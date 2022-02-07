@@ -32,15 +32,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-sphinx
     steps:
-      - name: Download math result for job 1
+      - uses: actions/checkout@v2
+        name: Checkout pypose/pypose.github.io
+      - name: Download built documentation
         uses: actions/download-artifact@v2
         with:
           name: DocumentationHTML
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - uses: actions/checkout@v2
-        name: Checkout pypose/pypose.github.io
+          path: docs
       - uses: actions/cache@v2
         name: Restore dependent gems
         with:
