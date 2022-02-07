@@ -1,19 +1,13 @@
-# This is a basic workflow to help you get started with Actions
-
 name: build-page-with-doc
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-jekyll:
     runs-on: ubuntu-latest
@@ -33,22 +27,12 @@ jobs:
           token: ${{ secrets.JEKYLL_PAT }}
           target_branch: 'gh-pages'
 
-  build-sphinx:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        name: Checkout pypose/pypose
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
-          repository: pypose/pypose
-          ref: docs
-          token: ${{ secrets.JEKYLL_PAT }}
-      - uses: ammaraskar/sphinx-action@master
-        name: Build Sphinx documentation
-        with:
-          docs-folder: "docs/"
-      - uses: actions/upload-artifact@v1
-        name: Save html artifacts
-        with:
+          github_token: ${{secrets.JEKYLL_PAT}}
+          # Required, workflow file name or ID
+          workflow: build-sphinx-html
           name: DocumentationHTML
-          path: docs/build/html
-
+          path: extract_here
+          repo: pypose/pypose.github.io
