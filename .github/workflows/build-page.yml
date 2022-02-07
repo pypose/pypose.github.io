@@ -27,8 +27,18 @@ jobs:
           token: ${{ secrets.JEKYLL_PAT }}
           target_branch: 'gh-pages'
 
-      - uses: actions/download-artifact@v2
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
+          github_token: ${{secrets.JEKYLL_PAT}}
+          # Required, workflow file name or ID
+          workflow: build-sphinx-html
+          # Optional, will use the branch
+          branch: build-doc
           name: DocumentationHTML
+          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
+          path: extract_here
+          # Optional, defaults to current repo
+          repo: pypose/pypose.github.io
       - name: Display structure of downloaded files
         run: ls -R
