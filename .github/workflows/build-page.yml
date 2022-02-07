@@ -6,7 +6,7 @@ name: build-page-with-doc
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master build-doc ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -15,23 +15,40 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build-jekyll:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        name: Checkout pypose/pypose.github.io
       - uses: actions/cache@v2
+        name: Restore dependent gems
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
           restore-keys: |
             ${{ runner.os }}-gems-
       - uses: helaili/jekyll-action@v2
+        name: Build Jekyll
         with:
           token: ${{ secrets.JEKYLL_PAT }}
           target_branch: 'gh-pages'
+
+  build-sphinx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout pypose/pypose
+        with:
+          repository: pypose/pypose
+          ref: docs
+          token: ${{ secrets.JEKYLL_PAT }}
+      - uses: ammaraskar/sphinx-action@master
+        name: Build Sphinx documentation
+        with:
+          docs-folder: "docs/"
+      - uses: actions/upload-artifact@v1
+        name: Save html artifacts
+        with:
+          name: DocumentationHTML
+          path: docs/_build/html/
 
