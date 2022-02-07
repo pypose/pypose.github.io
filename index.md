@@ -1,3 +1,7 @@
+---
+title: PyPose
+---
+
 ## Welcome to PyPose
 
 This page is under construction.
