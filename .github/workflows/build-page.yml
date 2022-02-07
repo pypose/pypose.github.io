@@ -34,11 +34,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout pypose/pypose.github.io
-      - name: Download built documentation
-        uses: actions/download-artifact@v2
-        with:
-          name: DocumentationHTML
-          path: docs
       - uses: actions/cache@v2
         name: Restore dependent gems
         with:
@@ -51,4 +46,14 @@ jobs:
         with:
           token: ${{ secrets.JEKYLL_PAT }}
           target_branch: 'gh-pages'
-      - run: ls -R build
+          build_only: true
+      - name: Download built documentation
+        uses: actions/download-artifact@v2
+        with:
+          name: DocumentationHTML
+          path: build/docs
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          branch: gh-pages
+          folder: build
