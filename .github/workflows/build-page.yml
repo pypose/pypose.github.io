@@ -22,11 +22,12 @@ jobs:
         name: Build Sphinx documentation
         with:
           docs-folder: "docs/"
+          build-command: "make dirhtml"
       - uses: actions/upload-artifact@v1
         name: Save html artifacts
         with:
           name: sphinx-doc.tar
-          path: docs/build/html
+          path: docs/build/dirhtml
 
   build-jekyll:
     runs-on: ubuntu-latest
@@ -44,10 +45,9 @@ jobs:
       - uses: helaili/jekyll-action@v2
         name: Build Jekyll
         with:
-#           token: ${{ secrets.JEKYLL_PAT }}
-#           target_branch: 'gh-pages'
           build_only: true
       - run: mkdir -p gh-pages/docs; cp -r build/* gh-pages
+        name: Relocate docs
       - name: Download built documentation
         uses: actions/download-artifact@v2
         with:
