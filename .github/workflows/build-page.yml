@@ -62,8 +62,9 @@ jobs:
 #           name: sphinx-doc.tar
 #           path: gh-pages/docs
         run: |
-          export artifacts=$(curl https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts?circle-token=${{ secrets.CIRCLECI }})
-          echo "payload: $artifacts"
+          export CIRCLE_TOKEN=?circle-token=${{ secrets.CIRCLECI }}
+          export ARTIFACTS=$(curl https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
+          wget $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
