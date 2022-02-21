@@ -11,29 +11,29 @@ on:
     types: [circle-ci-build]
 
 jobs:
-  build-sphinx:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        name: Checkout pypose/pypose
-        with:
-          repository: pypose/pypose
-          ref: main
-          token: ${{ secrets.JEKYLL_PAT }}
-      - uses: ammaraskar/sphinx-action@master
-        name: Build Sphinx documentation
-        with:
-          docs-folder: "docs/"
-          build-command: "make dirhtml"
-      - uses: actions/upload-artifact@v1
-        name: Save html artifacts
-        with:
-          name: sphinx-doc.tar
-          path: docs/build/dirhtml
+#   build-sphinx:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         name: Checkout pypose/pypose
+#         with:
+#           repository: pypose/pypose
+#           ref: main
+#           token: ${{ secrets.JEKYLL_PAT }}
+#       - uses: ammaraskar/sphinx-action@master
+#         name: Build Sphinx documentation
+#         with:
+#           docs-folder: "docs/"
+#           build-command: "make dirhtml"
+#       - uses: actions/upload-artifact@v1
+#         name: Save html artifacts
+#         with:
+#           name: sphinx-doc.tar
+#           path: docs/build/dirhtml
 
   build-jekyll:
     runs-on: ubuntu-latest
-    needs: build-sphinx
+#     needs: build-sphinx
     steps:
       - uses: actions/checkout@v2
         name: Checkout pypose/pypose.github.io
@@ -46,21 +46,24 @@ jobs:
             ${{ runner.os }}-gems-
       - run: mkdir -p gh-pages/docs
         name: Create build dir
-      - uses: helaili/jekyll-action@v2
-        name: Build Jekyll
-        with:
-          build_only: true
-          # remove in the future if this action picks up the page branch name correctly
-          target_branch: gh-pages
-          #  default build_dir is /github/jekyll_build; /github/workspace is the mount point for pyose.github.io
-          target_path: ../workspace/build
-      - run: cp -r build/* gh-pages
-        name: Relocate docs
+#       - uses: helaili/jekyll-action@v2
+#         name: Build Jekyll
+#         with:
+#           build_only: true
+#           # remove in the future if this action picks up the page branch name correctly
+#           target_branch: gh-pages
+#           #  default build_dir is /github/jekyll_build; /github/workspace is the mount point for pyose.github.io
+#           target_path: ../workspace/build
+#       - run: cp -r build/* gh-pages
+#         name: Relocate docs
       - name: Download built documentation
-        uses: actions/download-artifact@v2
-        with:
-          name: sphinx-doc.tar
-          path: gh-pages/docs
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: sphinx-doc.tar
+#           path: gh-pages/docs
+        run: |
+          export artifacts=$(curl https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts?circle-token=${{ secrets.CIRCLECI }})
+          echo "payload: ${{ toJson(artifacts) }}"
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
