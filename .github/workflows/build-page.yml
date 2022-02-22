@@ -66,7 +66,7 @@ jobs:
           export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
           wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
           mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
-          mv sphinx-docs/dirhtml/* gh-pages/docs
+          mv sphinx-docs/build/dirhtml/* gh-pages/docs
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
