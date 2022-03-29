@@ -71,9 +71,10 @@
   <h1>Source code for pypose.liegroup.group.groups</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span>
 <span class="kn">from</span> <span class="nn">.group_ops</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">mul</span><span class="p">,</span> <span class="n">adj</span>
 <span class="kn">from</span> <span class="nn">.group_ops</span> <span class="kn">import</span> <span class="n">adjT</span><span class="p">,</span> <span class="n">jinv</span><span class="p">,</span> <span class="n">act3</span><span class="p">,</span> <span class="n">act4</span><span class="p">,</span> <span class="n">toMatrix</span>
+<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">cumops_</span><span class="p">,</span> <span class="n">cumsum_</span><span class="p">,</span> <span class="n">cummul_</span><span class="p">,</span> <span class="n">cumprod_</span>
+<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span><span class="p">,</span> <span class="n">cumops</span><span class="p">,</span> <span class="n">cumsum</span><span class="p">,</span> <span class="n">cummul</span><span class="p">,</span> <span class="n">cumprod</span>
 
 
 <span class="n">HANDLED_FUNCTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;__getitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__setitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">,</span>
@@ -83,7 +84,9 @@
                      <span class="s1">&#39;index_select&#39;</span><span class="p">,</span> <span class="s1">&#39;masked_select&#39;</span><span class="p">,</span> <span class="s1">&#39;movedim&#39;</span><span class="p">,</span> <span class="s1">&#39;moveaxis&#39;</span><span class="p">,</span> <span class="s1">&#39;narrow&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;permute&#39;</span><span class="p">,</span> <span class="s1">&#39;reshape&#39;</span><span class="p">,</span> <span class="s1">&#39;row_stack&#39;</span><span class="p">,</span> <span class="s1">&#39;scatter&#39;</span><span class="p">,</span> <span class="s1">&#39;scatter_add&#39;</span><span class="p">,</span> <span class="s1">&#39;clone&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;swapaxes&#39;</span><span class="p">,</span> <span class="s1">&#39;swapdims&#39;</span><span class="p">,</span> <span class="s1">&#39;take&#39;</span><span class="p">,</span> <span class="s1">&#39;take_along_dim&#39;</span><span class="p">,</span> <span class="s1">&#39;tile&#39;</span><span class="p">,</span> <span class="s1">&#39;copy&#39;</span><span class="p">,</span>
-                     <span class="s1">&#39;transpose&#39;</span><span class="p">,</span> <span class="s1">&#39;unbind&#39;</span><span class="p">,</span> <span class="s1">&#39;gather&#39;</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">,</span> <span class="s1">&#39;expand&#39;</span><span class="p">,</span> <span class="s1">&#39;expand_as&#39;</span><span class="p">]</span>
+                     <span class="s1">&#39;transpose&#39;</span><span class="p">,</span> <span class="s1">&#39;unbind&#39;</span><span class="p">,</span> <span class="s1">&#39;gather&#39;</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">,</span> <span class="s1">&#39;expand&#39;</span><span class="p">,</span> <span class="s1">&#39;expand_as&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;index_select&#39;</span><span class="p">,</span> <span class="s1">&#39;masked_select&#39;</span><span class="p">,</span> <span class="s1">&#39;index_copy&#39;</span><span class="p">,</span> <span class="s1">&#39;index_copy_&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;select_scatter&#39;</span><span class="p">,</span> <span class="s1">&#39;index_put&#39;</span><span class="p">,</span><span class="s1">&#39;index_put_&#39;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">GroupType</span><span class="p">:</span>
@@ -146,7 +149,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="c1"># scalar * manifold</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">LieGroup</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Tensor Dimension Invalid&quot;</span>
             <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -214,7 +217,8 @@
     <span class="k">def</span> <span class="nf">__op__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">inputs</span><span class="p">,</span> <span class="n">out_shape</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__broadcast_inputs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">out_shape</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">nelement</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">out_shape</span> <span class="o">+</span> <span class="p">(</span><span class="n">dim</span><span class="p">,))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__broadcast_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -227,6 +231,38 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">shape</span><span class="o">+</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">shape</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">out_shape</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumsum</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cummul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumprod</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumsum_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumsum_</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cummul_</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cumprod_</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">SO3Type</span><span class="p">(</span><span class="n">GroupType</span><span class="p">):</span>
@@ -506,7 +542,31 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">quaternion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LieGroup.cumsum"><a class="viewcode-back" href="../../../../../liegroup/#pypose.liegroup.group.LieGroup.cumsum">[docs]</a>    <span class="k">def</span> <span class="nf">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LieGroup.cumprod"><a class="viewcode-back" href="../../../../../liegroup/#pypose.liegroup.group.LieGroup.cumprod">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LieGroup.cumsum_"><a class="viewcode-back" href="../../../../../liegroup/#pypose.liegroup.group.LieGroup.cumsum_">[docs]</a>    <span class="k">def</span> <span class="nf">cumsum_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumsum_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LieGroup.cumprod_"><a class="viewcode-back" href="../../../../../liegroup/#pypose.liegroup.group.LieGroup.cumprod_">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
