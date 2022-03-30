@@ -93,9 +93,9 @@
     <span class="sd">&#39;&#39;&#39;Lie Group Type Base Class&#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groud</span><span class="p">,</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">manifold</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group</span>     <span class="o">=</span> <span class="n">groud</span>     <span class="c1"># Group ID</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dimension</span> <span class="o">=</span> <span class="n">dimension</span> <span class="c1"># Data dimension</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">embedding</span> <span class="c1"># Embedding dimension</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_manifold</span>  <span class="o">=</span> <span class="n">manifold</span>  <span class="c1"># Manifold dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dimension</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">dimension</span><span class="p">])</span> <span class="c1"># Data dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">embedding</span><span class="p">])</span> <span class="c1"># Embedding dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manifold</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">manifold</span><span class="p">])</span>  <span class="c1"># Manifold dimension</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -211,7 +211,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">manifold</span><span class="p">]),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">manifold</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__op__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -438,58 +438,74 @@
 
 
 <div class="viewcode-block" id="LieGroup"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup">[docs]</a><span class="k">class</span> <span class="nc">LieGroup</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The Base Class for LieGroup Tensor</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; The Base Class for LieGroup Tensor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LieGroup Tensor (Inherited from torch.Tensor)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (tensor): Data of Liegroup Tensor</span>
 <span class="sd">        gtype (gtype): Group Type, which can be **Selected Below**:</span>
 
-<span class="sd">    .. list-table:: Liegroup Types</span>
-<span class="sd">        :widths: 25 25 50 30</span>
+<span class="sd">    .. list-table:: List of **gtype**</span>
+<span class="sd">        :widths: 25 25 30 30 30</span>
 <span class="sd">        :header-rows: 1</span>
 
 <span class="sd">        * - Name</span>
-<span class="sd">          - On Space</span>
-<span class="sd">          - On Manifold</span>
+<span class="sd">          - Embedding</span>
+<span class="sd">          - Alias Class</span>
+<span class="sd">          - Manifold</span>
 <span class="sd">          - Alias Class</span>
 <span class="sd">        * - Orthogonal Group</span>
-<span class="sd">          - pypose.SO3_type</span>
-<span class="sd">          - pypose.so3_type</span>
-<span class="sd">          - pypose.SO3(), pypose.so3()</span>
+<span class="sd">          - :code:`SO3_type`</span>
+<span class="sd">          - :meth:`SO3`</span>
+<span class="sd">          - :code:`so3_type`</span>
+<span class="sd">          - :meth:`so3`</span>
 <span class="sd">        * - Euclidean Group</span>
-<span class="sd">          - pypose.SE3_type</span>
-<span class="sd">          - pypose.se3_type</span>
-<span class="sd">          - pypose.SE3(), pypose.se3()</span>
+<span class="sd">          - :code:`SE3_type`</span>
+<span class="sd">          - :meth:`SE3`</span>
+<span class="sd">          - :code:`se3_type`</span>
+<span class="sd">          - :meth:`se3`</span>
 <span class="sd">        * - Similarity Group</span>
-<span class="sd">          - pypose.Sim3_type</span>
-<span class="sd">          - pypose.sim3_type</span>
-<span class="sd">          - pypose.Sim3(), pypose.sim3()</span>
+<span class="sd">          - :code:`Sim3_type`</span>
+<span class="sd">          - :meth:`Sim3`</span>
+<span class="sd">          - :code:`sim3_type`</span>
+<span class="sd">          - :meth:`sim3`</span>
 <span class="sd">        * - Scaling Orthogonal</span>
-<span class="sd">          - pypose.RxSO3_type</span>
-<span class="sd">          - pypose.rxso3_type</span>
-<span class="sd">          - pypose.RxSO3(), pypose.rxso3()</span>
+<span class="sd">          - :code:`RxSO3_type`</span>
+<span class="sd">          - :meth:`RxSO3`</span>
+<span class="sd">          - :code:`rxso3_type`</span>
+<span class="sd">          - :meth:`rxso3`</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; data = torch.randn(3, 3, requires_grad=True, device=&#39;cuda:0&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; pp.LieGroup(data, gtype=pp.so3_type)</span>
+<span class="sd">        so3Type Group:</span>
+<span class="sd">        tensor([[ 0.9520,  0.4517,  0.5834],</span>
+<span class="sd">                [-0.8106,  0.8197,  0.7077],</span>
+<span class="sd">                [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
 
-<span class="sd">    &gt;&gt;&gt; import torch</span>
-<span class="sd">    &gt;&gt;&gt; import pypose as pp</span>
-<span class="sd">    &gt;&gt;&gt; data = torch.randn(3, 3, requires_grad=True, device=&#39;cuda:0&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; pp.LieGroup(data, gtype=pp.so3_type)</span>
-<span class="sd">    so3Type Group:</span>
-<span class="sd">    tensor([[ 0.9520,  0.4517,  0.5834],</span>
-<span class="sd">            [-0.8106,  0.8197,  0.7077],</span>
-<span class="sd">            [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;,</span>
-<span class="sd">        grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="sd">        &gt;&gt;&gt; pp.so3(data)  ## Alias is Recommended</span>
+<span class="sd">        so3Type Group:</span>
+<span class="sd">        tensor([[ 0.9520,  0.4517,  0.5834],</span>
+<span class="sd">                [-0.8106,  0.8197,  0.7077],</span>
+<span class="sd">                [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
 
-<span class="sd">    &gt;&gt;&gt; pp.so3(data)  ## Recommended</span>
-<span class="sd">    so3Type Group:</span>
-<span class="sd">    tensor([[ 0.9520,  0.4517,  0.5834],</span>
-<span class="sd">            [-0.8106,  0.8197,  0.7077],</span>
-<span class="sd">            [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;,</span>
-<span class="sd">        grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="sd">    Note:</span>
+<span class="sd">        Alias of LieGroup for specific gtype is recommended.</span>
+<span class="sd">        For example, the following usage is equivalent:</span>
+
+<span class="sd">        - :code:`pp.LieGroup(data, gtype=pp.so3_type)`</span>
+
+<span class="sd">        - :code:`pp.so3(data)`</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        All properties of `torch.tensor` is available.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="s1">&#39;Dimension Invalid.&#39;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="s1">&#39;Dimension Invalid.&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span> <span class="o">=</span> <span class="n">gtype</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -516,11 +532,49 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gshape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">gshape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        LieGroup Tensor Shape (shape of torch.Tensor by removing the last dimension)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Size</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            - The only difference from :meth:`tensor.shape` is the last dimension is hidden.</span>
+
+<span class="sd">            - The last dimension can also be accessed via :code:`LieGroup.gtype.dimension`.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SE3(2)</span>
+<span class="sd">            &gt;&gt;&gt; x.gshape</span>
+<span class="sd">            torch.Size([2])</span>
+<span class="sd">            &gt;&gt;&gt; x.shape</span>
+<span class="sd">            torch.Size([2, 7])</span>
+<span class="sd">            &gt;&gt;&gt; x.gtype.dimension</span>
+<span class="sd">            torch.Size([7])</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">gview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,))</span>
+<div class="viewcode-block" id="LieGroup.gview"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.gview">[docs]</a>    <span class="k">def</span> <span class="nf">gview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A new lieGroup tensor sharing with the same data as the self tensor but of a different shape.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            shape (torch.Size or int...): the desired size</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The only difference from :meth:`tensor.view` is the last dimension is hidden.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_so3(2,2)</span>
+<span class="sd">            &gt;&gt;&gt; x.shape</span>
+<span class="sd">            torch.Size([2, 2, 3])</span>
+<span class="sd">            &gt;&gt;&gt; x.gview(-1).gshape</span>
+<span class="sd">            torch.Size([4])</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieGroup.Exp"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.Exp">[docs]</a>    <span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The exponential map.</span>
