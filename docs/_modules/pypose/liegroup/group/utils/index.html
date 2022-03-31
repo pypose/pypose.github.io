@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.liegroup.group.utils &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../../../../_static/katex_autorenderer.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../../search/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../liegroup/">LieGroup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../convert/">Convert</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../">Module code</a> &raquo;</li>
+      <li>pypose.liegroup.group.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pypose.liegroup.group.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">.groups</span> <span class="kn">import</span>  <span class="n">LieGroup</span>
+<span class="kn">from</span> <span class="nn">.groups</span> <span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">se3_type</span>
+<span class="kn">from</span> <span class="nn">.groups</span> <span class="kn">import</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">so3_type</span>
+<span class="kn">from</span> <span class="nn">.groups</span> <span class="kn">import</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">sim3_type</span>
+<span class="kn">from</span> <span class="nn">.groups</span> <span class="kn">import</span> <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span>
+
+
+<span class="n">SO3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
+<span class="n">so3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">so3_type</span><span class="p">)</span>
+<span class="n">SE3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
+<span class="n">se3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">se3_type</span><span class="p">)</span>
+<span class="n">Sim3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
+<span class="n">sim3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">sim3_type</span><span class="p">)</span>
+<span class="n">RxSO3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">RxSO3_type</span><span class="p">)</span>
+<span class="n">rxso3</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">rxso3_type</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_like</span><span class="p">(</span><span class="n">liegroup</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">liegroup</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="o">*</span><span class="n">liegroup</span><span class="o">.</span><span class="n">gshape</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_so3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">randn_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_like</span><span class="p">(</span><span class="n">liegroup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">liegroup</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">identity_like</span><span class="p">(</span><span class="o">*</span><span class="n">liegroup</span><span class="o">.</span><span class="n">gshape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">identity_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">assert_gtype</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">checker</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">LieGroup</span><span class="p">),</span> <span class="s2">&quot;Invalid LieGroup Type.&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+    <span class="k">return</span> <span class="n">checker</span>
+
+
+<div class="viewcode-block" id="Exp"><a class="viewcode-back" href="../../../../../generated/pypose.Exp/#pypose.Exp">[docs]</a><span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Exponential map for :code:`LieGroup` Tensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \exp: \mathcal{g} \mapsto \mathcal{G}</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\exp` map</span>
+<span class="sd">        :widths: 30 30 30 30</span>
+<span class="sd">        :header-rows: 1</span>
+
+<span class="sd">        * - input :code:`gtype`</span>
+<span class="sd">          - :math:`\mathcal{g}`</span>
+<span class="sd">          - :math:`\mathcal{G}`</span>
+<span class="sd">          - output :code:`gtype`</span>
+<span class="sd">        * - :code:`so3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^3`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^4`</span>
+<span class="sd">          - :code:`SO3_type`</span>
+<span class="sd">        * - :code:`se3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^6`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^7`</span>
+<span class="sd">          - :code:`SE3_type`</span>
+<span class="sd">        * - :code:`sim3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^7`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^8`</span>
+<span class="sd">          - :code:`Sim3_type`</span>
+<span class="sd">        * - :code:`rxso3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^4`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^5`</span>
+<span class="sd">          - :code:`RxSO3_type`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieGroup): the input LieGroup Tensor on manifold</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieGroup: The LieGroup Tensor in embedding space</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function :code:`Exp()` is different from :code:`exp()`, which returns</span>
+<span class="sd">        a new torch tensor with the exponential of the elements of the input tensor.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_so3(2, requires_grad=True)</span>
+<span class="sd">        so3Type Group:</span>
+<span class="sd">        tensor([[ 0.1366,  0.1370, -1.1921],</span>
+<span class="sd">                [-0.6003, -0.2165, -1.6576]], requires_grad=True)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.Exp() # equivalent to: pp.Exp(x)</span>
+<span class="sd">        SO3Type Group:</span>
+<span class="sd">        tensor([[ 0.0642,  0.0644, -0.5605,  0.8232],</span>
+<span class="sd">                [-0.2622, -0.0946, -0.7241,  0.6309]], grad_fn=&lt;AliasBackward0&gt;)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.exp() # Note that this returns torch.Tensor</span>
+<span class="sd">        tensor([[1.1463, 1.1469, 0.3036],</span>
+<span class="sd">                [0.5486, 0.8053, 0.1906]], grad_fn=&lt;ExpBackward0&gt;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Log"><a class="viewcode-back" href="../../../../../generated/pypose.Log/#pypose.Log">[docs]</a><span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Logarithm map for :code:`LieGroup` Tensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \log: \mathcal{G} \mapsto \mathcal{g}</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\log` map</span>
+<span class="sd">        :widths: 30 30 30 30</span>
+<span class="sd">        :header-rows: 1</span>
+
+<span class="sd">        * - input :code:`gtype`</span>
+<span class="sd">          - :math:`\mathcal{G}`</span>
+<span class="sd">          - :math:`\mathcal{g}`</span>
+<span class="sd">          - output :code:`gtype`</span>
+<span class="sd">        * - :code:`SO3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^4`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^3`</span>
+<span class="sd">          - :code:`so3_type`</span>
+<span class="sd">        * - :code:`SE3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^7`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^6`</span>
+<span class="sd">          - :code:`se3_type`</span>
+<span class="sd">        * - :code:`Sim3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^8`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^7`</span>
+<span class="sd">          - :code:`sim3_type`</span>
+<span class="sd">        * - :code:`RxSO3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^5`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^4`</span>
+<span class="sd">          - :code:`rxso3_type`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieGroup): the input LieGroup Tensor on manifold</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieGroup: The LieGroup Tensor in embedding space</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function :code:`Log()` is different from :code:`log()`, which returns</span>
+<span class="sd">        a new torch tensor with the logarithm of the elements of the input tensor.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3(2, requires_grad=True)</span>
+<span class="sd">        SO3Type Group:</span>
+<span class="sd">        tensor([[-0.1420,  0.1088,  0.5904,  0.7871],</span>
+<span class="sd">                [ 0.1470, -0.3328,  0.0580,  0.9297]], requires_grad=True)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
+<span class="sd">        so3Type Group:</span>
+<span class="sd">        tensor([[-0.3060,  0.2344,  1.2724],</span>
+<span class="sd">                [ 0.3012, -0.6817,  0.1187]], grad_fn=&lt;AliasBackward0&gt;)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
+<span class="sd">        tensor([[    nan, -2.2184, -0.5270, -0.2395],</span>
+<span class="sd">                [-1.9171,     nan, -2.8478, -0.0729]], grad_fn=&lt;LogBackward0&gt;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span></div>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Retr</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+
+<span class="nd">@assert_gtype</span>
+<span class="k">def</span> <span class="nf">Jinv</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Jinv</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
