@@ -268,12 +268,12 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">so3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">args</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">size</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">so3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">so3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
@@ -285,6 +285,7 @@
     <span class="k">def</span> <span class="nf">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="n">X</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">X</span><span class="o">.</span><span class="n">index_fill_</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
 
 
 <span class="k">class</span> <span class="nc">so3Type</span><span class="p">(</span><span class="n">GroupType</span><span class="p">):</span>
@@ -296,11 +297,11 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">SO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">SO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">so3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gtensor</span><span class="p">):</span>
@@ -333,12 +334,12 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">se3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">args</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">size</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">se3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">se3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -351,11 +352,11 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">se3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -368,12 +369,12 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">sim3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">args</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">size</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -386,11 +387,11 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">sim3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -403,12 +404,12 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">rxso3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">args</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">rxso3_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">size</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">gtype</span><span class="o">=</span><span class="n">rxso3_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">rxso3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="n">rxso3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">RxSO3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -421,11 +422,11 @@
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">RxSO3_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">RxSO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">RxSO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">randn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">LieGroup</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="o">=</span><span class="n">rxso3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
 
@@ -435,7 +436,7 @@
 <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span> <span class="o">=</span> <span class="n">RxSO3Type</span><span class="p">(),</span> <span class="n">rxso3Type</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="LieGroup"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup">[docs]</a><span class="k">class</span> <span class="nc">LieGroup</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup/#pypose.LieGroup">[docs]</a><span class="k">class</span> <span class="nc">LieGroup</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot; The Base Class for LieGroup Tensor</span>
 
 <span class="sd">    Returns:</span>
@@ -504,9 +505,9 @@
 <span class="sd">        See more details at https://pytorch.org/docs/stable/tensor_attributes.html</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">gtype</span><span class="p">:</span><span class="n">GroupType</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup.__init__"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup/#pypose.LieGroup.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">gtype</span><span class="p">:</span><span class="n">GroupType</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="s1">&#39;Dimension Invalid.&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span> <span class="o">=</span> <span class="n">gtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span> <span class="o">=</span> <span class="n">gtype</span></div>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">gtype</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LieGroup</span><span class="p">)</span>
@@ -534,13 +535,13 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">gshape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        LieGroup Tensor Shape (shape of torch.Tensor by removing the last dimension)</span>
+<span class="sd">        LieGroup Tensor Shape (shape of torch.Tensor by ignoring the last dimension)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Size</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            - The only difference from :meth:`tensor.shape` is the last dimension is hidden.</span>
+<span class="sd">            - The only difference from :code:`tensor.shape` is the last dimension is hidden.</span>
 
 <span class="sd">            - The last dimension can also be accessed via :code:`LieGroup.gtype.dimension`.</span>
 
@@ -555,8 +556,10 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-<div class="viewcode-block" id="LieGroup.gview"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.gview">[docs]</a>    <span class="k">def</span> <span class="nf">gview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup.gview"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.gview/#pypose.LieGroup.gview">[docs]</a>    <span class="k">def</span> <span class="nf">gview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns a new LieGroup tensor with the same data as the self tensor but of a different :code:`gshape`.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            shape (torch.Size or int...): the desired size</span>
 
@@ -564,7 +567,7 @@
 <span class="sd">            A new lieGroup tensor sharing with the same data as the self tensor but of a different shape.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            The only difference from :meth:`tensor.view` is the last dimension is hidden.</span>
+<span class="sd">            The only difference from :code:`tensor.view` is the last dimension is hidden.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; x = pp.randn_so3(2,2)</span>
@@ -575,101 +578,183 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LieGroup.Exp"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.Exp">[docs]</a>    <span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup.Exp"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Exp/#pypose.LieGroup.Exp">[docs]</a>    <span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Exp`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Log"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Log/#pypose.LieGroup.Log">[docs]</a>    <span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Log`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Inv"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Inv/#pypose.LieGroup.Inv">[docs]</a>    <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Inv`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Act"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Act/#pypose.LieGroup.Act">[docs]</a>    <span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Act`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.__mul__"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.__mul__/#pypose.LieGroup.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup.__matmul__"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.__matmul__/#pypose.LieGroup.__matmul__">[docs]</a>    <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LieGroup</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span> <span class="c1"># Same with: self.gtype.matrix(self) @ other</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Retr"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Retr/#pypose.LieGroup.Retr">[docs]</a>    <span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Retr`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Adj"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Adj/#pypose.LieGroup.Adj">[docs]</a>    <span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Adj`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.AdjT"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.AdjT/#pypose.LieGroup.AdjT">[docs]</a>    <span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.AdjT`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">Jinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Jinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.Jinv"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.Jinv/#pypose.LieGroup.Jinv">[docs]</a>    <span class="k">def</span> <span class="nf">Jinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Jinv`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Jinv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        See :meth:`pypose.Jr`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">Hat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">Hat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.tensor"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.tensor/#pypose.LieGroup.tensor">[docs]</a>    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the torch.Tensor without changing data.</span>
 
-    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the torch.Tensor form of LieGroup Tensor.</span>
 
-    <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3(2)</span>
+<span class="sd">            &gt;&gt;&gt; x.tensor()</span>
+<span class="sd">            tensor([[ 0.1196,  0.2339, -0.6824,  0.6822],</span>
+<span class="sd">                    [ 0.9198, -0.2704, -0.2395,  0.1532]])</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
-    <span class="k">def</span> <span class="nf">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="LieGroup.matrix"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.matrix/#pypose.LieGroup.matrix">[docs]</a>    <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return LieGroup Tensor into matrix form.</span>
 
-    <span class="k">def</span> <span class="nf">quaternion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">quaternion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the batched matrix form (torch.Tensor) of LieGroup Tensor.</span>
 
-    <span class="k">def</span> <span class="nf">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3(2)</span>
+<span class="sd">            &gt;&gt;&gt; x.matrix()</span>
+<span class="sd">            tensor([[[ 0.9285, -0.0040, -0.3713],</span>
+<span class="sd">                    [ 0.2503,  0.7454,  0.6178],</span>
+<span class="sd">                    [ 0.2743, -0.6666,  0.6931]],</span>
+<span class="sd">                    [[ 0.4805,  0.8602, -0.1706],</span>
+<span class="sd">                    [-0.7465,  0.2991, -0.5944],</span>
+<span class="sd">                    [-0.4603,  0.4130,  0.7858]]])</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LieGroup.cumops"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cumops">[docs]</a>    <span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+<div class="viewcode-block" id="LieGroup.translation"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.translation/#pypose.LieGroup.translation">[docs]</a>    <span class="k">def</span> <span class="nf">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Extract the translation vector from a LieGroup Tensor.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the batched translation.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SE3(2)</span>
+<span class="sd">            &gt;&gt;&gt; x.translation()</span>
+<span class="sd">            tensor([[-0.5358, -1.5421, -0.7224],</span>
+<span class="sd">                    [ 0.8331, -1.4412,  0.0863]])</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LieGroup.quaternion"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.quaternion/#pypose.LieGroup.quaternion">[docs]</a>    <span class="k">def</span> <span class="nf">quaternion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">quaternion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LieGroup.identity_"><a class="viewcode-back" href="../../../../../generated/pypose.LieGroup.identity_/#pypose.LieGroup.identity_">[docs]</a>    <span class="k">def</span> <span class="nf">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Inplace set the LieGroup Tensor to identity.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            LieGroup: the :code:`self` LieGroup Tensor</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The translation part, if there is, is set to zeros, while the</span>
+<span class="sd">            rotation part is set to identity quaternion.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3(2)</span>
+<span class="sd">            &gt;&gt;&gt; x</span>
+<span class="sd">            SO3Type Group:</span>
+<span class="sd">            tensor([[-0.0724,  0.1970,  0.0022,  0.9777],</span>
+<span class="sd">                    [ 0.3492,  0.4998, -0.5310,  0.5885]])</span>
+<span class="sd">            &gt;&gt;&gt; x.identity_()</span>
+<span class="sd">            SO3Type Group:</span>
+<span class="sd">            tensor([[0., 0., 0., 1.],</span>
+<span class="sd">                    [0., 0., 0., 1.]])</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        See :meth:`pypose.cumops`</span>
+<span class="sd">        See :func:`pypose.cumops`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LieGroup.cummul"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cummul">[docs]</a>    <span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        See :meth:`pypose.cummul`</span>
+<span class="sd">        See :func:`pypose.cummul`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LieGroup.cumprod"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cumprod">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        See :meth:`pypose.cumprod`</span>
+<span class="sd">        See :func:`pypose.cumprod`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LieGroup.cumops_"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cumops_">[docs]</a>    <span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inplace version of :meth:`pypose.cumops`</span>
+<span class="sd">        Inplace version of :func:`pypose.cumops`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LieGroup.cummul_"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cummul_">[docs]</a>    <span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inplace version of :meth:`pypose.cummul`</span>
+<span class="sd">        Inplace version of :func:`pypose.cummul`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LieGroup.cumprod_"><a class="viewcode-back" href="../../../../../liegroup/#pypose.LieGroup.cumprod_">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inplace version of :meth:`pypose.cumprod`</span>
+<span class="sd">        Inplace version of :func:`pypose.cumprod`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span><span class="o">.</span><span class="n">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../../../../liegroup/#pypose.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../../../../generated/pypose.Parameter/#pypose.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">LieGroup</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A kind of LieGroup Tensor that is to be considered a module parameter.</span>
 
@@ -691,8 +776,8 @@
 <span class="sd">        tensor([[1., 1., 1.],</span>
 <span class="sd">                [1., 1., 1.]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">gtype</span>
+<div class="viewcode-block" id="Parameter.__init__"><a class="viewcode-back" href="../../../../../generated/pypose.Parameter/#pypose.Parameter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">gtype</span></div>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

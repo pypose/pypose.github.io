@@ -75,8 +75,8 @@
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">SO3</span><span class="p">,</span> <span class="n">so3</span>
 
 
-<div class="viewcode-block" id="mat2SO3"><a class="viewcode-back" href="../../../../../generated/pypose.mat2SO3/#pypose.mat2SO3">[docs]</a><span class="k">def</span> <span class="nf">mat2SO3</span><span class="p">(</span><span class="n">rotation_matrix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert 3x3 or 3x4 rotation matrix to SO3 group (by quaternion)</span>
+<div class="viewcode-block" id="mat2SO3"><a class="viewcode-back" href="../../../../../generated/pypose.mat2SO3/#pypose.mat2SO3">[docs]</a><span class="k">def</span> <span class="nf">mat2SO3</span><span class="p">(</span><span class="n">rotation_matrix</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert 3x3 or 3x4 rotation matrices to SO3 group</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rotation_matrix (Tensor): the rotation matrix to convert.</span>
@@ -154,12 +154,12 @@
                     <span class="n">t2_rep</span> <span class="o">*</span> <span class="n">mask_c2</span> <span class="o">+</span> <span class="n">t3_rep</span> <span class="o">*</span> <span class="n">mask_c3</span><span class="p">)</span>  <span class="c1"># noqa</span>
 
     <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span> <span class="c1"># wxyz -&gt; xyzw</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">device</span><span class="p">))</span> <span class="c1"># wxyz -&gt; xyzw</span>
 
     <span class="k">return</span> <span class="n">SO3</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="euler2SO3"><a class="viewcode-back" href="../../../../../generated/pypose.euler2SO3/#pypose.euler2SO3">[docs]</a><span class="k">def</span> <span class="nf">euler2SO3</span><span class="p">(</span><span class="n">euler</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="euler2SO3"><a class="viewcode-back" href="../../../../../generated/pypose.euler2SO3/#pypose.euler2SO3">[docs]</a><span class="k">def</span> <span class="nf">euler2SO3</span><span class="p">(</span><span class="n">euler</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert Euler angles to SO3 Tensor</span>
 
 <span class="sd">    Args:</span>
@@ -173,9 +173,8 @@
 <span class="sd">        - Output: :code:`(*, 4)`</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; output = pp.euler2SO3(input, requires_grad=True)</span>
-<span class="sd">        &gt;&gt;&gt; output = pp.euler2SO3(input)</span>
-<span class="sd">        &gt;&gt;&gt; output</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(2, 3, requires_grad=True, dtype=torch.float64)</span>
+<span class="sd">        &gt;&gt;&gt; pp.euler2SO3(input)</span>
 <span class="sd">        SO3Type Group:</span>
 <span class="sd">        tensor([[-0.4873,  0.1162,  0.4829,  0.7182],</span>
 <span class="sd">                [ 0.3813,  0.4059, -0.2966,  0.7758]], grad_fn=&lt;AliasBackward0&gt;)</span>
@@ -193,7 +192,7 @@
                      <span class="n">cr</span> <span class="o">*</span> <span class="n">sp</span> <span class="o">*</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">sr</span> <span class="o">*</span> <span class="n">cp</span> <span class="o">*</span> <span class="n">sy</span><span class="p">,</span>
                      <span class="n">cr</span> <span class="o">*</span> <span class="n">cp</span> <span class="o">*</span> <span class="n">sy</span> <span class="o">-</span> <span class="n">sr</span> <span class="o">*</span> <span class="n">sp</span> <span class="o">*</span> <span class="n">cy</span><span class="p">,</span>
                      <span class="n">cr</span> <span class="o">*</span> <span class="n">cp</span> <span class="o">*</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">sr</span> <span class="o">*</span> <span class="n">sp</span> <span class="o">*</span> <span class="n">sy</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">SO3</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">gview</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">SO3</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">gview</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 </pre></div>
 
            </div>
