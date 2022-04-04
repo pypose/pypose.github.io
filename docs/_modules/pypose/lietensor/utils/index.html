@@ -412,41 +412,68 @@
 
 <div class="viewcode-block" id="Exp"><a class="viewcode-back" href="../../../../generated/pypose.Exp/#pypose.Exp">[docs]</a><span class="nd">@assert_ltype</span>
 <span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Exponential map for :code:`LieTensor` Tensor.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Exponential map for :code:`LieTensor` (Lie Algebra).</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \exp: \mathcal{g} \mapsto \mathcal{G}</span>
+<span class="sd">        \mathrm{Exp}: \mathcal{g} \mapsto \mathcal{G}</span>
 
-<span class="sd">    .. list-table:: List of supported :math:`\exp` map</span>
-<span class="sd">        :widths: 30 30 30 30</span>
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor (Lie Algebra)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieTensor: the output LieTensor (Lie Group)</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\mathrm{Exp}` map</span>
+<span class="sd">        :widths: 20 20 8 20 20</span>
 <span class="sd">        :header-rows: 1</span>
 
 <span class="sd">        * - input :code:`ltype`</span>
-<span class="sd">          - :math:`\mathcal{g}`</span>
-<span class="sd">          - :math:`\mathcal{G}`</span>
+<span class="sd">          - :math:`\mathcal{g}` (Lie Algebra)</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}` (Lie Group)</span>
 <span class="sd">          - output :code:`ltype`</span>
 <span class="sd">        * - :code:`so3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^3`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^4`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times3}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times4}`</span>
 <span class="sd">          - :code:`SO3_type`</span>
 <span class="sd">        * - :code:`se3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^6`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^7`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times6}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times7}`</span>
 <span class="sd">          - :code:`SE3_type`</span>
 <span class="sd">        * - :code:`sim3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^7`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^8`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times8}`</span>
 <span class="sd">          - :code:`Sim3_type`</span>
 <span class="sd">        * - :code:`rxso3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^4`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^5`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times5}`</span>
 <span class="sd">          - :code:`RxSO3_type`</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        input (LieTensor): the input LieTensor (Lie Group)</span>
+<span class="sd">    * Input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`so3_type` (input :math:`\mathbf{x}` is an instance of :meth:`so3`):</span>
 
-<span class="sd">    Return:</span>
-<span class="sd">        LieTensor: The LieTensor (Lie Algebra)</span>
+<span class="sd">        If :math:`\|\mathbf{x}_i\| &gt; \text{eps}`:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \left[\mathbf{x}_{i,1}\theta_i,</span>
+<span class="sd">            \mathbf{x}_{i,2}\theta_i,</span>
+<span class="sd">            \mathbf{x}_{i,3}\theta_i,</span>
+<span class="sd">            \cos(\frac{\|\mathbf{x}_i\|}{2})\right],</span>
+
+<span class="sd">        where :math:`\theta_i = \frac{1}{\|\mathbf{x}_i\|}\sin(\frac{\|\mathbf{x}_i\|}{2})`,</span>
+
+<span class="sd">        otherwise:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \left[\mathbf{x}_{i,1}\theta_i,~</span>
+<span class="sd">            \mathbf{x}_{i,2}\theta_i,~</span>
+<span class="sd">            \mathbf{x}_{i,3}\theta_i,~</span>
+<span class="sd">            1 - \frac{\|\mathbf{x}_i\|^2}{8} + \frac{\|\mathbf{x}_i\|^4}{384} \right],</span>
+
+<span class="sd">        where :math:`\theta_i = \frac{1}{2} - \frac{1}{48} \|\mathbf{x}_i\|^2 + \frac{1}{3840} \|\mathbf{x}_i\|^4`.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This function :func:`Exp()` is different from :func:`exp()`, which returns</span>
@@ -458,12 +485,16 @@
 <span class="sd">        tensor([[ 0.1366,  0.1370, -1.1921],</span>
 <span class="sd">                [-0.6003, -0.2165, -1.6576]], requires_grad=True)</span>
 
+<span class="sd">        :meth:`Exp` returns LieTensor :meth:`SO3`.</span>
+
 <span class="sd">        &gt;&gt;&gt; x.Exp() # equivalent to: pp.Exp(x)</span>
 <span class="sd">        SO3Type LieTensor:</span>
 <span class="sd">        tensor([[ 0.0642,  0.0644, -0.5605,  0.8232],</span>
 <span class="sd">                [-0.2622, -0.0946, -0.7241,  0.6309]], grad_fn=&lt;AliasBackward0&gt;)</span>
 
-<span class="sd">        &gt;&gt;&gt; x.exp() # Note that this returns torch.Tensor</span>
+<span class="sd">        :meth:`exp` returns torch tensor.</span>
+
+<span class="sd">        &gt;&gt;&gt; x.exp() # Note that this returns torch tensor</span>
 <span class="sd">        tensor([[1.1463, 1.1469, 0.3036],</span>
 <span class="sd">                [0.5486, 0.8053, 0.1906]], grad_fn=&lt;ExpBackward0&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -472,41 +503,46 @@
 
 <div class="viewcode-block" id="Log"><a class="viewcode-back" href="../../../../generated/pypose.Log/#pypose.Log">[docs]</a><span class="nd">@assert_ltype</span>
 <span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Logarithm map for :code:`LieTensor`.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Logarithm map for :code:`LieTensor` (Lie Group).</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \log: \mathcal{G} \mapsto \mathcal{g}</span>
+<span class="sd">        \mathrm{Log}: \mathcal{G} \mapsto \mathcal{g}</span>
 
-<span class="sd">    .. list-table:: List of supported :math:`\log` map</span>
-<span class="sd">        :widths: 30 30 30 30</span>
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor (Lie Group)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieTensor: the output LieTensor (Lie Algebra)</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\mathrm{Log}` map</span>
+<span class="sd">        :widths: 20 20 8 20 20</span>
 <span class="sd">        :header-rows: 1</span>
 
 <span class="sd">        * - input :code:`ltype`</span>
-<span class="sd">          - :math:`\mathcal{G}`</span>
-<span class="sd">          - :math:`\mathcal{g}`</span>
+<span class="sd">          - :math:`\mathcal{G}` (Lie Group)</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}` (Lie Algebra)</span>
 <span class="sd">          - output :code:`ltype`</span>
 <span class="sd">        * - :code:`SO3_type`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^4`</span>
+<span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^3`</span>
 <span class="sd">          - :code:`so3_type`</span>
 <span class="sd">        * - :code:`SE3_type`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^7`</span>
+<span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^6`</span>
 <span class="sd">          - :code:`se3_type`</span>
 <span class="sd">        * - :code:`Sim3_type`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^8`</span>
+<span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^7`</span>
 <span class="sd">          - :code:`sim3_type`</span>
 <span class="sd">        * - :code:`RxSO3_type`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^5`</span>
+<span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^4`</span>
 <span class="sd">          - :code:`rxso3_type`</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        input (LieTensor): the input LieTensor in form of Lie Group</span>
-
-<span class="sd">    Return:</span>
-<span class="sd">        LieTensor: The LieTensor  in form of Lie Algebra</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This function :func:`Log()` is different from :func:`log()`, which returns</span>
@@ -518,10 +554,14 @@
 <span class="sd">        tensor([[-0.1420,  0.1088,  0.5904,  0.7871],</span>
 <span class="sd">                [ 0.1470, -0.3328,  0.0580,  0.9297]], requires_grad=True)</span>
 
+<span class="sd">        :meth:`Log` returns LieTensor :meth:`so3`.</span>
+
 <span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
 <span class="sd">        so3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.3060,  0.2344,  1.2724],</span>
 <span class="sd">                [ 0.3012, -0.6817,  0.1187]], grad_fn=&lt;AliasBackward0&gt;)</span>
+
+<span class="sd">        :meth:`log` returns torch tensor.</span>
 
 <span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
 <span class="sd">        tensor([[    nan, -2.2184, -0.5270, -0.2395],</span>
