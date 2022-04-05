@@ -77,7 +77,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
 
-<div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.IMUPreintegrator/#pypose.IMUPreintegrator">[docs]</a><span class="k">class</span> <span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator">[docs]</a><span class="k">class</span> <span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
@@ -116,7 +116,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dr</span><span class="o">.</span><span class="n">identity_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
 
-<div class="viewcode-block" id="IMUPreintegrator.update"><a class="viewcode-back" href="../../../../generated/pypose.IMUPreintegrator/#pypose.IMUPreintegrator.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ang_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator.update"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ang_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        IMU Preintegration from duration (dt), angular rate (ang), linear acceleration (acc)</span>
 <span class="sd">        Uncertainty propagation from measurement covariance (cov): ang_cov, acc_cov</span>
@@ -176,7 +176,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">Bg</span> <span class="o">@</span> <span class="n">Cg</span> <span class="o">@</span> <span class="n">Bg</span><span class="o">.</span><span class="n">mT</span> <span class="o">/</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">Ba</span> <span class="o">@</span> <span class="n">Ca</span> <span class="o">@</span> <span class="n">Ba</span><span class="o">.</span><span class="n">mT</span> <span class="o">/</span> <span class="n">dt</span></div>
 
-<div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.IMUPreintegrator/#pypose.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propagated IMU status.</span>
 
