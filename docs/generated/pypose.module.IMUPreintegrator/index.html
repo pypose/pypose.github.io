@@ -104,7 +104,7 @@ for better precision.</p>
 <dd><p>Propagated IMU status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>reset</strong> (<em>bool</em><em>, </em><em>optional</em>) – if reset the preintegrator to initial state. Default: <code class="code docutils literal notranslate"><span class="pre">False</span></code></p>
+<dd class="field-odd"><p><strong>reset</strong> (<em>bool</em><em>, </em><em>optional</em>) – if reset the preintegrator to initial state. Default: <code class="code docutils literal notranslate"><span class="pre">True</span></code></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> containing 4 items: ‘rot’ation, ‘vel’ocity, ‘pos’ition, and ‘cov’ariance.</p>
@@ -129,7 +129,7 @@ for better precision.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fbfc6f1cdc0&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.update" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f5a91cccdc0&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.update" title="Permalink to this definition"></a></dt>
 <dd><p>IMU Preintegration from duration (dt), angular rate (ang), linear acceleration (acc)
 Uncertainty propagation from measurement covariance (cov): ang_cov, acc_cov
 Known IMU rotation (rot) estimation can be provided for better precision</p>
@@ -149,7 +149,7 @@ Known IMU rotation (rot) estimation can be provided for better precision</p>
 <li><p><strong>ang</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame. <code class="code docutils literal notranslate"><span class="pre">shape</span></code>: (3)</p></li>
 <li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame.
 <code class="code docutils literal notranslate"><span class="pre">shape</span></code>: (3)</p></li>
-<li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – known IMU rotation. <code class="code docutils literal notranslate"><span class="pre">lshape</span></code>: (1)</p></li>
+<li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – known IMU rotation, see following example. <code class="code docutils literal notranslate"><span class="pre">lshape</span></code>: (1)</p></li>
 <li><p><strong>ang_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of angular rate. <code class="code docutils literal notranslate"><span class="pre">shape</span></code>: (3, 3).
 Default: <code class="code docutils literal notranslate"><span class="pre">torch.eye(3)*(1.6968*10**-4)**2</span></code> (Adapted from Euroc dataset)</p></li>
 <li><p><strong>acc_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of linear acceleration.
@@ -158,6 +158,26 @@ Euroc dataset)</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default">
+<a class="reference internal image-reference" href="../../_images/imu-known-rot.png"><img alt="../../_images/imu-known-rot.png" src="../../_images/imu-known-rot.png" style="width: 300px;" /></a>
+</figure>
+<p>Fig. 1. Known Rotation.</p>
+</td>
+<td><figure class="align-default">
+<a class="reference internal image-reference" href="../../_images/imu-unknown-rot.png"><img alt="../../_images/imu-unknown-rot.png" src="../../_images/imu-unknown-rot.png" style="width: 300px;" /></a>
+</figure>
+<p>Fig. 2. Estimated Rotation.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Refer to Eq. (A9), (A10), (A7), (A8) in
 <a class="reference external" href="https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf">this RSS paper</a> for more details.</p>
 </dd></dl>
