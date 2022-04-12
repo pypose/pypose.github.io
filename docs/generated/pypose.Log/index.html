@@ -177,16 +177,20 @@
 a new torch tensor with the logarithm of the elements of the input tensor.</p>
 </div>
 <ul>
-<li><p><code class="code docutils literal notranslate"><span class="pre">SO3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">so3</span></code> map. Input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">SO3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>):</p>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">SO3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>):</p>
 <blockquote>
-<div><p>Let <span class="math">\(w\)</span>, <span class="math">\(\boldsymbol{\nu}\)</span> be the scalar and vector parts of <span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output with <code class="code docutils literal notranslate"><span class="pre">so3_type</span></code>.</p>
+<div><p>Let <span class="math">\(w\)</span>, <span class="math">\(\boldsymbol{\nu}\)</span> be the scalar and vector parts of
+<span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
 <p>If <span class="math">\(\|\boldsymbol{\nu}\| &gt; \text{eps}\)</span>:</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{y} = \left\{
                 \begin{array}{ll}
-                    2\frac{\mathrm{atan}(\|\boldsymbol{\nu}\|/w)}{\|\mathbf{\nu}\|}\boldsymbol{\nu}, \quad \|w\| > \text{eps} \\
-                    \pm\frac{\pi}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}, \quad \|w\| \leq \text{eps}
+                    2\frac{\mathrm{atan}(\|\boldsymbol{\nu}\|/w)}{\|
+                    \mathbf{\nu}\|}\boldsymbol{\nu}, \quad \|w\| > \text{eps} \\
+                    \pm\frac{\pi}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu},
+                    \quad \|w\| \leq \text{eps}
                 \end{array}
              \right.
 
@@ -199,12 +203,54 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 \]</div>
 </div></blockquote>
 </li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">SE3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{t}\)</span>, <span class="math">\(\mathbf{q}\)</span> be the translation and rotation parts of
+<span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div class="math">
+\[\mathbf{y} = \left[\mathbf{J}^{-1}\mathbf{t}, \mathrm{Log}(\mathbf{q}) \right],
+
+\]</div>
+<p>where <span class="math">\(\mathrm{Log}\)</span> is the Logarithm map for <code class="code docutils literal notranslate"><span class="pre">SO3_type</span></code> input and
+<span class="math">\(\mathbf{J}\)</span> is the Jacobian matrix.</p>
+</div></blockquote>
+</li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{q}\)</span>, <span class="math">\(s\)</span> be the rotation and scale parts of <span class="math">\(\mathbf{x}\)</span>, respectively;
+<span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div class="math">
+\[\mathbf{y} = \left[\mathrm{Log}(\mathbf{q}), \log(s) \right].
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">Sim3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span>
+is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{t}\)</span>, <span class="math">\(\mathbf{q}_s\)</span> be the translation and <code class="code docutils literal notranslate"><span class="pre">RxSO3</span></code> parts
+of <span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div class="math">
+\[\mathbf{y} = \left[\mathbf{J}_s^{-1}\mathbf{t}, \mathrm{Log}(\mathbf{q}_s) \right],
+
+\]</div>
+<p>where <span class="math">\(\mathbf{J}_s\)</span> is the similarity transformed Jacobian matrix.</p>
+</div></blockquote>
+</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Atan-based log thanks to C. Hertzberg et al.:”Integrating Generic Sensor Fusion Algorithms with
-Sound State Representation through Encapsulation of Manifolds” Information Fusion, 2011. Intuitively, <span class="math">\(\boldsymbol{\nu}\)</span> is used to define the rotation
-axis and <span class="math">\(w\)</span> to define the angle of rotation. Hence, if a measure of the rotation angle is <span class="math">\(\theta\)</span>, the quaternion with unit norm can be written as</p>
+<p>The <span class="math">\(\mathrm{atan}\)</span>-based Logarithm map implementation thanks to the paper:</p>
+<ul class="simple">
+<li><p>C. Hertzberg et al., <a class="reference external" href="https://doi.org/10.1016/j.inffus.2011.08.003">Integrating Generic Sensor Fusion Algorithms with Sound State
+Representation through Encapsulation of Manifolds</a>,
+Information Fusion, 2013.</p></li>
+</ul>
+<p>Intuitively, <span class="math">\(\boldsymbol{\nu}\)</span> is used to define the rotation axis and
+<span class="math">\(w\)</span> to define the angle of rotation <span class="math">\(\theta\)</span>, then the quaternion
+with unit norm can be written as</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]
@@ -215,118 +261,44 @@ axis and <span class="math">\(w\)</span> to define the angle of rotation. Hence,
 <p>Therefore, <span class="math">\(\|\boldsymbol{\nu}\| = \sin(\theta/2)\)</span>, <span class="math">\(\mathrm{atan}(\|\boldsymbol{\nu}\|/w) = \theta/2\)</span></p>
 </div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">SO3Type LieTensor:</span>
-<span class="go">tensor([[-0.1420,  0.1088,  0.5904,  0.7871],</span>
-<span class="go">        [ 0.1470, -0.3328,  0.0580,  0.9297]], requires_grad=True)</span>
-</pre></div>
-</div>
-<p><a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Log()</span></code></a> returns LieTensor <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">so3()</span></code></a>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<ul class="simple">
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <code class="code docutils literal notranslate"><span class="pre">SO3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">so3</span></code></p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
 <span class="go">so3Type LieTensor:</span>
 <span class="go">tensor([[-0.3060,  0.2344,  1.2724],</span>
-<span class="go">        [ 0.3012, -0.6817,  0.1187]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [ 0.3012, -0.6817,  0.1187]])</span>
 </pre></div>
 </div>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">log()</span></code> returns torch tensor.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="c1"># Note that this returns torch.Tensor</span>
-<span class="go">tensor([[    nan, -2.2184, -0.5270, -0.2395],</span>
-<span class="go">        [-1.9171,     nan, -2.8478, -0.0729]], grad_fn=&lt;LogBackward0&gt;)</span>
-</pre></div>
-</div>
-<ul>
-<li><p><code class="code docutils literal notranslate"><span class="pre">SE3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">se3</span></code> map. Input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">SE3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>):</p>
-<blockquote>
-<div><p>Let <span class="math">\(\mathbf{t}\)</span>, <span class="math">\(\mathbf{q}\)</span> be the translation and rotation parts of <span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output with <code class="code docutils literal notranslate"><span class="pre">se3_type</span></code>.</p>
-<div class="math">
-\[\mathbf{y} = \left[\mathbf{J}^{-1}\mathbf{t}, \mathbf{q}.\mathrm{Log}() \right],
-
-\]</div>
-<p>where <span class="math">\(\mathbf{J}\)</span> is the Jacobian matrix.</p>
-</div></blockquote>
-</li>
+<ul class="simple">
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <code class="code docutils literal notranslate"><span class="pre">SE3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">se3</span></code></p></li>
 </ul>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">SE3Type LieTensor:</span>
-<span class="go">tensor([[ 0.0648,  0.3764, -1.4237,  0.3287,  0.2104, -0.4227,  0.8179],</span>
-<span class="go">[ 0.8046, -0.3559, -0.7221, -0.4576, -0.5232,  0.3643,  0.6198]], requires_grad=True)</span>
-</pre></div>
-</div>
-<p><a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Log()</span></code></a> returns LieTensor <a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">se3()</span></code></a>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
 <span class="go">se3Type LieTensor:</span>
 <span class="go">tensor([[ 0.2958, -0.0840, -1.4733,  0.7004,  0.4483, -0.9009],</span>
-<span class="go">        [ 0.0850, -0.1020, -1.2616, -1.0524, -1.2031,  0.8377]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [ 0.0850, -0.1020, -1.2616, -1.0524, -1.2031,  0.8377]])</span>
 </pre></div>
 </div>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">log()</span></code> returns torch tensor.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="c1"># Note that this returns torch.Tensor</span>
-<span class="go">tensor([[-2.7358, -0.9771,     nan, -1.1126, -1.5588,     nan, -0.2010],</span>
-<span class="go">        [-0.2174,     nan,     nan,     nan,     nan, -1.0098, -0.4784]], grad_fn=&lt;LogBackward0&gt;)</span>
-</pre></div>
-</div>
-<ul>
-<li><p><code class="code docutils literal notranslate"><span class="pre">RxSO3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">rxso3</span></code> map. Input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">RxSO3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>):</p>
-<blockquote>
-<div><p>Let <span class="math">\(\mathbf{q}\)</span>, <span class="math">\(s\)</span> be the rotation and scale parts of <span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output with <code class="code docutils literal notranslate"><span class="pre">rxso3_type</span></code>.</p>
-<div class="math">
-\[\mathbf{y} = \left[\mathbf{q}.\mathrm{Log}(), \log(s) \right].
-
-\]</div>
-</div></blockquote>
-</li>
+<ul class="simple">
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <code class="code docutils literal notranslate"><span class="pre">RxSO3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">rxso3</span></code></p></li>
 </ul>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_RxSO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">RxSO3Type LieTensor:</span>
-<span class="go">tensor([[-0.5035,  0.1290, -0.8188,  0.2436,  1.7175],</span>
-<span class="go">        [ 0.2842, -0.1558, -0.3545,  0.8771,  2.9936]], requires_grad=True)</span>
-</pre></div>
-</div>
-<p><a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Log()</span></code></a> returns LieTensor <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rxso3()</span></code></a>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_RxSO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
 <span class="go">rxso3Type LieTensor:</span>
 <span class="go">tensor([[-1.3755,  0.3525, -2.2367,  0.5409],</span>
-<span class="go">        [ 0.5929, -0.3250, -0.7394,  1.0965]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [ 0.5929, -0.3250, -0.7394,  1.0965]])</span>
 </pre></div>
 </div>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">log()</span></code> returns torch tensor.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="c1"># Note that this returns torch.Tensor</span>
-<span class="go">tensor([[    nan, -2.0477,     nan, -1.4121,  0.5409],</span>
-<span class="go">        [-1.2581,     nan,     nan, -0.1311,  1.0965]], grad_fn=&lt;LogBackward0&gt;)</span>
-</pre></div>
-</div>
-<ul>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Sim3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">sim3</span></code> map. Input <span class="math">\(\mathbf{x}\)</span>’s <code class="code docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="code docutils literal notranslate"><span class="pre">Sim3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
-<blockquote>
-<div><p>Let <span class="math">\(\mathbf{t}\)</span>, <span class="math">\(\mathbf{q}s\)</span> be the translation and <code class="code docutils literal notranslate"><span class="pre">RxSO3</span></code> parts of <span class="math">\(\mathbf{x}\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output with <code class="code docutils literal notranslate"><span class="pre">sim3_type</span></code>.</p>
-<div class="math">
-\[\mathbf{y} = \left[\mathbf{J}_s^{-1}\mathbf{t}, \mathbf{q}s.\mathrm{Log}() \right],
-
-\]</div>
-<p>where <span class="math">\(\mathbf{J}_s\)</span> is the similarity transformed Jacobian matrix.</p>
-</div></blockquote>
-</li>
+<ul class="simple">
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <code class="code docutils literal notranslate"><span class="pre">Sim3</span></code> <span class="math">\(\mapsto\)</span> <code class="code docutils literal notranslate"><span class="pre">sim3</span></code></p></li>
 </ul>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_Sim3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">Sim3Type LieTensor:</span>
-<span class="go">tensor([[ 0.0624, -0.2797,  0.1231,  0.0803,  0.2879,  0.5486,  0.7808,  0.5272],</span>
-<span class="go">        [-0.5700,  1.4452, -0.4464,  0.2679,  0.7336,  0.6245, -0.0061,  2.3336]], requires_grad=True)</span>
-</pre></div>
-</div>
-<p><a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Log()</span></code></a> returns LieTensor <a class="reference internal" href="../pypose.sim3/#pypose.sim3" title="pypose.sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim3()</span></code></a>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_Sim3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
 <span class="go">sim3Type LieTensor:</span>
 <span class="go">tensor([[-0.1747, -0.3698,  0.2000,  0.1735,  0.6220,  1.1852, -0.6402],</span>
-<span class="go">        [-0.8685, -0.1717,  1.2139, -0.8385, -2.2957, -1.9545,  0.8474]], grad_fn=&lt;AliasBackward0&gt;)</span>
-</pre></div>
-</div>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">log()</span></code> returns torch tensor.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="c1"># Note that this returns torch.Tensor</span>
-<span class="go">tensor([[-2.7741,     nan, -2.0947, -2.5220, -1.2451, -0.6004, -0.2474, -0.6402],</span>
-<span class="go">        [    nan,  0.3683,     nan, -1.3170, -0.3098, -0.4707,     nan,  0.8474]], grad_fn=&lt;LogBackward0&gt;)</span>
+<span class="go">        [-0.8685, -0.1717,  1.2139, -0.8385, -2.2957, -1.9545,  0.8474]])</span>
 </pre></div>
 </div>
 </dd></dl>

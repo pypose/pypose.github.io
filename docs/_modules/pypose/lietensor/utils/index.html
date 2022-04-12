@@ -578,17 +578,21 @@
 <span class="sd">        This function :func:`Log()` is different from :func:`log()`, which returns</span>
 <span class="sd">        a new torch tensor with the logarithm of the elements of the input tensor.</span>
 
-<span class="sd">    * :code:`SO3` :math:`\mapsto` :code:`so3` map. Input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`SO3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SO3`):</span>
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`SO3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`):</span>
 
-<span class="sd">        Let :math:`w`, :math:`\boldsymbol{\nu}` be the scalar and vector parts of :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output with :code:`so3_type`.</span>
+<span class="sd">        Let :math:`w`, :math:`\boldsymbol{\nu}` be the scalar and vector parts of</span>
+<span class="sd">        :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output.</span>
 
 <span class="sd">        If :math:`\|\boldsymbol{\nu}\| &gt; \text{eps}`:</span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{y} = \left\{</span>
 <span class="sd">                                \begin{array}{ll} </span>
-<span class="sd">                                    2\frac{\mathrm{atan}(\|\boldsymbol{\nu}\|/w)}{\|\mathbf{\nu}\|}\boldsymbol{\nu}, \quad \|w\| &gt; \text{eps} \\</span>
-<span class="sd">                                    \pm\frac{\pi}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}, \quad \|w\| \leq \text{eps}</span>
+<span class="sd">                                    2\frac{\mathrm{atan}(\|\boldsymbol{\nu}\|/w)}{\|</span>
+<span class="sd">                                    \mathbf{\nu}\|}\boldsymbol{\nu}, \quad \|w\| &gt; \text{eps} \\</span>
+<span class="sd">                                    \pm\frac{\pi}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu},</span>
+<span class="sd">                                    \quad \|w\| \leq \text{eps}</span>
 <span class="sd">                                \end{array}</span>
 <span class="sd">                             \right.</span>
 
@@ -597,10 +601,48 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y} = 2\left( \frac{1}{w} - \frac{\|\boldsymbol{\nu}\|^2}{3w^3}\right)\boldsymbol{\nu}.</span>
 
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`SE3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{t}`, :math:`\mathbf{q}` be the translation and rotation parts of</span>
+<span class="sd">        :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y} = \left[\mathbf{J}^{-1}\mathbf{t}, \mathrm{Log}(\mathbf{q}) \right],</span>
+
+<span class="sd">        where :math:`\mathrm{Log}` is the Logarithm map for :code:`SO3_type` input and</span>
+<span class="sd">        :math:`\mathbf{J}` is the Jacobian matrix.</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`RxSO3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{q}`, :math:`s` be the rotation and scale parts of :math:`\mathbf{x}`, respectively;</span>
+<span class="sd">        :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y} = \left[\mathrm{Log}(\mathbf{q}), \log(s) \right].</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`Sim3_type` (input :math:`\mathbf{x}`</span>
+<span class="sd">      is an instance of :meth:`Sim3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{t}`, :math:`\mathbf{q}_s` be the translation and :code:`RxSO3` parts</span>
+<span class="sd">        of :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y} = \left[\mathbf{J}_s^{-1}\mathbf{t}, \mathrm{Log}(\mathbf{q}_s) \right],</span>
+
+<span class="sd">        where :math:`\mathbf{J}_s` is the similarity transformed Jacobian matrix.</span>
+
 <span class="sd">    Note:</span>
-<span class="sd">        Atan-based log thanks to C. Hertzberg et al.:&quot;Integrating Generic Sensor Fusion Algorithms with </span>
-<span class="sd">        Sound State Representation through Encapsulation of Manifolds&quot; Information Fusion, 2011. Intuitively, :math:`\boldsymbol{\nu}` is used to define the rotation </span>
-<span class="sd">        axis and :math:`w` to define the angle of rotation. Hence, if a measure of the rotation angle is :math:`\theta`, the quaternion with unit norm can be written as </span>
+<span class="sd">        The :math:`\mathrm{atan}`-based Logarithm map implementation thanks to the paper:</span>
+
+<span class="sd">        * C. Hertzberg et al., `Integrating Generic Sensor Fusion Algorithms with Sound State</span>
+<span class="sd">          Representation through Encapsulation of Manifolds &lt;https://doi.org/10.1016/j.inffus.2011.08.003&gt;`_,</span>
+<span class="sd">          Information Fusion, 2013.</span>
+
+<span class="sd">        Intuitively, :math:`\boldsymbol{\nu}` is used to define the rotation axis and</span>
+<span class="sd">        :math:`w` to define the angle of rotation :math:`\theta`, then the quaternion</span>
+<span class="sd">        with unit norm can be written as </span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]</span>
@@ -610,113 +652,39 @@
 <span class="sd">        Therefore, :math:`\|\boldsymbol{\nu}\| = \sin(\theta/2)`, :math:`\mathrm{atan}(\|\boldsymbol{\nu}\|/w) = \theta/2`</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3(2, requires_grad=True)</span>
-<span class="sd">        SO3Type LieTensor:</span>
-<span class="sd">        tensor([[-0.1420,  0.1088,  0.5904,  0.7871],</span>
-<span class="sd">                [ 0.1470, -0.3328,  0.0580,  0.9297]], requires_grad=True)</span>
 
-<span class="sd">        :meth:`Log` returns LieTensor :meth:`so3`.</span>
+<span class="sd">        * :math:`\mathrm{Log}`: :code:`SO3` :math:`\mapsto` :code:`so3`</span>
 
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3(2)</span>
 <span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
 <span class="sd">        so3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.3060,  0.2344,  1.2724],</span>
-<span class="sd">                [ 0.3012, -0.6817,  0.1187]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="sd">                [ 0.3012, -0.6817,  0.1187]])</span>
 
-<span class="sd">        :meth:`log` returns torch tensor.</span>
+<span class="sd">        * :math:`\mathrm{Log}`: :code:`SE3` :math:`\mapsto` :code:`se3`</span>
 
-<span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
-<span class="sd">        tensor([[    nan, -2.2184, -0.5270, -0.2395],</span>
-<span class="sd">                [-1.9171,     nan, -2.8478, -0.0729]], grad_fn=&lt;LogBackward0&gt;)</span>
-
-<span class="sd">                </span>
-<span class="sd">    * :code:`SE3` :math:`\mapsto` :code:`se3` map. Input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`SE3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SE3`):</span>
-
-<span class="sd">        Let :math:`\mathbf{t}`, :math:`\mathbf{q}` be the translation and rotation parts of :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output with :code:`se3_type`.</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y} = \left[\mathbf{J}^{-1}\mathbf{t}, \mathbf{q}.\mathrm{Log}() \right],</span>
-
-<span class="sd">        where :math:`\mathbf{J}` is the Jacobian matrix.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3(2, requires_grad=True)</span>
-<span class="sd">        SE3Type LieTensor:</span>
-<span class="sd">        tensor([[ 0.0648,  0.3764, -1.4237,  0.3287,  0.2104, -0.4227,  0.8179],</span>
-<span class="sd">        [ 0.8046, -0.3559, -0.7221, -0.4576, -0.5232,  0.3643,  0.6198]], requires_grad=True)</span>
-
-<span class="sd">        :meth:`Log` returns LieTensor :meth:`se3`.</span>
-
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3(2)</span>
 <span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
 <span class="sd">        se3Type LieTensor:</span>
 <span class="sd">        tensor([[ 0.2958, -0.0840, -1.4733,  0.7004,  0.4483, -0.9009],</span>
-<span class="sd">                [ 0.0850, -0.1020, -1.2616, -1.0524, -1.2031,  0.8377]], grad_fn=&lt;AliasBackward0&gt;)</span>
-
-<span class="sd">        :meth:`log` returns torch tensor.</span>
-
-<span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
-<span class="sd">        tensor([[-2.7358, -0.9771,     nan, -1.1126, -1.5588,     nan, -0.2010],</span>
-<span class="sd">                [-0.2174,     nan,     nan,     nan,     nan, -1.0098, -0.4784]], grad_fn=&lt;LogBackward0&gt;)</span>
-<span class="sd">        </span>
-
-<span class="sd">    * :code:`RxSO3` :math:`\mapsto` :code:`rxso3` map. Input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`RxSO3_type` (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`):</span>
-
-<span class="sd">        Let :math:`\mathbf{q}`, :math:`s` be the rotation and scale parts of :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output with :code:`rxso3_type`.</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y} = \left[\mathbf{q}.\mathrm{Log}(), \log(s) \right].</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.randn_RxSO3(2, requires_grad=True)</span>
-<span class="sd">        RxSO3Type LieTensor:</span>
-<span class="sd">        tensor([[-0.5035,  0.1290, -0.8188,  0.2436,  1.7175],</span>
-<span class="sd">                [ 0.2842, -0.1558, -0.3545,  0.8771,  2.9936]], requires_grad=True)</span>
+<span class="sd">                [ 0.0850, -0.1020, -1.2616, -1.0524, -1.2031,  0.8377]])</span>
 
 
-<span class="sd">        :meth:`Log` returns LieTensor :meth:`rxso3`.</span>
+<span class="sd">        * :math:`\mathrm{Log}`: :code:`RxSO3` :math:`\mapsto` :code:`rxso3`</span>
 
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_RxSO3(2)</span>
 <span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
 <span class="sd">        rxso3Type LieTensor:</span>
 <span class="sd">        tensor([[-1.3755,  0.3525, -2.2367,  0.5409],</span>
-<span class="sd">                [ 0.5929, -0.3250, -0.7394,  1.0965]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="sd">                [ 0.5929, -0.3250, -0.7394,  1.0965]])</span>
 
+<span class="sd">        * :math:`\mathrm{Log}`: :code:`Sim3` :math:`\mapsto` :code:`sim3`</span>
 
-<span class="sd">        :meth:`log` returns torch tensor.</span>
-
-<span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
-<span class="sd">        tensor([[    nan, -2.0477,     nan, -1.4121,  0.5409],</span>
-<span class="sd">                [-1.2581,     nan,     nan, -0.1311,  1.0965]], grad_fn=&lt;LogBackward0&gt;)</span>
-
-
-<span class="sd">    * :code:`Sim3` :math:`\mapsto` :code:`sim3` map. Input :math:`\mathbf{x}`&#39;s :code:`ltype` is :code:`Sim3_type` (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`):</span>
-
-<span class="sd">        Let :math:`\mathbf{t}`, :math:`\mathbf{q}s` be the translation and :code:`RxSO3` parts of :math:`\mathbf{x}`, respectively; :math:`\mathbf{y}` be the output with :code:`sim3_type`.</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y} = \left[\mathbf{J}_s^{-1}\mathbf{t}, \mathbf{q}s.\mathrm{Log}() \right],</span>
-
-<span class="sd">        where :math:`\mathbf{J}_s` is the similarity transformed Jacobian matrix.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.randn_Sim3(2, requires_grad=True)</span>
-<span class="sd">        Sim3Type LieTensor:</span>
-<span class="sd">        tensor([[ 0.0624, -0.2797,  0.1231,  0.0803,  0.2879,  0.5486,  0.7808,  0.5272],</span>
-<span class="sd">                [-0.5700,  1.4452, -0.4464,  0.2679,  0.7336,  0.6245, -0.0061,  2.3336]], requires_grad=True)</span>
-
-
-<span class="sd">        :meth:`Log` returns LieTensor :meth:`sim3`.</span>
-
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_Sim3(2)</span>
 <span class="sd">        &gt;&gt;&gt; x.Log() # equivalent to: pp.Log(x)</span>
 <span class="sd">        sim3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.1747, -0.3698,  0.2000,  0.1735,  0.6220,  1.1852, -0.6402],</span>
-<span class="sd">                [-0.8685, -0.1717,  1.2139, -0.8385, -2.2957, -1.9545,  0.8474]], grad_fn=&lt;AliasBackward0&gt;)</span>
-
-
-<span class="sd">        :meth:`log` returns torch tensor.</span>
-
-<span class="sd">        &gt;&gt;&gt; x.log() # Note that this returns torch.Tensor</span>
-<span class="sd">        tensor([[-2.7741,     nan, -2.0947, -2.5220, -1.2451, -0.6004, -0.2474, -0.6402],</span>
-<span class="sd">                [    nan,  0.3683,     nan, -1.3170, -0.3098, -0.4707,     nan,  0.8474]], grad_fn=&lt;LogBackward0&gt;)</span>
-
+<span class="sd">                [-0.8685, -0.1717,  1.2139, -0.8385, -2.2957, -1.9545,  0.8474]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span></div>
 
