@@ -85,31 +85,38 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.euler2SO3">
 <span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">euler2SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">euler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#euler2SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.euler2SO3" title="Permalink to this definition"></a></dt>
-<dd><p>Convert Euler angles to SO3 Tensor</p>
+<dd><p>Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>euler</strong> (<em>Tensor</em>) – the euler angles to convert.</p>
+<dd class="field-odd"><p><strong>euler</strong> (<em>Tensor</em>) – the euler angles to convert, <code class="code docutils literal notranslate"><span class="pre">shape:</span> <span class="pre">(*,</span> <span class="pre">3)</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>SO3 Tensor</p>
+<dd class="field-even"><p>SO3Type LieTensor, <code class="code docutils literal notranslate"><span class="pre">lshape:</span> <span class="pre">(*)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>Shape:</dt><dd><ul class="simple">
-<li><p>Input: <code class="code docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">3)</span></code></p></li>
-<li><p>Output: <code class="code docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">4)</span></code></p></li>
-</ul>
-</dd>
-</dl>
+<div class="math">
+\[{\displaystyle \mathbf{y}_i={\begin{bmatrix}\,
+\sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\\,
+\cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\\,
+\cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\\,
+\cos(\alpha_i)\cos(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\end{bmatrix}}},
+
+\]</div>
+<p>where the <span class="math">\(i\)</span>-th item of input <span class="math">\(\mathbf{x}_i = [\alpha_i, \beta_i, \gamma_i]\)</span>
+are roll, pitch, and yaw, respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The last dimension of the input tensor has to be 3.</p>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">euler2SO3</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 <span class="go">SO3Type LieTensor:</span>
 <span class="go">tensor([[-0.4873,  0.1162,  0.4829,  0.7182],</span>
-<span class="go">        [ 0.3813,  0.4059, -0.2966,  0.7758]], grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [ 0.3813,  0.4059, -0.2966,  0.7758]], dtype=torch.float64, grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
 </dd></dl>
