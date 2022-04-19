@@ -616,27 +616,27 @@
 <span class="sd">          - :math:`\mathcal{g}` (Lie Algebra)</span>
 <span class="sd">          - output :obj:`ltype`</span>
 <span class="sd">        * - :obj:`SO3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times4}`</span>
 <span class="sd">          - :math:`\mapsto`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times3}`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times3}`</span>
 <span class="sd">          - :obj:`so3_type`</span>
 <span class="sd">        * - :obj:`SE3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times7}`</span>
 <span class="sd">          - :math:`\mapsto`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times6}`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times6}`</span>
 <span class="sd">          - :obj:`se3_type`</span>
 <span class="sd">        * - :obj:`Sim3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times8}`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times8}`</span>
 <span class="sd">          - :math:`\mapsto`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
 <span class="sd">          - :obj:`sim3_type`</span>
 <span class="sd">        * - :obj:`RxSO3_type`</span>
-<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times5}`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times5}`</span>
 <span class="sd">          - :math:`\mapsto`</span>
-<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
 <span class="sd">          - :obj:`rxso3_type`</span>
 <span class="sd">    </span>
-<span class="sd">    Note:</span>
+<span class="sd">    Warning:</span>
 <span class="sd">        This function :func:`Log()` is different from :func:`log()`, which returns</span>
 <span class="sd">        a new torch tensor with the logarithm of the elements of the input tensor.</span>
 
@@ -693,7 +693,7 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \left[^s\mathbf{J}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],</span>
 
-<span class="sd">        where :math:`^s\mathbf{J}` is the similarity transformed left Jacobian.</span>
+<span class="sd">        where :math:`^s\mathbf{J}_i` is the similarity transformed left Jacobian.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The :math:`\mathrm{arctan}`-based Logarithm map implementation thanks to the paper:</span>
@@ -703,16 +703,22 @@
 <span class="sd">          Information Fusion, 2013.</span>
 
 <span class="sd">        Assume we have a unit rotation axis :math:`\mathbf{n}` and rotation angle :math:`\theta~(0\leq\theta&lt;2\pi)`, then</span>
-<span class="sd">        its quaternion :math:`\mathbf{q}=[\boldsymbol{\nu}, w]`, where :math:`w` is</span>
-<span class="sd">        the scalar part, can be defined as</span>
+<span class="sd">        the corresponding quaternion with unit norm :math:`\mathbf{q}` can be represented as</span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]</span>
 
-<span class="sd">        Therefore, given a quaternion, we can calculate its rotation angle :math:`\theta` as</span>
+<span class="sd">        Therefore, given a quaternion :math:`\mathbf{q}=[\boldsymbol{\nu}, w]`, where :math:`\boldsymbol{\nu}` is the vector part,</span>
+<span class="sd">        :math:`w` is the scalar part, to find the corresponding rotation vector , the rotation angle :math:`\theta` can be obtained as </span>
 
 <span class="sd">            .. math::</span>
-<span class="sd">                \theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2).</span>
+<span class="sd">                \theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2), </span>
+
+<span class="sd">        The unit rotation axis :math:`\mathbf{n}` can be obtained as :math:`\mathbf{n} = \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}`.     </span>
+<span class="sd">        Hence, the corresponding rotation vector is </span>
+<span class="sd">        </span>
+<span class="sd">            .. math::</span>
+<span class="sd">                \theta \mathbf{n} = 2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}\|/w)}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}.</span>
 
 <span class="sd">    Example:</span>
 
@@ -782,9 +788,173 @@
     <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Jinv"><a class="viewcode-back" href="../../../../generated/pypose.Jinv/#pypose.Jinv">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Jinv</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Jinv</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+<div class="viewcode-block" id="Jinvp"><a class="viewcode-back" href="../../../../generated/pypose.Jinvp/#pypose.Jinvp">[docs]</a><span class="nd">@assert_ltype</span>
+<span class="k">def</span> <span class="nf">Jinvp</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The dot product between left Jacobian inverse at the point given</span>
+<span class="sd">    by input (Lie Group) and second point (Lie Algebra).</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathrm{Jinvp}: (\mathcal{G}, \mathcal{g}) \mapsto \mathcal{g}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor (Lie Group)</span>
+<span class="sd">        p (LieTensor): the second LieTensor (Lie Algebra)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieTensor: the output LieTensor (Lie Algebra)</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\mathrm{Jinvp}` map</span>
+<span class="sd">        :widths: 20 20 8 20 20</span>
+<span class="sd">        :header-rows: 1</span>
+
+<span class="sd">        * - input :obj:`ltype`</span>
+<span class="sd">          - :math:`(\mathcal{G}, \mathcal{g})` (Lie Group, Lie Algebra)</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}` (Lie Algebra)</span>
+<span class="sd">          - output :obj:`ltype`</span>
+<span class="sd">        * - (:obj:`SO3_type`, :obj:`so3_type`)</span>
+<span class="sd">          - :math:`(\mathcal{G}\in\mathbb{R}^{*\times4}, \mathcal{g}\in\mathbb{R}^{*\times3})`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times3}`</span>
+<span class="sd">          - :obj:`so3_type`</span>
+<span class="sd">        * - (:obj:`SE3_type`, :obj:`se3_type`)</span>
+<span class="sd">          - :math:`(\mathcal{G}\in\mathbb{R}^{*\times7}, \mathcal{g}\in\mathbb{R}^{*\times6})`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times6}`</span>
+<span class="sd">          - :obj:`se3_type`</span>
+<span class="sd">        * - (:obj:`Sim3_type`, :obj:`sim3_type`)</span>
+<span class="sd">          - :math:`(\mathcal{G}\in\mathbb{R}^{*\times8}, \mathcal{g}\in\mathbb{R}^{*\times7})`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :obj:`sim3_type`</span>
+<span class="sd">        * - (:obj:`RxSO3_type`, :obj:`rxSO3_type`)</span>
+<span class="sd">          - :math:`(\mathcal{G}\in\mathbb{R}^{*\times5}, \mathcal{g}\in\mathbb{R}^{*\times4})`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :obj:`rxso3_type`</span>
+
+<span class="sd">    Let the input be (:math:`\mathbf{x}`, :math:`\mathbf{a}`), :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \mathbf{J}^{-1}_i(\mathbf{x}_i)\mathbf{a}_i,</span>
+
+<span class="sd">        where :math:`\mathbf{J}^{-1}_i(\mathbf{x}_i)` is the left-Jacobian of :math:`\mathbf{x}_i`. </span>
+
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{a}`)&#39;s :obj:`ltype` are :obj:`SO3_type` and :obj:`so3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`, :math:`\mathbf{a}` is an instance of :meth:`so3`). </span>
+<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra of :math:`\mathbf{x}_i`, </span>
+<span class="sd">      :math:`\boldsymbol{\Phi}_i` be the skew matrix of :math:`\boldsymbol{\phi}_i`:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \mathbf{I} - \frac{1}{2}\boldsymbol{\Phi}_i +</span>
+<span class="sd">            \mathrm{coef}\boldsymbol{\Phi}_i^2</span>
+
+<span class="sd">        where :math:`\mathbf{I}` is the identity matrix with the same dimension as :math:`\boldsymbol{\Phi}_i`, and </span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathrm{coef} = \left\{</span>
+<span class="sd">                                \begin{array}{ll} </span>
+<span class="sd">                                    \frac{1}{\theta^2} - \frac{\cos{\frac{\theta}{2}}}{2\theta\sin{\frac{\theta}{2}}},</span>
+<span class="sd">                                    \quad \|\theta\| &gt; \text{eps}, \\</span>
+<span class="sd">                                    \frac{1}{12}, \quad \|\theta\| \leq \text{eps}</span>
+<span class="sd">                                \end{array}</span>
+<span class="sd">                             \right.</span>
+
+
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{a}`)&#39;s :obj:`ltype` are :obj:`SE3_type` and :obj:`se3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`, :math:`\mathbf{a}` is an instance of :meth:`se3`). </span>
+<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra of the SO3 part of </span>
+<span class="sd">      :math:`\mathbf{x}_i`, :math:`\boldsymbol{\tau}` be the Lie Algebra of the translation part of :math:`\mathbf{x}_i`; </span>
+<span class="sd">      :math:`\boldsymbol{\Phi}` and :math:`\boldsymbol{\Tau}` be the skew matrices, respectively:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[</span>
+<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}) &amp; -\mathbf{J}_i^{-1}</span>
+<span class="sd">                                    (\boldsymbol{\Phi})\mathbf{Q}(\boldsymbol{\tau},</span>
+<span class="sd">                                    \boldsymbol{\phi})\mathbf{J}_i^{-1}(\boldsymbol{\Phi}) \\</span>
+<span class="sd">                                    \mathbf{0} &amp; \mathbf{J}_i^{-1}(\boldsymbol{\Phi})</span>
+<span class="sd">                                \end{array}</span>
+<span class="sd">                             \right]</span>
+
+<span class="sd">        where :math:`\mathbf{J}_i^{-1}(\boldsymbol{\Phi})` is the left Jacobian of</span>
+<span class="sd">        the SO3 part of :math:`\mathbf{x}_i`. :math:`\mathbf{Q}_i(\boldsymbol{\tau}, \boldsymbol{\phi})` is </span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align}</span>
+<span class="sd">                \mathbf{Q}_i(\boldsymbol{\tau}, \boldsymbol{\phi}) =</span>
+<span class="sd">                \frac{1}{2}\boldsymbol{\Tau} &amp;+ c_1 (\boldsymbol{\Phi\Tau} +</span>
+<span class="sd">                \boldsymbol{\Tau\Phi} + \boldsymbol{\Phi\Tau\Phi}) \\</span>
+<span class="sd">                &amp;+ c_2 (\boldsymbol{\Phi^2\Tau} + \boldsymbol{\Tau\Phi^2} - 3\boldsymbol{\Phi\Tau\Phi})\\</span>
+<span class="sd">                &amp;+ c_3 (\boldsymbol{\Phi\Tau\Phi^2} + \boldsymbol{\Phi^2\Tau\Phi})  </span>
+
+<span class="sd">            \end{align}</span>
+
+<span class="sd">        where,</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            c_1 = \left\{</span>
+<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                        \frac{\theta - \sin\theta}{\theta^3}, \quad \|\theta\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{1}{6}-\frac{1}{120}\theta^2,</span>
+<span class="sd">                        \quad \|\theta\| \leq \text{eps}</span>
+<span class="sd">                    \end{array}</span>
+<span class="sd">                    \right.     </span>
+
+
+<span class="sd">       .. math::</span>
+<span class="sd">            c_2 = \left\{</span>
+<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                        \frac{\theta^2 +2\cos\theta - 2}{2\theta^4}, \quad \|\theta\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{1}{24}-\frac{1}{720}\theta^2,</span>
+<span class="sd">                        \quad \|\theta\| \leq \text{eps}</span>
+<span class="sd">                    \end{array}</span>
+<span class="sd">                    \right.</span>
+
+<span class="sd">       .. math::</span>
+<span class="sd">            c_3 = \left\{</span>
+<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                        \frac{2\theta - 3\sin\theta + \theta\cos\theta}{2\theta^5},</span>
+<span class="sd">                        \quad \|\theta\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{1}{120}-\frac{1}{2520}\theta^2,</span>
+<span class="sd">                        \quad \|\theta\| \leq \text{eps}</span>
+<span class="sd">                    \end{array}</span>
+<span class="sd">                    \right.</span>
+
+
+<span class="sd">    Note:</span>
+<span class="sd">        :math:`\mathrm{Jinvp}` is usually used in the Baker-Campbell-Hausdorff formula</span>
+<span class="sd">        (BCH formula) when performing LieTensor multiplication.</span>
+<span class="sd">        One can refer to this paper for more details:</span>
+
+<span class="sd">        * J. Sola et al., `A micro Lie theory for state estimation in</span>
+<span class="sd">          robotics &lt;https://arxiv.org/abs/1812.01537&gt;`_, arXiv preprint arXiv:1812.01537 (2018).</span>
+
+<span class="sd">        In particular, Eq.(146) is the math used in the :obj:`SO3_type`, :obj:`so3_type` scenario; </span>
+<span class="sd">        Eq.(179b) and Eq.(180) are the math used in the :obj:`SE3_type`, :obj:`se3_type` scenario.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        * :math:`\mathrm{Jinvp}`: (:obj:`SO3`, :obj:`so3`) :math:`\mapsto` :obj:`so3`</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3(2)</span>
+<span class="sd">        &gt;&gt;&gt; p = pp.randn_so3(2)</span>
+<span class="sd">        &gt;&gt;&gt; x.Jinvp(p) # equivalent to: pp.Jinvp(x, a)</span>
+<span class="sd">        so3Type LieTensor:</span>
+<span class="sd">        tensor([[ 0.8782,  0.5898, -1.9071],</span>
+<span class="sd">                [-0.6499, -0.3977,  0.8115]])</span>
+
+<span class="sd">        * :math:`\mathrm{Jinvp}`: (:obj:`SE3`, :obj:`se3`) :math:`\mapsto` :obj:`se3`</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3(2)</span>
+<span class="sd">        &gt;&gt;&gt; p = pp.randn_se3(2)</span>
+<span class="sd">        &gt;&gt;&gt; x.Jinvp(p) # equivalent to: pp.Jinv(x, a)</span>
+<span class="sd">        se3Type LieTensor:</span>
+<span class="sd">        tensor([[-1.3803,  0.7891, -0.4268,  0.6917, -0.2167,  0.3333],</span>
+<span class="sd">                [-1.4517, -0.8059,  0.9343,  1.7398,  0.6579,  0.4785]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Jinvp</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Jr"><a class="viewcode-back" href="../../../../generated/pypose.Jr/#pypose.Jr">[docs]</a><span class="nd">@assert_ltype</span>

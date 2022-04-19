@@ -53,7 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../pypose.Act/">pypose.Act</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.Adj/">pypose.Adj</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.AdjT/">pypose.AdjT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pypose.Jinv/">pypose.Jinv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.Jinvp/">pypose.Jinvp</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.Jr/">pypose.Jr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.randn_so3/">pypose.randn_so3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.randn_SO3/">pypose.randn_SO3</a></li>
@@ -146,33 +146,33 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code></p></td>
-<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times4}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times4}\)</span></p></td>
 <td><p><span class="math">\(\mapsto\)</span></p></td>
-<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times3}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times3}\)</span></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code></p></td>
-<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times7}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times7}\)</span></p></td>
 <td><p><span class="math">\(\mapsto\)</span></p></td>
-<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times6}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times6}\)</span></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code></p></td>
-<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times8}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times8}\)</span></p></td>
 <td><p><span class="math">\(\mapsto\)</span></p></td>
-<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times7}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times7}\)</span></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code></p></td>
-<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times5}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times5}\)</span></p></td>
 <td><p><span class="math">\(\mapsto\)</span></p></td>
-<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times4}\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times4}\)</span></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code></p></td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>This function <a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-func docutils literal notranslate"><span class="pre">Log()</span></code></a> is different from <code class="xref py py-func docutils literal notranslate"><span class="pre">log()</span></code>, which returns
 a new torch tensor with the logarithm of the elements of the input tensor.</p>
 </div>
@@ -236,7 +236,7 @@ of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">
 \[\mathbf{y}_i = \left[^s\mathbf{J}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],
 
 \]</div>
-<p>where <span class="math">\(^s\mathbf{J}\)</span> is the similarity transformed left Jacobian.</p>
+<p>where <span class="math">\(^s\mathbf{J}_i\)</span> is the similarity transformed left Jacobian.</p>
 </div></blockquote>
 </li>
 </ul>
@@ -249,18 +249,26 @@ Representation through Encapsulation of Manifolds</a>,
 Information Fusion, 2013.</p></li>
 </ul>
 <p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}\)</span> and rotation angle <span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, then
-its quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where <span class="math">\(w\)</span> is
-the scalar part, can be defined as</p>
+the corresponding quaternion with unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]
 
 \]</div>
 </div></blockquote>
-<p>Therefore, given a quaternion, we can calculate its rotation angle <span class="math">\(\theta\)</span> as</p>
+<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where <span class="math">\(\boldsymbol{\nu}\)</span> is the vector part,
+<span class="math">\(w\)</span> is the scalar part, to find the corresponding rotation vector , the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
 <blockquote>
 <div><div class="math">
-\[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2).
+\[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2),
+
+\]</div>
+</div></blockquote>
+<p>The unit rotation axis <span class="math">\(\mathbf{n}\)</span> can be obtained as <span class="math">\(\mathbf{n} = \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>.
+Hence, the corresponding rotation vector is</p>
+<blockquote>
+<div><div class="math">
+\[\theta \mathbf{n} = 2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}\|/w)}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}.
 
 \]</div>
 </div></blockquote>
