@@ -185,14 +185,15 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 <p>If <span class="math">\(\|\boldsymbol{\nu}_i\| &gt; \text{eps}\)</span>:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{y}_i = \left\{
-                \begin{array}{ll}
-                    2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|
-                    \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, \quad \|w_i\| > \text{eps}, \\
-                    \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,
-                    \quad \|w_i\| \leq \text{eps},
-                \end{array}
-             \right.
+\[\mathbf{y}_i =
+    \left\{
+        \begin{array}{ll}
+            2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|
+            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, \quad \|w_i\| > \text{eps}, \\
+            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,
+            \quad \|w_i\| \leq \text{eps},
+        \end{array}
+    \right.
 
 \]</div>
 </div></blockquote>
@@ -213,7 +214,7 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 
 \]</div>
 <p>where <span class="math">\(\mathrm{Log}\)</span> is the Logarithm map for <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> input and
-<span class="math">\(\mathbf{J}_i\)</span> is the left Jacobian.</p>
+<span class="math">\(\mathbf{J}_i\)</span> is the left Jacobian for <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> input.</p>
 </div></blockquote>
 </li>
 <li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
@@ -231,12 +232,70 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
 <blockquote>
 <div><p>Let <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(^s\mathbf{q}_i\)</span> be the translation and <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a> parts
-of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">\(\sigma_i\)</span> be the
+corresponding Lie Algebra of the SO3 and scale part of <span class="math">\(^s\mathbf{q}_i\)</span>,
+<span class="math">\(\boldsymbol{\Phi}_i = \theta_i\mathbf{n}_i\)</span> be the skew matrix;
+<span class="math">\(s_i = e^\sigma_i\)</span>, <span class="math">\(\mathbf{y}\)</span> be the output.</p>
 <div class="math">
-\[\mathbf{y}_i = \left[^s\mathbf{J}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],
+\[\mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],
 
 \]</div>
-<p>where <span class="math">\(^s\mathbf{J}_i\)</span> is the similarity transformed left Jacobian.</p>
+<p>where</p>
+<blockquote>
+<div><div class="math">
+\[^s\mathbf{W}_i = A\boldsymbol{\Phi}_i + B\boldsymbol{\Phi}_i^2 + C\mathbf{I}
+
+\]</div>
+</div></blockquote>
+<p>in which if <span class="math">\(\|\sigma_i\| &gt; \text{eps}\)</span>:</p>
+<div class="math">
+\[A = \left\{
+        \begin{array}{ll}
+            \frac{s_i\sin\theta_i\sigma_i + (1-s_i\cos\theta_i)\theta_i}
+            {\theta_i(\sigma_i^2 + \theta_i^2)}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{(\sigma_i-1)s_i+1}{\sigma_i^2}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[B =
+\left\{
+    \begin{array}{ll}
+        \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}
+        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\| > \text{eps}, \\
+        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\| \leq \text{eps},
+    \end{array}
+\right.
+
+\]</div>
+<div class="math">
+\[C = \frac{e^{\sigma_i} - 1}{\sigma_i}\mathbf{I}
+
+\]</div>
+<p>otherwise:</p>
+<div class="math">
+\[A = \left\{
+        \begin{array}{ll}
+            \frac{1-\cos\theta_i}{\theta_i^2}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{1}{2}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[B = \left\{
+        \begin{array}{ll}
+            \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{1}{6}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[C = 1
+
+\]</div>
 </div></blockquote>
 </li>
 </ul>
@@ -248,30 +307,38 @@ of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">
 Representation through Encapsulation of Manifolds</a>,
 Information Fusion, 2013.</p></li>
 </ul>
-<p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}\)</span> and rotation angle <span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, then
-the corresponding quaternion with unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as</p>
+<p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}\)</span> and rotation angle
+<span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, then the corresponding quaternion with
+unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]
 
 \]</div>
 </div></blockquote>
-<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where <span class="math">\(\boldsymbol{\nu}\)</span> is the vector part,
-<span class="math">\(w\)</span> is the scalar part, to find the corresponding rotation vector , the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
+<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where <span class="math">\(\boldsymbol{\nu}\)</span>
+is the vector part, <span class="math">\(w\)</span> is the scalar part, to find the corresponding rotation vector ,
+the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
 <blockquote>
 <div><div class="math">
 \[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2),
 
 \]</div>
 </div></blockquote>
-<p>The unit rotation axis <span class="math">\(\mathbf{n}\)</span> can be obtained as <span class="math">\(\mathbf{n} = \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>.
-Hence, the corresponding rotation vector is</p>
+<p>The unit rotation axis <span class="math">\(\mathbf{n}\)</span> can be obtained as <span class="math">\(\mathbf{n} =
+\frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>. Hence, the corresponding rotation vector is</p>
 <blockquote>
 <div><div class="math">
-\[\theta \mathbf{n} = 2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}\|/w)}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}.
+\[\theta \mathbf{n} = 2\frac{\mathrm{arctan}
+(\|\boldsymbol{\nu}\|/w)}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}.
 
 \]</div>
 </div></blockquote>
+<p>More details about <span class="math">\(^s\mathbf{W}_i\)</span> in <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> can be found in Eq. (5.7):</p>
+<ul class="simple">
+<li><p>H. Strasdat, <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf">Local accuracy and global consistency for efficient visual SLAM</a>,
+Dissertation. Department of Computing, Imperial College London, 2012.</p></li>
+</ul>
 </div>
 <p class="rubric">Example</p>
 <ul class="simple">
