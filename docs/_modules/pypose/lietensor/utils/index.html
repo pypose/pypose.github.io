@@ -397,7 +397,10 @@
 
 <div class="viewcode-block" id="identity_like"><a class="viewcode-back" href="../../../../generated/pypose.identity_like/#pypose.identity_like">[docs]</a><span class="k">def</span> <span class="nf">identity_like</span><span class="p">(</span><span class="n">liegroup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">     Returns identity LieTensor with the same :obj:`size` and :obj:`ltype` as the given LieTensor.</span>
+<span class="sd">     Returns identity LieTensor with the same :obj:`lsize` and :obj:`ltype` as the given LieTensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        liegroup (LieTensor): the size of liegroup will determine the size of the output tensor. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -474,15 +477,16 @@
     <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_so3"><a class="viewcode-back" href="../../../../generated/pypose.identity_so3/#pypose.identity_so3">[docs]</a><span class="k">def</span> <span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_so3"><a class="viewcode-back" href="../../../../generated/pypose.identity_so3/#pypose.identity_so3">[docs]</a><span class="k">def</span> <span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns idetity :obj:`so3_type` LieTensor with the given :obj:`size`.</span>
-<span class="sd">    Please check :obj:`pp.so3` for more instructions of the keywords.</span>
+<span class="sd">    Returns identity :obj:`so3_type` LieTensor with the given :obj:`lsize`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
-<span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
+<span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
+<span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
+<span class="sd">            list or tuple. If not given, a single :obj:`so3_type` item will be returned.</span>
 
+<span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
 <span class="sd">            the returned tensor. Default: False.</span>
 
@@ -503,10 +507,13 @@
 <span class="sd">        LieTensor: a :obj:`so3_type` LieTensor</span>
 <span class="sd">    </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; pp.identity_so3(3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.identity_so3()</span>
+<span class="sd">        so3Type LieTensor:</span>
+<span class="sd">        tensor([0., 0., 0.])</span>
+
+<span class="sd">        &gt;&gt;&gt; pp.identity_so3(2)</span>
 <span class="sd">        so3Type LieTensor:</span>
 <span class="sd">        tensor([[0., 0., 0.],</span>
-<span class="sd">                [0., 0., 0.],</span>
 <span class="sd">                [0., 0., 0.]])</span>
 
 <span class="sd">        &gt;&gt;&gt; pp.identity_so3(2,1)</span>
@@ -514,17 +521,19 @@
 <span class="sd">        tensor([[[0., 0., 0.]],</span>
 <span class="sd">                [[0., 0., 0.]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_SE3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SE3/#pypose.identity_SE3">[docs]</a><span class="k">def</span> <span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_SE3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SE3/#pypose.identity_SE3">[docs]</a><span class="k">def</span> <span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns idetity :obj:`SE3_type` LieTensor with the given :obj:`size`.</span>
-<span class="sd">    Please check :obj:`pp.SE3` for more instructions of the keywords.</span>
+<span class="sd">    Returns identity :obj:`SE3_type` LieTensor with the given :obj:`lsize`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
-<span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
+<span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
+<span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
+<span class="sd">            list or tuple. If not given, a single :obj:`SE3_type` item will be returned.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
 <span class="sd">            the returned tensor. Default: False.</span>
@@ -546,10 +555,13 @@
 <span class="sd">        LieTensor: a :obj:`SE3_type` LieTensor</span>
 <span class="sd">    </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; pp.identity_SE3(3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.identity_SE3()</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([0., 0., 0., 0., 0., 0., 1.])</span>
+
+<span class="sd">        &gt;&gt;&gt; pp.identity_SE3(2)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        tensor([[0., 0., 0., 0., 0., 0., 1.],</span>
-<span class="sd">                [0., 0., 0., 0., 0., 0., 1.],</span>
 <span class="sd">                [0., 0., 0., 0., 0., 0., 1.]])</span>
 
 <span class="sd">        &gt;&gt;&gt; pp.identity_SE3(2,1)</span>
@@ -557,18 +569,19 @@
 <span class="sd">        tensor([[[0., 0., 0., 0., 0., 0., 1.]],</span>
 <span class="sd">                [[0., 0., 0., 0., 0., 0., 1.]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_se3"><a class="viewcode-back" href="../../../../generated/pypose.identity_se3/#pypose.identity_se3">[docs]</a><span class="k">def</span> <span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_se3"><a class="viewcode-back" href="../../../../generated/pypose.identity_se3/#pypose.identity_se3">[docs]</a><span class="k">def</span> <span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns idetity :obj:`se3_type` LieTensor with the given :obj:`size`.</span>
-<span class="sd">    Please check :obj:`pp.se3` for more instructions of the keywords.</span>
+<span class="sd">    Returns identity :obj:`se3_type` LieTensor with the given :obj:`lsize`.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
-<span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
+<span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
+<span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
+<span class="sd">            list or tuple. If not given, a single :obj:`se3_type` item will be returned.</span>
 
+<span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
 <span class="sd">            the returned tensor. Default: False.</span>
 
@@ -589,10 +602,13 @@
 <span class="sd">        LieTensor: a :obj:`se3_type` LieTensor</span>
 <span class="sd">    </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; pp.identity_se3(3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.identity_se3()</span>
+<span class="sd">        se3Type LieTensor:</span>
+<span class="sd">        tensor([0., 0., 0., 0., 0., 0.])</span>
+
+<span class="sd">        &gt;&gt;&gt; pp.identity_se3(2)</span>
 <span class="sd">        se3Type LieTensor:</span>
 <span class="sd">        tensor([[0., 0., 0., 0., 0., 0.],</span>
-<span class="sd">                [0., 0., 0., 0., 0., 0.],</span>
 <span class="sd">                [0., 0., 0., 0., 0., 0.]])</span>
 
 <span class="sd">        &gt;&gt;&gt; pp.identity_se3(2,1)</span>
@@ -600,18 +616,19 @@
 <span class="sd">        tensor([[0., 0., 0., 0., 0., 0.],</span>
 <span class="sd">                [0., 0., 0., 0., 0., 0.]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_sim3/#pypose.identity_sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_sim3/#pypose.identity_sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">     Returns idetity :obj:`sim3_type` LieTensor with the given :obj:`size`. </span>
-<span class="sd">     Please check :obj:`pp.sim3` for more instructions of the keywords.</span>
+<span class="sd">     Returns identity :obj:`sim3_type` LieTensor with the given :obj:`lsize`. </span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
-<span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
+<span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
+<span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
+<span class="sd">            list or tuple. If not given, a single :obj:`sim3_type` item will be returned.</span>
 
+<span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
 <span class="sd">            the returned tensor. Default: False.</span>
 
@@ -632,10 +649,13 @@
 <span class="sd">        LieTensor: a :obj:`sim3_type` LieTensor</span>
 <span class="sd">        </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; identity_sim3(3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.identity_sim3()</span>
+<span class="sd">        sim3Type LieTensor:</span>
+<span class="sd">        tensor([0., 0., 0., 0., 0., 0., 0.])</span>
+
+<span class="sd">        &gt;&gt;&gt; identity_sim3(2)</span>
 <span class="sd">        sim3Type LieTensor:</span>
 <span class="sd">        tensor([[0., 0., 0., 0., 0., 0., 0.],</span>
-<span class="sd">                [0., 0., 0., 0., 0., 0., 0.],</span>
 <span class="sd">                [0., 0., 0., 0., 0., 0., 0.]])</span>
 
 <span class="sd">        &gt;&gt;&gt; identity_sim3(2,1)</span>
@@ -643,17 +663,17 @@
 <span class="sd">        tensor([[[0., 0., 0., 0., 0., 0., 0.]],</span>
 <span class="sd">                [[0., 0., 0., 0., 0., 0., 0.]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_Sim3/#pypose.identity_Sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_Sim3/#pypose.identity_Sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns idetity :obj:`Sim3_type` LieTensor with the given :obj:`size`.</span>
-<span class="sd">    Please check :obj:`pp.Sim3` for more instructions of the keywords.</span>
+<span class="sd">    Returns identity :obj:`Sim3_type` LieTensor with the given :obj:`lsize`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
-<span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
+<span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
+<span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
+<span class="sd">            list or tuple. If not given, a single :obj:`Sim3_type` item will be returned.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -676,10 +696,13 @@
 <span class="sd">        LieTensor: a :obj:`Sim3_type` LieTensor</span>
 <span class="sd">        </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; identity_Sim3(3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.identity_Sim3()</span>
+<span class="sd">        Sim3Type LieTensor:</span>
+<span class="sd">        tensor([0., 0., 0., 0., 0., 0., 1., 1.])</span>
+
+<span class="sd">        &gt;&gt;&gt; identity_Sim3(2)</span>
 <span class="sd">        Sim3Type LieTensor:</span>
 <span class="sd">        tensor([[0., 0., 0., 0., 0., 0., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0., 0., 0., 1., 1.],</span>
 <span class="sd">                [0., 0., 0., 0., 0., 0., 1., 1.]])</span>
 
 <span class="sd">        &gt;&gt;&gt; identity_Sim3(2,1)</span>
@@ -687,7 +710,7 @@
 <span class="sd">        tensor([[[0., 0., 0., 0., 0., 0., 1., 1.]],</span>
 <span class="sd">                [[0., 0., 0., 0., 0., 0., 1., 1.]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>    </div>
+    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>    </div>
 
 
 <div class="viewcode-block" id="identity_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.identity_rxso3/#pypose.identity_rxso3">[docs]</a><span class="k">def</span> <span class="nf">identity_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
