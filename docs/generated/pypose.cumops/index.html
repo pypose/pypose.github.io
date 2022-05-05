@@ -111,18 +111,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.cumops">
 <span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">cumops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/basics/#cumops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.cumops" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the cumulative customized operation of LieTensor elements of input in the dimension dim.</p>
-<p>For example, if input is a vector of size N, the result will also be a vector of size N, with elements.</p>
+<dd><p>Returns the cumulative user-defined operation of LieTensor along a dimension.</p>
 <div class="math">
-\[y_i = x_1~\mathrm{ops}~x_2 ~\mathrm{ops}~ \cdots ~\mathrm{ops}~ x_i
+\[y_i = x_1~\mathrm{\circ}~x_2 ~\mathrm{\circ}~ \cdots ~\mathrm{\circ}~ x_i,
 
 \]</div>
+<p>where <span class="math">\(\mathrm{\circ}\)</span> is the user-defined operation and <span class="math">\(x_i,~y_i\)</span>
+are the <span class="math">\(i\)</span>-th LieType item along the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dim</span></code> dimension of input and
+output, respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><em>LieTensor</em></a>) – the input LieTensor</p></li>
 <li><p><strong>dim</strong> (<em>int</em>) – the dimension to do the operation over</p></li>
-<li><p><strong>ops</strong> (<em>func</em>) – the function to be customized</p></li>
+<li><p><strong>ops</strong> (<em>func</em>) – the user-defined operation or function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -135,9 +137,11 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>The users are supposed to provide meaningful customized operation.</p></li>
-<li><p>It doesn’t check whether the results are valid for mathematical
+<li><p>The users are supposed to provide meaningful operation.</p></li>
+<li><p>This function doesn’t check whether the results are valid for mathematical
 definition of LieTensor, e.g., quaternion.</p></li>
+<li><p>The time complexity of the function is <span class="math">\(\mathcal{O}(\log N)\)</span>, where
+<span class="math">\(N\)</span> is the LieTensor size along the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dim</span></code> dimension.</p></li>
 </ul>
 </div>
 <p class="rubric">Examples</p>
