@@ -73,8 +73,8 @@
              
   <h1>Source code for pypose.lietensor.lietensor</h1><div class="highlight"><pre>
 <span></span>
+<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">numbers</span>
 <span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">linalg</span>
 <span class="kn">from</span> <span class="nn">torch.utils._pytree</span> <span class="kn">import</span> <span class="n">tree_map</span>
 <span class="kn">from</span> <span class="nn">.backends</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">mul</span><span class="p">,</span> <span class="n">adj</span>
@@ -154,11 +154,9 @@
         <span class="c1"># Transform on points</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="c1"># scalar * manifold</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Tensor Dimension Invalid&quot;</span>
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="c1"># (scalar or tensor) * manifold</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">ltype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">ltype</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Invalid __mul__ operation&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
