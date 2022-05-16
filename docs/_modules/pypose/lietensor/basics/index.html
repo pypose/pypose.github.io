@@ -178,8 +178,15 @@
     <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="cummul"><a class="viewcode-back" href="../../../../generated/pypose.cummul/#pypose.cummul">[docs]</a><span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+<div class="viewcode-block" id="cummul"><a class="viewcode-back" href="../../../../generated/pypose.cummul/#pypose.cummul">[docs]</a><span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative multiplication (*) of LieTensor along a dimension.</span>
+
+<span class="sd">    * Left multiplication:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_i * x_{i-1} * \cdots * x_1,</span>
+
+<span class="sd">    * Right multiplication:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        y_i = x_1 * x_2 * \cdots * x_i,</span>
@@ -190,6 +197,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        input (LieTensor): the input LieTensor</span>
 <span class="sd">        dim (int): the dimension to do the multiplication over</span>
+<span class="sd">        left (bool, optional): whether perform left multiplication in :obj:`cummul`.</span>
+<span class="sd">            If set it to :obj:`False`, this function performs right multiplication. Defaul: True</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: The LieTensor</span>
@@ -198,14 +207,28 @@
 <span class="sd">        - The time complexity of the function is :math:`\mathcal{O}(\log N)`, where</span>
 <span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
 
-<span class="sd">    Examples:</span>
+<span class="sd">    Example:</span>
+<span class="sd">    </span>
+<span class="sd">        * Left multiplication with :math:`\text{input} \in` :meth:`SE3`</span>
+
 <span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
-<span class="sd">        &gt;&gt;&gt; pp.cumprod(input, dim=0)</span>
-<span class="sd">        SE3Type LieTensor:</span>
-<span class="sd">        tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
-<span class="sd">                [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.cummul(input, dim=0)</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
+<span class="sd">                    [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
+
+<span class="sd">        * Left multiplication with :math:`\text{input} \in` :meth:`SO3`</span>
+
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SO3(1,2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cummul(input, dim=1, left=False)</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            tensor([[[-1.8252e-01,  1.6198e-01,  8.3683e-01,  4.9007e-01],</span>
+<span class="sd">                    [ 2.0905e-04,  5.2031e-01,  8.4301e-01, -1.3642e-01]]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="cumprod"><a class="viewcode-back" href="../../../../generated/pypose.cumprod/#pypose.cumprod">[docs]</a><span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -237,23 +260,23 @@
 <span class="sd">        - The time complexity of the function is :math:`\mathcal{O}(\log N)`, where</span>
 <span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
 
-<span class="sd">    Examples:</span>
+<span class="sd">    Example:</span>
 
-<span class="sd">    * Left product with :math:`input \in` :meth:`SE3`</span>
+<span class="sd">        * Left product with :math:`\text{input} \in` :meth:`SE3`</span>
 
-<span class="sd">    &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
-<span class="sd">    &gt;&gt;&gt; pp.cumprod(input, dim=0)</span>
-<span class="sd">    SE3Type LieTensor:</span>
-<span class="sd">    tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
-<span class="sd">            [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumprod(input, dim=0)</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
+<span class="sd">                    [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
 
-<span class="sd">    * Right product with :math:`input \in` :meth:`SO3`</span>
+<span class="sd">        * Right product with :math:`\text{input} \in` :meth:`SO3`</span>
 
-<span class="sd">    &gt;&gt;&gt; input = pp.randn_SO3(1,2)</span>
-<span class="sd">    &gt;&gt;&gt; pp.cumprod(input, dim=1, left=False)</span>
-<span class="sd">    SO3Type LieTensor:</span>
-<span class="sd">    tensor([[[ 0.5798, -0.1189, -0.2429,  0.7686],</span>
-<span class="sd">            [ 0.7515, -0.1920,  0.5072,  0.3758]]])</span>
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SO3(1,2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumprod(input, dim=1, left=False)</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            tensor([[[ 0.5798, -0.1189, -0.2429,  0.7686],</span>
+<span class="sd">                    [ 0.7515, -0.1920,  0.5072,  0.3758]]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span>
