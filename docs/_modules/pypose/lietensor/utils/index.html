@@ -1495,7 +1495,7 @@
 
 
 <div class="viewcode-block" id="Adj"><a class="viewcode-back" href="../../../../generated/pypose.Adj/#pypose.Adj">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The dot product between the Adjoint matrix at the point given by an input (Lie Group) and </span>
 <span class="sd">    the second point (Lie Algebra).</span>
@@ -1543,9 +1543,9 @@
 <span class="sd">    Let the input be (:math:`\mathbf{x}`, :math:`\mathbf{p}`), :math:`\mathbf{y}` be the output.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = \mathbf{Adj}(\mathbf{x}_i)\mathbf{p}_i,</span>
+<span class="sd">            \mathbf{y}_i = \mathrm{Adj}(\mathbf{x}_i)\mathbf{p}_i,</span>
 
-<span class="sd">        where, :math:`\mathbf{Adj}(\mathbf{x}_i)` is the adjoint matrix of the Lie group of :math:`\mathbf{x}_i`.</span>
+<span class="sd">        where, :math:`\mathrm{Adj}(\mathbf{x}_i)` is the adjoint matrix of the Lie group of :math:`\mathbf{x}_i`.</span>
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type` and :obj:`so3_type`</span>
 <span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`, :math:`\mathbf{p}` is an instance of :meth:`so3`).</span>
@@ -1553,7 +1553,7 @@
 <span class="sd">      The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{Adj}(\mathbf{x}_i) = \mathbf{x}_i </span>
+<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \mathbf{x}_i </span>
 
 <span class="sd">        In the case of :math:`\textrm{SO3}`, the adjoint transformation for an element is the same</span>
 <span class="sd">        rotation matrix used to represent the element. Rotating a tangent vector by an element &quot;moves&quot; it</span>
@@ -1566,7 +1566,7 @@
 <span class="sd">      of :math:`\mathbf{t}_i`. The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{Adj}(\mathbf{x}_i) = \left[</span>
+<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
 <span class="sd">                                \begin{array}{cc} </span>
 <span class="sd">                                    \mathbf{R}_i &amp; \mathbf{t}_{i\times}\mathbf{R}_i \\</span>
 <span class="sd">                                    0 &amp; \mathbf{R}_i</span>
@@ -1591,7 +1591,7 @@
 <span class="sd">      The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{Adj}(\mathbf{x}_i) = \left[</span>
+<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
 <span class="sd">                                \begin{array}{cc} </span>
 <span class="sd">                                    s_i\mathbf{R}_i&amp; \mathbf{t}_{i\times}\mathbf{R}_i&amp; -\mathbf{t}_i \\</span>
 <span class="sd">                                    0 &amp; \mathbf{R}_i&amp; 0 \\</span>
@@ -1615,7 +1615,7 @@
 <span class="sd">      and scale parts of the group. The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{Adj}(\mathbf{x}_i) = \left[</span>
+<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
 <span class="sd">                                \begin{array}{cc} </span>
 <span class="sd">                                    \mathbf{R}_i &amp; 0 \\</span>
 <span class="sd">                                    0 &amp; 1</span>
@@ -1634,6 +1634,25 @@
 
 <span class="sd">        In the case of :math:`\textrm{RxSO3}` group, the adjoint transformation is the same as the rotation </span>
 <span class="sd">        matrix of the group i.e. the :math:`\textrm{SO3}` part of the group.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The adjoint operator is a linear map which moves an element :math:`\mathbf{p} \in \mathcal{g}`</span>
+<span class="sd">        in the right tangent space of :math:`\mathbf{x} \in \mathcal{G}` to the left tangent space.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x} = \mathbf{x} * \mathrm{Exp}(\mathbf{p})</span>
+<span class="sd">        </span>
+<span class="sd">        It can be easily verified:</span>
+
+<span class="sd">            &gt;&gt;&gt; x, p = pp.randn_SO3(), pp.randn_so3()</span>
+<span class="sd">            &gt;&gt;&gt; torch.allclose(x*p.Exp(), x.Adj(p).Exp()*x)</span>
+<span class="sd">            True</span>
+<span class="sd">        </span>
+<span class="sd">        One can refer to Eq. (8) of the following paper:</span>
+
+<span class="sd">        * Zachary Teed et al., `Tangent Space Backpropagation for 3D Transformation Groups</span>
+<span class="sd">          &lt;https://arxiv.org/pdf/2103.12032.pdf&gt;`_, IEEE/CVF Conference on Computer Vision</span>
+<span class="sd">          and Pattern Recognition (CVPR), 2021.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        :math:`\mathrm{Adj}` is generally used to transform a tangent vector from the tangent space around one</span>
@@ -1691,7 +1710,7 @@
 <span class="sd">            tensor([[-1.3590, -0.4314, -0.0297,  1.0166],</span>
 <span class="sd">                    [-0.3378, -0.4942, -2.0083, -0.4321]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AdjT"><a class="viewcode-back" href="../../../../generated/pypose.AdjT/#pypose.AdjT">[docs]</a><span class="nd">@assert_ltype</span>

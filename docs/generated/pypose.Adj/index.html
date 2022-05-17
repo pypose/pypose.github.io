@@ -110,7 +110,7 @@
 <h1>pypose.Adj<a class="headerlink" href="#pypose-adj" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.Adj">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">Adj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#Adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.Adj" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">Adj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#Adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.Adj" title="Permalink to this definition"></a></dt>
 <dd><p>The dot product between the Adjoint matrix at the point given by an input (Lie Group) and
 the second point (Lie Algebra).</p>
 <div class="math">
@@ -178,10 +178,10 @@ the second point (Lie Algebra).</p>
 <p>Let the input be (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>), <span class="math">\(\mathbf{y}\)</span> be the output.</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{y}_i = \mathbf{Adj}(\mathbf{x}_i)\mathbf{p}_i,
+\[\mathbf{y}_i = \mathrm{Adj}(\mathbf{x}_i)\mathbf{p}_i,
 
 \]</div>
-<p>where, <span class="math">\(\mathbf{Adj}(\mathbf{x}_i)\)</span> is the adjoint matrix of the Lie group of <span class="math">\(\mathbf{x}_i\)</span>.</p>
+<p>where, <span class="math">\(\mathrm{Adj}(\mathbf{x}_i)\)</span> is the adjoint matrix of the Lie group of <span class="math">\(\mathbf{x}_i\)</span>.</p>
 </div></blockquote>
 <ul>
 <li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code>
@@ -190,7 +190,7 @@ Given <span class="math">\(\mathbf{x}_i \in\)</span> <span class="math">\(\textr
 The adjoint transformation is given by:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{Adj}(\mathbf{x}_i) = \mathbf{x}_i
+\[\mathrm{Adj}(\mathbf{x}_i) = \mathbf{x}_i
 
 \]</div>
 <p>In the case of <span class="math">\(\textrm{SO3}\)</span>, the adjoint transformation for an element is the same
@@ -205,7 +205,7 @@ rotation and translation part of the group. Let <span class="math">\(\mathbf{t}_
 of <span class="math">\(\mathbf{t}_i\)</span>. The adjoint transformation is given by:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{Adj}(\mathbf{x}_i) = \left[
+\[\mathrm{Adj}(\mathbf{x}_i) = \left[
                     \begin{array}{cc}
                         \mathbf{R}_i & \mathbf{t}_{i\times}\mathbf{R}_i \\
                         0 & \mathbf{R}_i
@@ -233,7 +233,7 @@ Let <span class="math">\(\mathbf{R}_i\in\)</span> <span class="math">\(\textrm{S
 The adjoint transformation is given by:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{Adj}(\mathbf{x}_i) = \left[
+\[\mathrm{Adj}(\mathbf{x}_i) = \left[
                     \begin{array}{cc}
                         s_i\mathbf{R}_i& \mathbf{t}_{i\times}\mathbf{R}_i& -\mathbf{t}_i \\
                         0 & \mathbf{R}_i& 0 \\
@@ -260,7 +260,7 @@ Let <span class="math">\(\mathbf{R}_i \in\)</span> <span class="math">\(\textrm{
 and scale parts of the group. The adjoint transformation is given by:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{Adj}(\mathbf{x}_i) = \left[
+\[\mathrm{Adj}(\mathbf{x}_i) = \left[
                     \begin{array}{cc}
                         \mathbf{R}_i & 0 \\
                         0 & 1
@@ -283,6 +283,26 @@ matrix of the group i.e. the <span class="math">\(\textrm{SO3}\)</span> part of 
 </div></blockquote>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The adjoint operator is a linear map which moves an element <span class="math">\(\mathbf{p} \in \mathcal{g}\)</span>
+in the right tangent space of <span class="math">\(\mathbf{x} \in \mathcal{G}\)</span> to the left tangent space.</p>
+<div class="math">
+\[\mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x} = \mathbf{x} * \mathrm{Exp}(\mathbf{p})
+
+\]</div>
+<p>It can be easily verified:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">Exp</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>One can refer to Eq. (8) of the following paper:</p>
+<ul class="simple">
+<li><p>Zachary Teed et al., <a class="reference external" href="https://arxiv.org/pdf/2103.12032.pdf">Tangent Space Backpropagation for 3D Transformation Groups</a>, IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR), 2021.</p></li>
+</ul>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><span class="math">\(\mathrm{Adj}\)</span> is generally used to transform a tangent vector from the tangent space around one
