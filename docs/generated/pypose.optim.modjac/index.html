@@ -24,7 +24,6 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.optim.modjacrev" href="../pypose.optim.modjacrev/" />
     <link rel="prev" title="Optimization" href="../../optim/" /> 
 </head>
 
@@ -51,8 +50,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.optim.modjac</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.modjacrev/">pypose.optim.modjacrev</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.modjacfwd/">pypose.optim.modjacfwd</a></li>
 </ul>
 </li>
 </ul>
@@ -91,12 +88,14 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – a PyTorch model that takes Tensor inputs and
-returns a tuple of Tensors or a Tensor.</p></li>
-<li><p><strong>inputs</strong> (<em>tuple of Tensors</em><em> or </em><em>Tensor</em>) – inputs to the function <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p></li>
-<li><p><strong>flatten</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, all module parameters are flattened
-and concatenated to form a single vector. The Jacobian will be computed
-with respect to this single flattened parameter.</p></li>
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – a PyTorch model that takes Tensor or LieTensor
+inputs and returns a tuple of Tensor/LieTensor or a Tensor/LieTensor.</p></li>
+<li><p><strong>inputs</strong> (<em>tuple of Tensors/LieTensor</em><em> or </em><em>Tensor/LieTensor</em>) – inputs to the
+module <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p></li>
+<li><p><strong>flatten</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, all module parameters and outputs
+are flattened and concatenated to form a single vector. The Jacobian
+will be computed with respect to this single flattened vectors, thus
+a single Tensor will be returned.</p></li>
 <li><p><strong>create_graph</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the Jacobian will be
 computed in a differentiable manner. Note that when <code class="docutils literal notranslate"><span class="pre">strict</span></code> is
 <code class="docutils literal notranslate"><span class="pre">False</span></code>, the result can not require gradients or be disconnected
@@ -124,16 +123,16 @@ prefer to use <code class="docutils literal notranslate"><span class="pre">&quot
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>if there is a single
-output and <code class="docutils literal notranslate"><span class="pre">flatten=True</span></code>, this will be a single Tensor containing the
-Jacobian for the linearized inputs and output. If either one doesn’t
-hold, then the Jacobian will be a tuple of Tensors. If both of
-them don’t hold, then the Jacobian will be a tuple of tuple of
-Tensors where <code class="docutils literal notranslate"><span class="pre">Jacobian[i][j]</span></code> will contain the Jacobian of the
-<code class="docutils literal notranslate"><span class="pre">i</span></code>th output and <code class="docutils literal notranslate"><span class="pre">j</span></code>th parameter and will have as size the
-concatenation of the sizes of the corresponding output and the
-corresponding parameter and will have same dtype and device as the
-corresponding input. If strategy is <code class="docutils literal notranslate"><span class="pre">forward-mode</span></code>, the dtype will be
-that of the output; otherwise, the parameter.</p>
+parameter and output, this will be a single Tensor containing the
+Jacobian for the linearized parameter and output. If there are more
+than one parameters, then the Jacobian will be a tuple of Tensors.
+If there are more than one outputs (even if there is only one parameter),
+then the Jacobian will be a tuple of tuple of Tensors where <code class="docutils literal notranslate"><span class="pre">Jacobian[i][j]</span></code>
+will contain the Jacobian of the <code class="docutils literal notranslate"><span class="pre">i</span></code>th output and <code class="docutils literal notranslate"><span class="pre">j</span></code>th parameter
+and will have as size the concatenation of the sizes of the corresponding
+output and the corresponding parameter and will have same dtype and device as the
+corresponding parameter. If strategy is <code class="docutils literal notranslate"><span class="pre">forward-mode</span></code>, the dtype will be
+that of the output; otherwise, the parameters.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Jacobian (Tensor or nested tuple of Tensors)</p>
@@ -159,19 +158,19 @@ which computes the Jacobian of a given Python function.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">tensor([[[[-1.1571, -1.6217,  0.0000,  0.0000,  1.0000,  0.0000],</span>
-<span class="go">          [ 0.2917, -1.1545,  0.0000,  0.0000,  1.0000,  0.0000]],</span>
-<span class="go">         [[-1.4052,  0.7642,  0.0000,  0.0000,  1.0000,  0.0000],</span>
-<span class="go">          [ 0.7777, -1.5251,  0.0000,  0.0000,  1.0000,  0.0000]]],</span>
-<span class="go">        [[[ 0.0000,  0.0000, -1.1571, -1.6217,  0.0000,  1.0000],</span>
-<span class="go">          [ 0.0000,  0.0000,  0.2917, -1.1545,  0.0000,  1.0000]],</span>
-<span class="go">         [[ 0.0000,  0.0000, -1.4052,  0.7642,  0.0000,  1.0000],</span>
-<span class="go">          [ 0.0000,  0.0000,  0.7777, -1.5251,  0.0000,  1.0000]]]])</span>
+<span class="go">tensor([[-0.4162,  0.0968,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [-0.6042,  1.1886,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 1.4623,  0.7389,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 1.0716,  2.4293,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000, -0.4162,  0.0968,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000, -0.6042,  1.1886,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  1.4623,  0.7389,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  1.0716,  2.4293,  0.0000,  1.0000]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">J</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">torch.Size([2, 2, 2, 6])</span>
+<span class="go">torch.Size([8, 6])</span>
 </pre></div>
 </div>
-<p>Calculate Jacobian with respect to <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.LieTensor</span></code></a>.</p>
+<p>Calculate Jacobian with respect to parameter of <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.LieTensor</span></code></a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PoseTransform</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -182,14 +181,16 @@ which computes the Jacobian of a given Python function.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span> <span class="o">=</span> <span class="n">PoseTransform</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">tensor([[[ 0.6769,  0.4854,  0.3703,  0.0000,  0.0000,  0.0000],</span>
-<span class="go">         [-0.6020,  0.6618,  0.1506,  0.0000,  0.0000,  0.0000],</span>
-<span class="go">         [-0.1017, -0.3866,  0.8824,  0.0000,  0.0000,  0.0000],</span>
-<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]],</span>
-<span class="go">        [[ 0.0000,  0.0000,  0.0000,  0.9671,  0.1685, -0.1407],</span>
-<span class="go">         [ 0.0000,  0.0000,  0.0000, -0.2092,  0.9203, -0.2629],</span>
-<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0665,  0.2907,  0.9380],</span>
-<span class="go">         [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]]])</span>
+<span class="go">tensor([[ 0.4670,  0.7041,  0.0029,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [-0.6591,  0.4554, -0.2566,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [-0.2477,  0.0670,  0.9535,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.8593,  0.2672,  0.3446],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000, -0.2417,  0.9503, -0.1154],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000, -0.3630, -0.0179,  0.9055],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([8, 6])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -201,7 +202,6 @@ which computes the Jacobian of a given Python function.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../../optim/" class="btn btn-neutral float-left" title="Optimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../pypose.optim.modjacrev/" class="btn btn-neutral float-right" title="pypose.optim.modjacrev" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
