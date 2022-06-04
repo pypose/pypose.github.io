@@ -55,7 +55,7 @@ jobs:
           PR_NUM="${{ github.event.client_payload.pr_num }}"
           [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX=""
           mkdir -p gh-pages/docs/$DEST_SUFFIX
-          rsync -a sphinx-docs/build/dirhtml/ gh-pages/docs/$DEST_SUFFIX --delete
+          rsync -a sphinx-docs/build/dirhtml/ gh-pages/docs/$DEST_SUFFIX --delete --exclude preview
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
