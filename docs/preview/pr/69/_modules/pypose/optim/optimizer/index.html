@@ -126,7 +126,7 @@
 <span class="sd">    Note:</span>
 <span class="sd">        Different from PyTorch optimizers like</span>
 <span class="sd">        `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the model</span>
-<span class="sd">        loss has to be a scalar, the model loss of :obj:`LM` can be a Tensor/LieTensor or a</span>
+<span class="sd">        loss has to be a scalar, the model output of :obj:`LM` can be a Tensor/LieTensor or a</span>
 <span class="sd">        tuple of Tensors/LieTensors.</span>
 
 <span class="sd">    Example:</span>
@@ -136,16 +136,18 @@
 <span class="sd">        ...     def __init__(self, *dim):</span>
 <span class="sd">        ...         super().__init__()</span>
 <span class="sd">        ...         self.pose = pp.Parameter(pp.randn_se3(*dim))</span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     def forward(self, inputs):</span>
 <span class="sd">        ...         return (self.pose.Exp() @ inputs).Log().abs()</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; posnet, pose = PoseInv(2, 2), pp.randn_SE3(2, 2)</span>
 <span class="sd">        &gt;&gt;&gt; optimizer = pp.optim.LM(posnet, dampening=1e-6)</span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; for idx in range(10):</span>
 <span class="sd">        ...     loss = optimizer.step(pose)</span>
 <span class="sd">        ...     error = loss.mean()</span>
 <span class="sd">        ...     print(&#39;Pose Inversion error %.7f @ %d it&#39;%(error, idx))</span>
-<span class="sd">        ...     if loss.mean() &lt; 1e-5:</span>
+<span class="sd">        ...     if error &lt; 1e-5:</span>
 <span class="sd">        ...         print(&#39;Early Stoping with error:&#39;, error.item())</span>
 <span class="sd">        ...         break</span>
 <span class="sd">        ...</span>

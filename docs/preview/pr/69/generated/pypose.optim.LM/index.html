@@ -135,7 +135,7 @@ descent direction.</p>
 <p class="admonition-title">Note</p>
 <p>Different from PyTorch optimizers like
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.SGD.html">SGD</a>, where the model
-loss has to be a scalar, the model loss of <a class="reference internal" href="#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LM</span></code></a> can be a Tensor/LieTensor or a
+loss has to be a scalar, the model output of <a class="reference internal" href="#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LM</span></code></a> can be a Tensor/LieTensor or a
 tuple of Tensors/LieTensors.</p>
 </div>
 <p class="rubric">Example</p>
@@ -144,16 +144,18 @@ tuple of Tensors/LieTensors.</p>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">dim</span><span class="p">))</span>
+<span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">@</span> <span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">posnet</span><span class="p">,</span> <span class="n">pose</span> <span class="o">=</span> <span class="n">PoseInv</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">LM</span><span class="p">(</span><span class="n">posnet</span><span class="p">,</span> <span class="n">dampening</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">error</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Pose Inversion error </span><span class="si">%.7f</span><span class="s1"> @ </span><span class="si">%d</span><span class="s1"> it&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Early Stoping with error:&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 <span class="gp">... </span>        <span class="k">break</span>
 <span class="gp">...</span>
