@@ -6,4 +6,5 @@ group :jekyll_plugins do
   gem "jekyll-paginate-v2"
   gem 'jekyll-autoprefixer'
   gem 'jekyll-feed'
+  gem "therubyracer"
 end
