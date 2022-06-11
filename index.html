@@ -1,0 +1,87 @@
+---
+layout: default
+background-class: home-page-background
+body-class: homepage
+display-news-banner: false
+---
+
+<div class="jumbotron jumbotron-fluid on-dark-background">
+  <div class="container">
+    <h1>PyPose =<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GTSAM x PyTorch</h1>
+
+    <p class="lead">PyPose is to connect classic robotics with modern learning methods.</p>
+
+    <a href="{{ site.baseurl }}/get-started" class="btn btn-lg with-right-arrow" data-cta="get-started">
+      Install
+    </a>
+  </div>
+</div>
+
+<div class="main-content-wrapper">
+
+  {% if page.display-news-banner == true %}
+
+  {% assign news = site.news | sort: "order" %}
+
+    <div id="news-items">
+      <div class="list container news-banner-container">
+        {% for news_item in news %}
+          <div class="news-banner-text">
+            {% include news_banner_info.html %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="pagination"></div>
+    </div>
+    {% else %}
+    <div class="no-banner"></div>
+  {% endif %}
+
+  <div class="container homepage-feature-module key-features-module">
+
+    <div class="row">
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Key Features &amp;<br />Capabilities</h2>
+
+            <!-- <a href="{{ site.baseurl }}/features" class="btn btn-lg with-right-arrow module-button">
+              See all Features
+            </a> -->
+          </div>
+        </div>
+
+        <div class="row key-features-boxes">
+          {% assign features = site.features | where: "featured-home", true | sort: 'order' %}
+
+          {% for feature in features %}
+            <div class="col-md-3 key-feature-box">
+              <h5>{{ feature.title }}</h5>
+              <p>{{ feature.summary-home }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- <div class="col-md-3 ecosystem-row">
+        <div class="card ecosystem-card">
+          <div class="card-body">
+            <div class="card-summary">
+              <p>Support Ukraine 🇺🇦 <br/><a href="https://opensource.fb.com/support-ukraine" target="_blank" rel="noopener">Help Provide Humanitarian Aid to Ukraine.</a></p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- {% include quick_start_module.html %} -->
+
+
+</div>
+
+
+
+<!-- Load JS for pagination -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+<script list-id="news-items" display-count="1" pagination="true" src="{{ site.baseurl }}/assets/filter-hub-tags.js"></script>

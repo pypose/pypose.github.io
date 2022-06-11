@@ -1,0 +1,114 @@
+---
+layout: default
+title: Contributors
+permalink: /resources/contributors/
+body-class: ecosystem
+background-class: features-background
+---
+
+<div class="jumbotron jumbotron-fluid contributor-jumbotron">
+  <div class="contributor-jumbo-text container">
+    <h1>PyTorch Contributors</h1>
+    <span></span>
+    <h2 class="lead">The central place for PyTorch contributors to stay up-to-date with the codebase and discover notable RFCs, PRs and more.</h2>
+  </div>
+</div>
+
+<div id="pytorch-1" class="main-content-wrapper contributor-wrapper join-wrapper">
+  <div class="contributor main-content">
+    <div class="contributor-container-fluid container-fluid nav-menu-wrapper">
+      <div class="nav-background">
+        <div class="contributor-container">
+          <nav class="navbar navbar-expand-lg navbar-light main-content-menu">
+            <ul class="navbar-nav contributor-nav">
+              <li id="sign-up" class="nav-item nav-select">
+                <span class="nav-link contributor-nav-link">PyTorch Contributors</span>
+              </li>
+              <li id="past-issues" class="nav-item">
+                <span class="nav-link contributor-nav-link">Newsletters</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    {% include past_issues.html %}
+
+    <div class="two-column-row">
+      <div class="content-left">
+        <h2>Newsletter Sign Up</h2>
+        <p>Follow the contributors newsletter for curated news from across the PyTorch developer community</p>
+        <div class="contributor-form">
+          <form action="https://cl.s10.exct.net/DEManager.aspx" name="subscribeForm" method="post">
+            <input type="hidden" name="_clientID" value="515009167">
+            <input type="hidden" name="_deExternalKey" value="BBAD707C-57C6-46F4-9701-D24E5550FB79">
+            <input type="hidden" name="_action" value="add">
+            <input type="hidden" name="_returnXML" value="0">
+            <input type="hidden" name="_successURL" value="https://pytorch.org/resources/contributors?signUp=success">
+            <input type="hidden" name="_errorURL" value="https://pytorch.org/resources/contributors?signUp=fail">
+            <div class="contributor-form-ui">
+              <input type="text" name="Email Address">
+              <input type="submit" value="Submit">
+            </div>
+            <div class="contributor-consent-check">
+              <input type="checkbox" id="agree" oninvalid="this.setCustomValidity('')" required>
+              <label for="agree">
+                <span>I accept the terms and conditions below</span>
+              </label>
+            </div>
+          </form>
+          <p class="form-success">Thanks! You are now subscribed to the PyTorch Contributors Newsletter.</p>
+          <p class="form-fail">There was an error submitting your email address. Please try again.</p>
+          <p class="please-accept-terms">Please accept the terms and conditions below</p>
+        </div>
+        <p class="email-consent">
+          By submitting your email, you agree to receive technical updates and marketing-related electronic communications from Facebook Inc, and its affiliated businesses, including news, events, and updates.
+          You may withdraw your consent and unsubscribe from these at any time, for example, by clicking the unsubscribe link included on our emails. For more information about how Facebook handles your data, please read our <a href="https://pytorch.org/assets/tos-oss-privacy-policy/fb-oss-privacy-policy.pdf">Data Policy</a>
+        </p>
+        <a id="issue-toggle" class="contributors-button" href="#pytorch-1">View Issues</a>
+      </div>
+
+      <div class="content-right">
+        <div>
+          <h2>Join the conversation</h2>
+          <p>Join the contributor's discussion forum to learn and collaborate on the latest development across PyTorch</p>
+          <a class="contributors-button" href="{{ site.external_urls.contributor_forum }}">Contributor Forums</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $("#past-issues, #issue-toggle" ).on("click", function() {
+    $(".hidden").show();
+    $("#sign-up").removeClass("nav-select");
+    $("#past-issues").addClass("nav-select");
+  })
+
+  $("#sign-up").on("click", function() {
+    $(".hidden").hide();
+    $("#past-issues").removeClass("nav-select");
+    $(this).addClass("nav-select");
+  });
+
+  var urlParams = new URLSearchParams(window.location.search);
+  var paramValue = urlParams.has('signUp') ? urlParams.get('signUp') : null;
+
+  if (paramValue == 'success') {
+    $(".form-fail").hide();
+    $(".form-success").show();
+  } else if (paramValue == 'fail') {
+    $(".form-success").hide();
+    $(".form-fail").show();
+  }
+
+  $('input[type=submit]').on("click", function(e) {
+    var checked = $('input[type=checkbox]').prop('checked');
+    if (!checked) {
+      $(".please-accept-terms").show().fadeOut(4000);
+      e.preventDefault();
+    }
+  });
+</script>
