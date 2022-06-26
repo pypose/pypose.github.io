@@ -14,6 +14,8 @@ jobs:
   build-jekyll:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        name: Checkout pypose/pypose.github.io
       - uses: ruby/setup-ruby@v1
         name: Setup Ruby
         with:
@@ -26,8 +28,6 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile --immutable # per suggestion of actions/setup-node
         name: Setup Yarn
-      - uses: actions/checkout@v3
-        name: Checkout pypose/pypose.github.io
       - run: make build_deploy
         name: Build Jekyll site
 #       - uses: actions/cache@v2
