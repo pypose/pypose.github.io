@@ -14,55 +14,65 @@ jobs:
   build-jekyll:
     runs-on: ubuntu-latest
     steps:
+      - uses: ruby/setup-ruby@v1
+        name: Setup Ruby
+        with:
+          # Automatically versioned with .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v3
+        name: Setup Node
+        with:
+          node-version: 9.8.0
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile --immutable # per suggestion of actions/setup-node
+        name: Setup Yarn
       - uses: actions/checkout@v3
         name: Checkout pypose/pypose.github.io
-      - uses: actions/cache@v2
-        name: Restore dependent gems
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-#       - uses: actions/setup-node@v3
+      - run: make build_deploy
+        name: Build Jekyll site
+#       - uses: actions/cache@v2
+#         name: Restore dependent gems
 #         with:
-#           node-version: 9.8.0
-      - run: sudo apt-get install -y nodejs
-      - uses: limjh16/jekyll-action-ts@v2
-        name: Build Jekyll
-        with:
-          build_only: true
-          # remove in the future if this action picks up the page branch name correctly
-          target_branch: gh-pages
-          #  default build_dir is /github/jekyll_build; /github/workspace is the mount point for pyose.github.io
-          target_path: ../workspace/build
-      - uses: actions/checkout@v3
-        name: Checkout previously built docs
-        with: 
-          ref: gh-pages
-          path: gh-pages-old
-      - name: Purge old site and assemble new
-        run: |
-          mv gh-pages-old/docs gh-pages-docs
-          rm -r gh-pages-old
-          mkdir gh-pages
-          mv gh-pages-docs gh-pages/docs
-          # no write permission to ./build outside container, has to make a copy
-          cp -r build/* gh-pages
-      - name: Download built documentation
-        if: ${{ github.event.action == 'circle-ci-build' }}
-        run: |
-          export CIRCLE_TOKEN=?circle-token=${{ secrets.CIRCLECI }}
-          export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
-          wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
-          mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
-          # move to docs/pr/<pr number> if is from pr
-          PR_NUM="${{ github.event.client_payload.pr_num }}"
-          [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX=""
-          mkdir -p gh-pages/docs/$DEST_SUFFIX
-          rsync -a sphinx-docs/build/dirhtml/ gh-pages/docs/$DEST_SUFFIX --delete --exclude preview
+#           path: vendor/bundle
+#           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
+#           restore-keys: |
+#             ${{ runner.os }}-gems-
+#       - uses: limjh16/jekyll-action-ts@v2
+#         name: Build Jekyll
+#         with:
+#           build_only: true
+#           # remove in the future if this action picks up the page branch name correctly
+#           target_branch: gh-pages
+#           #  default build_dir is /github/jekyll_build; /github/workspace is the mount point for pyose.github.io
+#           target_path: ../workspace/build
+#       - uses: actions/checkout@v3
+#         name: Checkout previously built docs
+#         with: 
+#           ref: gh-pages
+#           path: gh-pages-old
+#       - name: Purge old site and assemble new
+#         run: |
+#           mv gh-pages-old/docs gh-pages-docs
+#           rm -r gh-pages-old
+#           mkdir gh-pages
+#           mv gh-pages-docs gh-pages/docs
+#           # no write permission to ./build outside container, has to make a copy
+#           cp -r build/* gh-pages
+#       - name: Download built documentation
+#         if: ${{ github.event.action == 'circle-ci-build' }}
+#         run: |
+#           export CIRCLE_TOKEN=?circle-token=${{ secrets.CIRCLECI }}
+#           export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
+#           wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
+#           mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
+#           # move to docs/pr/<pr number> if is from pr
+#           PR_NUM="${{ github.event.client_payload.pr_num }}"
+#           [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX=""
+#           mkdir -p gh-pages/docs/$DEST_SUFFIX
+#           rsync -a sphinx-docs/build/dirhtml/ gh-pages/docs/$DEST_SUFFIX --delete --exclude preview
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
           token: ${{ secrets.JEKYLL_PAT }}
           branch: gh-pages
-          folder: gh-pages
+          folder: _site
