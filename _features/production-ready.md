@@ -25,7 +25,7 @@ snippet: >
   ```
 
 summary-home: Transition seamlessly between eager and graph modes with TorchScript, and accelerate the path to production with TorchServe.
-featured-home: true
+featured-home: false
 
 ---
 

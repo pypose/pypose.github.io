@@ -11,7 +11,7 @@ snippet: >
   ```
 
 summary-home: Scalable distributed training and performance optimization in research and production is enabled by the torch.distributed backend.
-featured-home: true
+featured-home: false
 
 ---
 

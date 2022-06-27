@@ -13,7 +13,7 @@ snippet: >
   ```
 
 summary-home: A rich ecosystem of tools and libraries extends PyTorch and supports development in computer vision, NLP and more.
-featured-home: true
+featured-home: false
 
 ---
 
