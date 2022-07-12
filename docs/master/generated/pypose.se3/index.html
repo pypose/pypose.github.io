@@ -111,15 +111,13 @@ be raised.</p>
 <p>Internally, se3 LieTensors are stored by concatenating the axis-angle
 representation of the rotation with the “velocity” vector:</p>
 <div class="math">
-\[\mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \tau_x, \tau_y, \tau_z],
+\[\mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log t_x, \log t_y, \log t_z]
 
 \]</div>
 <p>where <span class="math">\(\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T\)</span>
 is the axis-angle vector as in <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.so3</span></code></a>, and
-<span class="math">\(\begin{pmatrix} \tau_x &amp; \tau_y &amp; \tau_z \end{pmatrix}^T = \mathbf{J}^{-1}
-\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T\)</span> is the product between the
-left Jacobian inverse (of SO3’s logarithm map) and the translation vector.
-See <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Log()</span></code></a> with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code> input.</p>
+<span class="math">\(\begin{pmatrix} \log t_x &amp; \log t_y &amp; \log t_z \end{pmatrix}^T\)</span>
+is the element-wise logarithm of the translation vector from <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SE3</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">se3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 <span class="go">se3Type LieTensor:</span>

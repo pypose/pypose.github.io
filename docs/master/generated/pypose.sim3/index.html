@@ -111,15 +111,13 @@ be raised.</p>
 <p>Internally, sim3 LieTensors are stored by concatenating the log translation
 vector with the corresponding rxso3:</p>
 <div class="math">
-\[\mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],
+\[\mathrm{data}[*, :] = [\log t_x, \log t_y, \log t_z, \delta_x, \delta_y, \delta_z, \log s]
 
 \]</div>
-<p>where <span class="math">\(\begin{pmatrix} \tau_x &amp; \tau_y &amp; \tau_z \end{pmatrix}^T  = \mathbf{W}^{-1}
-\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T\)</span> is the product between the
-left Jacobian inverse (of RxSO3’s logarithm map) and the translation vector, and
+<p>where <span class="math">\(\begin{pmatrix} \log t_x &amp; \log t_y &amp; \log t_z \end{pmatrix}^T\)</span>
+is the log translation vector as in <a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.se3</span></code></a>, and
 <span class="math">\(\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z &amp; \log s \end{pmatrix}^T\)</span>
-represents the rotation and scaling, as in <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.rxso3</span></code></a>.
-See <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Log()</span></code></a> with <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> input.</p>
+represents the rotation and scaling, as in <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.rxso3</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">Sim3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="go">sim3Type LieTensor:</span>

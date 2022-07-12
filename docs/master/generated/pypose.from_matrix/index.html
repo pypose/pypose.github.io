@@ -95,7 +95,7 @@
 <h1>pypose.from_matrix<a class="headerlink" href="#pypose-from-matrix" title="Permalink to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.from_matrix">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#from_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.from_matrix" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#from_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.from_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Convert batched rotation or transformation matrices to LieTensor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -107,15 +107,22 @@ See more details in <a class="reference internal" href="../pypose.LieTensor/#pyp
 <li><p><strong>check</strong> (<em>bool</em><em>, </em><em>optional</em>) – flag to check if the input is valid rotation matrices (orthogonal
 and with a determinant of one). Set to <code class="docutils literal notranslate"><span class="pre">False</span></code> if less computation is needed.
 Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – relative tolerance when check is enabled. Default: 1e-05</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – absolute tolerance when check is enabled. Default: 1e-05</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>A rotation matrix is consided illegal if, <span class="math">\(\vert \mathbf{R}\vert\neq1\)</span> or
-<span class="math">\(\mathbf{RR}^{T}\neq \mathbf{I}\)</span>. When <code class="docutils literal notranslate"><span class="pre">check</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, illegal input
-will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, since the function will ouput irrelevant result, likely
-contains <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
+<p>Numerically, a transformation matrix is considered legal if:</p>
+<div class="math">
+\[|{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\
+|\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}
+
+\]</div>
+<p>where <span class="math">\(|\cdot |\)</span> is element-wise absolute function. When <code class="docutils literal notranslate"><span class="pre">check</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+illegal input will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Otherwise, no data validation is performed.
+Illegal input will output an irrelevant result, which likely contains <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

@@ -119,48 +119,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        model (nn.Module): a module containing learnable parameters.</span>
 <span class="sd">        damping (float): Levenberg&#39;s damping factor (non-negative number) to prevent singularity.</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        The (non-negative) damping factor :math:`\lambda` can be adjusted at each iteration. If</span>
-<span class="sd">        reduction of the residual is rapid, a smaller value can be used, bringing the algorithm</span>
-<span class="sd">        closer to the Gauss-Newton algorithm, whereas if an iteration gives insufficient reduction</span>
-<span class="sd">        in the residual, :math:`\lambda` can be increased, giving a step closer to the gradient</span>
-<span class="sd">        descent direction.</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        Different from PyTorch optimizers like</span>
-<span class="sd">        `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the model</span>
-<span class="sd">        loss has to be a scalar, the model output of :obj:`LM` can be a Tensor/LieTensor or a</span>
-<span class="sd">        tuple of Tensors/LieTensors.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        Optimizing a simple module to **approximate pose inversion**.</span>
-
-<span class="sd">        &gt;&gt;&gt; class PoseInv(nn.Module):</span>
-<span class="sd">        ...     def __init__(self, *dim):</span>
-<span class="sd">        ...         super().__init__()</span>
-<span class="sd">        ...         self.pose = pp.Parameter(pp.randn_se3(*dim))</span>
-<span class="sd">        ...</span>
-<span class="sd">        ...     def forward(self, inputs):</span>
-<span class="sd">        ...         return (self.pose.Exp() @ inputs).Log()</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; posnet = PoseInv(2, 2)</span>
-<span class="sd">        &gt;&gt;&gt; inputs, targets = pp.randn_SE3(2, 2), pp.identity_se3(2, 2)</span>
-<span class="sd">        &gt;&gt;&gt; optimizer = pp.optim.LM(posnet, damping=1e-6)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; for idx in range(10):</span>
-<span class="sd">        ...     loss = optimizer.step(inputs, targets)</span>
-<span class="sd">        ...     print(&#39;Pose Inversion loss %.7f @ %d it&#39;%(loss, idx))</span>
-<span class="sd">        ...     if loss &lt; 1e-5:</span>
-<span class="sd">        ...         print(&#39;Early Stoping with loss:&#39;, loss.item())</span>
-<span class="sd">        ...         break</span>
-<span class="sd">        ...</span>
-<span class="sd">        Pose Inversion error 1.1270601 @ 0 it</span>
-<span class="sd">        Pose Inversion error 0.2298058 @ 1 it</span>
-<span class="sd">        Pose Inversion error 0.0203174 @ 2 it</span>
-<span class="sd">        Pose Inversion error 0.0001056 @ 3 it</span>
-<span class="sd">        Pose Inversion error 0.0000001 @ 4 it</span>
-<span class="sd">        Early Stoping with error: 7.761021691976566e-08</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">damping</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
@@ -169,22 +127,71 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">defaults</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LM.step"><a class="viewcode-back" href="../../../../generated/pypose.optim.LM/#pypose.optim.LM.step">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs a single optimization step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            inputs (Tensor/LieTensor or tuple of Tensors/LieTensors): the inputs to the model.</span>
 <span class="sd">            targets (Tensor/LieTensor or tuple of Tensors/LieTensors): the model targets to approximate.</span>
+<span class="sd">                If not given, the model outputs are minimized. Defaults: ``None``.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the minimized model loss, i.e., :math:`\|\bm{y} - \bm{f}(\bm{\theta}, \bm{x})\|^2`.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The (non-negative) damping factor :math:`\lambda` can be adjusted at each iteration. If</span>
+<span class="sd">            reduction of the residual is rapid, a smaller value can be used, bringing the algorithm</span>
+<span class="sd">            closer to the Gauss-Newton algorithm, whereas if an iteration gives insufficient reduction</span>
+<span class="sd">            in the residual, :math:`\lambda` can be increased, giving a step closer to the gradient</span>
+<span class="sd">            descent direction.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Different from PyTorch optimizers like</span>
+<span class="sd">            `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the model</span>
+<span class="sd">            loss has to be a scalar, the model output of :obj:`LM` can be a Tensor/LieTensor or a</span>
+<span class="sd">            tuple of Tensors/LieTensors.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            Optimizing a simple module to **approximate pose inversion**.</span>
+
+<span class="sd">            &gt;&gt;&gt; class PoseInv(nn.Module):</span>
+<span class="sd">            ...     def __init__(self, *dim):</span>
+<span class="sd">            ...         super().__init__()</span>
+<span class="sd">            ...         self.pose = pp.Parameter(pp.randn_se3(*dim))</span>
+<span class="sd">            ...</span>
+<span class="sd">            ...     def forward(self, inputs):</span>
+<span class="sd">            ...         return (self.pose.Exp() @ inputs).Log()</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; posnet = PoseInv(2, 2)</span>
+<span class="sd">            &gt;&gt;&gt; inputs, targets = pp.randn_SE3(2, 2), pp.identity_se3(2, 2)</span>
+<span class="sd">            &gt;&gt;&gt; optimizer = pp.optim.LM(posnet, damping=1e-6)</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; for idx in range(10):</span>
+<span class="sd">            ...     loss = optimizer.step(inputs, targets)</span>
+<span class="sd">            ...     print(&#39;Pose Inversion loss %.7f @ %d it&#39;%(loss, idx))</span>
+<span class="sd">            ...     if loss &lt; 1e-5:</span>
+<span class="sd">            ...         print(&#39;Early Stoping with loss:&#39;, loss.item())</span>
+<span class="sd">            ...         break</span>
+<span class="sd">            ...</span>
+<span class="sd">            Pose Inversion error 1.1270601 @ 0 it</span>
+<span class="sd">            Pose Inversion error 0.2298058 @ 1 it</span>
+<span class="sd">            Pose Inversion error 0.0203174 @ 2 it</span>
+<span class="sd">            Pose Inversion error 0.0001056 @ 3 it</span>
+<span class="sd">            Pose Inversion error 0.0000001 @ 4 it</span>
+<span class="sd">            Early Stoping with error: 7.761021691976566e-08</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">E</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([(</span><span class="n">t</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([(</span><span class="n">t</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="o">-</span><span class="n">o</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="o">-</span><span class="n">outputs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
             <span class="n">numels</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
             <span class="n">J</span> <span class="o">=</span> <span class="n">modjac</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
