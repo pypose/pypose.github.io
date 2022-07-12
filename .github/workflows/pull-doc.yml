@@ -1,0 +1,39 @@
+name: pull-doc-from-circleci
+
+on:
+  repository_dispatch:
+    types: [circle-ci-build]
+
+jobs:
+  pull-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout pypose/pypose.github.io
+        with:
+          path: 'repo'
+          fetch-depth: 0 # per instruction of https://github.com/marketplace/actions/github-push
+          persist-credentials: true
+      - name: Download built documentation
+        run: |
+          export CIRCLE_TOKEN=?circle-token=${{ secrets.CIRCLECI }}
+          export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
+          wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
+          mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
+          # move to docs/pr/<pr number> if is from pr
+          PR_NUM="${{ github.event.client_payload.pr_num }}"
+          [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="master"
+          mkdir -p docs/$DEST_SUFFIX
+          rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
+      - name: Commit files
+        run: |
+          cd repo
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs
+          git commit -m "Add docs from pypose/pypose"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          directory: repo
+          branch: test-pull-doc
