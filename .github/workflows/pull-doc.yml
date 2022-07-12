@@ -23,7 +23,7 @@ jobs:
           # move to docs/pr/<pr number> if is from pr
           PR_NUM="${{ github.event.client_payload.pr_num }}"
           [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="master"
-          mkdir -p docs/$DEST_SUFFIX
+          mkdir -p repo/docs/$DEST_SUFFIX
           rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
       - name: Commit files
         run: |
