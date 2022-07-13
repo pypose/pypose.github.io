@@ -102,14 +102,12 @@ is for optimizing the model parameters to approximate the targets, which can be 
 Tensor/LieTensor or a tuple of Tensors/LieTensors.</p>
 <div class="math">
 \[\bm{\theta}^* = \arg\min_{\bm{\theta}} \sum_i
-    \rho\left(
-        (\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)^T(\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)
-    \right),
+    \rho\left(\|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2\right),
 
 \]</div>
 <p>where <span class="math">\(\bm{f}()\)</span> is the model, <span class="math">\(\bm{\theta}\)</span> is the parameters to be optimized,
-<span class="math">\(\bm{x}\)</span> is the model inputs, and <span class="math">\(\rho\)</span> is a robust kernel function.
-<span class="math">\(\rho(x) = x\)</span> is used in default.</p>
+<span class="math">\(\bm{x}\)</span> is the model inputs, and <span class="math">\(\rho\)</span> is a robust kernel function to reduce
+the effect of outliers. <span class="math">\(\rho(x) = x\)</span> is used by default.</p>
 <div class="math">
 \[\begin{aligned}
      &\rule{113mm}{0.4pt}                                                                 \\
@@ -135,7 +133,7 @@ Tensor/LieTensor or a tuple of Tensors/LieTensors.</p>
 <li><p><strong>model</strong> (<em>nn.Module</em>) – a module containing learnable parameters.</p></li>
 <li><p><strong>solver</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – a linear solver. Available linear solvers include
 <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> and <a class="reference internal" href="../pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ" title="pypose.optim.solver.LSTSQ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.LSTSQ()</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> is used.
-Default: None.</p></li>
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>kernel</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – a robust kernel function. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>corrector</strong> – (nn.Module, optional): a Jacobian and model residual corrector to fit
 the kernel function. If a kernel is given but a corrector is not specified, auto
@@ -155,8 +153,8 @@ can be any shape, while their <strong>last dimension</strong> <span class="math"
 dimension of model residual, whose inner product will be input to the kernel
 function. This is useful for residuals like re-projection error, whose last
 dimension is 2.</p>
-<p>Note that auto correction is equivalent to the method of ‘square-rooting the kernel’
-mentioned in Section 3.3 of the following paper. This replace the
+<p>Note that <strong>auto correction</strong> is equivalent to the method of ‘square-rooting the kernel’
+mentioned in Section 3.3 of the following paper. This replaces the
 <span class="math">\(d\)</span>-dimensional residual with a one-dimensional one, which loses
 residual-level structural information.</p>
 <ul class="simple">
@@ -164,16 +162,17 @@ residual-level structural information.</p>
 Conference on Computer Vision (ECCV), 2014.</p></li>
 </ul>
 <p><strong>Therefore, the users need to keep the last dimension of model output and target to
-1, even if the model residual is a scalar, otherwise the model Jacobian will be a
-row vector, instead of a matrix, which loses sample-level structural information,
-but becomes faster.</strong></p>
+1, even if the model residual is a scalar. If the model output only has one dimension,
+the model Jacobian will be a row vector, instead of a matrix, which loses sample-level
+structural information, although computing Jacobian vector is faster.</strong></p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Instead of solving <span class="math">\(\mathbf{J}^T\mathbf{J}\delta = -\mathbf{J}^T\mathbf{R}\)</span>, we solve
-<span class="math">\(\mathbf{J}\delta = -\mathbf{R}\)</span> via QR-decomposition, which is more numerically
-advisible. Therefore, only solvers with pseudo inversion such as <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> and
-<a class="reference internal" href="../pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ" title="pypose.optim.solver.LSTSQ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.LSTSQ()</span></code></a> are available. More details are in Eq. (5) of the paper:</p>
+<span class="math">\(\mathbf{J}\delta = -\mathbf{R}\)</span> via pseudo inversion, which is more numerically
+advisible. Therefore, only solvers with pseudo inversion (inverting non-square matrices)
+such as <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> and <a class="reference internal" href="../pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ" title="pypose.optim.solver.LSTSQ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.LSTSQ()</span></code></a> are available.
+More details are in Eq. (5) of the paper “<a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-319-10602-1_50">Robust Bundle Adjustment Revisited</a>”.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.optim.GaussNewton.step">
@@ -189,7 +188,7 @@ If not given, the model outputs are minimized. Defaults: <code class="docutils l
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the minimized model loss, i.e.,
-<span class="math">\(\sum_i\rho(\|\bm{y}_i - \bm{f}(\bm{\theta}, \bm{x}_i)\|^2)\)</span>.</p>
+<span class="math">\(\sum_i \rho( \|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2)\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tensor</p>

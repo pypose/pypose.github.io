@@ -139,13 +139,11 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{\theta}^* = \arg\min_{\bm{\theta}} \sum_i </span>
-<span class="sd">            \rho\left(</span>
-<span class="sd">                (\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)^T(\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)</span>
-<span class="sd">            \right),</span>
+<span class="sd">            \rho\left(\|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2\right),</span>
 
 <span class="sd">    where :math:`\bm{f}()` is the model, :math:`\bm{\theta}` is the parameters to be optimized,</span>
-<span class="sd">    :math:`\bm{x}` is the model inputs, and :math:`\rho` is a robust kernel function.</span>
-<span class="sd">    :math:`\rho(x) = x` is used in default.</span>
+<span class="sd">    :math:`\bm{x}` is the model inputs, and :math:`\rho` is a robust kernel function to reduce</span>
+<span class="sd">    the effect of outliers. :math:`\rho(x) = x` is used by default.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">       \begin{aligned}</span>
@@ -169,7 +167,7 @@
 <span class="sd">        model (nn.Module): a module containing learnable parameters.</span>
 <span class="sd">        solver (nn.Module, optional): a linear solver. Available linear solvers include</span>
 <span class="sd">            :meth:`solver.PINV` and :meth:`solver.LSTSQ`. If ``None``, :meth:`solver.PINV` is used.</span>
-<span class="sd">            Default: None.</span>
+<span class="sd">            Default: ``None``.</span>
 <span class="sd">        kernel (nn.Module, optional): a robust kernel function. Default: ``None``.</span>
 <span class="sd">        corrector: (nn.Module, optional): a Jacobian and model residual corrector to fit</span>
 <span class="sd">            the kernel function. If a kernel is given but a corrector is not specified, auto</span>
@@ -190,8 +188,8 @@
 <span class="sd">        function. This is useful for residuals like re-projection error, whose last</span>
 <span class="sd">        dimension is 2.</span>
 
-<span class="sd">        Note that auto correction is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
-<span class="sd">        mentioned in Section 3.3 of the following paper. This replace the</span>
+<span class="sd">        Note that **auto correction** is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
+<span class="sd">        mentioned in Section 3.3 of the following paper. This replaces the</span>
 <span class="sd">        :math:`d`-dimensional residual with a one-dimensional one, which loses</span>
 <span class="sd">        residual-level structural information.</span>
 
@@ -200,15 +198,16 @@
 <span class="sd">          Conference on Computer Vision (ECCV), 2014.</span>
 <span class="sd">        </span>
 <span class="sd">        **Therefore, the users need to keep the last dimension of model output and target to</span>
-<span class="sd">        1, even if the model residual is a scalar, otherwise the model Jacobian will be a</span>
-<span class="sd">        row vector, instead of a matrix, which loses sample-level structural information,</span>
-<span class="sd">        but becomes faster.**</span>
+<span class="sd">        1, even if the model residual is a scalar. If the model output only has one dimension,</span>
+<span class="sd">        the model Jacobian will be a row vector, instead of a matrix, which loses sample-level</span>
+<span class="sd">        structural information, although computing Jacobian vector is faster.**</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Instead of solving :math:`\mathbf{J}^T\mathbf{J}\delta = -\mathbf{J}^T\mathbf{R}`, we solve</span>
-<span class="sd">        :math:`\mathbf{J}\delta = -\mathbf{R}` via QR-decomposition, which is more numerically</span>
-<span class="sd">        advisible. Therefore, only solvers with pseudo inversion such as :meth:`solver.PINV` and</span>
-<span class="sd">        :meth:`solver.LSTSQ` are available. More details are in Eq. (5) of the paper:</span>
+<span class="sd">        :math:`\mathbf{J}\delta = -\mathbf{R}` via pseudo inversion, which is more numerically</span>
+<span class="sd">        advisible. Therefore, only solvers with pseudo inversion (inverting non-square matrices)</span>
+<span class="sd">        such as :meth:`solver.PINV` and :meth:`solver.LSTSQ` are available.</span>
+<span class="sd">        More details are in Eq. (5) of the paper &quot;`Robust Bundle Adjustment Revisited`_&quot;.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{})</span>
@@ -234,7 +233,7 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the minimized model loss, i.e.,</span>
-<span class="sd">            :math:`\sum_i\rho(\|\bm{y}_i - \bm{f}(\bm{\theta}, \bm{x}_i)\|^2)`.</span>
+<span class="sd">            :math:`\sum_i \rho( \|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2)`.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Different from PyTorch optimizers like</span>
@@ -288,20 +287,18 @@
 
 <div class="viewcode-block" id="LevenbergMarquardt"><a class="viewcode-back" href="../../../../generated/pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt">[docs]</a><span class="k">class</span> <span class="nc">LevenbergMarquardt</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    The Levenberg-Marquardt (LM) algorithm, which is also known as the damped least-squares (DLS)</span>
+<span class="sd">    The Levenberg-Marquardt (LM) algorithm, which is also known as the damped least squares (DLS)</span>
 <span class="sd">    method for solving non-linear least squares problems. This implementation is for optimizing the</span>
 <span class="sd">    model parameters to approximate the targets, which can be a Tensor/LieTensor or a tuple of</span>
 <span class="sd">    Tensors/LieTensors.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{\theta}^* = \arg\min_{\bm{\theta}} \sum_i </span>
-<span class="sd">            \rho\left(</span>
-<span class="sd">                (\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)^T(\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)</span>
-<span class="sd">            \right),</span>
+<span class="sd">            \rho\left(\|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2\right),</span>
 
 <span class="sd">    where :math:`\bm{f}()` is the model, :math:`\bm{\theta}` is the parameters to be optimized,</span>
-<span class="sd">    :math:`\bm{x}` is the model inputs, and :math:`\rho` is a robust kernel function.</span>
-<span class="sd">    :math:`\rho(x) = x` is used in default.</span>
+<span class="sd">    :math:`\bm{x}` is the model inputs, and :math:`\rho` is a robust kernel function to reduce</span>
+<span class="sd">    the effect of outliers. :math:`\rho(x) = x` is used by default.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">       \begin{aligned}</span>
@@ -313,8 +310,8 @@
 <span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial \bm{f}}</span>
 <span class="sd">                {\partial \bm{\theta}_{t-1}}}                                                    \\</span>
-<span class="sd">            &amp;\hspace{5mm} \mathbf{A} \leftarrow (\mathbf{J}^T \mathbf{J} </span>
-<span class="sd">                + \lambda \mathrm{diag}(\mathbf{J}^T \mathbf{J})).\mathrm{clamp(min, max)}       \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{A} \leftarrow (\mathbf{J}^T \mathbf{J} + \lambda</span>
+<span class="sd">                \mathrm{diag}(\mathbf{J}^T \mathbf{J})).\mathrm{diagnal\_clamp(min, max)}        \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{R} = \bm{f(\bm{\theta}_{t-1}, \bm{x})} - \bm{y}                \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{R}, \mathbf{J}=\mathrm{corrector}(\rho, \mathbf{R}, \mathbf{J})\\</span>
 <span class="sd">            &amp;\hspace{5mm} \bm{\delta} = \mathrm{solver}(\mathbf{A}, -\mathbf{J}^T\mathbf{R})     \\</span>
@@ -328,14 +325,14 @@
 <span class="sd">        model (nn.Module): a module containing learnable parameters.</span>
 <span class="sd">        damping (float): Levenberg&#39;s damping factor (positive number).</span>
 <span class="sd">        solver (nn.Module, optional): a linear solver. If ``None``, :meth:`solver.Cholesky` is used.</span>
-<span class="sd">            Default: None.</span>
+<span class="sd">            Default: ``None``.</span>
 <span class="sd">        kernel (nn.Module, optional): a robust kernel function. Default: ``None``.</span>
 <span class="sd">        corrector: (nn.Module, optional): a Jacobian and model residual corrector to fit the kernel</span>
 <span class="sd">            function. If a kernel is given but a corrector is not specified, auto correction is</span>
 <span class="sd">            used. Auto correction can be unstable when the robust model has indefinite Hessian.</span>
 <span class="sd">            Default: ``None``.</span>
-<span class="sd">        min (float, optional): the lower-bound of the matrix diagonal to inverse. Default: 1e-6.</span>
-<span class="sd">        max (float, optional): the upper-bound of the matrix diagonal to inverse. Default: 1e32.</span>
+<span class="sd">        min (float, optional): the lower-bound of the Hessian diagonal. Default: 1e-6.</span>
+<span class="sd">        max (float, optional): the upper-bound of the Hessian diagonal. Default: 1e32.</span>
 
 <span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`, :meth:`solver.Cholesky`.</span>
 
@@ -350,7 +347,7 @@
 <span class="sd">        function. This is useful for residuals like re-projection error, whose last</span>
 <span class="sd">        dimension is 2.</span>
 
-<span class="sd">        Note that auto correction is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
+<span class="sd">        Note that **auto correction** is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
 <span class="sd">        mentioned in Section 3.3 of the following paper. This replace the</span>
 <span class="sd">        :math:`d`-dimensional residual with a one-dimensional one, which loses</span>
 <span class="sd">        residual-level structural information.</span>
@@ -360,9 +357,9 @@
 <span class="sd">          Conference on Computer Vision (ECCV), 2014.</span>
 <span class="sd">        </span>
 <span class="sd">        **Therefore, the users need to keep the last dimension of model output and target to</span>
-<span class="sd">        1, even if the model residual is a scalar, otherwise the model Jacobian will be a</span>
-<span class="sd">        row vector, instead of a matrix, which loses sample-level structural information,</span>
-<span class="sd">        but becomes faster.**</span>
+<span class="sd">        1, even if the model residual is a scalar. If the model output only has one dimension,</span>
+<span class="sd">        the model Jacobian will be a row vector, instead of a matrix, which loses sample-level</span>
+<span class="sd">        structural information, although computing Jacobian vector is faster.**</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">damping</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e32</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">damping</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;damping factor has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">damping</span><span class="p">))</span>
@@ -392,13 +389,13 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the minimized model loss, i.e.,</span>
-<span class="sd">            :math:`\sum_i\rho(\|\bm{y}_i - \bm{f}(\bm{\theta}, \bm{x}_i)\|^2)`.</span>
+<span class="sd">            :math:`\sum_i \rho( \|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2)`.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The (non-negative) damping factor :math:`\lambda` can be adjusted at each iteration. If</span>
-<span class="sd">            reduction of the residual is rapid, a smaller value can be used, bringing the algorithm</span>
-<span class="sd">            closer to the Gauss-Newton algorithm, whereas if an iteration gives insufficient reduction</span>
-<span class="sd">            in the residual, :math:`\lambda` can be increased, giving a step closer to the gradient</span>
+<span class="sd">            the residual reduces rapidly, a smaller value can be used, bringing the algorithm</span>
+<span class="sd">            closer to the Gauss-Newton algorithm, whereas if an iteration gives insufficient residual</span>
+<span class="sd">            reduction, :math:`\lambda` can be increased, giving a step closer to the gradient</span>
 <span class="sd">            descent direction.</span>
 
 <span class="sd">            See more details of `Levenberg-Marquardt (LM) algorithm</span>

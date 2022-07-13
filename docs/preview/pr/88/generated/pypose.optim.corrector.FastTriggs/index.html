@@ -115,9 +115,9 @@ model residual and Jacobian, respectively. <span class="math">\(\rho()\)</span> 
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This implementation has a faster and numerically stable solution than <a class="reference internal" href="../pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs" title="pypose.optim.corrector.Triggs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Triggs()</span></code></a>
-due to the removal of 2nd order derivatives, since most kernel functions have negative
-Hessians, which can lead a 2nd order optimizer unstable. It basically aims to solve</p>
+<p>This implementation has a faster and numerically stable solution than <a class="reference internal" href="../pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs" title="pypose.optim.corrector.Triggs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Triggs()</span></code></a>.
+It removes the kernel’s 2nd order derivatives (often negative), which can lead a 2nd
+order optimizer unstable. It basically aims to solve</p>
 <div class="math">
 \[\bm{\theta}^* = \arg\min_{\bm{\theta}} \mathbf{g}(\bm{x})
             = \arg\min_{\bm{\theta}} \sum_i \rho(\mathbf{R}_i^T \mathbf{R}_i),
@@ -127,7 +127,7 @@ Hessians, which can lead a 2nd order optimizer unstable. It basically aims to so
 <span class="math">\(\bm{f}(\bm{\theta}, \bm{x})\)</span> is the model, <span class="math">\(\bm{\theta}\)</span> is the parameters
 to be optimized, <span class="math">\(\bm{x}\)</span> is the model inputs, <span class="math">\(\bm{y}\)</span> is the model targets.
 Considering the 1st order Taylor expansion of the model
-<span class="math">\(\bm{f}(\bm{\theta}+\delta) \approx \bm{f}(\bm{\theta}) + \mathbf{J}_i \bm{\theta}\)</span>.
+<span class="math">\(\bm{f}(\bm{\theta}+\bm{\delta})\approx\bm{f}(\bm{\theta})+\mathbf{J}_i\bm{\delta}\)</span>.
 If we take <span class="math">\(c_i = \mathbf{R}_i^T \mathbf{R}_i\)</span> and set the first derivative of
 <span class="math">\(\mathbf{g}(\bm{\delta})\)</span> to zero, we have</p>
 <div class="math">
@@ -151,8 +151,9 @@ If we take <span class="math">\(c_i = \mathbf{R}_i^T \mathbf{R}_i\)</span> and s
 
 \]</div>
 <p>This gives us the corrected model residual <span class="math">\(\mathbf{R}_i^\rho\)</span> and Jacobian
-<span class="math">\(\mathbf{J}_i^\rho\)</span>, which is the solution to the standard 2nd order optimizers
-such as <a class="reference internal" href="../pypose.optim.GN/#pypose.optim.GN" title="pypose.optim.GN"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.GN()</span></code></a> and <a class="reference internal" href="../pypose.optim.LM/#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.LM()</span></code></a>.</p>
+<span class="math">\(\mathbf{J}_i^\rho\)</span>, which end with the same problem formulation as the
+standard 2nd order optimizers such as <a class="reference internal" href="../pypose.optim.GN/#pypose.optim.GN" title="pypose.optim.GN"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.GN()</span></code></a> and
+<a class="reference internal" href="../pypose.optim.LM/#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.LM()</span></code></a>.</p>
 <div class="math">
 \[\sum_i {\mathbf{J}_i^\rho}^T \mathbf{J}_i^\rho \bm{\delta}
 = - \sum_i {\mathbf{J}_i^\rho}^T \mathbf{R}_i^\rho

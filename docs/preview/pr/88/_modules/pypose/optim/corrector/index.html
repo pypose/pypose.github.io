@@ -98,9 +98,9 @@
 <span class="sd">        kernel (nn.Module): the robust kernel (cost) function.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        This implementation has a faster and numerically stable solution than :meth:`Triggs`</span>
-<span class="sd">        due to the removal of 2nd order derivatives, since most kernel functions have negative</span>
-<span class="sd">        Hessians, which can lead a 2nd order optimizer unstable. It basically aims to solve</span>
+<span class="sd">        This implementation has a faster and numerically stable solution than :meth:`Triggs`.</span>
+<span class="sd">        It removes the kernel&#39;s 2nd order derivatives (often negative), which can lead a 2nd</span>
+<span class="sd">        order optimizer unstable. It basically aims to solve</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \bm{\theta}^* = \arg\min_{\bm{\theta}} \mathbf{g}(\bm{x})</span>
@@ -110,7 +110,7 @@
 <span class="sd">        :math:`\bm{f}(\bm{\theta}, \bm{x})` is the model, :math:`\bm{\theta}` is the parameters</span>
 <span class="sd">        to be optimized, :math:`\bm{x}` is the model inputs, :math:`\bm{y}` is the model targets.</span>
 <span class="sd">        Considering the 1st order Taylor expansion of the model</span>
-<span class="sd">        :math:`\bm{f}(\bm{\theta}+\delta) \approx \bm{f}(\bm{\theta}) + \mathbf{J}_i \bm{\theta}`.</span>
+<span class="sd">        :math:`\bm{f}(\bm{\theta}+\bm{\delta})\approx\bm{f}(\bm{\theta})+\mathbf{J}_i\bm{\delta}`.</span>
 <span class="sd">        If we take :math:`c_i = \mathbf{R}_i^T \mathbf{R}_i` and set the first derivative of</span>
 <span class="sd">        :math:`\mathbf{g}(\bm{\delta})` to zero, we have</span>
 
@@ -134,8 +134,9 @@
 <span class="sd">                \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{R}_i\right)</span>
 
 <span class="sd">        This gives us the corrected model residual :math:`\mathbf{R}_i^\rho` and Jacobian</span>
-<span class="sd">        :math:`\mathbf{J}_i^\rho`, which is the solution to the standard 2nd order optimizers</span>
-<span class="sd">        such as :meth:`pypose.optim.GN` and :meth:`pypose.optim.LM`.</span>
+<span class="sd">        :math:`\mathbf{J}_i^\rho`, which end with the same problem formulation as the</span>
+<span class="sd">        standard 2nd order optimizers such as :meth:`pypose.optim.GN` and</span>
+<span class="sd">        :meth:`pypose.optim.LM`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \sum_i {\mathbf{J}_i^\rho}^T \mathbf{J}_i^\rho \bm{\delta}</span>
@@ -182,7 +183,7 @@
 
 <span class="sd">    :math:`\mathbf{R}_i` and :math:`\mathbf{J}_i` are the :math:`i`-th item of the model</span>
 <span class="sd">    residual and Jacobian, respectively. :math:`\rho()` is the kernel function and</span>
-<span class="sd">    :math:`c_i = \mathbf{R}_i^T\mathbf{R}_i` is the point to compute the gradients.</span>
+<span class="sd">    :math:`c_i = \mathbf{R}_i^T\mathbf{R}_i` is the evaluation point.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kernel (nn.Module): the robust kernel (cost) function.</span>
@@ -197,7 +198,7 @@
 <span class="sd">    Warning:</span>
 
 <span class="sd">        The :meth:`FastTriggs` corrector is preferred when the kernel function has a</span>
-<span class="sd">        negative Hessian.</span>
+<span class="sd">        negative 2nd order derivative.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
