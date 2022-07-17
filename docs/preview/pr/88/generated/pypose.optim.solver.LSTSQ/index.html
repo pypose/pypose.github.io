@@ -109,8 +109,8 @@
 \[\bm{x}_i = \mathrm{lstsq}(\mathbf{A}_i, \mathbf{b}_i),
 
 \]</div>
-<p>where <span class="math">\(\mathrm{lstsq}()\)</span> is the function for directly calculating the matrix multiplication
-of <span class="math">\(\mathbf{b}_i\)</span> with the pseudo inversion of <span class="math">\(\mathbf{A}_i\)</span>.</p>
+<p>where <span class="math">\(\mathrm{lstsq}()\)</span> computes a solution to the least squares problem
+of a system of linear equations. More details go to <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.linalg.lstsq.html">torch.linalg.lstsq</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -149,19 +149,21 @@ mind some precision loss.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This solver is faster and more numerically stable than <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PINV()</span></code></a>. More details go to
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.linalg.lstsq.html">torch.linalg.lstsq</a>.</p>
+<p>This solver is faster and more numerically stable than <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PINV()</span></code></a>.</p>
 <p>It is also preferred to use <a class="reference internal" href="../pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky" title="pypose.optim.solver.Cholesky"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Cholesky()</span></code></a> if the matrix <span class="math">\(\mathbf{A}\)</span> is guaranteed
-to be positive definite.</p>
+to be a complex Hermitian or a real symmetric positive-definite matrix.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ps</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">LSTSQ</span><span class="p">(</span><span class="n">driver</span><span class="o">=</span><span class="s1">&#39;gels&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">LSTSQ</span><span class="p">(</span><span class="n">driver</span><span class="o">=</span><span class="s1">&#39;gels&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-<span class="go">tensor([[ 1.8572],</span>
-<span class="go">        [-1.4063],</span>
-<span class="go">        [-0.7925]])</span>
+<span class="go">tensor([[[ 0.9997],</span>
+<span class="go">         [-1.3288],</span>
+<span class="go">         [-1.6327]],</span>
+<span class="go">        [[ 3.1639],</span>
+<span class="go">         [-0.5379],</span>
+<span class="go">         [-1.2872]]])</span>
 </pre></div>
 </div>
 <dl class="py method">
