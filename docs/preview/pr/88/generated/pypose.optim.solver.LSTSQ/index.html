@@ -114,17 +114,19 @@ of a system of linear equations. More details go to <a class="reference external
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rcond</strong> (<em>float</em><em>, </em><em>optional</em>) – used to determine the effective rank of <span class="math">\(\mathbf{A}\)</span>. It is
-used only when the fast model is enabled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, rcond is set to the machine
-precision of the dtype of <span class="math">\(\mathbf{A}\)</span>. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>rcond</strong> (<em>float</em><em>, </em><em>optional</em>) – Cut-off ratio for small singular values. For the purposes of
+rank determination, singular values are treated as zero if they are smaller than
+rcond times the largest singular value. It is used only when the fast model is
+enabled. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, rcond is set to the machine precision of the dtype of
+<span class="math">\(\mathbf{A}\)</span>. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>driver</strong> (<em>string</em><em>, </em><em>optional</em>) – <p>chooses the LAPACK/MAGMA function that will be used. It is
 used only when the fast model is enabled. For CPU users, the valid values are <code class="docutils literal notranslate"><span class="pre">gels</span></code>,
 <code class="docutils literal notranslate"><span class="pre">gelsy</span></code>, <code class="docutils literal notranslate"><span class="pre">gelsd</span></code>, <code class="docutils literal notranslate"><span class="pre">gelss</span></code>. For CUDA users, the only valid driver is <code class="docutils literal notranslate"><span class="pre">gels</span></code>,
-which assumes that <span class="math">\(\mathbf{A}\)</span> is full-rank. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">gelsy</span></code> is used for
-CPU inputs and <code class="docutils literal notranslate"><span class="pre">gels</span></code> for CUDA inputs. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+which assumes that input matrices (<span class="math">\(\mathbf{A}\)</span>) are full-rank. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gelsy</span></code> is used for CPU inputs and <code class="docutils literal notranslate"><span class="pre">gels</span></code> for CUDA inputs. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.
 To choose the best driver on CPU consider:</p>
 <ul>
-<li><p>If <span class="math">\(\mathbf{A}\)</span> is well-conditioned (its <a class="reference external" href="https://en.wikipedia.org/wiki/Condition_number">condition number</a> is not too large), or you do not
+<li><p>If input matrices (<span class="math">\(\mathbf{A}\)</span>) are well-conditioned (<a class="reference external" href="https://en.wikipedia.org/wiki/Condition_number">condition number</a> is not too large), or you do not
 mind some precision loss.</p>
 <blockquote>
 <div><ul class="simple">
@@ -133,7 +135,7 @@ mind some precision loss.</p>
 </ul>
 </div></blockquote>
 </li>
-<li><p>If <span class="math">\(\mathbf{A}\)</span> is not well-conditioned.</p>
+<li><p>If input matrices (<span class="math">\(\mathbf{A}\)</span>) are not well-conditioned.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gelsd</span></code> (tridiagonal reduction and SVD)</p></li>
@@ -150,11 +152,11 @@ mind some precision loss.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This solver is faster and more numerically stable than <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PINV()</span></code></a>.</p>
-<p>It is also preferred to use <a class="reference internal" href="../pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky" title="pypose.optim.solver.Cholesky"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Cholesky()</span></code></a> if the matrix <span class="math">\(\mathbf{A}\)</span> is guaranteed
-to be a complex Hermitian or a real symmetric positive-definite matrix.</p>
+<p>It is also preferred to use <a class="reference internal" href="../pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky" title="pypose.optim.solver.Cholesky"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Cholesky()</span></code></a> if input matrices (<span class="math">\(\mathbf{A}\)</span>)
+are guaranteed to complex Hermitian or real symmetric positive-definite.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">LSTSQ</span><span class="p">(</span><span class="n">driver</span><span class="o">=</span><span class="s1">&#39;gels&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
