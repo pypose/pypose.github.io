@@ -1,8 +1,8 @@
-# pytorch.org site
+# pypose.org site
 
-[https://pytorch.org](https://pytorch.org)
+[https://pypose.org](https://pypose.org)
 
-A static website built in [Jekyll](https://jekyllrb.com/) and [Bootstrap](https://getbootstrap.com/) for [PyTorch](https://pytorch.org/), and its tutorials and documentation.
+A static website built in [Jekyll](https://jekyllrb.com/) and [Bootstrap](https://getbootstrap.com/) for [PyPose](https://pypose.org/), and its tutorials and documentation.
 
 ## Prerequisites
 
@@ -73,15 +73,15 @@ This will build the static site at `./_site`. This directory is not tracked in g
 
 ## Deployments
 
-The website is hosted on [Github Pages](https://pages.github.com/) at [https://pytorch.org](https://pytorch.org).
+The website is hosted on [Github Pages](https://pages.github.com/) at [https://pypose.org](https://pypose.org).
 
-To deploy changes, merge your latest code into the `site` branch. A build will be automatically built and committed to the `master` branch via a CircleCI job.
+To deploy changes, merge your latest code into the `site` branch. A build will be automatically built and committed to the `gh-pages` branch via a CircleCI job.
 
-To view the status of the build visit [https://circleci.com/gh/pytorch/pytorch.github.io](https://circleci.com/gh/pytorch/pytorch.github.io).
+To view the status of the build visit [https://github.com/pypose/pypose.github.io/actions](https://github.com/pypose/pypose.github.io/actions).
 
-## Contributing to PyTorch Documentation and Tutorials
-* You can find information about contributing to PyTorch documentation in the 
-PyTorch repo [README.md](https://github.com/pytorch/pytorch/blob/master/README.md) file. 
-* Information about contributing to PyTorch Tutorials can be found in the 
-tutorials [README.md](https://github.com/pytorch/tutorials/blob/master/README.md).
-* Additional contribution information can be found in [PyTorch CONTRIBUTING.md](https://github.com/pytorch/pytorch/blob/master/CONTRIBUTING.md).
+## Contributing to PyPose Documentation and Tutorials
+* You can find information about contributing to PyPose documentation in the 
+PyPose repo [README.md](https://github.com/pypose/pypose/blob/main/README.md) file. 
+* Information about contributing to PyPose Tutorials can be found in the 
+tutorials [README.md](https://github.com/pypose/tutorials/blob/main/README.md).
+* Additional contribution information can be found in [PyPose CONTRIBUTING.md](https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md).
