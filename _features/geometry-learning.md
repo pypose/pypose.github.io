@@ -1,5 +1,5 @@
 ---
-title: Geometry and Learning-based SLAM
+title: Geometric Learning
 order: 10
 snippet: >
   ```sh
@@ -13,9 +13,7 @@ snippet: >
       --image-project=deeplearning-platform-release
   ```
 
-summary-home: Can combine geometry-based methods such as factor graph optimization with learning-based methods.
+summary-home: Can combine geometry-based methods such as bundle adjustments and factor graph optimization with learning-based methods such as feature extraction and loop closure detection.
 featured-home: true
 
 ---
-
-PyPose allows for combining geometry-based methods such as bundle adjustments and factor graph optimization with learning-based methods such as feature extraction and loop closure detection.

@@ -17,5 +17,3 @@ summary-home: PyPose is built upon the PyTorch library with deep integrations wi
 featured-home: true
 
 ---
-
-fdaf
