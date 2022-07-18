@@ -1,5 +1,5 @@
 ---
-title: Diverse Applications
+title: Robotics-Oriented
 order: 9
 snippet: >
   ```cpp
@@ -18,8 +18,6 @@ snippet: >
       }
     }
   ```
-summary-home: Can be applied to VIO, stereo VO, multiple view VO, LiDAR, etc.
+summary-home: Designed for robotic applications including SLAM (VIO, stereo VO, multiple view VO, LiDAR), Control (MPC), and Planning.
 featured-home: true
 ---
-
-dfa
