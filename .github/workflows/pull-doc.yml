@@ -22,7 +22,7 @@ jobs:
           mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
           # move to docs/pr/<pr number> if is from pr
           PR_NUM="${{ github.event.client_payload.pr_num }}"
-          [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="master"
+          [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="main"
           mkdir -p repo/docs/$DEST_SUFFIX
           rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
       - name: Commit files
@@ -36,4 +36,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           directory: repo
-          branch: master
+          branch: main
