@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.optim.optimizer &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../../../_static/katex_autorenderer.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../">Module code</a> &raquo;</li>
+      <li>pypose.optim.optimizer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pypose.optim.optimizer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">.jacobian</span> <span class="kn">import</span> <span class="n">modjac</span>
+<span class="kn">from</span> <span class="nn">..lietensor</span> <span class="kn">import</span> <span class="n">LieTensor</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span>
+
+
+<div class="viewcode-block" id="LM"><a class="viewcode-back" href="../../../../generated/pypose.optim.LM/#pypose.optim.LM">[docs]</a><span class="k">class</span> <span class="nc">LM</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The `Levenberg-Marquardt (LM) algorithm</span>
+<span class="sd">    &lt;https://en.wikipedia.org/wiki/Levenberg-Marquardt_algorithm&gt;`_, which is also known as the</span>
+<span class="sd">    damped least-squares (DLS) method for solving non-linear least squares problems. This</span>
+<span class="sd">    implementation is for optimizing the model parameters to approximate the targets, which can</span>
+<span class="sd">    be a Tensor/LieTensor or a tuple of Tensors/LieTensors.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{\theta}^* = \arg\min_{\bm{\theta}}\sum_i \|\bm{y}_i - \bm{f}(\bm{\theta}, \bm{x}_i)\|^2,</span>
+
+<span class="sd">    where :math:`\bm{f}(\bm{\theta}, \bm{x})` is the model, :math:`\bm{\theta}` is the parameters</span>
+<span class="sd">    to be optimized, and :math:`\bm{x}` is the model inputs.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">       \begin{aligned}</span>
+<span class="sd">            &amp;\rule{113mm}{0.4pt}                                                                 \\</span>
+<span class="sd">            &amp;\textbf{input}: \lambda \geq 0~\text{(damping)}, \bm{\theta}_0~\text{(params)},</span>
+<span class="sd">                \bm{f}~\text{(model)}, \bm{x}~(\text{inputs}), \bm{y}~(\text{targets})           \\</span>
+<span class="sd">            &amp;\rule{113mm}{0.4pt}                                                                 \\</span>
+<span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial \bm{f}}</span>
+<span class="sd">                {\partial \bm{\theta}_{t-1}}}                                                    \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{A} \leftarrow \mathbf{J}^T \mathbf{J} + \lambda \mathbf{I}     \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{E} = \bm{y} - \bm{f(\bm{\theta}_{t-1}, \bm{x})}                \\</span>
+<span class="sd">            &amp;\hspace{5mm} \textbf{try}                                                           \\</span>
+<span class="sd">            &amp;\hspace{10mm} \mathbf{L} = \mathrm{cholesky\_decomposition}(\mathbf{A})             \\</span>
+<span class="sd">            &amp;\hspace{10mm} \bm{\delta}=\mathrm{cholesky\_solve}(\mathbf{J}^T \mathbf{E}, \bm{L}) \\</span>
+<span class="sd">            &amp;\hspace{5mm} \textbf{except}                                                        \\</span>
+<span class="sd">            &amp;\hspace{10mm} \bm{\delta}=\mathrm{pseudo\_inverse}(\mathbf{A})\mathbf{J}^T\mathbf{E}\\</span>
+<span class="sd">            &amp;\hspace{5mm} \bm{\theta}_t \leftarrow \bm{\theta}_{t-1} + \bm{\delta}               \\</span>
+<span class="sd">            &amp;\rule{113mm}{0.4pt}                                                          \\[-1.ex]</span>
+<span class="sd">            &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]</span>
+<span class="sd">            &amp;\rule{113mm}{0.4pt}                                                          \\[-1.ex]</span>
+<span class="sd">       \end{aligned}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (nn.Module): a module containing learnable parameters.</span>
+<span class="sd">        damping (float): Levenberg&#39;s damping factor (non-negative number) to prevent singularity.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">damping</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="k">assert</span> <span class="n">damping</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid damping factor: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">damping</span><span class="p">))</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">damping</span><span class="o">=</span><span class="n">damping</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">defaults</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LM.step"><a class="viewcode-back" href="../../../../generated/pypose.optim.LM/#pypose.optim.LM.step">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Performs a single optimization step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs (Tensor/LieTensor or tuple of Tensors/LieTensors): the inputs to the model.</span>
+<span class="sd">            targets (Tensor/LieTensor or tuple of Tensors/LieTensors): the model targets to approximate.</span>
+<span class="sd">                If not given, the model outputs are minimized. Defaults: ``None``.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the minimized model loss, i.e., :math:`\|\bm{y} - \bm{f}(\bm{\theta}, \bm{x})\|^2`.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The (non-negative) damping factor :math:`\lambda` can be adjusted at each iteration. If</span>
+<span class="sd">            reduction of the residual is rapid, a smaller value can be used, bringing the algorithm</span>
+<span class="sd">            closer to the Gauss-Newton algorithm, whereas if an iteration gives insufficient reduction</span>
+<span class="sd">            in the residual, :math:`\lambda` can be increased, giving a step closer to the gradient</span>
+<span class="sd">            descent direction.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Different from PyTorch optimizers like</span>
+<span class="sd">            `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the model</span>
+<span class="sd">            loss has to be a scalar, the model output of :obj:`LM` can be a Tensor/LieTensor or a</span>
+<span class="sd">            tuple of Tensors/LieTensors.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            Optimizing a simple module to **approximate pose inversion**.</span>
+
+<span class="sd">            &gt;&gt;&gt; class PoseInv(nn.Module):</span>
+<span class="sd">            ...     def __init__(self, *dim):</span>
+<span class="sd">            ...         super().__init__()</span>
+<span class="sd">            ...         self.pose = pp.Parameter(pp.randn_se3(*dim))</span>
+<span class="sd">            ...</span>
+<span class="sd">            ...     def forward(self, inputs):</span>
+<span class="sd">            ...         return (self.pose.Exp() @ inputs).Log()</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; posnet = PoseInv(2, 2)</span>
+<span class="sd">            &gt;&gt;&gt; inputs, targets = pp.randn_SE3(2, 2), pp.identity_se3(2, 2)</span>
+<span class="sd">            &gt;&gt;&gt; optimizer = pp.optim.LM(posnet, damping=1e-6)</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; for idx in range(10):</span>
+<span class="sd">            ...     loss = optimizer.step(inputs, targets)</span>
+<span class="sd">            ...     print(&#39;Pose Inversion loss %.7f @ %d it&#39;%(loss, idx))</span>
+<span class="sd">            ...     if loss &lt; 1e-5:</span>
+<span class="sd">            ...         print(&#39;Early Stoping with loss:&#39;, loss.item())</span>
+<span class="sd">            ...         break</span>
+<span class="sd">            ...</span>
+<span class="sd">            Pose Inversion error 1.1270601 @ 0 it</span>
+<span class="sd">            Pose Inversion error 0.2298058 @ 1 it</span>
+<span class="sd">            Pose Inversion error 0.0203174 @ 2 it</span>
+<span class="sd">            Pose Inversion error 0.0001056 @ 3 it</span>
+<span class="sd">            Pose Inversion error 0.0000001 @ 4 it</span>
+<span class="sd">            Early Stoping with error: 7.761021691976566e-08</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([(</span><span class="n">t</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="o">-</span><span class="n">o</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">E</span> <span class="o">=</span> <span class="o">-</span><span class="n">outputs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="n">numels</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">modjac</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">J</span><span class="p">)</span><span class="o">.</span><span class="n">diagonal_scatter</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;damping&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">J</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># Faster but sometimes singular error</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">E</span><span class="p">)</span><span class="o">.</span><span class="n">cholesky_solve</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span> <span class="c1"># Slower but singular is fine</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Using pseudo inverse due to singular matrix.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">pinverse</span><span class="p">()</span> <span class="o">@</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">E</span><span class="p">)</span>
+            <span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">numels</span><span class="p">)</span>
+            <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">D</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">E</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
