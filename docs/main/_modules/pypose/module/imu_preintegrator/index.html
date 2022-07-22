@@ -84,17 +84,17 @@
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pos (torch.Tensor, optional): initial postion. Default: torch.zeros(3)</span>
+<span class="sd">        pos (torch.Tensor, optional): initial position. Default: torch.zeros(3)</span>
 <span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`</span>
-<span class="sd">        vel (torch.Tensor, optional): initial postion. Default: torch.zeros(3)</span>
+<span class="sd">        vel (torch.Tensor, optional): initial position. Default: torch.zeros(3)</span>
 <span class="sd">        gravity (float, optional): the gravity acceleration. Default: 9.81007</span>
 <span class="sd">        gyro_cov (float, optional): covariance of the gyroscope. Default: (1.6968e-4)**2</span>
 <span class="sd">        acc_cov (float, optional): covariance of the accelerator. Default: (2e-3)**2</span>
-<span class="sd">        prop_cov (Bool, optional): flag to propogate the covariance matrix. Default: :obj:`True`</span>
+<span class="sd">        prop_cov (Bool, optional): flag to propagate the covariance matrix. Default: :obj:`True`</span>
 <span class="sd">        reset (Bool, optional): flag to reset the initial states after each time the :obj:`forward`</span>
 <span class="sd">            function is called. If False, the IMU integrator will use the states from last time</span>
 <span class="sd">            as the initial states. Note that if the :obj:`init_state` is not :obj:`None` while calling </span>
-<span class="sd">            the :obj:`forward` function, the integrator will use the given inital state Default: :obj:`False`.</span>
+<span class="sd">            the :obj:`forward` function, the integrator will use the given initial state Default: :obj:`False`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(),</span>
@@ -207,7 +207,7 @@
 <span class="sd">                \end{bmatrix},</span>
 
 <span class="sd">        where :math:`\cdot^\wedge` is the skew matrix (:meth:`pypose.vec2skew`),</span>
-<span class="sd">        :math:`C \in\mathbf{R}^{9\times 9}` is the covarience matrix,</span>
+<span class="sd">        :math:`C \in\mathbf{R}^{9\times 9}` is the covariance matrix,</span>
 <span class="sd">        and :math:`J_r^k` is the right jacobian (:meth:`pypose.Jr`) of integrated rotation</span>
 <span class="sd">        :math:`\mathrm{Exp}(w_k{\Delta}t)` at :math:`k`-th time step,</span>
 <span class="sd">        :math:`C_{g}` and :math:`C_{\mathbf{a}}` are measurement covariance of angular rate</span>
@@ -236,7 +236,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            The implementation is based on Eq. (A7), (A8), (A9), and (A10) of this report:</span>
 
-<span class="sd">            * Christian Forster, et al., `IMU Preintegration on Manifold for Ecient Visual-Inertial</span>
+<span class="sd">            * Christian Forster, et al., `IMU Preintegration on Manifold for Efficient Visual-Inertial</span>
 <span class="sd">              Maximum-a-Posteriori Estimation</span>
 <span class="sd">              &lt;https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf&gt;`_, Technical Report</span>
 <span class="sd">              GT-IRIM-CP&amp;R-2015-001, 2015.</span>

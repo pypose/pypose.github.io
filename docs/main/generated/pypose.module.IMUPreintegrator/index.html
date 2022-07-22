@@ -89,23 +89,23 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial postion. Default: torch.zeros(3)</p></li>
+<li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3)</p></li>
 <li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a></p></li>
-<li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial postion. Default: torch.zeros(3)</p></li>
+<li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3)</p></li>
 <li><p><strong>gravity</strong> (<em>float</em><em>, </em><em>optional</em>) – the gravity acceleration. Default: 9.81007</p></li>
 <li><p><strong>gyro_cov</strong> (<em>float</em><em>, </em><em>optional</em>) – covariance of the gyroscope. Default: (1.6968e-4)**2</p></li>
 <li><p><strong>acc_cov</strong> (<em>float</em><em>, </em><em>optional</em>) – covariance of the accelerator. Default: (2e-3)**2</p></li>
-<li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propogate the covariance matrix. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propagate the covariance matrix. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></p></li>
 <li><p><strong>reset</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to reset the initial states after each time the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
 function is called. If False, the IMU integrator will use the states from last time
 as the initial states. Note that if the <code class="xref py py-obj docutils literal notranslate"><span class="pre">init_state</span></code> is not <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> while calling
-the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> function, the integrator will use the given inital state Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> function, the integrator will use the given initial state Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f0b6c9d9550&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7efd2127c520&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Propagate IMU states from duration (<span class="math">\(\delta t\)</span>), gyroscope (angular rate <span class="math">\(\omega\)</span>),
 linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame, as well as their measurement
 covariance for gyroscope <span class="math">\(C_{g}\)</span> and acceleration <span class="math">\(C_{\mathbf{a}}\)</span>.
@@ -191,7 +191,7 @@ B_a = \begin{bmatrix}
         1/2 {\Delta}R_{ik} {\Delta}t^2
     \end{bmatrix},\]</div>
 <p>where <span class="math">\(\cdot^\wedge\)</span> is the skew matrix (<a class="reference internal" href="../pypose.vec2skew/#pypose.vec2skew" title="pypose.vec2skew"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.vec2skew()</span></code></a>),
-<span class="math">\(C \in\mathbf{R}^{9\times 9}\)</span> is the covarience matrix,
+<span class="math">\(C \in\mathbf{R}^{9\times 9}\)</span> is the covariance matrix,
 and <span class="math">\(J_r^k\)</span> is the right jacobian (<a class="reference internal" href="../pypose.Jr/#pypose.Jr" title="pypose.Jr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Jr()</span></code></a>) of integrated rotation
 <span class="math">\(\mathrm{Exp}(w_k{\Delta}t)\)</span> at <span class="math">\(k\)</span>-th time step,
 <span class="math">\(C_{g}\)</span> and <span class="math">\(C_{\mathbf{a}}\)</span> are measurement covariance of angular rate
@@ -223,7 +223,7 @@ are used if <code class="xref py py-obj docutils literal notranslate"><span clas
 <p class="admonition-title">Note</p>
 <p>The implementation is based on Eq. (A7), (A8), (A9), and (A10) of this report:</p>
 <ul class="simple">
-<li><p>Christian Forster, et al., <a class="reference external" href="https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf">IMU Preintegration on Manifold for Ecient Visual-Inertial
+<li><p>Christian Forster, et al., <a class="reference external" href="https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf">IMU Preintegration on Manifold for Efficient Visual-Inertial
 Maximum-a-Posteriori Estimation</a>, Technical Report
 GT-IRIM-CP&amp;R-2015-001, 2015.</p></li>
 </ul>

@@ -124,7 +124,7 @@
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;Internally, SO3 LieTensors are stored as unit quaternions:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [q_x, q_y, q_z, q_w]</span>
+<span class="sd">        \mathrm{data}[*, :] = [q_x, q_y, q_z, q_w],</span>
 
 <span class="sd">    where :math:`q_x^2 + q_y^2 + q_z^2 + q_w^2 = 1`.</span>
 <span class="sd">    </span>
@@ -149,7 +149,7 @@
 <span class="sd">    `axis-angle &lt;https://en.wikipedia.org/wiki/Axis-angle_representation&gt;`_ format:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z]</span>
+<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z],</span>
 
 <span class="sd">    with :math:`\delta = \begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T`</span>
 <span class="sd">    being the axis of rotation and :math:`\theta = \|{\delta}\|` being the angle.</span>
@@ -169,7 +169,7 @@
 <span class="sd">    representing the rotation with a vector representing the translation.</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w]</span>
+<span class="sd">        \mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w],</span>
 
 <span class="sd">    where :math:`\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T \in \mathbb{R}^3` is</span>
 <span class="sd">    the translation and</span>
@@ -187,16 +187,18 @@
 <span class="sd">    &#39;&#39;&#39;</span><span class="p">)</span>
 
 <span class="n">se3</span> <span class="o">=</span> <span class="n">_LieTensor_wrapper_add_docstr</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">se3_type</span><span class="p">),</span>
-    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;Internally, se3 LieTensors are stored by concatenating the axis-angle</span>
-<span class="sd">    representation of the rotation with the &quot;velocity&quot; vector:</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;Internally, se3 LieTensors are stored by concatenating the &quot;velocity&quot; vector</span>
+<span class="sd">    with the axis-angle representation of the rotation:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log t_x, \log t_y, \log t_z]</span>
+<span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z],</span>
 
-<span class="sd">    where :math:`\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T`</span>
-<span class="sd">    is the axis-angle vector as in :obj:`pypose.so3`, and</span>
-<span class="sd">    :math:`\begin{pmatrix} \log t_x &amp; \log t_y &amp; \log t_z \end{pmatrix}^T`</span>
-<span class="sd">    is the element-wise logarithm of the translation vector from :obj:`pypose.SE3`.</span>
+<span class="sd">    where :math:`\begin{pmatrix} \tau_x &amp; \tau_y &amp; \tau_z \end{pmatrix}^T =</span>
+<span class="sd">    \mathbf{J}^{-1} \begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T` is the product</span>
+<span class="sd">    between the left Jacobian inverse (of SO3&#39;s logarithm map) and the translation</span>
+<span class="sd">    vector, and :math:`\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T`</span>
+<span class="sd">    is the axis-angle vector as in :obj:`pypose.so3`.</span>
+<span class="sd">    More details go to :meth:`pypose.Log` with :obj:`SE3_type` input.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; pp.se3(torch.randn(2, 6))</span>
@@ -213,7 +215,7 @@
 <span class="sd">    representing the rotation with a scaling factor:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [q_x, q_y, q_z, q_w, s]</span>
+<span class="sd">        \mathrm{data}[*, :] = [q_x, q_y, q_z, q_w, s],</span>
 
 <span class="sd">    where :math:`\begin{pmatrix} q_x &amp; q_y &amp; q_z &amp; q_w \end{pmatrix}^T`</span>
 <span class="sd">    is the unit quaternion as in :obj:`pypose.SO3` and</span>
@@ -234,7 +236,7 @@
 <span class="sd">    representation of the rotation with the log scale:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log s]</span>
+<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log s],</span>
 
 <span class="sd">    where :math:`\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T`</span>
 <span class="sd">    is the axis-angle vector in :obj:`pypose.so3`, and</span>
@@ -255,7 +257,7 @@
 <span class="sd">    vector with an RxSO3:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w, s]</span>
+<span class="sd">        \mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w, s],</span>
 
 <span class="sd">    where :math:`\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T \in \mathbb{R}^3`</span>
 <span class="sd">    is the translation vector and</span>
@@ -278,12 +280,15 @@
 <span class="sd">    vector with the corresponding rxso3:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [\log t_x, \log t_y, \log t_z, \delta_x, \delta_y, \delta_z, \log s]</span>
+<span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],</span>
 
-<span class="sd">    where :math:`\begin{pmatrix} \log t_x &amp; \log t_y &amp; \log t_z \end{pmatrix}^T`</span>
-<span class="sd">    is the log translation vector as in :obj:`pypose.se3`, and</span>
+<span class="sd">    where :math:`\begin{pmatrix} \tau_x &amp; \tau_y &amp; \tau_z \end{pmatrix}^T = \mathbf{W}^{-1}</span>
+<span class="sd">    \begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T` is the product between the</span>
+<span class="sd">    inverse of the :math:`\mathbf{W}`-matrix and the translation vector, and</span>
 <span class="sd">    :math:`\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z &amp; \log s \end{pmatrix}^T`</span>
 <span class="sd">    represents the rotation and scaling, as in :obj:`pypose.rxso3`.</span>
+<span class="sd">    More details about :math:`\mathbf{W}`-matrix go to :meth:`pypose.Log` with</span>
+<span class="sd">    :obj:`Sim3_type` input.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; pp.Sim3(torch.randn(2, 7))</span>

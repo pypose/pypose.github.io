@@ -144,9 +144,12 @@ than the shape of the corresponding Lie Algebra of the input.</p></li>
 and <span class="math">\(\bm{y}\)</span> is the output LieTensor.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">other</span></code> Tensor is treated as a Lie Algebra during computation. The elements beyond
-the corresponding shape of a Lie Algebra in the last dimension are ignored. This is
-because the gradient of a Lie Group is computed as the perturbation in its tangent space:</p>
+<p>A Lie Group normally requires a larger space than its corresponding Lie Algebra, thus
+the elements in the last dimension of the <code class="docutils literal notranslate"><span class="pre">other</span></code> Tensor (treated as a Lie Algebra
+in this function) beyond the expected shape of the Lie Algebra are ignored. This is
+because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)
+in its tangent space and is stored in the LieGroup’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor.grad</span></code>, which has
+the same storage space with the LieGroup.</p>
 <div class="math">
 \[\begin{align*}
     \frac{D f(\mathcal{X})}{D \mathcal{X}} & \overset{\underset{\mathrm{def}}{}}{=}
@@ -168,6 +171,7 @@ smaller storage space).</p>
 <p>See <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LieTensor()</span></code></a> for types of Lie Algebra and Lie Group.</p>
 <p>See <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exp()</span></code></a> for Exponential mapping of Lie Algebra.</p>
 <p class="rubric">Examples</p>
+<p>The following operations are equivalent.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span>
