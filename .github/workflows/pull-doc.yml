@@ -16,7 +16,7 @@ jobs:
           persist-credentials: true
       - name: Download built documentation
         run: |
-          export CIRCLE_TOKEN=?circle-token=${{ secrets.CIRCLECI }}
+          export CIRCLE_TOKEN=?circle-token=${{ secrets.BOT_CIRCLECI_PAT }}
           export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
           wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
           mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
@@ -28,8 +28,8 @@ jobs:
       - name: Commit files
         run: |
           cd repo
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "pypose.org@gmail.com"
+          git config --local user.name "pyposebot"
           git add docs
           git commit -m "Add docs from pypose/pypose"
       - name: Push changes
@@ -37,4 +37,4 @@ jobs:
         with:
           directory: repo
           branch: main
-          github_token: ${{ secrets.JEKYLL_PAT }}
+          github_token: ${{ secrets.BOT_GH_PAT }}
