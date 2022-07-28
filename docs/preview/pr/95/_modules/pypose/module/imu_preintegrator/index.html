@@ -88,8 +88,10 @@
 <span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`</span>
 <span class="sd">        vel (torch.Tensor, optional): initial postion. Default: torch.zeros(3)</span>
 <span class="sd">        gravity (float, optional): the gravity acceleration. Default: 9.81007</span>
-<span class="sd">        gyro_cov (float, optional): covariance of the gyroscope. Default: (1.6968e-4)**2</span>
-<span class="sd">        acc_cov (float, optional): covariance of the accelerator. Default: (2e-3)**2</span>
+<span class="sd">        gyro_cov: covariance of the gyroscope. If the covaraince of the x, y and z axises are different, </span>
+<span class="sd">            the :obj:`gyro_cov` use the form :code:`torch.Tensor(gyro_cov_x, gyro_cov_y, gyro_cov_z)`. Default: (3.2e-3)**2</span>
+<span class="sd">        acc_cov: covariance of the accelerator. If the covaraince of the x, y and z axises are different, </span>
+<span class="sd">            the :obj:`acc_cov` use the form :code:`torch.Tensor(acc_cov_x, acc_cov_y, acc_cov_z)`. Default: (8e-2)**2</span>
 <span class="sd">        prop_cov (Bool, optional): flag to propogate the covariance matrix. Default: :obj:`True`</span>
 <span class="sd">        reset (Bool, optional): flag to reset the initial states after each time the :obj:`forward`</span>
 <span class="sd">            function is called. If False, the IMU integrator will use the states from last time</span>
@@ -100,20 +102,26 @@
                        <span class="n">rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(),</span>
                        <span class="n">vel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">gravity</span> <span class="o">=</span> <span class="mf">9.81007</span><span class="p">,</span>
-                       <span class="n">gyro_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.6968e-4</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
-                       <span class="n">acc_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2e-3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">gyro_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.2e-3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">acc_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8e-2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
                        <span class="n">prop_cov</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                        <span class="n">reset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_cov</span> <span class="o">=</span> <span class="n">reset</span><span class="p">,</span> <span class="n">prop_cov</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acc_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">]])</span>
+        
         <span class="c1"># Initial status of IMU: (pos)ition, (rot)ation, (vel)ocity, (cov)ariance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gravity&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gravity</span><span class="p">]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;rot&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;vel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gyro_cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">]]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">]]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gyro_cov&#39;</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># th  referenced rotation of the covariance</span>
 
     <span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
@@ -145,11 +153,20 @@
 <span class="sd">                of the dictionary should be :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
 <span class="sd">                torch.Tensor}`. The initial state given in constructor will be used if not given.</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            This layer supports the input shape with :math:`(B, F, H_{in})`, :math:`(F, H_{in})`</span>
+<span class="sd">        Shape:</span>
+<span class="sd">            Input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape with :math:`(B, F, H_{in})`, :math:`(F, H_{in})`</span>
 <span class="sd">            and :math:`(H_{in})`, where :math:`B` is the batch size (or the number of IMU),</span>
 <span class="sd">            :math:`F` is the number of frames (measurements), and :math:`H_{in}` is the raw</span>
 <span class="sd">            sensor inputs.</span>
+
+<span class="sd">            init_state (Optional): The initial state before the integration. It contains :code:`pos`: initial position, </span>
+<span class="sd">            :code:`rot`: initial rotation, :code:`vel`: initial velocity, with the shape :math:`(B, H_{in})`</span>
+<span class="sd">                </span>
+<span class="sd">            Output: The output is a :obj:`dict` of integration state.</span>
+<span class="sd">            It contains the :code:`pos`: position, :code:`rot`: rotation, :code:`vel`: velocity. Each output has the shape :math:`(B, F, H_{out})`,  where :math:`B` is the batch size (or the number of IMU),</span>
+<span class="sd">            :math:`F` is the number of frames (measurements), and :math:`H_{out}` is the raw sensor inputs.</span>
+<span class="sd">            If the flag :obj:`prop_cov` is True, the output state will also include :code:`cov`: the covariance matrix, </span>
+<span class="sd">            where the shape is :math:`(B, 9, 9)`</span>
 
 <span class="sd">        IMU Measurements Integration:</span>
 
