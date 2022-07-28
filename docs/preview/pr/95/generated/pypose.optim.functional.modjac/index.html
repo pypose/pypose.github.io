@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pypose.optim.modjac &mdash; PyPose 0.0.1 documentation</title>
+  <title>pypose.optim.functional.modjac &mdash; PyPose 0.0.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="prev" title="pypose.optim.LM" href="../pypose.optim.LM/" /> 
+    <link rel="prev" title="pypose.optim.corrector.Triggs" href="../pypose.optim.corrector.Triggs/" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,8 +49,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GaussNewton/">pypose.optim.GaussNewton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GN/">pypose.optim.GN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LevenbergMarquardt/">pypose.optim.LevenbergMarquardt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LM/">pypose.optim.LM</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.optim.modjac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.PINV/">pypose.optim.solver.PINV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.LSTSQ/">pypose.optim.solver.LSTSQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.Cholesky/">pypose.optim.solver.Cholesky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Huber/">pypose.optim.kernel.Huber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.PseudoHuber/">pypose.optim.kernel.PseudoHuber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Cauchy/">pypose.optim.kernel.Cauchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.FastTriggs/">pypose.optim.corrector.FastTriggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.Triggs/">pypose.optim.corrector.Triggs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.optim.functional.modjac</a></li>
 </ul>
 </li>
 </ul>
@@ -70,9 +81,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../optim/">Optimization</a> &raquo;</li>
-      <li>pypose.optim.modjac</li>
+      <li>pypose.optim.functional.modjac</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/generated/pypose.optim.modjac.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/generated/pypose.optim.functional.modjac.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -80,11 +91,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="pypose-optim-modjac">
-<h1>pypose.optim.modjac<a class="headerlink" href="#pypose-optim-modjac" title="Permalink to this heading"></a></h1>
+  <section id="pypose-optim-functional-modjac">
+<h1>pypose.optim.functional.modjac<a class="headerlink" href="#pypose-optim-functional-modjac" title="Permalink to this heading"></a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.optim.modjac">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.</span></span><span class="sig-name descname"><span class="pre">modjac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reverse-mode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/jacobian/#modjac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.modjac" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pypose.optim.functional.modjac">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.functional.</span></span><span class="sig-name descname"><span class="pre">modjac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reverse-mode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/functional/#modjac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.functional.modjac" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the model Jacobian with respect to the model parameters.</p>
 <p>For a parametric model <span class="math">\(\bm{f}(\bm{\theta}, \bm{x})\)</span>, where <span class="math">\(\bm{\theta}\)</span> is
 the learnable parameter and <span class="math">\(\bm{x}\)</span> is the input, it computes the
@@ -155,7 +166,7 @@ that of the output; otherwise, the parameters.</p>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The function <a class="reference internal" href="#pypose.optim.modjac" title="pypose.optim.modjac"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modjac</span></code></a> calculate Jacobian of model parameters.
+<p>The function <a class="reference internal" href="#pypose.optim.functional.modjac" title="pypose.optim.functional.modjac"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modjac</span></code></a> calculate Jacobian of model parameters.
 This is in contrast to PyTorch’s function <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.autograd.functional.jacobian.html">jacobian</a>,
 which computes the Jacobian of a given Python function.</p>
 </div>
@@ -216,7 +227,7 @@ which computes the Jacobian of a given Python function.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../pypose.optim.LM/" class="btn btn-neutral float-left" title="pypose.optim.LM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pypose.optim.corrector.Triggs/" class="btn btn-neutral float-left" title="pypose.optim.corrector.Triggs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

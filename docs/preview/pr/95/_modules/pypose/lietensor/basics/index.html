@@ -148,9 +148,12 @@
 <span class="sd">    and :math:`\bm{y}` is the output LieTensor.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The ``other`` Tensor is treated as a Lie Algebra during computation. The elements beyond</span>
-<span class="sd">        the corresponding shape of a Lie Algebra in the last dimension are ignored. This is</span>
-<span class="sd">        because the gradient of a Lie Group is computed as the perturbation in its tangent space:</span>
+<span class="sd">        A Lie Group normally requires a larger space than its corresponding Lie Algebra, thus</span>
+<span class="sd">        the elements in the last dimension of the ``other`` Tensor (treated as a Lie Algebra</span>
+<span class="sd">        in this function) beyond the expected shape of the Lie Algebra are ignored. This is</span>
+<span class="sd">        because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)</span>
+<span class="sd">        in its tangent space and is stored in the LieGroup&#39;s :obj:`LieTensor.grad`, which has</span>
+<span class="sd">        the same storage space with the LieGroup.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
@@ -176,6 +179,8 @@
 <span class="sd">    See :meth:`Exp` for Exponential mapping of Lie Algebra.</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        The following operations are equivalent.</span>
+
 <span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3()</span>
 <span class="sd">        &gt;&gt;&gt; a = torch.randn(6)</span>
 <span class="sd">        &gt;&gt;&gt; x + a</span>

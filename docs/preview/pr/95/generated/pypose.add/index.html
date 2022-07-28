@@ -112,9 +112,9 @@
              
   <section id="pypose-add">
 <h1>pypose.add<a class="headerlink" href="#pypose-add" title="Permalink to this heading"></a></h1>
-<dl class="py function">
+<dl class="py class">
 <dt class="sig sig-object py" id="pypose.add">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/basics/#add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.add" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/basics/#add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.add" title="Permalink to this definition"></a></dt>
 <dd><p>Adds other, scaled by alpha, to input LieTensor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -144,9 +144,12 @@ than the shape of the corresponding Lie Algebra of the input.</p></li>
 and <span class="math">\(\bm{y}\)</span> is the output LieTensor.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">other</span></code> Tensor is treated as a Lie Algebra during computation. The elements beyond
-the corresponding shape of a Lie Algebra in the last dimension are ignored. This is
-because the gradient of a Lie Group is computed as the perturbation in its tangent space:</p>
+<p>A Lie Group normally requires a larger space than its corresponding Lie Algebra, thus
+the elements in the last dimension of the <code class="docutils literal notranslate"><span class="pre">other</span></code> Tensor (treated as a Lie Algebra
+in this function) beyond the expected shape of the Lie Algebra are ignored. This is
+because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)
+in its tangent space and is stored in the LieGroup’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor.grad</span></code>, which has
+the same storage space with the LieGroup.</p>
 <div class="math">
 \[\begin{align*}
     \frac{D f(\mathcal{X})}{D \mathcal{X}} & \overset{\underset{\mathrm{def}}{}}{=}
@@ -168,6 +171,7 @@ smaller storage space).</p>
 <p>See <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LieTensor()</span></code></a> for types of Lie Algebra and Lie Group.</p>
 <p>See <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Exp()</span></code></a> for Exponential mapping of Lie Algebra.</p>
 <p class="rubric">Examples</p>
+<p>The following operations are equivalent.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span>

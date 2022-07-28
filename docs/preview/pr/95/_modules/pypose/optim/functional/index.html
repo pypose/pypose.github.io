@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pypose.optim.jacobian &mdash; PyPose 0.0.1 documentation</title>
+  <title>pypose.optim.functional &mdash; PyPose 0.0.1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
@@ -64,7 +64,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../">Module code</a> &raquo;</li>
-      <li>pypose.optim.jacobian</li>
+      <li>pypose.optim.functional</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -73,14 +73,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for pypose.optim.jacobian</h1><div class="highlight"><pre>
+  <h1>Source code for pypose.optim.functional</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">functorch</span>
 <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">Tensor</span>
 <span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
 
 
-<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.modjac/#pypose.optim.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
+<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
                     <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
@@ -206,7 +206,8 @@
     <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,)</span>
+        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
 
     <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func_param</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="n">create_graph</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span> \
                     <span class="n">vectorize</span><span class="o">=</span><span class="n">vectorize</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">)</span>
@@ -217,7 +218,7 @@
                     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">J</span><span class="p">)),</span> <span class="s1">&#39;Jacobian contains Nan! Check your model and inputs!&#39;</span>
     <span class="k">return</span> <span class="n">J</span></div>
 
 
