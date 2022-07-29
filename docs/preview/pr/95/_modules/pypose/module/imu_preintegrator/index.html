@@ -84,36 +84,46 @@
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pos (torch.Tensor, optional): initial postion. Default: torch.zeros(3)</span>
+<span class="sd">        pos (torch.Tensor, optional): initial position. Default: torch.zeros(3)</span>
 <span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`</span>
-<span class="sd">        vel (torch.Tensor, optional): initial postion. Default: torch.zeros(3)</span>
+<span class="sd">        vel (torch.Tensor, optional): initial position. Default: torch.zeros(3)</span>
 <span class="sd">        gravity (float, optional): the gravity acceleration. Default: 9.81007</span>
-<span class="sd">        gyro_cov (float, optional): covariance of the gyroscope. Default: (1.6968e-4)**2</span>
-<span class="sd">        acc_cov (float, optional): covariance of the accelerator. Default: (2e-3)**2</span>
-<span class="sd">        prop_cov (Bool, optional): flag to propogate the covariance matrix. Default: :obj:`True`</span>
+<span class="sd">        gyro_cov: covariance of the gyroscope. If the covariance of the x, y and z axises are</span>
+<span class="sd">            different, the :obj:`gyro_cov` use the form :code:`torch.Tensor(gyro_cov_x, gyro_cov_y,</span>
+<span class="sd">            gyro_cov_z)`. Default: (3.2e-3)**2</span>
+<span class="sd">        acc_cov: covariance of the accelerator. If the covariance of the x, y and z axises are</span>
+<span class="sd">            different, the :obj:`acc_cov` use the form :code:`torch.Tensor(acc_cov_x, acc_cov_y,</span>
+<span class="sd">            acc_cov_z)`. Default: (8e-2)**2</span>
+<span class="sd">        prop_cov (Bool, optional): flag to propagate the covariance matrix. Default: :obj:`True`</span>
 <span class="sd">        reset (Bool, optional): flag to reset the initial states after each time the :obj:`forward`</span>
 <span class="sd">            function is called. If False, the IMU integrator will use the states from last time</span>
-<span class="sd">            as the initial states. Note that if the :obj:`init_state` is not :obj:`None` while calling </span>
-<span class="sd">            the :obj:`forward` function, the integrator will use the given inital state Default: :obj:`False`.</span>
+<span class="sd">            as the initial states. This flag is ignored if the :obj:`init_state` is not ``None``,</span>
+<span class="sd">            the integrator will use the given initial state. Default: :obj:`False`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(),</span>
                        <span class="n">vel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">gravity</span> <span class="o">=</span> <span class="mf">9.81007</span><span class="p">,</span>
-                       <span class="n">gyro_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.6968e-4</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
-                       <span class="n">acc_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2e-3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">gyro_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.2e-3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">acc_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8e-2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
                        <span class="n">prop_cov</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                        <span class="n">reset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_cov</span> <span class="o">=</span> <span class="n">reset</span><span class="p">,</span> <span class="n">prop_cov</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acc_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">]])</span>
+        
         <span class="c1"># Initial status of IMU: (pos)ition, (rot)ation, (vel)ocity, (cov)ariance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gravity&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gravity</span><span class="p">]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;rot&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;vel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gyro_cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">]]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">]]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gyro_cov&#39;</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># th  referenced rotation of the covariance</span>
 
     <span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
@@ -145,11 +155,21 @@
 <span class="sd">                of the dictionary should be :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
 <span class="sd">                torch.Tensor}`. The initial state given in constructor will be used if not given.</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            This layer supports the input shape with :math:`(B, F, H_{in})`, :math:`(F, H_{in})`</span>
-<span class="sd">            and :math:`(H_{in})`, where :math:`B` is the batch size (or the number of IMU),</span>
-<span class="sd">            :math:`F` is the number of frames (measurements), and :math:`H_{in}` is the raw</span>
-<span class="sd">            sensor inputs.</span>
+<span class="sd">        Shape:</span>
+<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape with</span>
+<span class="sd">              :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where :math:`B` is</span>
+<span class="sd">              the batch size (or the number of IMU), :math:`F` is the number of frames (measurements),</span>
+<span class="sd">              and :math:`H_{in}` is the raw sensor signals.</span>
+
+<span class="sd">            - init_state (Optional): The initial state before the integration. It contains</span>
+<span class="sd">              :code:`pos`: initial position, :code:`rot`: initial rotation, :code:`vel`: initial</span>
+<span class="sd">              velocity, with the shape :math:`(B, H_{in})`</span>
+
+<span class="sd">            - output: The output is a :obj:`dict` of integration state.</span>
+<span class="sd">              It contains the ``pos``: position, ``rot``: rotation, ``vel``: velocity.</span>
+<span class="sd">              Each output has the shape :math:`(B, F, H_{out})`, where :math:`H_{out}` is</span>
+<span class="sd">              the corresponding signal dimension. If the flag :obj:`prop_cov` is ``True``, the</span>
+<span class="sd">              output will include ``cov``, the covariance matrix with shape :math:`(B, 9, 9)`.</span>
 
 <span class="sd">        IMU Measurements Integration:</span>
 
@@ -174,7 +194,7 @@
 
 <span class="sd">            - :math:`a_k` is linear acceleration at the :math:`k`-th time step.</span>
 
-<span class="sd">            - :math:`w_k` is angular rate at the :math:`k`-{th} time step.</span>
+<span class="sd">            - :math:`w_k` is angular rate at the :math:`k`-th time step.</span>
 
 <span class="sd">        Uncertainty Propagation:</span>
 
@@ -210,7 +230,7 @@
 <span class="sd">                \end{bmatrix},</span>
 
 <span class="sd">        where :math:`\cdot^\wedge` is the skew matrix (:meth:`pypose.vec2skew`),</span>
-<span class="sd">        :math:`C \in\mathbf{R}^{9\times 9}` is the covarience matrix,</span>
+<span class="sd">        :math:`C \in\mathbf{R}^{9\times 9}` is the covariance matrix,</span>
 <span class="sd">        and :math:`J_r^k` is the right jacobian (:meth:`pypose.Jr`) of integrated rotation</span>
 <span class="sd">        :math:`\mathrm{Exp}(w_k{\Delta}t)` at :math:`k`-th time step,</span>
 <span class="sd">        :math:`C_{g}` and :math:`C_{\mathbf{a}}` are measurement covariance of angular rate</span>
@@ -239,8 +259,8 @@
 <span class="sd">        Note:</span>
 <span class="sd">            The implementation is based on Eq. (A7), (A8), (A9), and (A10) of this report:</span>
 
-<span class="sd">            * Christian Forster, et al., `IMU Preintegration on Manifold for Ecient Visual-Inertial</span>
-<span class="sd">              Maximum-a-Posteriori Estimation</span>
+<span class="sd">            * Christian Forster, et al., `IMU Preintegration on Manifold for Efficient Visual-Inertial</span>
+<span class="sd">              Maximum-a-posteriori Estimation</span>
 <span class="sd">              &lt;https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf&gt;`_, Technical Report</span>
 <span class="sd">              GT-IRIM-CP&amp;R-2015-001, 2015.</span>
 
@@ -339,7 +359,8 @@
                 <span class="s1">&#39;Ha&#39;</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">vec2skew</span><span class="p">(</span><span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span>
                 <span class="s1">&#39;dt&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> 
             <span class="p">}</span>
-            <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_cov</span><span class="p">(</span><span class="n">cov_input</span> <span class="o">=</span> <span class="n">cov_input_state</span><span class="p">,</span> <span class="n">init_cov</span> <span class="o">=</span> <span class="n">init_cov</span><span class="p">,</span> <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">acc_cov</span><span class="p">)</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_cov</span><span class="p">(</span><span class="n">cov_input</span> <span class="o">=</span> <span class="n">cov_input_state</span><span class="p">,</span> <span class="n">init_cov</span> <span class="o">=</span> <span class="n">init_cov</span><span class="p">,</span>
+                                    <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">acc_cov</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cov&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
@@ -412,13 +433,14 @@
 
         <span class="c1"># [0, R_{ik}dt, 1/2R_{ik}dt^2]^T</span>
         <span class="n">Ba</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
-        <span class="n">Ba</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">Ba</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span>
+                                                <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># the term of B</span>
         <span class="n">B_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">Bg</span> <span class="o">@</span> <span class="n">Cg</span> <span class="o">@</span> <span class="n">Bg</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">Ba</span> <span class="o">@</span> <span class="n">Ca</span> <span class="o">@</span> <span class="n">Ba</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
         <span class="n">B_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">init_cov</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">B_cov</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">A_left_cum</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># cumfrom An to I, then flip</span>
+        <span class="n">A_left_cum</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># cum from An to I, then flip</span>
         <span class="n">A_right_cum</span> <span class="o">=</span> <span class="n">A_left_cum</span><span class="o">.</span><span class="n">mT</span>
         <span class="n">cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">A_left_cum</span> <span class="o">@</span> <span class="n">B_cov</span> <span class="o">@</span> <span class="n">A_right_cum</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;cov&#39;</span><span class="p">:</span> <span class="n">cov</span><span class="p">,</span> <span class="s1">&#39;Rij&#39;</span><span class="p">:</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]}</span></div>
