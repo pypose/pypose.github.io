@@ -91,56 +91,10 @@
              
   <section id="pypose-se3">
 <h1>pypose.se3<a class="headerlink" href="#pypose-se3" title="Permalink to this heading"></a></h1>
-<dl class="py data">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pypose.se3">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">se3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;,</span> <span class="pre">ltype=&lt;pypose.lietensor.lietensor.se3Type</span> <span class="pre">object&gt;)</span></em><a class="headerlink" href="#pypose.se3" title="Permalink to this definition"></a></dt>
-<dd><p>Alias of se3 type <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, or ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’) – <p>A
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object, or constructing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>
-object from <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, which defines tensor data (see below), or
-from ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’, which defines tensor shape.</p>
-<p>The shape of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object must be <cite>(*, 6)</cite>,
-where <cite>*</cite> is empty, one, or more batched dimensions (the
-<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> of this LieTensor), otherwise error will
-be raised.</p>
-</p>
-</dd>
-</dl>
-<p>Internally, se3 LieTensors are stored by concatenating the “velocity” vector
-with the axis-angle representation of the rotation:</p>
-<div class="math">
-\[\mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z],
-
-\]</div>
-<p>where <span class="math">\(\begin{pmatrix} \tau_x &amp; \tau_y &amp; \tau_z \end{pmatrix}^T =
-\mathbf{J}^{-1} \begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T\)</span> is the product
-between the left Jacobian inverse (of SO3’s logarithm map) and the translation
-vector, and <span class="math">\(\begin{pmatrix} \delta_x &amp; \delta_y &amp; \delta_z \end{pmatrix}^T\)</span>
-is the axis-angle vector as in <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.so3</span></code></a>.
-More details go to <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Log()</span></code></a> with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code> input.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">se3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="go">se3Type LieTensor:</span>
-<span class="go">tensor([[-0.8710, -1.4994, -0.2843,  1.0185, -0.3932, -0.4839],</span>
-<span class="go">        [-0.4750, -0.4804, -0.7083, -1.8141, -1.4409, -0.3125]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">se3</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="go">se3Type LieTensor:</span>
-<span class="go">tensor([0., 0., 0., 0., 0., 1.])</span>
-</pre></div>
-</div>
-<p>If <cite>data</cite> is tensor-like, the last dimension should correspond to the
-6 elements of the above embedding.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is not advised to construct se3 Tensors by specifying storage
-sizes with <cite>int…</cite>, which does not initialize data.</p>
-<p>Consider using <a class="reference internal" href="../pypose.randn_se3/#pypose.randn_se3" title="pypose.randn_se3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.randn_se3</span></code></a> or
-<a class="reference internal" href="../pypose.identity_se3/#pypose.identity_se3" title="pypose.identity_se3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.identity_se3</span></code></a> instead.</p>
-</div>
-<p>See <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Exp</span></code></a>, <a class="reference internal" href="../pypose.Inv/#pypose.Inv" title="pypose.Inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Inv</span></code></a> for
-implementations of relevant operations.</p>
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">se3</span></span><a class="headerlink" href="#pypose.se3" title="Permalink to this definition"></a></dt>
+<dd><p>alias of functools.partial(&lt;class ‘pypose.lietensor.lietensor.LieTensor’&gt;, ltype=&lt;pypose.lietensor.lietensor.se3Type object&gt;)</p>
 </dd></dl>
 
 </section>
