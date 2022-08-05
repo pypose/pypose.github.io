@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.Sim3 &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../_static/katex_autorenderer.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.sim3" href="../pypose.sim3/" />
+    <link rel="prev" title="pypose.se3" href="../pypose.se3/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../lietensor/">LieTensor</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pypose.LieTensor/">pypose.LieTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.Parameter/">pypose.Parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.SO3/">pypose.SO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.so3/">pypose.so3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.SE3/">pypose.SE3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.se3/">pypose.se3</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.Sim3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.sim3/">pypose.sim3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.RxSO3/">pypose.RxSO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.rxso3/">pypose.rxso3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../lietensor/">LieTensor</a> &raquo;</li>
+      <li>pypose.Sim3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/pypose.Sim3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pypose-sim3">
+<h1>pypose.Sim3<a class="headerlink" href="#pypose-sim3" title="Permalink to this heading"></a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="pypose.Sim3">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">Sim3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;,</span> <span class="pre">ltype=&lt;pypose.lietensor.lietensor.Sim3Type</span> <span class="pre">object&gt;)</span></em><a class="headerlink" href="#pypose.Sim3" title="Permalink to this definition"></a></dt>
+<dd><p>Alias of Sim3 type <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, or ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’) – <p>A
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object, or constructing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>
+object from <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, which defines tensor data (see below), or
+from ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’, which defines tensor shape.</p>
+<p>The shape of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object must be <cite>(*, 8)</cite>,
+where <cite>*</cite> is empty, one, or more batched dimensions (the
+<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> of this LieTensor), otherwise error will
+be raised.</p>
+</p>
+</dd>
+</dl>
+<p>Internally, Sim3 LieTensors are stored by concatenating the translation
+vector with an RxSO3:</p>
+<div class="math">
+\[\mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w, s],
+
+\]</div>
+<p>where <span class="math">\(\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T \in \mathbb{R}^3\)</span>
+is the translation vector and
+<span class="math">\(\begin{pmatrix} q_x &amp; q_y &amp; q_z &amp; q_w \end{pmatrix}^T\)</span> and
+<span class="math">\(s \in \mathbb{R}\)</span> are the unit quaternion and the scaling factor
+as in <code class="xref py py-obj docutils literal notranslate"><span class="pre">pp.RxSO3</span></code>, respectively.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">Sim3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="go">Sim3Type LieTensor:</span>
+<span class="go">tensor([[ 0.0175,  0.8657, -0.2274,  2.2380, -0.0297, -0.3799, -0.0664,  0.9995],</span>
+<span class="go">        [ 0.8744,  0.4114,  1.2041, -0.5687, -0.5630,  0.6025, -0.6137,  1.1185]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">Sim3</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">Sim3Type LieTensor:</span>
+<span class="go">tensor([0., 0., 0., 0., 0., 0., 1., 1.])</span>
+</pre></div>
+</div>
+<p>If <cite>data</cite> is tensor-like, the last dimension should correspond to the
+8 elements of the above embedding.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is not advised to construct Sim3 Tensors by specifying storage
+sizes with <cite>int…</cite>, which does not initialize data.</p>
+<p>Consider using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.randn_Sim3</span></code> or
+<a class="reference internal" href="../pypose.identity_Sim3/#pypose.identity_Sim3" title="pypose.identity_Sim3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.identity_Sim3</span></code></a> instead.</p>
+</div>
+<p>See <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Log</span></code></a>, <a class="reference internal" href="../pypose.Inv/#pypose.Inv" title="pypose.Inv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Inv</span></code></a>, <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Act</span></code></a>, <a class="reference internal" href="../pypose.Retr/#pypose.Retr" title="pypose.Retr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Retr</span></code></a>, <a class="reference internal" href="../pypose.Adj/#pypose.Adj" title="pypose.Adj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Adj</span></code></a>, <a class="reference internal" href="../pypose.AdjT/#pypose.AdjT" title="pypose.AdjT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.AdjT</span></code></a>, <a class="reference internal" href="../pypose.Jinvp/#pypose.Jinvp" title="pypose.Jinvp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.Jinvp</span></code></a> for
+implementations of relevant operations.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../pypose.se3/" class="btn btn-neutral float-left" title="pypose.se3" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pypose.sim3/" class="btn btn-neutral float-right" title="pypose.sim3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
