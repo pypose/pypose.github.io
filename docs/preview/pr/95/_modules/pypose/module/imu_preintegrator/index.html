@@ -88,12 +88,12 @@
 <span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`</span>
 <span class="sd">        vel (torch.Tensor, optional): initial position. Default: torch.zeros(3)</span>
 <span class="sd">        gravity (float, optional): the gravity acceleration. Default: 9.81007</span>
-<span class="sd">        gyro_cov: covariance of the gyroscope. If the covariance of the x, y and z axises are</span>
-<span class="sd">            different, the :obj:`gyro_cov` use the form :code:`torch.Tensor(gyro_cov_x, gyro_cov_y,</span>
-<span class="sd">            gyro_cov_z)`. Default: (3.2e-3)**2</span>
-<span class="sd">        acc_cov: covariance of the accelerator. If the covariance of the x, y and z axises are</span>
-<span class="sd">            different, the :obj:`acc_cov` use the form :code:`torch.Tensor(acc_cov_x, acc_cov_y,</span>
-<span class="sd">            acc_cov_z)`. Default: (8e-2)**2</span>
+<span class="sd">        gyro_cov: covariance of the gyroscope. Default: (3.2e-3)**2.</span>
+<span class="sd">            Please use the form :code:`torch.Tensor(gyro_cov_x, gyro_cov_y, gyro_cov_z)`, </span>
+<span class="sd">            if the covariance of the x, y and z axises are different.</span>
+<span class="sd">        acc_cov: covariance of the accelerator. Default: (8e-2)**2. </span>
+<span class="sd">            Please use the form :code:`torch.Tensor(acc_cov_x, acc_cov_y,acc_cov_z)`, </span>
+<span class="sd">            if the covariance of the x, y and z axises are different.</span>
 <span class="sd">        prop_cov (Bool, optional): flag to propagate the covariance matrix. Default: :obj:`True`</span>
 <span class="sd">        reset (Bool, optional): flag to reset the initial states after each time the :obj:`forward`</span>
 <span class="sd">            function is called. If False, the IMU integrator will use the states from last time</span>
@@ -145,7 +145,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            dt (torch.Tensor): time interval from last update.</span>
 <span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
-<span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame.</span>
+<span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">                (raw sensor input with gravity).</span>
 <span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation.</span>
 <span class="sd">            gyro_cov (torch.Tensor, optional): covariance matrix of angular rate.</span>
 <span class="sd">                Default value is used if not given.</span>
@@ -175,10 +176,10 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
-<span class="sd">                {\Delta}R_{ik+1} &amp;= {\Delta}R_{ik} \mathrm{Exp} ((w_k - b_i^g) {\Delta}t) \\</span>
-<span class="sd">                {\Delta}v_{ik+1} &amp;= {\Delta}v_{ik} + {\Delta}R_{ik} (a_k - b_i^a) {\Delta}t \\</span>
+<span class="sd">                {\Delta}R_{ik+1} &amp;= {\Delta}R_{ik} \mathrm{Exp} ((w_k - b_k^g) {\Delta}t) \\</span>
+<span class="sd">                {\Delta}v_{ik+1} &amp;= {\Delta}v_{ik} + {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t \\</span>
 <span class="sd">                {\Delta}p_{ik+1} &amp;= {\Delta}v_{ik} + {\Delta}v_{ik} {\Delta}t</span>
-<span class="sd">                    + 1/2 {\Delta}R_{ik} (a_k - b_i^a) {\Delta}t^2</span>
+<span class="sd">                    + 1/2 {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t^2</span>
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">        where:</span>
@@ -196,6 +197,15 @@
 
 <span class="sd">            - :math:`w_k` is angular rate at the :math:`k`-th time step.</span>
 
+<span class="sd">            - :math:`b_k^g` is the gyroscope bias of the sensor at the :math:`k`-th </span>
+<span class="sd">              time step.</span>
+
+<span class="sd">            - :math:`b_k^g` is the accleration bias of the sensor at the :math:`k`-th </span>
+<span class="sd">              time step.</span>
+
+<span class="sd">        Note: :math:`b_k^g` and :math:`b_k^a` shall be removed from the function inputs: :code:`acc` </span>
+<span class="sd">        and :code:`gyro`.</span>
+
 <span class="sd">        Uncertainty Propagation:</span>
 
 <span class="sd">        .. math::</span>
@@ -209,8 +219,8 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            A = \begin{bmatrix}</span>
 <span class="sd">                  {\Delta}R_{ik+1}^T &amp; 0_{3*3} \\</span>
-<span class="sd">                  -{\Delta}R_{ik} (a_k - b_i^g)^\wedge {\Delta}t &amp; I_{3*3} &amp; 0_{3*3} \\</span>
-<span class="sd">                  -1/2{\Delta}R_{ik} (a_k - b_i^g)^\wedge {\Delta}t^2 &amp; I_{3*3} {\Delta}t &amp; I_{3*3}</span>
+<span class="sd">                  -{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t &amp; I_{3*3} &amp; 0_{3*3} \\</span>
+<span class="sd">                  -1/2{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t^2 &amp; I_{3*3} {\Delta}t &amp; I_{3*3}</span>
 <span class="sd">                \end{bmatrix},</span>
 
 <span class="sd">        .. math::</span>
@@ -356,7 +366,7 @@
             <span class="n">cov_input_state</span> <span class="o">=</span><span class="p">{</span>
                 <span class="s1">&#39;Rij&#39;</span><span class="p">:</span> <span class="n">Rij</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
                 <span class="s1">&#39;Rk&#39;</span><span class="p">:</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;dr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                <span class="s1">&#39;Ha&#39;</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">vec2skew</span><span class="p">(</span><span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span>
+                <span class="s1">&#39;Ha&#39;</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">vec2skew</span><span class="p">(</span><span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span>
                 <span class="s1">&#39;dt&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> 
             <span class="p">}</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_cov</span><span class="p">(</span><span class="n">cov_input</span> <span class="o">=</span> <span class="n">cov_input_state</span><span class="p">,</span> <span class="n">init_cov</span> <span class="o">=</span> <span class="n">init_cov</span><span class="p">,</span>
@@ -395,7 +405,7 @@
         <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">incre_t</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;acc&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;vel&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;pos&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;rot&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;vel&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;pos&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;rot&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
                 <span class="s1">&#39;t&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;dr&#39;</span><span class="p">:</span> <span class="n">dr</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span>
 
     <span class="nd">@classmethod</span>
