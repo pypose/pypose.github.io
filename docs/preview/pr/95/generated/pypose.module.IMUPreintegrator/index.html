@@ -93,12 +93,12 @@
 <li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a></p></li>
 <li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3)</p></li>
 <li><p><strong>gravity</strong> (<em>float</em><em>, </em><em>optional</em>) – the gravity acceleration. Default: 9.81007</p></li>
-<li><p><strong>gyro_cov</strong> – covariance of the gyroscope. If the covariance of the x, y and z axises are
-different, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">gyro_cov</span></code> use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(gyro_cov_x,</span> <span class="pre">gyro_cov_y,</span>
-<span class="pre">gyro_cov_z)</span></code>. Default: (3.2e-3)**2</p></li>
-<li><p><strong>acc_cov</strong> – covariance of the accelerator. If the covariance of the x, y and z axises are
-different, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">acc_cov</span></code> use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(acc_cov_x,</span> <span class="pre">acc_cov_y,</span>
-<span class="pre">acc_cov_z)</span></code>. Default: (8e-2)**2</p></li>
+<li><p><strong>gyro_cov</strong> – covariance of the gyroscope. Default: (3.2e-3)**2.
+Please use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(gyro_cov_x,</span> <span class="pre">gyro_cov_y,</span> <span class="pre">gyro_cov_z)</span></code>,
+if the covariance of the x, y and z axises are different.</p></li>
+<li><p><strong>acc_cov</strong> – covariance of the accelerator. Default: (8e-2)**2.
+Please use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(acc_cov_x,</span> <span class="pre">acc_cov_y,acc_cov_z)</span></code>,
+if the covariance of the x, y and z axises are different.</p></li>
 <li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propagate the covariance matrix. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></p></li>
 <li><p><strong>reset</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to reset the initial states after each time the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
 function is called. If False, the IMU integrator will use the states from last time
@@ -109,7 +109,7 @@ the integrator will use the given initial state. Default: <code class="xref py p
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7faa3798f610&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fb2e8351a30&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Propagate IMU states from duration (<span class="math">\(\delta t\)</span>), gyroscope (angular rate <span class="math">\(\omega\)</span>),
 linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame, as well as their measurement
 covariance for gyroscope <span class="math">\(C_{g}\)</span> and acceleration <span class="math">\(C_{\mathbf{a}}\)</span>.
@@ -119,7 +119,8 @@ Known IMU rotation <span class="math">\(R\)</span> estimation can also be provid
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> (<em>torch.Tensor</em>) – time interval from last update.</p></li>
 <li><p><strong>gyro</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
-<li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame.</p></li>
+<li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
+(raw sensor input with gravity).</p></li>
 <li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation.</p></li>
 <li><p><strong>gyro_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of angular rate.
 Default value is used if not given.</p></li>
@@ -151,10 +152,10 @@ output will include <code class="docutils literal notranslate"><span class="pre"
 <p>IMU Measurements Integration:</p>
 <div class="math">
 \[\begin{align*}
-    {\Delta}R_{ik+1} &= {\Delta}R_{ik} \mathrm{Exp} ((w_k - b_i^g) {\Delta}t) \\
-    {\Delta}v_{ik+1} &= {\Delta}v_{ik} + {\Delta}R_{ik} (a_k - b_i^a) {\Delta}t \\
+    {\Delta}R_{ik+1} &= {\Delta}R_{ik} \mathrm{Exp} ((w_k - b_k^g) {\Delta}t) \\
+    {\Delta}v_{ik+1} &= {\Delta}v_{ik} + {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t \\
     {\Delta}p_{ik+1} &= {\Delta}v_{ik} + {\Delta}v_{ik} {\Delta}t
-        + 1/2 {\Delta}R_{ik} (a_k - b_i^a) {\Delta}t^2
+        + 1/2 {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t^2
 \end{align*}
 
 \]</div>
@@ -169,8 +170,14 @@ and <span class="math">\(k\)</span>-th time step.</p></li>
 and <span class="math">\(k\)</span>-th time step.</p></li>
 <li><p><span class="math">\(a_k\)</span> is linear acceleration at the <span class="math">\(k\)</span>-th time step.</p></li>
 <li><p><span class="math">\(w_k\)</span> is angular rate at the <span class="math">\(k\)</span>-th time step.</p></li>
+<li><p><span class="math">\(b_k^g\)</span> is the gyroscope bias of the sensor at the <span class="math">\(k\)</span>-th
+time step.</p></li>
+<li><p><span class="math">\(b_k^g\)</span> is the accleration bias of the sensor at the <span class="math">\(k\)</span>-th
+time step.</p></li>
 </ul>
 </div></blockquote>
+<p>Note: <span class="math">\(b_k^g\)</span> and <span class="math">\(b_k^a\)</span> shall be removed from the function inputs: <code class="code docutils literal notranslate"><span class="pre">acc</span></code>
+and <code class="code docutils literal notranslate"><span class="pre">gyro</span></code>.</p>
 <p>Uncertainty Propagation:</p>
 <div class="math">
 \[\begin{align*}
@@ -183,8 +190,8 @@ and <span class="math">\(k\)</span>-th time step.</p></li>
 <div class="math">
 \[A = \begin{bmatrix}
       {\Delta}R_{ik+1}^T & 0_{3*3} \\
-      -{\Delta}R_{ik} (a_k - b_i^g)^\wedge {\Delta}t & I_{3*3} & 0_{3*3} \\
-      -1/2{\Delta}R_{ik} (a_k - b_i^g)^\wedge {\Delta}t^2 & I_{3*3} {\Delta}t & I_{3*3}
+      -{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t & I_{3*3} & 0_{3*3} \\
+      -1/2{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t^2 & I_{3*3} {\Delta}t & I_{3*3}
     \end{bmatrix},
 
 \]</div>
