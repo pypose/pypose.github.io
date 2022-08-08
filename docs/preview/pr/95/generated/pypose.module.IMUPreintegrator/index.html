@@ -89,31 +89,31 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3)</p></li>
-<li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a></p></li>
-<li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3)</p></li>
-<li><p><strong>gravity</strong> (<em>float</em><em>, </em><em>optional</em>) – the gravity acceleration. Default: 9.81007</p></li>
+<li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
+<li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a>.</p></li>
+<li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: torch.zeros(3).</p></li>
+<li><p><strong>gravity</strong> (<em>float</em><em>, </em><em>optional</em>) – the gravity acceleration. Default: 9.81007.</p></li>
 <li><p><strong>gyro_cov</strong> – covariance of the gyroscope. Default: (3.2e-3)**2.
-Please use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(gyro_cov_x,</span> <span class="pre">gyro_cov_y,</span> <span class="pre">gyro_cov_z)</span></code>,
-if the covariance of the x, y and z axises are different.</p></li>
+Use the form <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.Tensor(gyro_cov_x,</span> <span class="pre">gyro_cov_y,</span> <span class="pre">gyro_cov_z)</span></code>,
+if the covariance on the three axes are different.</p></li>
 <li><p><strong>acc_cov</strong> – covariance of the accelerator. Default: (8e-2)**2.
-Please use the form <code class="code docutils literal notranslate"><span class="pre">torch.Tensor(acc_cov_x,</span> <span class="pre">acc_cov_y,acc_cov_z)</span></code>,
-if the covariance of the x, y and z axises are different.</p></li>
-<li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propagate the covariance matrix. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></p></li>
-<li><p><strong>reset</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to reset the initial states after each time the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
-function is called. If False, the IMU integrator will use the states from last time
-as the initial states. This flag is ignored if the <code class="xref py py-obj docutils literal notranslate"><span class="pre">init_state</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-the integrator will use the given initial state. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+Use the form <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.Tensor(acc_cov_x,</span> <span class="pre">acc_cov_y,acc_cov_z)</span></code>,
+if the covariance on the three axes are different.</p></li>
+<li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propagate the covariance matrix. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>reset</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to reset the initial states after the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
+function is called. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the integration starts from the last integration.
+This flag is ignored if <code class="xref py py-obj docutils literal notranslate"><span class="pre">init_state</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fb2e8351a30&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Propagate IMU states from duration (<span class="math">\(\delta t\)</span>), gyroscope (angular rate <span class="math">\(\omega\)</span>),
-linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame, as well as their measurement
-covariance for gyroscope <span class="math">\(C_{g}\)</span> and acceleration <span class="math">\(C_{\mathbf{a}}\)</span>.
-Known IMU rotation <span class="math">\(R\)</span> estimation can also be provided for better precision.</p>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fb8046e4b20&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Propagate IMU states from duration (<span class="math">\(\delta t\)</span>), gyroscope (angular rate
+<span class="math">\(\omega\)</span>), linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame, as well as
+their measurement covariance for gyroscope <span class="math">\(C_{g}\)</span> and acceleration
+<span class="math">\(C_{\mathbf{a}}\)</span>. Known IMU rotation estimation <span class="math">\(R\)</span> can be provided for
+better precision.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -123,12 +123,12 @@ Known IMU rotation <span class="math">\(R\)</span> estimation can also be provid
 (raw sensor input with gravity).</p></li>
 <li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation.</p></li>
 <li><p><strong>gyro_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of angular rate.
-Default value is used if not given.</p></li>
+If not given, the default state in constructor will be used.</p></li>
 <li><p><strong>acc_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of linear acceleration.
-Default value is used if not given.</p></li>
-<li><p><strong>init_state</strong> (<em>Dict</em><em>, </em><em>optional</em>) – the initial state for the integration. The structure
-of the dictionary should be <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'pos':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'rot':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'vel':</span>
-<span class="pre">torch.Tensor}</span></code>. The initial state given in constructor will be used if not given.</p></li>
+If not given, the default state in constructor will be used.</p></li>
+<li><p><strong>init_state</strong> (<em>Dict</em><em>, </em><em>optional</em>) – the initial state of the integration. The dictionary
+should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'pos':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'rot':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'vel':</span>
+<span class="pre">torch.Tensor}</span></code>. If not given, the initial state in constructor will be used.</p></li>
 </ul>
 </dd>
 </dl>
@@ -136,16 +136,16 @@ of the dictionary should be <code class="xref py py-obj docutils literal notrans
 <dt>Shape:</dt><dd><ul class="simple">
 <li><p>input (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dt</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">gyro</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">acc</span></code>): This layer supports the input shape with
 <span class="math">\((B, F, H_{in})\)</span>, <span class="math">\((F, H_{in})\)</span> and <span class="math">\((H_{in})\)</span>, where <span class="math">\(B\)</span> is
-the batch size (or the number of IMU), <span class="math">\(F\)</span> is the number of frames (measurements),
-and <span class="math">\(H_{in}\)</span> is the raw sensor signals.</p></li>
-<li><p>init_state (Optional): The initial state before the integration. It contains
+the batch size (or the number of IMU), <span class="math">\(F\)</span> is the number of frames
+(measurements), and <span class="math">\(H_{in}\)</span> is the raw sensor signals.</p></li>
+<li><p>init_state (Optional): The initial state of the integration. It contains
 <code class="code docutils literal notranslate"><span class="pre">pos</span></code>: initial position, <code class="code docutils literal notranslate"><span class="pre">rot</span></code>: initial rotation, <code class="code docutils literal notranslate"><span class="pre">vel</span></code>: initial
 velocity, with the shape <span class="math">\((B, H_{in})\)</span></p></li>
-<li><p>output: The output is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> of integration state.
-It contains the <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position, <code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, <code class="docutils literal notranslate"><span class="pre">vel</span></code>: velocity.
-Each output has the shape <span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is
-the corresponding signal dimension. If the flag <code class="xref py py-obj docutils literal notranslate"><span class="pre">prop_cov</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
-output will include <code class="docutils literal notranslate"><span class="pre">cov</span></code>, the covariance matrix with shape <span class="math">\((B, 9, 9)\)</span>.</p></li>
+<li><p>output: a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> of integrated state including <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position,
+<code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, and <code class="docutils literal notranslate"><span class="pre">vel</span></code>: velocity, each of which has a shape
+<span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is the signal dimension.
+If <code class="xref py py-obj docutils literal notranslate"><span class="pre">prop_cov</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, it will also include <code class="docutils literal notranslate"><span class="pre">cov</span></code>: covariance
+matrix in shape of <span class="math">\((B, 9, 9)\)</span>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -219,7 +219,8 @@ and <span class="math">\(J_r^k\)</span> is the right jacobian (<a class="referen
 and acceleration, respectively.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Output covariance (Shape: (9, 9)) is in the order of rotation, velocity, and position.</p>
+<p>Output covariance (Shape: <span class="math">\((B, 9, 9)\)</span>) is in the order of rotation, velocity,
+and position.</p>
 </div>
 <p>With IMU preintegration, the propagated IMU status:</p>
 <div class="math">
