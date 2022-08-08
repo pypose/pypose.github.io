@@ -108,7 +108,7 @@ This flag is ignored if <code class="xref py py-obj docutils literal notranslate
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7fb8046e4b20&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot:</span> <span class="pre">~typing.Optional[functools.partial(&lt;class</span> <span class="pre">'pypose.lietensor.lietensor.LieTensor'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype=&lt;pypose.lietensor.lietensor.SO3Type</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f2ab09e1a30&gt;)]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_state=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Propagate IMU states from duration (<span class="math">\(\delta t\)</span>), gyroscope (angular rate
 <span class="math">\(\omega\)</span>), linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame, as well as
 their measurement covariance for gyroscope <span class="math">\(C_{g}\)</span> and acceleration
@@ -152,10 +152,10 @@ matrix in shape of <span class="math">\((B, 9, 9)\)</span>.</p></li>
 <p>IMU Measurements Integration:</p>
 <div class="math">
 \[\begin{align*}
-    {\Delta}R_{ik+1} &= {\Delta}R_{ik} \mathrm{Exp} ((w_k - b_k^g) {\Delta}t) \\
-    {\Delta}v_{ik+1} &= {\Delta}v_{ik} + {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t \\
-    {\Delta}p_{ik+1} &= {\Delta}v_{ik} + {\Delta}v_{ik} {\Delta}t
-        + 1/2 {\Delta}R_{ik} (a_k - b_k^a) {\Delta}t^2
+    {\Delta}R_{ik+1} &= {\Delta}R_{ik} \mathrm{Exp} (w_k {\Delta}t) \\
+    {\Delta}v_{ik+1} &= {\Delta}v_{ik} + {\Delta}R_{ik} a_k {\Delta}t \\
+    {\Delta}p_{ik+1} &= {\Delta}p_{ik} + {\Delta}v_{ik} {\Delta}t
+        + \frac{1}{2} {\Delta}R_{ik} a_k {\Delta}t^2
 \end{align*}
 
 \]</div>
@@ -170,14 +170,10 @@ and <span class="math">\(k\)</span>-th time step.</p></li>
 and <span class="math">\(k\)</span>-th time step.</p></li>
 <li><p><span class="math">\(a_k\)</span> is linear acceleration at the <span class="math">\(k\)</span>-th time step.</p></li>
 <li><p><span class="math">\(w_k\)</span> is angular rate at the <span class="math">\(k\)</span>-th time step.</p></li>
-<li><p><span class="math">\(b_k^g\)</span> is the gyroscope bias of the sensor at the <span class="math">\(k\)</span>-th
-time step.</p></li>
-<li><p><span class="math">\(b_k^g\)</span> is the accleration bias of the sensor at the <span class="math">\(k\)</span>-th
-time step.</p></li>
+<li><p><span class="math">\({\Delta}t\)</span> is the time interval from time step <span class="math">\(k\)</span>-th to time
+step <span class="math">\({k+1}\)</span>-th time step.</p></li>
 </ul>
 </div></blockquote>
-<p>Note: <span class="math">\(b_k^g\)</span> and <span class="math">\(b_k^a\)</span> shall be removed from the function inputs: <code class="code docutils literal notranslate"><span class="pre">acc</span></code>
-and <code class="code docutils literal notranslate"><span class="pre">gyro</span></code>.</p>
 <p>Uncertainty Propagation:</p>
 <div class="math">
 \[\begin{align*}
@@ -190,8 +186,8 @@ and <code class="code docutils literal notranslate"><span class="pre">gyro</span
 <div class="math">
 \[A = \begin{bmatrix}
       {\Delta}R_{ik+1}^T & 0_{3*3} \\
-      -{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t & I_{3*3} & 0_{3*3} \\
-      -1/2{\Delta}R_{ik} (a_k - b_k^g)^\wedge {\Delta}t^2 & I_{3*3} {\Delta}t & I_{3*3}
+      -{\Delta}R_{ik} (a_k^{\wedge}) {\Delta}t & I_{3*3} & 0_{3*3} \\
+      -1/2{\Delta}R_{ik} (a_k^{\wedge}) {\Delta}t^2 & I_{3*3} {\Delta}t & I_{3*3}
     \end{bmatrix},
 
 \]</div>
@@ -226,8 +222,8 @@ and position.</p>
 <div class="math">
 \[\begin{align*}
     R_j &= {\Delta}R_{ij} * R_i                                                     \\
-    v_j &= {\Delta}v_{ij} * R_i   + v_i + g \Delta t_{ij}                           \\
-    p_j &= {\Delta}p_{ij} * R_i   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\
+    v_j &= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\
+    p_j &= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\
 \end{align*}
 
 \]</div>
@@ -238,7 +234,8 @@ and position.</p>
 are the preintegrated measurements.</p></li>
 <li><p><span class="math">\(R_i\)</span>, <span class="math">\(v_i\)</span>, and <span class="math">\(p_i\)</span> are the initial state. Default initial values
 are used if <code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code> is True.</p></li>
-<li><p><span class="math">\(R_j\)</span>, <span class="math">\(v_j\)</span>, and <span class="math">\(p_j\)</span> are the propagated state variables</p></li>
+<li><p><span class="math">\(R_j\)</span>, <span class="math">\(v_j\)</span>, and <span class="math">\(p_j\)</span> are the propagated state variables.</p></li>
+<li><p><span class="math">\({\Delta}t_{ij}\)</span> is the time interval from frame i to j.</p></li>
 </ul>
 </div></blockquote>
 <div class="admonition note">
