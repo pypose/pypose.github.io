@@ -193,9 +193,10 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
     \left\{
         \begin{array}{ll}
             2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|
-            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, \quad \|w_i\| > \text{eps}, \\
-            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,
-            \quad \|w_i\| \leq \text{eps},
+            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,
+                \quad \|w_i\| > \text{eps}, \\
+            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}
+                \boldsymbol{\nu}_i, \quad \|w_i\| \leq \text{eps},
         \end{array}
     \right.
 
@@ -203,7 +204,8 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 </div></blockquote>
 <p>otherwise:</p>
 <div class="math">
-\[\mathbf{y}_i = 2\left( \frac{1}{w_i} - \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.
+\[\mathbf{y}_i = 2\left( \frac{1}{w_i} -
+    \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.
 
 \]</div>
 </div></blockquote>
@@ -224,8 +226,8 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 <li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
 (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>):</p>
 <blockquote>
-<div><p>Let <span class="math">\(\mathbf{q}_i\)</span>, <span class="math">\(s_i\)</span> be the rotation and scale parts of <span class="math">\(\mathbf{x}_i\)</span>, respectively;
-<span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div><p>Let <span class="math">\(\mathbf{q}_i\)</span>, <span class="math">\(s_i\)</span> be the rotation and scale parts of
+<span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
 <div class="math">
 \[\mathbf{y}_i = \left[\mathrm{Log}(\mathbf{q}_i), \log(s_i) \right].
 
@@ -235,13 +237,16 @@ a new torch tensor with the logarithm of the elements of the input tensor.</p>
 <li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span>
 is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
 <blockquote>
-<div><p>Let <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(^s\mathbf{q}_i\)</span> be the translation and <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a> parts
-of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">\(\sigma_i\)</span> be the corresponding
-Lie Algebra of the SO3 and scale part of <span class="math">\(^s\mathbf{q}_i\)</span>, <span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew
-matrix of <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">\(\boldsymbol{\phi}_i\)</span> can be represented as
-<span class="math">\(\theta_i\mathbf{n}_i\)</span>, <span class="math">\(s_i = e^\sigma_i\)</span>, <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div><p>Let <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(^s\mathbf{q}_i\)</span> be the translation and <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a>
+parts of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\boldsymbol{\phi}_i\)</span>,
+<span class="math">\(\sigma_i\)</span> be the corresponding Lie Algebra of the SO3 and scale part of
+<span class="math">\(^s\mathbf{q}_i\)</span>, <span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix of
+<span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">\(\boldsymbol{\phi}_i\)</span> can be represented as
+<span class="math">\(\theta_i\mathbf{n}_i\)</span>, <span class="math">\(s_i = e^\sigma_i\)</span>, <span class="math">\(\mathbf{y}\)</span> be the
+output.</p>
 <div class="math">
-\[\mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],
+\[\mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i,
+    \mathrm{Log}(^s\mathbf{q}_i) \right],
 
 \]</div>
 <p>where</p>
@@ -267,8 +272,10 @@ matrix of <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">
 \left\{
     \begin{array}{ll}
         \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}
-        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\| > \text{eps}, \\
-        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\| \leq \text{eps},
+        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2},
+            \quad \|\theta_i\| > \text{eps}, \\
+        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3},
+            \quad \|\theta_i\| \leq \text{eps},
     \end{array}
 \right.
 
@@ -290,7 +297,8 @@ matrix of <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">
 <div class="math">
 \[B = \left\{
         \begin{array}{ll}
-            \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{\theta_i - \sin\theta_i}{\theta_i^3},
+                \quad \|\theta_i\| > \text{eps}, \\
             \frac{1}{6}, \quad \|\theta_i\| \leq \text{eps},
         \end{array}
     \right.
@@ -308,8 +316,7 @@ matrix of <span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">
 <p>The <span class="math">\(\mathrm{arctan}\)</span>-based Logarithm map implementation thanks to the paper:</p>
 <ul class="simple">
 <li><p>C. Hertzberg et al., <a class="reference external" href="https://doi.org/10.1016/j.inffus.2011.08.003">Integrating Generic Sensor Fusion Algorithms with Sound State
-Representation through Encapsulation of Manifolds</a>,
-Information Fusion, 2013.</p></li>
+Representation through Encapsulation of Manifolds</a>, Information Fusion, 2013.</p></li>
 </ul>
 <p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}\)</span> and rotation angle
 <span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, then the corresponding quaternion with
@@ -320,17 +327,19 @@ unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as</p>
 
 \]</div>
 </div></blockquote>
-<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where <span class="math">\(\boldsymbol{\nu}\)</span>
-is the vector part, <span class="math">\(w\)</span> is the scalar part, to find the corresponding rotation vector ,
-the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
+<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where
+<span class="math">\(\boldsymbol{\nu}\)</span> is the vector part, <span class="math">\(w\)</span> is the scalar part, to find
+the corresponding rotation vector, the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
 <blockquote>
 <div><div class="math">
-\[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2),
+\[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\|
+= \sin(\theta/2),
 
 \]</div>
 </div></blockquote>
 <p>The unit rotation axis <span class="math">\(\mathbf{n}\)</span> can be obtained as <span class="math">\(\mathbf{n} =
-\frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>. Hence, the corresponding rotation vector is</p>
+\frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>.
+Hence, the corresponding rotation vector is</p>
 <blockquote>
 <div><div class="math">
 \[\theta \mathbf{n} = 2\frac{\mathrm{arctan}
