@@ -57,11 +57,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.PINV/">pypose.optim.solver.PINV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.LSTSQ/">pypose.optim.solver.LSTSQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.Cholesky/">pypose.optim.solver.Cholesky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Constant/">pypose.optim.strategy.Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Adaptive/">pypose.optim.strategy.Adaptive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.TrustRegion/">pypose.optim.strategy.TrustRegion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Huber/">pypose.optim.kernel.Huber</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.PseudoHuber/">pypose.optim.kernel.PseudoHuber</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Cauchy/">pypose.optim.kernel.Cauchy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.FastTriggs/">pypose.optim.corrector.FastTriggs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.Triggs/">pypose.optim.corrector.Triggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/">pypose.optim.scheduler.StopOnPlateau</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.functional.modjac/">pypose.optim.functional.modjac</a></li>
 </ul>
 </li>
@@ -96,28 +100,32 @@
 <h1>pypose.optim.GaussNewton<a class="headerlink" href="#pypose-optim-gaussnewton" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.optim.GaussNewton">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.</span></span><span class="sig-name descname"><span class="pre">GaussNewton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.</span></span><span class="sig-name descname"><span class="pre">GaussNewton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton" title="Permalink to this definition"></a></dt>
 <dd><p>The Gauss-Newton (GN) algorithm solving non-linear least squares problems. This implementation
-is for optimizing the model parameters to approximate the targets, which can be a
+is for optimizing the model parameters to approximate the target, which can be a
 Tensor/LieTensor or a tuple of Tensors/LieTensors.</p>
 <div class="math">
 \[\bm{\theta}^* = \arg\min_{\bm{\theta}} \sum_i
-    \rho\left(\|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2\right),
+    \rho\left((\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)^T \mathbf{W}_i
+    (\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\right),
 
 \]</div>
 <p>where <span class="math">\(\bm{f}()\)</span> is the model, <span class="math">\(\bm{\theta}\)</span> is the parameters to be optimized,
-<span class="math">\(\bm{x}\)</span> is the model inputs, and <span class="math">\(\rho\)</span> is a robust kernel function to reduce
-the effect of outliers. <span class="math">\(\rho(x) = x\)</span> is used by default.</p>
+<span class="math">\(\bm{x}\)</span> is the model input, <span class="math">\(\Sigma_i\)</span> is a weighted square matrix (positive
+definite), and <span class="math">\(\rho\)</span> is a robust kernel function to reduce the effect of outliers.
+<span class="math">\(\rho(x) = x\)</span> is used by default.</p>
 <div class="math">
 \[\begin{aligned}
      &\rule{113mm}{0.4pt}                                                                 \\
      &\textbf{input}: \bm{\theta}_0~\text{(params)}, \bm{f}~\text{(model)},
-         \bm{x}~(\text{inputs}), \bm{y}~(\text{targets}), \rho~(\text{kernel})            \\
+         \bm{x}~(\text{input}), \bm{y}~(\text{target}), \rho~(\text{kernel})              \\
      &\rule{113mm}{0.4pt}                                                                 \\
      &\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\
-     &\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial \bm{f}}
-         {\partial \bm{\theta}_{t-1}}}                                                    \\
-     &\hspace{5mm} \mathbf{R} = \bm{f(\bm{\theta}_{t-1}, \bm{x})} - \bm{y}                \\
+     &\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial } {\partial \bm{\theta}_{t-1}}}
+                   \left(\sqrt{\mathbf{W}}\bm{f}\right)~(\sqrt{\cdot}
+                   \text{is the Cholesky decomposition})                                  \\
+     &\hspace{5mm} \mathbf{R} = \sqrt{\mathbf{W}}
+                 (\bm{f(\bm{\theta}_{t-1}, \bm{x})}-\bm{y})                               \\
      &\hspace{5mm} \mathbf{R}, \mathbf{J}=\mathrm{corrector}(\rho, \mathbf{R}, \mathbf{J})\\
      &\hspace{5mm} \bm{\delta} = \mathrm{solver}(\mathbf{J}, -\mathbf{R})                 \\
      &\hspace{5mm} \bm{\theta}_t \leftarrow \bm{\theta}_{t-1} + \bm{\delta}               \\
@@ -139,6 +147,10 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
 the kernel function. If a kernel is given but a corrector is not specified, auto
 correction is used. Auto correction can be unstable when the robust model has
 indefinite Hessian. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – a square positive definite matrix defining the weight of
+model residual. Use this only when all inputs shared the same weight matrices. This is
+ignored when weight is given when calling <a class="reference internal" href="#pypose.optim.GaussNewton.step" title="pypose.optim.GaussNewton.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> or <a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/#pypose.optim.scheduler.StopOnPlateau.optimize" title="pypose.optim.scheduler.StopOnPlateau.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> method.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -148,13 +160,13 @@ indefinite Hessian. Default: <code class="docutils literal notranslate"><span cl
 <p>Available correctors: <a class="reference internal" href="../pypose.optim.corrector.FastTriggs/#pypose.optim.corrector.FastTriggs" title="pypose.optim.corrector.FastTriggs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">corrector.FastTriggs()</span></code></a>; <a class="reference internal" href="../pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs" title="pypose.optim.corrector.Triggs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">corrector.Triggs()</span></code></a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The output of model <span class="math">\(\bm{f}(\bm{\theta},\bm{x}_i)\)</span> and targets <span class="math">\(\bm{y}_i\)</span>
+<p>The output of model <span class="math">\(\bm{f}(\bm{\theta},\bm{x}_i)\)</span> and target <span class="math">\(\bm{y}_i\)</span>
 can be any shape, while their <strong>last dimension</strong> <span class="math">\(d\)</span> is always taken as the
 dimension of model residual, whose inner product will be input to the kernel
 function. This is useful for residuals like re-projection error, whose last
 dimension is 2.</p>
 <p>Note that <strong>auto correction</strong> is equivalent to the method of ‘square-rooting the kernel’
-mentioned in Section 3.3 of the following paper. This replaces the
+mentioned in Section 3.3 of the following paper. It replaces the
 <span class="math">\(d\)</span>-dimensional residual with a one-dimensional one, which loses
 residual-level structural information.</p>
 <ul class="simple">
@@ -176,19 +188,20 @@ More details are in Eq. (5) of the paper “<a class="reference external" href="
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.optim.GaussNewton.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton.step" title="Permalink to this definition"></a></dt>
 <dd><p>Performs a single optimization step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> (<em>Tensor/LieTensor</em><em> or </em><em>tuple of Tensors/LieTensors</em>) – the inputs to the model.</p></li>
-<li><p><strong>targets</strong> (<em>Tensor/LieTensor</em>) – the model targets to approximate.
-If not given, the model outputs are minimized. Defaults: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>input</strong> (<em>Tensor/LieTensor</em><em> or </em><em>tuple of Tensors/LieTensors</em>) – the input to the model.</p></li>
+<li><p><strong>target</strong> (<em>Tensor/LieTensor</em>) – the model target to approximate.
+If not given, the model output is minimized. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – a square positive definite matrix defining the weight of
+model residual. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the minimized model loss, i.e.,
-<span class="math">\(\sum_i \rho( \|\bm{f}(\bm{\theta},\bm{x}_i)-\bm{y}_i)\|^2)\)</span>.</p>
+<dd class="field-even"><p>the minimized model loss.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tensor</p>
@@ -211,17 +224,17 @@ Wikipedia.</p>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">dim</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="c1"># the last dimension of the output is 6,</span>
 <span class="gp">... </span>        <span class="c1"># which will be the residual dimension.</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">@</span> <span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">@</span> <span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">posinv</span> <span class="o">=</span> <span class="n">PoseInv</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">inputs</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">GN</span><span class="p">(</span><span class="n">posinv</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">error</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">error</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Pose Inversion error </span><span class="si">%.7f</span><span class="s1"> @ </span><span class="si">%d</span><span class="s1"> it&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Early Stopping with error:&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
