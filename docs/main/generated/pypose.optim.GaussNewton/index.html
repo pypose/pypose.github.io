@@ -162,9 +162,8 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
 <p class="admonition-title">Warning</p>
 <p>The output of model <span class="math">\(\bm{f}(\bm{\theta},\bm{x}_i)\)</span> and target <span class="math">\(\bm{y}_i\)</span>
 can be any shape, while their <strong>last dimension</strong> <span class="math">\(d\)</span> is always taken as the
-dimension of model residual, whose inner product will be input to the kernel
-function. This is useful for residuals like re-projection error, whose last
-dimension is 2.</p>
+dimension of model residual, whose inner product is the input to the kernel function.
+This is useful for residuals like re-projection error, whose last dimension is 2.</p>
 <p>Note that <strong>auto correction</strong> is equivalent to the method of ‘square-rooting the kernel’
 mentioned in Section 3.3 of the following paper. It replaces the
 <span class="math">\(d\)</span>-dimensional residual with a one-dimensional one, which loses
@@ -174,9 +173,10 @@ residual-level structural information.</p>
 Conference on Computer Vision (ECCV), 2014.</p></li>
 </ul>
 <p><strong>Therefore, the users need to keep the last dimension of model output and target to
-1, even if the model residual is a scalar. If the model output only has one dimension,
-the model Jacobian will be a row vector, instead of a matrix, which loses sample-level
-structural information, although computing Jacobian vector is faster.</strong></p>
+1, even if the model residual is a scalar. If the users flatten all sample residuals
+into a vector (residual inner product will be a scalar), the model Jacobian will be a
+row vector, instead of a matrix, which loses sample-level structural information,
+although computing Jacobian vector is faster.</strong></p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
