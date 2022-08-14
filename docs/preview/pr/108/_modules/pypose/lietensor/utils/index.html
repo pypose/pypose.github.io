@@ -422,7 +422,8 @@
 <span class="sd">    The factor 2 is due to the way we define distance (see also `Matt Mason&#39;s lecture on </span>
 <span class="sd">    quaternions &lt;http://www.cs.cmu.edu/afs/cs/academic/class/16741-s07/www/lectures/Lecture8.pdf&gt;`_)</span>
 <span class="sd">    The :math:`1/\sqrt{3}` factor is necessary because the distribution in the tangent space is </span>
-<span class="sd">    a 3-dimensional Gaussian, so that the *length* of a tangent vector needs to be scaled by :math:`1/\sqrt{3}`.</span>
+<span class="sd">    a 3-dimensional Gaussian, so that the *length* of a tangent vector needs to be scaled by</span>
+<span class="sd">    :math:`1/\sqrt{3}`.</span>
 
 <span class="sd">    Then the output can be written as:</span>
 
@@ -1098,7 +1099,8 @@
 <span class="sd">            \mathbf{x}_{i,3}\theta_i,~</span>
 <span class="sd">            1 - \frac{\|\mathbf{x}_i\|^2}{8} + \frac{\|\mathbf{x}_i\|^4}{384} \right],</span>
 
-<span class="sd">        where :math:`\theta_i = \frac{1}{2} - \frac{1}{48} \|\mathbf{x}_i\|^2 + \frac{1}{3840} \|\mathbf{x}_i\|^4`.</span>
+<span class="sd">        where :math:`\theta_i = \frac{1}{2} - \frac{1}{48} \|\mathbf{x}_i\|^2</span>
+<span class="sd">        + \frac{1}{3840} \|\mathbf{x}_i\|^4`.</span>
 
 <span class="sd">    * Input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`se3_type`</span>
 <span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`se3`):</span>
@@ -1156,8 +1158,10 @@
 <span class="sd">            \left\{</span>
 <span class="sd">                \begin{array}{ll} </span>
 <span class="sd">                    \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}</span>
-<span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\| \geq \text{eps}, \\</span>
-<span class="sd">                    \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\| &lt; \text{eps},</span>
+<span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\|</span>
+<span class="sd">                        \geq \text{eps}, \\</span>
+<span class="sd">                    \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\|</span>
+<span class="sd">                        &lt; \text{eps},</span>
 <span class="sd">                \end{array}</span>
 <span class="sd">            \right.</span>
 
@@ -1177,7 +1181,8 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            B = \left\{</span>
 <span class="sd">                    \begin{array}{ll} </span>
-<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| \geq \text{eps}, \\</span>
+<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\|</span>
+<span class="sd">                            \geq \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}, \quad \|\theta_i\| &lt; \text{eps},</span>
 <span class="sd">                    \end{array}</span>
 <span class="sd">                \right.</span>
@@ -1186,15 +1191,16 @@
 <span class="sd">            C = 1</span>
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
-<span class="sd">        The detailed explanation of the above :math:`\mathrm{Exp}`: calculation can be found in the paper:</span>
+<span class="sd">        The detailed explanation of the above :math:`\mathrm{Exp}`: calculation can be found</span>
+<span class="sd">        in the paper:</span>
 
 <span class="sd">        * Grassia, F. Sebastian., `Practical Parameterization of Rotations using the</span>
 <span class="sd">          Exponential Map &lt;https://www.tandfonline.com/doi/pdf/10.1080/10867651.1998.10487493&gt;`_,</span>
 <span class="sd">          Journal of graphics tools, 1998.</span>
 
-<span class="sd">        Assume we have a unit rotation axis :math:`\mathbf{n}~(\|\mathbf{n}\|=1)` and rotation angle</span>
-<span class="sd">        :math:`\theta~(0\leq\theta&lt;2\pi)`, let :math:`\mathbf{x}=\theta\mathbf{n}`, then the corresponding</span>
-<span class="sd">        quaternion with unit norm :math:`\mathbf{q}` can be represented as:</span>
+<span class="sd">        Assume we have a unit rotation axis :math:`\mathbf{n}~(\|\mathbf{n}\|=1)` and rotation</span>
+<span class="sd">        angle :math:`\theta~(0\leq\theta&lt;2\pi)`, let :math:`\mathbf{x}=\theta\mathbf{n}`, then</span>
+<span class="sd">        the corresponding quaternion with unit norm :math:`\mathbf{q}` can be represented as:</span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{q} = \left[\frac{\sin(\theta/2)}{\theta} \mathbf{x}, \cos(\theta/2) \right].</span>
@@ -1208,15 +1214,17 @@
 <span class="sd">        Then, the corresponding quaternion is:</span>
 <span class="sd">        </span>
 <span class="sd">            .. math::</span>
-<span class="sd">                \mathbf{q} = \left[\frac{\sin(\|\mathbf{x}\|/2)}{\|\mathbf{x}\|} \mathbf{x}, \cos(\|\mathbf{x}\|/2) \right].</span>
+<span class="sd">                \mathbf{q} = \left[\frac{\sin(\|\mathbf{x}\|/2)}{\|\mathbf{x}\|} \mathbf{x},</span>
+<span class="sd">                    \cos(\|\mathbf{x}\|/2) \right].</span>
 
 <span class="sd">        If :math:`\|\mathbf{x}\|` is small (:math:`\|\mathbf{x}\|\le \text{eps}`),</span>
-<span class="sd">        we use the Taylor Expansion form of :math:`\sin(\|\mathbf{x}\|/2)` and :math:`\cos(\|\mathbf{x}\|/2)`.</span>
+<span class="sd">        we use the Taylor Expansion form of :math:`\sin(\|\mathbf{x}\|/2)` and</span>
+<span class="sd">        :math:`\cos(\|\mathbf{x}\|/2)`.</span>
 
 <span class="sd">        More details about :math:`^s\mathbf{W}_i` in :obj:`sim3_type` can be found in Eq. (5.7):</span>
 
-<span class="sd">        * H. Strasdat, `Local Accuracy and Global Consistency for Efficient Visual</span>
-<span class="sd">          SLAM &lt;http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf&gt;`_,</span>
+<span class="sd">        * H. Strasdat, `Local Accuracy and Global Consistency for Efficient Visual SLAM</span>
+<span class="sd">          &lt;http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf&gt;`_,</span>
 <span class="sd">          Dissertation. Department of Computing, Imperial College London, 2012.</span>
 
 <span class="sd">    Examples:</span>
@@ -1319,16 +1327,18 @@
 <span class="sd">                    \left\{</span>
 <span class="sd">                        \begin{array}{ll} </span>
 <span class="sd">                            2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|</span>
-<span class="sd">                            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, \quad \|w_i\| &gt; \text{eps}, \\</span>
-<span class="sd">                            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,</span>
-<span class="sd">                            \quad \|w_i\| \leq \text{eps},</span>
+<span class="sd">                            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, </span>
+<span class="sd">                                \quad \|w_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}</span>
+<span class="sd">                                \boldsymbol{\nu}_i, \quad \|w_i\| \leq \text{eps},</span>
 <span class="sd">                        \end{array}</span>
 <span class="sd">                    \right.</span>
 
 <span class="sd">        otherwise:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = 2\left( \frac{1}{w_i} - \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.</span>
+<span class="sd">            \mathbf{y}_i = 2\left( \frac{1}{w_i} - </span>
+<span class="sd">                \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.</span>
 
 <span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`SE3_type`</span>
 <span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`):</span>
@@ -1345,8 +1355,8 @@
 <span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`RxSO3_type`</span>
 <span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`):</span>
 
-<span class="sd">        Let :math:`\mathbf{q}_i`, :math:`s_i` be the rotation and scale parts of :math:`\mathbf{x}_i`, respectively;</span>
-<span class="sd">        :math:`\mathbf{y}` be the output.</span>
+<span class="sd">        Let :math:`\mathbf{q}_i`, :math:`s_i` be the rotation and scale parts of</span>
+<span class="sd">        :math:`\mathbf{x}_i`, respectively; :math:`\mathbf{y}` be the output.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \left[\mathrm{Log}(\mathbf{q}_i), \log(s_i) \right].</span>
@@ -1354,14 +1364,17 @@
 <span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`Sim3_type` (input :math:`\mathbf{x}`</span>
 <span class="sd">      is an instance of :meth:`Sim3`):</span>
 
-<span class="sd">        Let :math:`\mathbf{t}_i`, :math:`^s\mathbf{q}_i` be the translation and :obj:`RxSO3` parts</span>
-<span class="sd">        of :math:`\mathbf{x}_i`, respectively; :math:`\boldsymbol{\phi}_i`, :math:`\sigma_i` be the corresponding </span>
-<span class="sd">        Lie Algebra of the SO3 and scale part of :math:`^s\mathbf{q}_i`, :math:`\boldsymbol{\Phi}_i` be the skew </span>
-<span class="sd">        matrix of :math:`\boldsymbol{\phi}_i`, :math:`\boldsymbol{\phi}_i` can be represented as </span>
-<span class="sd">        :math:`\theta_i\mathbf{n}_i`, :math:`s_i = e^\sigma_i`, :math:`\mathbf{y}` be the output.</span>
+<span class="sd">        Let :math:`\mathbf{t}_i`, :math:`^s\mathbf{q}_i` be the translation and :obj:`RxSO3`</span>
+<span class="sd">        parts of :math:`\mathbf{x}_i`, respectively; :math:`\boldsymbol{\phi}_i`,</span>
+<span class="sd">        :math:`\sigma_i` be the corresponding Lie Algebra of the SO3 and scale part of</span>
+<span class="sd">        :math:`^s\mathbf{q}_i`, :math:`\boldsymbol{\Phi}_i` be the skew matrix of</span>
+<span class="sd">        :math:`\boldsymbol{\phi}_i`, :math:`\boldsymbol{\phi}_i` can be represented as</span>
+<span class="sd">        :math:`\theta_i\mathbf{n}_i`, :math:`s_i = e^\sigma_i`, :math:`\mathbf{y}` be the</span>
+<span class="sd">        output.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i, \mathrm{Log}(^s\mathbf{q}_i) \right],</span>
+<span class="sd">            \mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i,</span>
+<span class="sd">                \mathrm{Log}(^s\mathbf{q}_i) \right],</span>
 
 <span class="sd">        where</span>
 
@@ -1384,8 +1397,10 @@
 <span class="sd">            \left\{</span>
 <span class="sd">                \begin{array}{ll} </span>
 <span class="sd">                    \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}</span>
-<span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
-<span class="sd">                    \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\| \leq \text{eps},</span>
+<span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2},</span>
+<span class="sd">                        \quad \|\theta_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                    \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3},</span>
+<span class="sd">                        \quad \|\theta_i\| \leq \text{eps},</span>
 <span class="sd">                \end{array}</span>
 <span class="sd">            \right.</span>
 
@@ -1405,7 +1420,8 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            B = \left\{</span>
 <span class="sd">                    \begin{array}{ll} </span>
-<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3},</span>
+<span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}, \quad \|\theta_i\| \leq \text{eps},</span>
 <span class="sd">                    \end{array}</span>
 <span class="sd">                \right.</span>
@@ -1417,8 +1433,8 @@
 <span class="sd">        The :math:`\mathrm{arctan}`-based Logarithm map implementation thanks to the paper:</span>
 
 <span class="sd">        * C. Hertzberg et al., `Integrating Generic Sensor Fusion Algorithms with Sound State</span>
-<span class="sd">          Representation through Encapsulation of Manifolds &lt;https://doi.org/10.1016/j.inffus.2011.08.003&gt;`_,</span>
-<span class="sd">          Information Fusion, 2013.</span>
+<span class="sd">          Representation through Encapsulation of Manifolds</span>
+<span class="sd">          &lt;https://doi.org/10.1016/j.inffus.2011.08.003&gt;`_, Information Fusion, 2013.</span>
 
 <span class="sd">        Assume we have a unit rotation axis :math:`\mathbf{n}` and rotation angle</span>
 <span class="sd">        :math:`\theta~(0\leq\theta&lt;2\pi)`, then the corresponding quaternion with</span>
@@ -1427,15 +1443,17 @@
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]</span>
 
-<span class="sd">        Therefore, given a quaternion :math:`\mathbf{q}=[\boldsymbol{\nu}, w]`, where :math:`\boldsymbol{\nu}`</span>
-<span class="sd">        is the vector part, :math:`w` is the scalar part, to find the corresponding rotation vector ,</span>
-<span class="sd">        the rotation angle :math:`\theta` can be obtained as </span>
+<span class="sd">        Therefore, given a quaternion :math:`\mathbf{q}=[\boldsymbol{\nu}, w]`, where</span>
+<span class="sd">        :math:`\boldsymbol{\nu}` is the vector part, :math:`w` is the scalar part, to find</span>
+<span class="sd">        the corresponding rotation vector, the rotation angle :math:`\theta` can be obtained as </span>
 
 <span class="sd">            .. math::</span>
-<span class="sd">                \theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\| = \sin(\theta/2), </span>
+<span class="sd">                \theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\|</span>
+<span class="sd">                = \sin(\theta/2), </span>
 
 <span class="sd">        The unit rotation axis :math:`\mathbf{n}` can be obtained as :math:`\mathbf{n} =</span>
-<span class="sd">        \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}`. Hence, the corresponding rotation vector is </span>
+<span class="sd">        \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}`.</span>
+<span class="sd">        Hence, the corresponding rotation vector is </span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \theta \mathbf{n} = 2\frac{\mathrm{arctan}</span>
@@ -1485,6 +1503,208 @@
 
 <div class="viewcode-block" id="Inv"><a class="viewcode-back" href="../../../../generated/pypose.Inv/#pypose.Inv">[docs]</a><span class="nd">@assert_ltype</span>
 <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The inverse of the input lieTensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathrm{Inv}: Y_i = X_i^{-1}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor (Lie Group or Lie Algebra)</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        LieTensor: the output LieTensor (Lie Group or Lie Algebra)</span>
+
+<span class="sd">    .. list-table:: List of supported :math:`\mathrm{Inv}` map</span>
+<span class="sd">        :widths: 20 20 8 20 20</span>
+<span class="sd">        :header-rows: 1</span>
+
+<span class="sd">        * - input :obj:`ltype`</span>
+<span class="sd">          - LieTensor</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - LieTensor</span>
+<span class="sd">          - output :obj:`ltype`</span>
+<span class="sd">        * - :obj:`SO3_type`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :obj:`SO3_type`</span>
+<span class="sd">        * - :obj:`SE3_type`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :obj:`SE3_type`</span>
+<span class="sd">        * - :obj:`Sim3_type`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times8}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times8}`</span>
+<span class="sd">          - :obj:`Sim3_type`</span>
+<span class="sd">        * - :obj:`RxSO3_type`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times5}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{G}\in\mathbb{R}^{*\times5}`</span>
+<span class="sd">          - :obj:`RxSO3_type`</span>
+<span class="sd">        * - :obj:`so3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times3}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times3}`</span>
+<span class="sd">          - :obj:`so3_type`</span>
+<span class="sd">        * - :obj:`se3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times6}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times6}`</span>
+<span class="sd">          - :obj:`se3_type`</span>
+<span class="sd">        * - :obj:`sim3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times7}`</span>
+<span class="sd">          - :obj:`sim3_type`</span>
+<span class="sd">        * - :obj:`rxso3_type`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :math:`\mapsto`</span>
+<span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
+<span class="sd">          - :obj:`rxso3_type`</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`SO3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`):</span>
+
+<span class="sd">        Let :math:`w_i`, :math:`\boldsymbol{\nu}_i` be the scalar and vector parts of</span>
+<span class="sd">        :math:`\mathbf{x}_i`, respectively. :math:`\mathbf{x}_i=\left[\boldsymbol{\nu}_i,</span>
+<span class="sd">        \ w_i \right]`. :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \mathrm{conj}(\mathbf{x}_i)=[-\boldsymbol{\nu}_i, \ w_i]</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`SE3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{t}_i`, :math:`\mathbf{q}_i` be the translation and rotation parts of</span>
+<span class="sd">        :math:`\mathbf{x}_i`, respectively; :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \left[-\mathrm{Inv}(\mathbf{q}_i)*\mathbf{t}_i,</span>
+<span class="sd">            \mathrm{Inv}(\mathbf{q}_i) \right]</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`RxSO3_type`</span>
+<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{q}_i`, :math:`s_i` be the rotation and scale parts of</span>
+<span class="sd">        :math:`\mathbf{x}_i`, respectively; :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \left[\mathrm{conj}(\mathbf{q}_i), \ 1/s_i \right]</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`Sim3_type` (input :math:`\mathbf{x}`</span>
+<span class="sd">      is an instance of :meth:`Sim3`):</span>
+
+<span class="sd">        Let :math:`\mathbf{t}_i`, :math:`^s\mathbf{q}_i` be the translation and :obj:`RxSO3` parts</span>
+<span class="sd">        of :math:`\mathbf{x}_i`, respectively;  :math:`\mathbf{y}` be the output.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = \left[-\mathrm{Inv}(^s\mathbf{q}_i)*\mathbf{t}_i, </span>
+<span class="sd">            \mathrm{Inv}(^s\mathbf{q}_i) \right]</span>
+
+<span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`so3_type` or :obj:`se3_type` or</span>
+<span class="sd">      :obj:`sim3_type` or :obj:`rxso3_type`(input :math:`\mathbf{x}` is an instance of :meth:`so3`</span>
+<span class="sd">      or :meth:`se3` or :meth:`sim3` or :meth:`rxso3`):</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{y}_i = -\mathbf{x}_i</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`SO3` :math:`\mapsto` :obj:`SO3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3()</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            tensor([-0.1402, -0.2827,  0.2996,  0.9004])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.1402,  0.2827, -0.2996,  0.9004])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`SE3` :math:`\mapsto` :obj:`SE3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SE3()</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.6074, -0.7596,  0.8703, -0.3092,  0.2932,  0.9027,  0.0598])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.9475, -0.8764,  0.1938,  0.3092, -0.2932, -0.9027,  0.0598])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`RxSO3` :math:`\mapsto` :obj:`RxSO3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_RxSO3()</span>
+<span class="sd">            RxSO3Type LieTensor:</span>
+<span class="sd">            tensor([-0.5103,  0.4707, -0.3494,  0.6292,  0.9199])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            RxSO3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.5103, -0.4707,  0.3494,  0.6292,  1.0871])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`Sim3` :math:`\mapsto` :obj:`Sim3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_Sim3()</span>
+<span class="sd">            Sim3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.7056,  1.3140, -0.1995, -0.2444, -0.5250,  0.5504,  0.6014,  1.0543])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            Sim3Type LieTensor:</span>
+<span class="sd">            tensor([-0.9712, -0.2361,  1.0188,  0.2444,  0.5250, -0.5504,  0.6014,  0.9485])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`so3` :math:`\mapsto` :obj:`so3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_so3()</span>
+<span class="sd">            so3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.0612, -0.7190,  2.6897])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            so3Type LieTensor:</span>
+<span class="sd">            tensor([-0.0612,  0.7190, -2.6897])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`se3` :math:`\mapsto` :obj:`se3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_se3()</span>
+<span class="sd">            se3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.2837, -1.8318,  1.0104,  2.2385, -0.1980, -0.9487])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            se3Type LieTensor:</span>
+<span class="sd">            tensor([-0.2837,  1.8318, -1.0104, -2.2385,  0.1980,  0.9487])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`rxso3` :math:`\mapsto` :obj:`rxso3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_rxso3()</span>
+<span class="sd">            rxso3Type LieTensor:</span>
+<span class="sd">            tensor([ 1.0414, -0.0087, -0.4427, -1.1343])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            rxso3Type LieTensor:</span>
+<span class="sd">            tensor([-1.0414,  0.0087,  0.4427,  1.1343])</span>
+
+<span class="sd">        * :math:`\mathrm{Inv}`: :obj:`sim3` :math:`\mapsto` :obj:`sim3`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_sim3()</span>
+<span class="sd">            sim3Type LieTensor:</span>
+<span class="sd">            tensor([-0.0724,  1.8174,  2.1810, -0.9324, -0.0952, -0.5792,  0.4318])</span>
+<span class="sd">            &gt;&gt;&gt; x.Inv() # equivalent to: pp.Inv(x)</span>
+<span class="sd">            sim3Type LieTensor:</span>
+<span class="sd">            tensor([ 0.0724, -1.8174, -2.1810,  0.9324,  0.0952,  0.5792, -0.4318])</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Mathematically, only Lie Group has an inverse. For the convenience, we also provide the</span>
+<span class="sd">        inverse for the corresponding Lie Algebra. One can validate the results by:</span>
+
+<span class="sd">        if input :math:`\mathbf{x}` is the LieTensor from Lie Group, for example</span>
+<span class="sd">        :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`SO3_type` :</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3()</span>
+<span class="sd">            &gt;&gt;&gt; x * x.Inv()</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            LieTensor([0., 0., 0., 1.])</span>
+
+<span class="sd">        if input :math:`\mathbf{x}` is the LieTensor from Lie Algebra, for example</span>
+<span class="sd">        :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`so3_type` :</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_so3()</span>
+<span class="sd">            &gt;&gt;&gt; x + x.Inv()</span>
+<span class="sd">            tensor([0., 0., 0.])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span></div>
 
 
@@ -1653,25 +1873,29 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \mathrm{Adj}(\mathbf{x}_i)\mathbf{p}_i,</span>
 
-<span class="sd">        where, :math:`\mathrm{Adj}(\mathbf{x}_i)` is the adjoint matrix of the Lie group of :math:`\mathbf{x}_i`.</span>
+<span class="sd">        where, :math:`\mathrm{Adj}(\mathbf{x}_i)` is the adjoint matrix of the Lie group of</span>
+<span class="sd">        :math:`\mathbf{x}_i`.</span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type` and :obj:`so3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`, :math:`\mathbf{p}` is an instance of :meth:`so3`).</span>
-<span class="sd">      Given :math:`\mathbf{x}_i \in` :math:`\textrm{SO(3)}`.</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type` and</span>
+<span class="sd">      :obj:`so3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SO3`, :math:`\mathbf{p}`</span>
+<span class="sd">      is an instance of :meth:`so3`). Given :math:`\mathbf{x}_i \in` :math:`\textrm{SO(3)}`.</span>
 <span class="sd">      The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \mathbf{x}_i </span>
 
 <span class="sd">        In the case of :math:`\textrm{SO3}`, the adjoint transformation for an element is the same</span>
-<span class="sd">        rotation matrix used to represent the element. Rotating a tangent vector by an element &quot;moves&quot; it</span>
-<span class="sd">        from the tangent space on the right side of the element to the tangent space on the left.</span>
+<span class="sd">        rotation matrix used to represent the element. Rotating a tangent vector by an element</span>
+<span class="sd">        &quot;moves&quot; it from the tangent space on the right side of the element to the tangent space on</span>
+<span class="sd">        the left.</span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SE3_type` and :obj:`se3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`, :math:`\mathbf{p}` is an instance of :meth:`se3`).</span>
-<span class="sd">      Let :math:`\mathbf{R}_i \in` :math:`\textrm{SO(3)}` and :math:`\mathbf{t}_i \in \mathbb{R}^{3\times3}` represent the </span>
-<span class="sd">      rotation and translation part of the group. Let :math:`\mathbf{t}_{i\times}` be the skew matrix (:meth:`pypose.vec2skew`) </span>
-<span class="sd">      of :math:`\mathbf{t}_i`. The adjoint transformation is given by:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SE3_type`</span>
+<span class="sd">      and :obj:`se3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SE3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`se3`). Let :math:`\mathbf{R}_i \in`</span>
+<span class="sd">      :math:`\textrm{SO(3)}` and :math:`\mathbf{t}_i \in \mathbb{R}^{3\times3}` represent the</span>
+<span class="sd">      rotation and translation part of the group. Let :math:`\mathbf{t}_{i\times}` be the skew</span>
+<span class="sd">      matrix (:meth:`pypose.vec2skew`) of :math:`\mathbf{t}_i`.</span>
+<span class="sd">      The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
@@ -1691,21 +1915,22 @@
 <span class="sd">                                \end{array}</span>
 <span class="sd">                             \right] \in \mathrm{SE(3)}  </span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type` and :obj:`sim3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`, :math:`\mathbf{p}` is an instance of :meth:`sim3`).</span>
-<span class="sd">      Let :math:`\mathbf{R}_i\in` :math:`\textrm{SO(3)}`, :math:`\mathbf{t}_i \in \mathbb{R}^{3\times3}`, and </span>
-<span class="sd">      :math:`s_i \in \mathbb{R}^+` represent the rotation, translation, and scale parts of the group. Let </span>
-<span class="sd">      :math:`\mathbf{t}_{i\times}` be the skew matrix (:meth:`pypose.vec2skew`) of :math:`\mathbf{t}_i`.</span>
-<span class="sd">      The adjoint transformation is given by:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type` and</span>
+<span class="sd">      :obj:`sim3_type` (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`, :math:`\mathbf{p}`</span>
+<span class="sd">      is an instance of :meth:`sim3`). Let :math:`\mathbf{R}_i\in` :math:`\textrm{SO(3)}`,</span>
+<span class="sd">      :math:`\mathbf{t}_i \in \mathbb{R}^{3\times3}`, and :math:`s_i \in \mathbb{R}^+` represent</span>
+<span class="sd">      the rotation, translation, and scale parts of the group. Let :math:`\mathbf{t}_{i\times}`</span>
+<span class="sd">      be the skew matrix (:meth:`pypose.vec2skew`) of :math:`\mathbf{t}_i`. The adjoint</span>
+<span class="sd">      transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
-<span class="sd">                                    s_i\mathbf{R}_i&amp; \mathbf{t}_{i\times}\mathbf{R}_i&amp; -\mathbf{t}_i \\</span>
-<span class="sd">                                    0 &amp; \mathbf{R}_i&amp; 0 \\</span>
-<span class="sd">                                    0 &amp; 0 &amp; 1</span>
-<span class="sd">                                \end{array}</span>
-<span class="sd">                             \right] \in \mathbb{R}^{7\times7}</span>
+<span class="sd">                        \begin{array}{cc} </span>
+<span class="sd">                            s_i\mathbf{R}_i&amp; \mathbf{t}_{i\times}\mathbf{R}_i&amp; -\mathbf{t}_i \\</span>
+<span class="sd">                            0 &amp; \mathbf{R}_i&amp; 0 \\</span>
+<span class="sd">                            0 &amp; 0 &amp; 1</span>
+<span class="sd">                        \end{array}</span>
+<span class="sd">                        \right] \in \mathbb{R}^{7\times7}</span>
 
 <span class="sd">        where,</span>
 
@@ -1717,10 +1942,11 @@
 <span class="sd">                                \end{array}</span>
 <span class="sd">                             \right] \in \textrm{Sim(3)}    </span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type` and :obj:`rxso3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`, :math:`\mathbf{p}` is an instance of :meth:`rxso3`).</span>
-<span class="sd">      Let :math:`\mathbf{R}_i \in` :math:`\textrm{SO(3)}`, and :math:`s_i \in \mathbb{R}^+` represent the rotation </span>
-<span class="sd">      and scale parts of the group. The adjoint transformation is given by:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type`</span>
+<span class="sd">      and :obj:`rxso3_type` (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`rxso3`). Let :math:`\mathbf{R}_i \in`</span>
+<span class="sd">      :math:`\textrm{SO(3)}`, and :math:`s_i \in \mathbb{R}^+` represent the rotation and</span>
+<span class="sd">      scale parts of the group. The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
@@ -1740,15 +1966,17 @@
 <span class="sd">                                \end{array}</span>
 <span class="sd">                             \right] \in \mathrm{RxSO(3)}</span>
 
-<span class="sd">        In the case of :math:`\textrm{RxSO3}` group, the adjoint transformation is the same as the rotation </span>
-<span class="sd">        matrix of the group i.e. the :math:`\textrm{SO3}` part of the group.</span>
+<span class="sd">        In the case of :math:`\textrm{RxSO3}` group, the adjoint transformation is the same as</span>
+<span class="sd">        the rotation matrix of the group i.e. the :math:`\textrm{SO3}` part of the group.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The adjoint operator is a linear map which moves an element :math:`\mathbf{p} \in \mathcal{g}`</span>
-<span class="sd">        in the right tangent space of :math:`\mathbf{x} \in \mathcal{G}` to the left tangent space.</span>
+<span class="sd">        The adjoint operator is a linear map which moves an element</span>
+<span class="sd">        :math:`\mathbf{p} \in \mathcal{g}` in the right tangent space of</span>
+<span class="sd">        :math:`\mathbf{x} \in \mathcal{G}` to the left tangent space.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x} = \mathbf{x} * \mathrm{Exp}(\mathbf{p})</span>
+<span class="sd">            \mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x} </span>
+<span class="sd">            = \mathbf{x} * \mathrm{Exp}(\mathbf{p})</span>
 <span class="sd">        </span>
 <span class="sd">        It can be easily verified:</span>
 
@@ -1763,15 +1991,15 @@
 <span class="sd">          and Pattern Recognition (CVPR), 2021.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        :math:`\mathrm{Adj}` is generally used to transform a tangent vector from the tangent space around one</span>
-<span class="sd">        element to the tangent space of another.</span>
+<span class="sd">        :math:`\mathrm{Adj}` is generally used to transform a tangent vector from the tangent</span>
+<span class="sd">        space around one element to the tangent space of another.</span>
 <span class="sd">        One can refer to this paper for more details:</span>
 
 <span class="sd">        * J. Sola et al., `A micro Lie theory for state estimation in</span>
 <span class="sd">          robotics &lt;https://arxiv.org/abs/1812.01537&gt;`_, arXiv preprint arXiv:1812.01537 (2018).</span>
 
-<span class="sd">        The following thesis and the tutorial serve as a good reading material to learn more about deriving the </span>
-<span class="sd">        adjoint matrices for different transformation groups. </span>
+<span class="sd">        The following thesis and the tutorial serve as a good reading material to learn more</span>
+<span class="sd">        about deriving the adjoint matrices for different transformation groups. </span>
 
 <span class="sd">        * Strasdat, H., 2012. `Local accuracy and global consistency for efficient visual SLAM</span>
 <span class="sd">          &lt;https://www.doc.ic.ac.uk/~ajd/Publications/Strasdat-H-2012-PhD-Thesis.pdf&gt;`_, </span>
@@ -1877,52 +2105,67 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \mathbf{J}^{-1}_i(\mathbf{x}_i)\mathbf{p}_i,</span>
 
-<span class="sd">        where :math:`\mathbf{J}^{-1}_i(\mathbf{x}_i)` is the inverse of left Jacobian of :math:`\mathbf{x}_i`. </span>
+<span class="sd">        where :math:`\mathbf{J}^{-1}_i(\mathbf{x}_i)` is the inverse of left Jacobian of</span>
+<span class="sd">        :math:`\mathbf{x}_i`. </span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type` and :obj:`so3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SO3`, :math:`\mathbf{p}` is an instance of :meth:`so3`).</span>
-<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra of :math:`\mathbf{x}_i`, </span>
-<span class="sd">      :math:`\boldsymbol{\Phi}_i` be the skew matrix (:meth:`pypose.vec2skew`) of :math:`\boldsymbol{\phi}_i`:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type`</span>
+<span class="sd">      and :obj:`so3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SO3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`so3`).</span>
+<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra</span>
+<span class="sd">      of :math:`\mathbf{x}_i`, :math:`\boldsymbol{\Phi}_i` be the skew matrix</span>
+<span class="sd">      (:meth:`pypose.vec2skew`) of :math:`\boldsymbol{\phi}_i`:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \mathbf{I} - \frac{1}{2}\boldsymbol{\Phi}_i +</span>
 <span class="sd">            \mathrm{coef}\boldsymbol{\Phi}_i^2</span>
 
-<span class="sd">      where :math:`\mathbf{I}` is the identity matrix with the same dimension as :math:`\boldsymbol{\Phi}_i`, and </span>
+<span class="sd">      where :math:`\mathbf{I}` is the identity matrix with the same dimension as</span>
+<span class="sd">      :math:`\boldsymbol{\Phi}_i`, and </span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathrm{coef} = \left\{</span>
-<span class="sd">                                \begin{array}{ll} </span>
-<span class="sd">                                    \frac{1}{\theta_i^2} - \frac{\cos{\frac{\theta_i}{2}}}{2\theta\sin{\frac{\theta_i}{2}}},</span>
-<span class="sd">                                    \quad \|\theta_i\| &gt; \text{eps}, \\</span>
-<span class="sd">                                    \frac{1}{12},</span>
-<span class="sd">                                    \quad \|\theta_i\| \leq \text{eps}</span>
-<span class="sd">                                \end{array}</span>
-<span class="sd">                             \right.</span>
+<span class="sd">            \mathrm{coef} =</span>
+<span class="sd">                \left\{</span>
+<span class="sd">                \begin{array}{ll} </span>
+<span class="sd">                    \frac{1}{\theta_i^2} -</span>
+<span class="sd">                    \frac{\cos{\frac{\theta_i}{2}}}{2\theta\sin{\frac{\theta_i}{2}}},</span>
+<span class="sd">                    \quad \|\theta_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                    \frac{1}{12},</span>
+<span class="sd">                    \quad \|\theta_i\| \leq \text{eps}</span>
+<span class="sd">                \end{array}</span>
+<span class="sd">                \right.</span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SE3_type` and :obj:`se3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`SE3`, :math:`\mathbf{p}` is an instance of :meth:`se3`).</span>
-<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra of the SO3 part of </span>
-<span class="sd">      :math:`\mathbf{x}_i`, :math:`\boldsymbol{\tau}_i` be the Lie Algebra of the translation part of :math:`\mathbf{x}_i`; </span>
-<span class="sd">      :math:`\boldsymbol{\Phi}_i` and :math:`\boldsymbol{\Tau}_i` be the skew matrices, respectively:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SE3_type`</span>
+<span class="sd">      and :obj:`se3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SE3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`se3`).</span>
+<span class="sd">      Let :math:`\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i` be the corresponding Lie Algebra</span>
+<span class="sd">      of the SO3 part of :math:`\mathbf{x}_i`, :math:`\boldsymbol{\tau}_i` be the Lie Algebra</span>
+<span class="sd">      of the translation part of :math:`\mathbf{x}_i`; :math:`\boldsymbol{\Phi}_i` and</span>
+<span class="sd">      :math:`\boldsymbol{\Tau}_i` be the skew matrices, respectively:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
-<span class="sd">                                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &amp; -\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
-<span class="sd">                                    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) \\</span>
-<span class="sd">                                    \mathbf{0} &amp; \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
-<span class="sd">                                \end{array}</span>
-<span class="sd">                             \right]</span>
+<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) =</span>
+<span class="sd">                \left[</span>
+<span class="sd">                \begin{array}{cc} </span>
+<span class="sd">                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &amp; </span>
+<span class="sd">                            - \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
+<span class="sd">                    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) </span>
+<span class="sd">                        \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) \\</span>
+<span class="sd">                    \mathbf{0} &amp; \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
+<span class="sd">                \end{array}</span>
+<span class="sd">                \right]</span>
 
-<span class="sd">        where :math:`\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)` is the inverse of left Jacobian of the SO3 part of :math:`\mathbf{x}_i`.</span>
+<span class="sd">        where :math:`\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)` is the inverse of left Jacobian</span>
+<span class="sd">        of the SO3 part of :math:`\mathbf{x}_i`. </span>
 <span class="sd">        :math:`\mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)` is </span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) = \frac{1}{2}\boldsymbol{\Tau}_i &amp;+ c_1</span>
-<span class="sd">                (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i} + \boldsymbol{\Phi_i\Tau_i\Phi_i}) \\</span>
-<span class="sd">                 &amp;+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2} - 3\boldsymbol{\Phi_i\Tau_i\Phi_i})\\</span>
+<span class="sd">                \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) = </span>
+<span class="sd">                    \frac{1}{2}\boldsymbol{\Tau}_i &amp;+ c_1</span>
+<span class="sd">                (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i} </span>
+<span class="sd">                    + \boldsymbol{\Phi_i\Tau_i\Phi_i}) \\</span>
+<span class="sd">                 &amp;+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2} </span>
+<span class="sd">                    - 3\boldsymbol{\Phi_i\Tau_i\Phi_i})\\</span>
 <span class="sd">                 &amp;+ c_3 (\boldsymbol{\Phi_i\Tau_i\Phi_i^2} + \boldsymbol{\Phi_i^2\Tau_i\Phi_i})  </span>
 <span class="sd">            \end{align*}</span>
 
@@ -1931,7 +2174,8 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            c_1 = \left\{</span>
 <span class="sd">                    \begin{array}{ll} </span>
-<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3},</span>
+<span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}-\frac{1}{120}\theta_i^2,</span>
 <span class="sd">                        \quad \|\theta_i\| \leq \text{eps}</span>
 <span class="sd">                    \end{array}</span>
@@ -1940,7 +2184,8 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            c_2 = \left\{</span>
 <span class="sd">                    \begin{array}{ll} </span>
-<span class="sd">                        \frac{\theta_i^2 +2\cos\theta_i - 2}{2\theta_i^4}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
+<span class="sd">                        \frac{\theta_i^2 +2\cos\theta_i - 2}{2\theta_i^4},</span>
+<span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{24}-\frac{1}{720}\theta_i^2,</span>
 <span class="sd">                        \quad \|\theta_i\| \leq \text{eps}</span>
 <span class="sd">                    \end{array}</span>
@@ -1956,28 +2201,34 @@
 <span class="sd">                    \end{array}</span>
 <span class="sd">                    \right.           </span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type` and :obj:`sim3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`, :math:`\mathbf{p}` is an instance of :meth:`sim3`).</span>
-<span class="sd">      The inverse of left Jacobian can be approximated as:</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type`</span>
+<span class="sd">      and :obj:`sim3_type` (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`sim3`). The inverse of left Jacobian can</span>
+<span class="sd">      be approximated as:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \sum_{n=0}(-1)^n\frac{B_n}{n!}(\boldsymbol{\xi}_i^{\curlywedge})^n</span>
+<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = </span>
+<span class="sd">                \sum_{n=0}(-1)^n\frac{B_n}{n!}(\boldsymbol{\xi}_i^{\curlywedge})^n</span>
 
 <span class="sd">        where :math:`B_n` is the Bernoulli number: :math:`B_0 = 1`, :math:`B_1 = -\frac{1}{2}`,</span>
 <span class="sd">        :math:`B_2 = \frac{1}{6}`, :math:`B_3 = 0`, :math:`B_4 = -\frac{1}{30}`.</span>
-<span class="sd">        :math:`\boldsymbol{\xi}_i^{\curlywedge} = \mathrm{adj}(\boldsymbol{\xi}_i^{\wedge})` and :math:`\mathrm{adj}` </span>
-<span class="sd">        is the adjoint of the Lie algebra :math:`\mathfrak{sim}(3)`, e.g., :math:`\boldsymbol{\xi}_i \in \mathfrak{sim}(3)`.</span>
-<span class="sd">        Notice that if notate :math:`\boldsymbol{X}_i = \mathrm{Adj}(\mathbf{x}_i)` and :math:`\mathrm{Adj}` </span>
-<span class="sd">        is the adjoint of the Lie group :math:`\mathrm{Sim}(3)`, there is a nice property:</span>
-<span class="sd">        :math:`\mathrm{Adj}(\mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})) = \mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))`, </span>
+<span class="sd">        :math:`\boldsymbol{\xi}_i^{\curlywedge} = \mathrm{adj}(\boldsymbol{\xi}_i^{\wedge})`</span>
+<span class="sd">        and :math:`\mathrm{adj}` is the adjoint of the Lie algebra :math:`\mathfrak{sim}(3)`,</span>
+<span class="sd">        e.g., :math:`\boldsymbol{\xi}_i \in \mathfrak{sim}(3)`. Notice that if notate</span>
+<span class="sd">        :math:`\boldsymbol{X}_i = \mathrm{Adj}(\mathbf{x}_i)` and :math:`\mathrm{Adj}` is the</span>
+<span class="sd">        adjoint of the Lie group :math:`\mathrm{Sim}(3)`, there is a nice property:</span>
+<span class="sd">        :math:`\mathrm{Adj}(\mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})) =</span>
+<span class="sd">        \mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))`, </span>
 <span class="sd">        or :math:`\boldsymbol{X}_i = \mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})`.</span>
 <span class="sd">        </span>
 
-<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type` and :obj:`rxso3_type`</span>
-<span class="sd">      (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`, :math:`\mathbf{p}` is an instance of :meth:`rxso3`).</span>
-<span class="sd">      Let :math:`\boldsymbol{\phi}_i` be the corresponding Lie Algebra of the SO3 part of</span>
-<span class="sd">      :math:`\mathbf{x}_i`, :math:`\boldsymbol{\Phi}_i` be the skew matrix (:meth:`pypose.vec2skew`),</span>
-<span class="sd">      The inverse of left Jacobian of :math:`\mathbf{x}_i` is the same as that for the SO3 part of :math:`\mathbf{x}_i`.</span>
+<span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type`</span>
+<span class="sd">      and :obj:`rxso3_type` (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`,</span>
+<span class="sd">      :math:`\mathbf{p}` is an instance of :meth:`rxso3`). Let :math:`\boldsymbol{\phi}_i`</span>
+<span class="sd">      be the corresponding Lie Algebra of the SO3 part of :math:`\mathbf{x}_i`,</span>
+<span class="sd">      :math:`\boldsymbol{\Phi}_i` be the skew matrix (:meth:`pypose.vec2skew`), The inverse</span>
+<span class="sd">      of left Jacobian of :math:`\mathbf{x}_i` is the same as that for the SO3 part of</span>
+<span class="sd">      :math:`\mathbf{x}_i`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[</span>
