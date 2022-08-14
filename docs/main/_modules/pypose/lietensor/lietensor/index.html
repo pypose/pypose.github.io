@@ -837,12 +837,13 @@
 <span class="sd">                grad_fn=&lt;AliasBackward0&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="p">:</span><span class="n">LieType</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="s1">&#39;The last dimension of a LieTensor has to be &#39;</span> \
-            <span class="s1">&#39;corresponding to their LieType. More details go to </span><span class="si">{}</span><span class="s1">. If this error happens in an &#39;</span> \
-            <span class="s1">&#39;optimization process, where LieType is not a necessary structure, we suggest to &#39;</span>    \
-            <span class="s1">&#39;call .tensor() to convert a LieTensor to Tensor before passing it to an optimizer. &#39;</span> \
-            <span class="s1">&#39;If this still happens, create an issue on GitHub please.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s1">&#39;https://pypose.org/docs/generated/pypose.LieTensor/#pypose.LieTensor&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The last dimension of a LieTensor has to be corresponding to their &#39;</span> \
+            <span class="s1">&#39;LieType. Ignore this warning if you are using deepcopy. More details go to </span><span class="si">{}</span><span class="s1">. &#39;</span> \
+            <span class="s1">&#39;If this error happens in an optimization process, where LieType is not a necessary &#39;</span>
+            <span class="s1">&#39;structure, we suggest to call .tensor() to convert a LieTensor to Tensor before &#39;</span> \
+            <span class="s1">&#39;passing it to an optimizer. If you believe it is a bug, create an issue on GitHub.&#39;</span> \
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;https://pypose.org/docs/generated/pypose.LieTensor/#pypose.LieTensor&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">ltype</span>
 
     <span class="nd">@staticmethod</span>
@@ -856,6 +857,9 @@
                    <span class="s1">&#39; </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LieTensor.new_empty"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.new_empty">[docs]</a>    <span class="k">def</span> <span class="nf">new_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">ltype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__torch_function__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
