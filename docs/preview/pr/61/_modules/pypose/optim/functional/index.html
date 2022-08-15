@@ -80,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
 
 
-<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
+<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
                     <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
@@ -101,17 +101,17 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (torch.nn.Module): a PyTorch model that takes Tensor or LieTensor</span>
-<span class="sd">            inputs and returns a tuple of Tensors/LieTensors or a Tensor/LieTensor.</span>
-<span class="sd">        inputs (tuple of Tensors/LieTensors or Tensor/LieTensor): inputs to the</span>
+<span class="sd">            input and returns a tuple of Tensors/LieTensors or a Tensor/LieTensor.</span>
+<span class="sd">        input (tuple of Tensors/LieTensors or Tensor/LieTensor): input to the</span>
 <span class="sd">            model. Defaults to ``None``.</span>
 <span class="sd">        create_graph (bool, optional): If ``True``, the Jacobian will be</span>
 <span class="sd">            computed in a differentiable manner. Note that when ``strict`` is</span>
 <span class="sd">            ``False``, the result can not require gradients or be disconnected</span>
-<span class="sd">            from the inputs.  Defaults to ``False``.</span>
+<span class="sd">            from the input.  Defaults to ``False``.</span>
 <span class="sd">        strict (bool, optional): If ``True``, an error will be raised when we</span>
 <span class="sd">            detect that there exists an input such that all the outputs are</span>
 <span class="sd">            independent of it. If ``False``, we return a Tensor of zeros as the</span>
-<span class="sd">            jacobian for said inputs, which is the expected mathematical value.</span>
+<span class="sd">            jacobian for said input, which is the expected mathematical value.</span>
 <span class="sd">            Defaults to ``False``.</span>
 <span class="sd">        vectorize (bool, optional): When computing the jacobian, usually we invoke</span>
 <span class="sd">            ``autograd.grad`` once per row of the jacobian. If this flag is</span>
@@ -125,7 +125,7 @@
 <span class="sd">            determine whether the Jacobian will be computed with forward or reverse</span>
 <span class="sd">            mode AD. Currently, ``&quot;forward-mode&quot;`` requires ``vectorized=True``.</span>
 <span class="sd">            Defaults to ``&quot;reverse-mode&quot;``. If ``func`` has more outputs than</span>
-<span class="sd">            inputs, ``&quot;forward-mode&quot;`` tends to be more performant. Otherwise,</span>
+<span class="sd">            input, ``&quot;forward-mode&quot;`` tends to be more performant. Otherwise,</span>
 <span class="sd">            prefer to use ``&quot;reverse-mode&quot;``.</span>
 <span class="sd">        flatten (bool, optional): If ``True``, all module parameters and outputs</span>
 <span class="sd">            are flattened and concatenated to form a single vector. The Jacobian</span>
@@ -156,17 +156,17 @@
 <span class="sd">        Calculates Jacobian with respect to all model parameters.</span>
 
 <span class="sd">        &gt;&gt;&gt; model = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1)</span>
-<span class="sd">        &gt;&gt;&gt; inputs = torch.randn(1, 1, 1)</span>
-<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, inputs)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(1, 1, 1)</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, input)</span>
 <span class="sd">        (tensor([[[[[[[0.3365]]]]]]]), tensor([[[[1.]]]]))</span>
 <span class="sd">        &gt;&gt;&gt; [j.shape for j in J]</span>
 <span class="sd">        [torch.Size([1, 1, 1, 1, 1, 1, 1]), torch.Size([1, 1, 1, 1])]</span>
 
 <span class="sd">        Function with flattened parameters returns a combined Jacobian.</span>
 
-<span class="sd">        &gt;&gt;&gt; inputs = torch.randn(2, 2, 2)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(2, 2, 2)</span>
 <span class="sd">        &gt;&gt;&gt; model = nn.Conv2d(in_channels=2, out_channels=2, kernel_size=1)</span>
-<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, inputs, flatten=True)</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, input, flatten=True)</span>
 <span class="sd">        tensor([[-0.4162,  0.0968,  0.0000,  0.0000,  1.0000,  0.0000],</span>
 <span class="sd">                [-0.6042,  1.1886,  0.0000,  0.0000,  1.0000,  0.0000],</span>
 <span class="sd">                [ 1.4623,  0.7389,  0.0000,  0.0000,  1.0000,  0.0000],</span>
@@ -188,8 +188,8 @@
 <span class="sd">        ...     def forward(self, x):</span>
 <span class="sd">        ...         return self.p.Exp() * x</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; model, inputs = PoseTransform(), pp.randn_SO3()</span>
-<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, inputs, flatten=True)</span>
+<span class="sd">        &gt;&gt;&gt; model, input = PoseTransform(), pp.randn_SO3()</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.modjac(model, input, flatten=True)</span>
 <span class="sd">        tensor([[ 0.4670,  0.7041,  0.0029,  0.0000,  0.0000,  0.0000],</span>
 <span class="sd">                [-0.6591,  0.4554, -0.2566,  0.0000,  0.0000,  0.0000],</span>
 <span class="sd">                [-0.2477,  0.0670,  0.9535,  0.0000,  0.0000,  0.0000],</span>
@@ -201,13 +201,13 @@
 <span class="sd">        &gt;&gt;&gt; J.shape</span>
 <span class="sd">        torch.Size([8, 6])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">func</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">make_functional</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">func</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">buffers</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">make_functional_with_buffers</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">buffers</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">inputs</span><span class="p">,)</span>
-        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="nb">input</span><span class="p">,)</span>
+        <span class="n">func_param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">p</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">buffers</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">)</span>
 
     <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func_param</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="n">create_graph</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span> \
                     <span class="n">vectorize</span><span class="o">=</span><span class="n">vectorize</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">)</span>
@@ -218,20 +218,20 @@
                     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">J</span><span class="p">)),</span> <span class="s1">&#39;Jacobian contains Nan! Check your model and inputs!&#39;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">J</span><span class="p">)),</span> <span class="s1">&#39;Jacobian contains Nan! Check your model and input!&#39;</span>
     <span class="k">return</span> <span class="n">J</span></div>
 
 
-<span class="k">def</span> <span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">make_functional</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="n">jacrev</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">jacrev</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">func</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">make_functional</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="n">jacfwd</span> <span class="o">=</span> <span class="n">functorch</span><span class="o">.</span><span class="n">jacfwd</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">jacfwd</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jacfwd</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 </pre></div>
 
            </div>

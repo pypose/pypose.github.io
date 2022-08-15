@@ -120,36 +120,33 @@
 <dt class="sig sig-object py" id="pypose.randn_Sim3">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_Sim3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_Sim3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_Sim3" title="Permalink to this definition"></a></dt>
 <dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> LieTensor filled with the Exponential map of the random
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> LieTensor generated using <a class="reference internal" href="../pypose.randn_sim3/#pypose.randn_sim3" title="pypose.randn_sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn_sim3()</span></code></a>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> LieTensor. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> LieTensor is generated using <a class="reference internal" href="../pypose.randn_sim3/#pypose.randn_sim3" title="pypose.randn_sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn_sim3()</span></code></a>.</p>
 <div class="math">
-\[\mathrm{out}_i = \mathrm{Exp}([\mathcal{N}(\mathbf{0}_{3\times 1}, \mathbf{\sigma_{\rm{t}}}_{3\times 1}),
-\mathcal{U}(x, y, z)*\mathcal{N}(0, \sigma_{\rm{r}}),
-\mathcal{N}(0, \sigma_{\mathrm{s}})])
+\[\mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s]),
 
 \]</div>
-<p>where <span class="math">\(\mathcal{N}\)</span> denotes normal distribution and <span class="math">\(\mathcal{U}(x, y, z)\)</span> is 3-dimensional
-cordination of a random point from the uniformed distribution on the standard sphere.
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_t</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_r</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_s</span></code> are all from input argument <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code>, i.e.,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code> = (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_t</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_r</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_s</span></code>).
-Detailed explanation of <span class="math">\(\mathcal{U}(x, y, z)\)</span> see <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn_so3()</span></code></a>.</p>
-<p>The shape of the tensor is defined by the variable argument size.</p>
+<p>where <span class="math">\(\tau_x, \tau_y, \tau_z \sim \mathcal{N}(0, \sigma_{\rm{t}})\)</span>,
+<span class="math">\(\log s \sim \mathcal{N}(0, \sigma_{\rm{s}})\)</span> and
+<span class="math">\([\delta_x, \delta_y, \delta_z]\)</span> is generated using <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a>.
+<span class="math">\(\mathcal{N}(\cdot, \cdot)\)</span> denotes normal distribution and <span class="math">\(\mathrm{Exp}()\)</span> is the
+Exponential map.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>size</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the shape of the output tensor.
 Can be a variable number of arguments or a collection like a list or tuple.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>tuple</em><em>, </em><em>optional</em>) – variance (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_t</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_r</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_s</span></code>)
+<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation (<code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_t</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_r</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_s</span></code>)
 for the three normal distribution. Default: 1.0.</p></li>
 <li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
-the returned tensor. Default: False.</p></li>
+the returned tensor. Default: “False”.</p></li>
 <li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling</p></li>
 <li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned tensor.
-Default: if None, uses a global default (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
+Default: “None”. If None, uses a global default (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
 <li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned Tensor.
 Default: torch.strided.</p></li>
 <li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
-Default: if None, uses the current device for the default tensor
-type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). device will be the CPU
+Default: “None”. If None, uses the current device for the default tensor
+type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). Device will be the CPU
 for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 </ul>
 </dd>
