@@ -95,21 +95,7 @@
 <li><p><strong>C</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The coefficient matrix in the state-space equation of LTI system,</p></li>
 <li><p><strong>D</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The coefficient matrix in the state-space equation of LTI system,</p></li>
 <li><p><strong>c1</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The constant input of the system,</p></li>
-<li><p><strong>c2</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The constant output of the system.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>According to the actual physical meaning, the dimensions of A, B, C, D must be the consistent,
-whether in batch or not.</p>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.LTI.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#LTI.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LTI.forward" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
+<li><p><strong>c2</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The constant output of the system,</p></li>
 <li><p><strong>state</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The state of the current timestamp of LTI system,</p></li>
 <li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The input of the current timestamp of LTI system.</p></li>
 </ul>
@@ -134,11 +120,17 @@ which is called the state-space equation.</p>
 <p>Here, we consider the discrete-time system dynamics.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><span class="math">\(\mathbf{A}\)</span>, <span class="math">\(\mathbf{B}\)</span>, <span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span>, <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span> could be a single input or in a batch.
-In the batch case, their dimensions must be consistent so that they can be multiplied for each channel.</p>
+<p>According to the actual physical meaning, the dimensions of A, B, C, D must be the consistent,
+whether in batch or not.</p>
+<p><span class="math">\(\mathbf{A}\)</span>, <span class="math">\(\mathbf{B}\)</span>, <span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span>, <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span>
+could be a single input or in a batch. In the batch case, their dimensions must be consistent
+so that they can be multiplied for each channel.</p>
 <p>Note that here variables are given as row vectors.</p>
 </div>
-<p class="rubric">Example</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.LTI.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#LTI.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LTI.forward" title="Permalink to this definition"></a></dt>
+<dd><p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 <span class="go">    B = torch.randn((2,3,2))</span>
 <span class="go">    C = torch.randn((2,3,3))</span>
