@@ -205,7 +205,8 @@ a new torch tensor with the exponential of the elements of the input tensor.</p>
 1 - \frac{\|\mathbf{x}_i\|^2}{8} + \frac{\|\mathbf{x}_i\|^4}{384} \right],
 
 \]</div>
-<p>where <span class="math">\(\theta_i = \frac{1}{2} - \frac{1}{48} \|\mathbf{x}_i\|^2 + \frac{1}{3840} \|\mathbf{x}_i\|^4\)</span>.</p>
+<p>where <span class="math">\(\theta_i = \frac{1}{2} - \frac{1}{48} \|\mathbf{x}_i\|^2
++ \frac{1}{3840} \|\mathbf{x}_i\|^4\)</span>.</p>
 </div></blockquote>
 </li>
 <li><p>Input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code>
@@ -266,8 +267,10 @@ of <span class="math">\(\bm{\phi}_i\)</span>; <span class="math">\(s_i = e^\sigm
 \left\{
     \begin{array}{ll}
         \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}
-        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\| \geq \text{eps}, \\
-        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\| < \text{eps},
+        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\|
+            \geq \text{eps}, \\
+        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3}, \quad \|\theta_i\|
+            < \text{eps},
     \end{array}
 \right.
 
@@ -289,7 +292,8 @@ of <span class="math">\(\bm{\phi}_i\)</span>; <span class="math">\(s_i = e^\sigm
 <div class="math">
 \[B = \left\{
         \begin{array}{ll}
-            \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| \geq \text{eps}, \\
+            \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\|
+                \geq \text{eps}, \\
             \frac{1}{6}, \quad \|\theta_i\| < \text{eps},
         \end{array}
     \right.
@@ -304,15 +308,16 @@ of <span class="math">\(\bm{\phi}_i\)</span>; <span class="math">\(s_i = e^\sigm
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The detailed explanation of the above <span class="math">\(\mathrm{Exp}\)</span>: calculation can be found in the paper:</p>
+<p>The detailed explanation of the above <span class="math">\(\mathrm{Exp}\)</span>: calculation can be found
+in the paper:</p>
 <ul class="simple">
 <li><p>Grassia, F. Sebastian., <a class="reference external" href="https://www.tandfonline.com/doi/pdf/10.1080/10867651.1998.10487493">Practical Parameterization of Rotations using the
 Exponential Map</a>,
 Journal of graphics tools, 1998.</p></li>
 </ul>
-<p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}~(\|\mathbf{n}\|=1)\)</span> and rotation angle
-<span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, let <span class="math">\(\mathbf{x}=\theta\mathbf{n}\)</span>, then the corresponding
-quaternion with unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as:</p>
+<p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}~(\|\mathbf{n}\|=1)\)</span> and rotation
+angle <span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, let <span class="math">\(\mathbf{x}=\theta\mathbf{n}\)</span>, then
+the corresponding quaternion with unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as:</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{q} = \left[\frac{\sin(\theta/2)}{\theta} \mathbf{x}, \cos(\theta/2) \right].
@@ -330,16 +335,17 @@ quaternion with unit norm <span class="math">\(\mathbf{q}\)</span> can be repres
 <p>Then, the corresponding quaternion is:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{q} = \left[\frac{\sin(\|\mathbf{x}\|/2)}{\|\mathbf{x}\|} \mathbf{x}, \cos(\|\mathbf{x}\|/2) \right].
+\[\mathbf{q} = \left[\frac{\sin(\|\mathbf{x}\|/2)}{\|\mathbf{x}\|} \mathbf{x},
+    \cos(\|\mathbf{x}\|/2) \right].
 
 \]</div>
 </div></blockquote>
 <p>If <span class="math">\(\|\mathbf{x}\|\)</span> is small (<span class="math">\(\|\mathbf{x}\|\le \text{eps}\)</span>),
-we use the Taylor Expansion form of <span class="math">\(\sin(\|\mathbf{x}\|/2)\)</span> and <span class="math">\(\cos(\|\mathbf{x}\|/2)\)</span>.</p>
+we use the Taylor Expansion form of <span class="math">\(\sin(\|\mathbf{x}\|/2)\)</span> and
+<span class="math">\(\cos(\|\mathbf{x}\|/2)\)</span>.</p>
 <p>More details about <span class="math">\(^s\mathbf{W}_i\)</span> in <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> can be found in Eq. (5.7):</p>
 <ul class="simple">
-<li><p>H. Strasdat, <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf">Local Accuracy and Global Consistency for Efficient Visual
-SLAM</a>,
+<li><p>H. Strasdat, <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf">Local Accuracy and Global Consistency for Efficient Visual SLAM</a>,
 Dissertation. Department of Computing, Imperial College London, 2012.</p></li>
 </ul>
 </div>

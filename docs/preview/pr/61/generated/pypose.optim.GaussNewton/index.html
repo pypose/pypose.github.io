@@ -57,11 +57,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.PINV/">pypose.optim.solver.PINV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.LSTSQ/">pypose.optim.solver.LSTSQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.Cholesky/">pypose.optim.solver.Cholesky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Constant/">pypose.optim.strategy.Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Adaptive/">pypose.optim.strategy.Adaptive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.TrustRegion/">pypose.optim.strategy.TrustRegion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Huber/">pypose.optim.kernel.Huber</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.PseudoHuber/">pypose.optim.kernel.PseudoHuber</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Cauchy/">pypose.optim.kernel.Cauchy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.FastTriggs/">pypose.optim.corrector.FastTriggs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.Triggs/">pypose.optim.corrector.Triggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/">pypose.optim.scheduler.StopOnPlateau</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pypose.optim.functional.modjac/">pypose.optim.functional.modjac</a></li>
 </ul>
 </li>
@@ -96,7 +100,7 @@
 <h1>pypose.optim.GaussNewton<a class="headerlink" href="#pypose-optim-gaussnewton" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.optim.GaussNewton">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.</span></span><span class="sig-name descname"><span class="pre">GaussNewton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.</span></span><span class="sig-name descname"><span class="pre">GaussNewton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/optimizer/#GaussNewton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.GaussNewton" title="Permalink to this definition"></a></dt>
 <dd><p>The Gauss-Newton (GN) algorithm solving non-linear least squares problems. This implementation
 is for optimizing the model parameters to approximate the target, which can be a
 Tensor/LieTensor or a tuple of Tensors/LieTensors.</p>
@@ -145,8 +149,12 @@ correction is used. Auto correction can be unstable when the robust model has
 indefinite Hessian. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – a square positive definite matrix defining the weight of
 model residual. Use this only when all inputs shared the same weight matrices. This is
-ignored when weight is given when calling <a class="reference internal" href="#pypose.optim.GaussNewton.step" title="pypose.optim.GaussNewton.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code> method.
+ignored when weight is given when calling <a class="reference internal" href="#pypose.optim.GaussNewton.step" title="pypose.optim.GaussNewton.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> or <a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/#pypose.optim.scheduler.StopOnPlateau.optimize" title="pypose.optim.scheduler.StopOnPlateau.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> method.
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>vectorize</strong> (<em>bool</em><em>, </em><em>optional</em>) – the method of computing Jacobian. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
+gradient of each scalar in output with respect to the model parameters will be
+computed in parallel with <code class="docutils literal notranslate"><span class="pre">&quot;reverse-mode&quot;</span></code>. More details go to
+<a class="reference internal" href="../pypose.optim.functional.modjac/#pypose.optim.functional.modjac" title="pypose.optim.functional.modjac"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.functional.modjac()</span></code></a>. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
 </dl>

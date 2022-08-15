@@ -189,13 +189,16 @@ by input (Lie Group) and second point (Lie Algebra).</p>
 \[\mathbf{y}_i = \mathbf{J}^{-1}_i(\mathbf{x}_i)\mathbf{p}_i,
 
 \]</div>
-<p>where <span class="math">\(\mathbf{J}^{-1}_i(\mathbf{x}_i)\)</span> is the inverse of left Jacobian of <span class="math">\(\mathbf{x}_i\)</span>.</p>
+<p>where <span class="math">\(\mathbf{J}^{-1}_i(\mathbf{x}_i)\)</span> is the inverse of left Jacobian of
+<span class="math">\(\mathbf{x}_i\)</span>.</p>
 </div></blockquote>
 <ul>
-<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code>
-(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>, <span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">so3()</span></code></a>).
-Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be the corresponding Lie Algebra of <span class="math">\(\mathbf{x}_i\)</span>,
-<span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix (<a class="reference internal" href="../pypose.vec2skew/#pypose.vec2skew" title="pypose.vec2skew"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.vec2skew()</span></code></a>) of <span class="math">\(\boldsymbol{\phi}_i\)</span>:</p>
+<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>,
+<span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">so3()</span></code></a>).
+Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be the corresponding Lie Algebra
+of <span class="math">\(\mathbf{x}_i\)</span>, <span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix
+(<a class="reference internal" href="../pypose.vec2skew/#pypose.vec2skew" title="pypose.vec2skew"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.vec2skew()</span></code></a>) of <span class="math">\(\boldsymbol{\phi}_i\)</span>:</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{J}^{-1}_i(\mathbf{x}_i) = \mathbf{I} - \frac{1}{2}\boldsymbol{\Phi}_i +
@@ -203,44 +206,56 @@ Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be 
 
 \]</div>
 </div></blockquote>
-<p>where <span class="math">\(\mathbf{I}\)</span> is the identity matrix with the same dimension as <span class="math">\(\boldsymbol{\Phi}_i\)</span>, and</p>
+<p>where <span class="math">\(\mathbf{I}\)</span> is the identity matrix with the same dimension as
+<span class="math">\(\boldsymbol{\Phi}_i\)</span>, and</p>
 <blockquote>
 <div><div class="math">
-\[\mathrm{coef} = \left\{
-                    \begin{array}{ll}
-                        \frac{1}{\theta_i^2} - \frac{\cos{\frac{\theta_i}{2}}}{2\theta\sin{\frac{\theta_i}{2}}},
-                        \quad \|\theta_i\| > \text{eps}, \\
-                        \frac{1}{12},
-                        \quad \|\theta_i\| \leq \text{eps}
-                    \end{array}
-                 \right.
+\[\mathrm{coef} =
+    \left\{
+    \begin{array}{ll}
+        \frac{1}{\theta_i^2} -
+        \frac{\cos{\frac{\theta_i}{2}}}{2\theta\sin{\frac{\theta_i}{2}}},
+        \quad \|\theta_i\| > \text{eps}, \\
+        \frac{1}{12},
+        \quad \|\theta_i\| \leq \text{eps}
+    \end{array}
+    \right.
 
 \]</div>
 </div></blockquote>
 </li>
-<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code>
-(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>, <span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">se3()</span></code></a>).
-Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be the corresponding Lie Algebra of the SO3 part of
-<span class="math">\(\mathbf{x}_i\)</span>, <span class="math">\(\boldsymbol{\tau}_i\)</span> be the Lie Algebra of the translation part of <span class="math">\(\mathbf{x}_i\)</span>;
-<span class="math">\(\boldsymbol{\Phi}_i\)</span> and <span class="math">\(\boldsymbol{\Tau}_i\)</span> be the skew matrices, respectively:</p>
+<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>,
+<span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">se3()</span></code></a>).
+Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be the corresponding Lie Algebra
+of the SO3 part of <span class="math">\(\mathbf{x}_i\)</span>, <span class="math">\(\boldsymbol{\tau}_i\)</span> be the Lie Algebra
+of the translation part of <span class="math">\(\mathbf{x}_i\)</span>; <span class="math">\(\boldsymbol{\Phi}_i\)</span> and
+<span class="math">\(\boldsymbol{\Tau}_i\)</span> be the skew matrices, respectively:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[
-                    \begin{array}{cc}
-                        \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) & -\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)
-                        \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) \\
-                        \mathbf{0} & \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)
-                    \end{array}
-                 \right]
+\[\mathbf{J}^{-1}_i(\mathbf{x}_i) =
+    \left[
+    \begin{array}{cc}
+        \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &
+                - \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)
+        \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)
+            \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) \\
+        \mathbf{0} & \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)
+    \end{array}
+    \right]
 
 \]</div>
-<p>where <span class="math">\(\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)\)</span> is the inverse of left Jacobian of the SO3 part of <span class="math">\(\mathbf{x}_i\)</span>.
+<p>where <span class="math">\(\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)\)</span> is the inverse of left Jacobian
+of the SO3 part of <span class="math">\(\mathbf{x}_i\)</span>.
 <span class="math">\(\mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)\)</span> is</p>
 <div class="math">
 \[\begin{align*}
-    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) = \frac{1}{2}\boldsymbol{\Tau}_i &+ c_1
-    (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i} + \boldsymbol{\Phi_i\Tau_i\Phi_i}) \\
-     &+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2} - 3\boldsymbol{\Phi_i\Tau_i\Phi_i})\\
+    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) =
+        \frac{1}{2}\boldsymbol{\Tau}_i &+ c_1
+    (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i}
+        + \boldsymbol{\Phi_i\Tau_i\Phi_i}) \\
+     &+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2}
+        - 3\boldsymbol{\Phi_i\Tau_i\Phi_i})\\
      &+ c_3 (\boldsymbol{\Phi_i\Tau_i\Phi_i^2} + \boldsymbol{\Phi_i^2\Tau_i\Phi_i})
 \end{align*}
 
@@ -249,7 +264,8 @@ Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be 
 <div class="math">
 \[c_1 = \left\{
         \begin{array}{ll}
-            \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{\theta_i - \sin\theta_i}{\theta_i^3},
+                \quad \|\theta_i\| > \text{eps}, \\
             \frac{1}{6}-\frac{1}{120}\theta_i^2,
             \quad \|\theta_i\| \leq \text{eps}
         \end{array}
@@ -259,7 +275,8 @@ Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be 
 <div class="math">
 \[c_2 = \left\{
         \begin{array}{ll}
-            \frac{\theta_i^2 +2\cos\theta_i - 2}{2\theta_i^4}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{\theta_i^2 +2\cos\theta_i - 2}{2\theta_i^4},
+                \quad \|\theta_i\| > \text{eps}, \\
             \frac{1}{24}-\frac{1}{720}\theta_i^2,
             \quad \|\theta_i\| \leq \text{eps}
         \end{array}
@@ -279,29 +296,35 @@ Let <span class="math">\(\boldsymbol{\phi}_i = \theta_i\mathbf{n}_i\)</span> be 
 \]</div>
 </div></blockquote>
 </li>
-<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code>
-(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>, <span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.sim3/#pypose.sim3" title="pypose.sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim3()</span></code></a>).
-The inverse of left Jacobian can be approximated as:</p>
+<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>,
+<span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.sim3/#pypose.sim3" title="pypose.sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim3()</span></code></a>). The inverse of left Jacobian can
+be approximated as:</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{J}^{-1}_i(\mathbf{x}_i) = \sum_{n=0}(-1)^n\frac{B_n}{n!}(\boldsymbol{\xi}_i^{\curlywedge})^n
+\[\mathbf{J}^{-1}_i(\mathbf{x}_i) =
+    \sum_{n=0}(-1)^n\frac{B_n}{n!}(\boldsymbol{\xi}_i^{\curlywedge})^n
 
 \]</div>
 <p>where <span class="math">\(B_n\)</span> is the Bernoulli number: <span class="math">\(B_0 = 1\)</span>, <span class="math">\(B_1 = -\frac{1}{2}\)</span>,
 <span class="math">\(B_2 = \frac{1}{6}\)</span>, <span class="math">\(B_3 = 0\)</span>, <span class="math">\(B_4 = -\frac{1}{30}\)</span>.
-<span class="math">\(\boldsymbol{\xi}_i^{\curlywedge} = \mathrm{adj}(\boldsymbol{\xi}_i^{\wedge})\)</span> and <span class="math">\(\mathrm{adj}\)</span>
-is the adjoint of the Lie algebra <span class="math">\(\mathfrak{sim}(3)\)</span>, e.g., <span class="math">\(\boldsymbol{\xi}_i \in \mathfrak{sim}(3)\)</span>.
-Notice that if notate <span class="math">\(\boldsymbol{X}_i = \mathrm{Adj}(\mathbf{x}_i)\)</span> and <span class="math">\(\mathrm{Adj}\)</span>
-is the adjoint of the Lie group <span class="math">\(\mathrm{Sim}(3)\)</span>, there is a nice property:
-<span class="math">\(\mathrm{Adj}(\mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})) = \mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))\)</span>,
+<span class="math">\(\boldsymbol{\xi}_i^{\curlywedge} = \mathrm{adj}(\boldsymbol{\xi}_i^{\wedge})\)</span>
+and <span class="math">\(\mathrm{adj}\)</span> is the adjoint of the Lie algebra <span class="math">\(\mathfrak{sim}(3)\)</span>,
+e.g., <span class="math">\(\boldsymbol{\xi}_i \in \mathfrak{sim}(3)\)</span>. Notice that if notate
+<span class="math">\(\boldsymbol{X}_i = \mathrm{Adj}(\mathbf{x}_i)\)</span> and <span class="math">\(\mathrm{Adj}\)</span> is the
+adjoint of the Lie group <span class="math">\(\mathrm{Sim}(3)\)</span>, there is a nice property:
+<span class="math">\(\mathrm{Adj}(\mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})) =
+\mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))\)</span>,
 or <span class="math">\(\boldsymbol{X}_i = \mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})\)</span>.</p>
 </div></blockquote>
 </li>
-<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code>
-(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>, <span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rxso3()</span></code></a>).
-Let <span class="math">\(\boldsymbol{\phi}_i\)</span> be the corresponding Lie Algebra of the SO3 part of
-<span class="math">\(\mathbf{x}_i\)</span>, <span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix (<a class="reference internal" href="../pypose.vec2skew/#pypose.vec2skew" title="pypose.vec2skew"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.vec2skew()</span></code></a>),
-The inverse of left Jacobian of <span class="math">\(\mathbf{x}_i\)</span> is the same as that for the SO3 part of <span class="math">\(\mathbf{x}_i\)</span>.</p>
+<li><p>If input (<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{p}\)</span>)’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> are <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>,
+<span class="math">\(\mathbf{p}\)</span> is an instance of <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rxso3()</span></code></a>). Let <span class="math">\(\boldsymbol{\phi}_i\)</span>
+be the corresponding Lie Algebra of the SO3 part of <span class="math">\(\mathbf{x}_i\)</span>,
+<span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix (<a class="reference internal" href="../pypose.vec2skew/#pypose.vec2skew" title="pypose.vec2skew"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.vec2skew()</span></code></a>), The inverse
+of left Jacobian of <span class="math">\(\mathbf{x}_i\)</span> is the same as that for the SO3 part of
+<span class="math">\(\mathbf{x}_i\)</span>.</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[
