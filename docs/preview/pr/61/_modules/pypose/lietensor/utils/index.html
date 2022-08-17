@@ -75,15 +75,16 @@
              
   <h1>Source code for pypose.lietensor.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.types</span> <span class="kn">import</span> <span class="n">_size</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span>  <span class="n">LieTensor</span>
+<span class="kn">from</span> <span class="nn">torch.types</span> <span class="kn">import</span> <span class="n">_size</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">LieType</span>
+<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">LieTensor</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">se3_type</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">so3_type</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">sim3_type</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span>
 <span class="kn">from</span> <span class="nn">.common_types</span> <span class="kn">import</span> <span class="n">_size_any_t</span>
+
 
 <span class="k">def</span> <span class="nf">_LieTensor_wrapper_add_docstr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">embedding_doc</span><span class="p">):</span>
     <span class="n">ltype</span><span class="p">:</span> <span class="n">LieType</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ltype&#39;</span><span class="p">]</span>
@@ -305,7 +306,7 @@
 <div class="viewcode-block" id="randn_like"><a class="viewcode-back" href="../../../../generated/pypose.randn_like/#pypose.randn_like">[docs]</a><span class="k">def</span> <span class="nf">randn_like</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns a LieTensor with the same size as input that is filled with random</span>
-<span class="sd">    LieTensor that satisfies the corresponding :obj:`input.ltype`.</span>
+<span class="sd">    LieTensor with the corresponding :obj:`input.ltype`.</span>
 
 <span class="sd">    The corresponding random generator can be</span>
 
@@ -343,29 +344,32 @@
 
 <span class="sd">        input (LieTensor): the size of input will determine size of the output tensor.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation for generating random LieTensors. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation for generating random</span>
+<span class="sd">            LieTensors. Default: 1.0.</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned Tensor.</span>
-<span class="sd">            Default: if None, defaults to the dtype of input.</span>
+<span class="sd">            Default: if ``None``, defaults to the dtype of input.</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned tensor.</span>
-<span class="sd">            Default: if None, defaults to the layout of input.</span>
+<span class="sd">            Default: if ``None``, defaults to the layout of input.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: if None, defaults to the device of input.</span>
+<span class="sd">            Default: if ``None``, defaults to the device of input.</span>
 
-<span class="sd">        requires_grad (bool, optional): If autograd should record operations on the returned tensor.</span>
-<span class="sd">            Default: False.</span>
+<span class="sd">        requires_grad (bool, optional): If autograd should record operations on the returned</span>
+<span class="sd">            tensor. Default: ``False``.</span>
 
-<span class="sd">        memory_format (torch.memory_format, optional): the desired memory format of returned Tensor.</span>
-<span class="sd">            Default: torch.preserve_format.</span>
+<span class="sd">        memory_format (torch.memory_format, optional): the desired memory format of returned</span>
+<span class="sd">            Tensor. Default: torch.preserve_format.</span>
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
-<span class="sd">        The parameter :math:`\sigma` can either be:</span>
+<span class="sd">        The parameter sigma (:math:`\sigma`) can either be:</span>
 
-<span class="sd">            - a single ``float`` -- in which all the elements in the LieType share the same sigma.</span>
+<span class="sd">            - a single ``float`` -- in which all the elements in the LieType share the same</span>
+<span class="sd">              sigma.</span>
 
-<span class="sd">            - a ``tuple`` of a number of floats -- in which case, the specific sigma for each element can be assigned independently.</span>
+<span class="sd">            - a ``tuple`` of a number of floats -- in which case, the specific sigma for</span>
+<span class="sd">              each element can be assigned independently.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If we have:</span>
@@ -373,14 +377,14 @@
 <span class="sd">        .. code::</span>
 
 <span class="sd">            import pypose as pp</span>
-<span class="sd">            x = pp.SO3(data)</span>
+<span class="sd">            x = pp.SO3([0, 0, 0, 1])</span>
 
 <span class="sd">        Then the following two usages are equivalent:</span>
 
 <span class="sd">        .. code::</span>
 
 <span class="sd">            pp.randn_like(x)</span>
-<span class="sd">            pp.randn_SO3(x.lshape, dtype=x.dtype, layout=x.layout, device=x.device)</span>
+<span class="sd">            pp.randn_SO3(*x.lshape, dtype=x.dtype, layout=x.layout, device=x.device)</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; x = pp.so3(torch.tensor([[0, 0, 0]]))</span>
@@ -393,58 +397,61 @@
 
 <div class="viewcode-block" id="randn_so3"><a class="viewcode-back" href="../../../../generated/pypose.randn_so3/#pypose.randn_so3">[docs]</a><span class="k">def</span> <span class="nf">randn_so3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`so3_type` LieTensor filled with random numbers. The generated LieTensor satisfies </span>
-<span class="sd">    that the corresponding rotation axis follows uniform distribution on the standard sphere and </span>
-<span class="sd">    the rotation angle follows normal distribution with 0 mean and standard deviation :obj:`sigma`.</span>
+<span class="sd">    Returns :obj:`so3_type` LieTensor filled with random numbers. The generated LieTensor</span>
+<span class="sd">    satisfies that the corresponding rotation axis follows uniform distribution on the</span>
+<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and</span>
+<span class="sd">    standard deviation :obj:`sigma`.</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z] = [\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \cdot \theta,</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">        \mathrm{data}[*, :] &amp;= [\delta_x, \delta_y, \delta_z] \\</span>
+<span class="sd">                            &amp;= [\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \cdot \theta,</span>
+<span class="sd">        \end{aligned}</span>
 
-<span class="sd">    .. math::</span>
-<span class="sd">        [\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \sim \mathcal{U}_{\mathrm{s}},</span>
-
-<span class="sd">    .. math::</span>
-<span class="sd">        \theta \sim \mathcal{N}(0, \sigma),</span>
-
-<span class="sd">    where :math:`\mathcal{U}_{\mathrm{s}}` denotes uniform distribution on the standard sphere. </span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution.</span>
-
+<span class="sd">    where :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` is randomly generated from uniform</span>
+<span class="sd">    distribution :math:`\mathcal{U}_{\mathrm{s}}` on a standard sphere and :math:`\theta`</span>
+<span class="sd">    is generated from a normal distribution :math:`\mathcal{N}(0, \sigma)`, where sigma</span>
+<span class="sd">    (:math:`\sigma`) is the standard deviation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation. Default: 1.0.</span>
+<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation.</span>
+<span class="sd">            Default: 1.0.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If None, uses a global default</span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
 <span class="sd">            Default: torch.strided.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`so3_type` LieTensor</span>
 
-
 <span class="sd">    Note:</span>
-<span class="sd">        We sample the uniform distributed points :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` using:</span>
+<span class="sd">        The uniform distributed points :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` on a sphere</span>
+<span class="sd">        are sampled using:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \delta_x&#39; = \frac{x_0}{d}, \delta_y&#39; = \frac{y_0}{d}, \delta_z&#39; = \frac{z_0}{d},</span>
 <span class="sd">        </span>
+<span class="sd">        where</span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            x_0, y_0, z_0 \sim \mathcal{N}(0, \sigma),</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            d = \sqrt{(x^2_0+y^2_0+z^2_0)}.</span>
 
@@ -469,9 +476,9 @@
 <span class="sd">        :alt: map to buried treasure</span>
 <span class="sd">        :align: center</span>
 
-<span class="sd">        Visualization of :meth:`pypose.randn_so3()`. We sample a total of 5000 random rotations using </span>
-<span class="sd">        :meth:`pypose.randn_so3()` and apply them on the basepoint [0, 0, 1], the generated points are </span>
-<span class="sd">        shown in blue.</span>
+<span class="sd">        Visualization of :meth:`pypose.randn_so3()`. A total of 5000 random rotations</span>
+<span class="sd">        are sampled using :meth:`pypose.randn_so3()` and applied to the basepoint</span>
+<span class="sd">        [0, 0, 1] (shown in blue).</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 

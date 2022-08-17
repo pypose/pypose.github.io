@@ -120,7 +120,7 @@
 <dt class="sig sig-object py" id="pypose.randn_like">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_like" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a LieTensor with the same size as input that is filled with random
-LieTensor that satisfies the corresponding <code class="xref py py-obj docutils literal notranslate"><span class="pre">input.ltype</span></code>.</p>
+LieTensor with the corresponding <code class="xref py py-obj docutils literal notranslate"><span class="pre">input.ltype</span></code>.</p>
 <p>The corresponding random generator can be</p>
 <table class="colwidths-given docutils align-default" id="id1">
 <caption><span class="caption-text">List of available random LieTensor generator of input <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code>.</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
@@ -170,27 +170,30 @@ LieTensor that satisfies the corresponding <code class="xref py py-obj docutils 
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><em>LieTensor</em></a>) – the size of input will determine size of the output tensor.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation for generating random LieTensors. Default: 1.0.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation for generating random
+LieTensors. Default: 1.0.</p></li>
 <li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned Tensor.
-Default: if None, defaults to the dtype of input.</p></li>
+Default: if <code class="docutils literal notranslate"><span class="pre">None</span></code>, defaults to the dtype of input.</p></li>
 <li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned tensor.
-Default: if None, defaults to the layout of input.</p></li>
+Default: if <code class="docutils literal notranslate"><span class="pre">None</span></code>, defaults to the layout of input.</p></li>
 <li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
-Default: if None, defaults to the device of input.</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on the returned tensor.
-Default: False.</p></li>
-<li><p><strong>memory_format</strong> (<em>torch.memory_format</em><em>, </em><em>optional</em>) – the desired memory format of returned Tensor.
-Default: torch.preserve_format.</p></li>
+Default: if <code class="docutils literal notranslate"><span class="pre">None</span></code>, defaults to the device of input.</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on the returned
+tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>memory_format</strong> (<em>torch.memory_format</em><em>, </em><em>optional</em>) – the desired memory format of returned
+Tensor. Default: torch.preserve_format.</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The parameter <span class="math">\(\sigma\)</span> can either be:</p>
+<p>The parameter sigma (<span class="math">\(\sigma\)</span>) can either be:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>a single <code class="docutils literal notranslate"><span class="pre">float</span></code> – in which all the elements in the LieType share the same sigma.</p></li>
-<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of a number of floats – in which case, the specific sigma for each element can be assigned independently.</p></li>
+<li><p>a single <code class="docutils literal notranslate"><span class="pre">float</span></code> – in which all the elements in the LieType share the same
+sigma.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of a number of floats – in which case, the specific sigma for
+each element can be assigned independently.</p></li>
 </ul>
 </div></blockquote>
 </div>
@@ -198,12 +201,12 @@ Default: torch.preserve_format.</p></li>
 <p class="admonition-title">Note</p>
 <p>If we have:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Then the following two usages are equivalent:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">lshape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">lshape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
