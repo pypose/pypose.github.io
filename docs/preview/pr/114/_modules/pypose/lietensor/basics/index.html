@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.lietensor.basics &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../../../_static/katex_autorenderer.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../">Module code</a> &raquo;</li>
+      <li>pypose.lietensor.basics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pypose.lietensor.basics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="vec2skew"><a class="viewcode-back" href="../../../../generated/pypose.vec2skew/#pypose.vec2skew">[docs]</a><span class="k">def</span> <span class="nf">vec2skew</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert batched vectors to skew matrices.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (Tensor): the tensor :math:`\mathbf{x}` to convert.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Tensor: the skew matrices :math:`\mathbf{y}`.</span>
+
+<span class="sd">    Shape:</span>
+<span class="sd">        Input: :obj:`(*, 3)`</span>
+
+<span class="sd">        Output: :obj:`(*, 3, 3)`</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        {\displaystyle \mathbf{y}_i={\begin{bmatrix}\,\,</span>
+<span class="sd">        0&amp;\!-x_{i,3}&amp;\,\,\,x_{i,2}\\\,\,\,x_{i,3}&amp;0&amp;\!-x_{i,1}</span>
+<span class="sd">        \\\!-x_{i,2}&amp;\,\,x_{i,1}&amp;\,\,0\end{bmatrix}}}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The last dimension of the input tensor has to be 3.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; pp.vec2skew(torch.randn(1,3))</span>
+<span class="sd">        tensor([[[ 0.0000, -2.2059, -1.2761],</span>
+<span class="sd">                [ 2.2059,  0.0000,  0.2929],</span>
+<span class="sd">                [ 1.2761, -0.2929,  0.0000]]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">input</span>
+    <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Last dim should be 3&quot;</span>
+    <span class="n">O</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>        <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>  <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span> <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>         <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>  <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>         <span class="n">O</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_"><a class="viewcode-back" href="../../../../generated/pypose.add_/#pypose.add_">[docs]</a><span class="k">def</span> <span class="nf">add_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inplace version of :meth:`pypose.add`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add"><a class="viewcode-back" href="../../../../generated/pypose.add/#pypose.add">[docs]</a><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Adds other, scaled by alpha, to input LieTensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (:obj:`LieTensor`): the input LieTensor (Lie Algebra or Lie Group).</span>
+
+<span class="sd">        other (:obj:`Tensor`): the tensor to add to input. The last dimension has to be no less</span>
+<span class="sd">            than the shape of the corresponding Lie Algebra of the input.</span>
+
+<span class="sd">        alpha (:obj:`Number`): the multiplier for other.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`LieTensor`: the output LieTensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{y}_i =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">        \alpha * \bm{a}_i + \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Algebra} \\</span>
+<span class="sd">        \mathrm{Exp}(\alpha * \bm{a}_i) \times \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Group}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where :math:`\bm{x}` is the ``input`` LieTensor, :math:`\bm{a}` is the ``other`` Tensor to add,</span>
+<span class="sd">    and :math:`\bm{y}` is the output LieTensor.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        A Lie Group normally requires a larger space than its corresponding Lie Algebra, thus</span>
+<span class="sd">        the elements in the last dimension of the ``other`` Tensor (treated as a Lie Algebra</span>
+<span class="sd">        in this function) beyond the expected shape of the Lie Algebra are ignored. This is</span>
+<span class="sd">        because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)</span>
+<span class="sd">        in its tangent space and is stored in the LieGroup&#39;s :obj:`LieTensor.grad`, which has</span>
+<span class="sd">        the same storage space with the LieGroup.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \frac{D f(\mathcal{X})}{D \mathcal{X}} &amp; \overset{\underset{\mathrm{def}}{}}{=}</span>
+<span class="sd">                \displaystyle \lim_{\bm{\tau} \to \bm{0}} \frac{f(\bm{\tau} \oplus \mathcal{X})</span>
+<span class="sd">                    \ominus f(\mathcal{X})}{\bm{\tau}} \\</span>
+<span class="sd">                &amp; = \left. \frac{\partial \mathrm{Log} (\mathrm{Exp}(\bm{\tau}) \times \mathcal{X})</span>
+<span class="sd">                    \times f(\mathcal{X})^{-1}}{\partial \bm{\tau}}\right|_{\bm{\tau=\bm{0}}}</span>
+<span class="sd">            \end{align*},</span>
+
+<span class="sd">        where :math:`\mathcal{X}` is a Lie Group and :math:`\bm{\tau}` is its left perturbation.</span>
+
+<span class="sd">        See Eq.(44) in `Micro Lie theory &lt;https://arxiv.org/abs/1812.01537&gt;`_ for more details of</span>
+<span class="sd">        the gradient for a Lie Group.</span>
+
+<span class="sd">        This provides convenience to work with PyTorch optimizers like :obj:`torch.optim.SGD`,</span>
+<span class="sd">        which calls function :meth:`.add_` of a Lie Group to adjust parameters by gradients</span>
+<span class="sd">        (:obj:`LieTensor.grad`, where the last element is often zero since tangent vector requires</span>
+<span class="sd">        smaller storage space).</span>
+
+<span class="sd">    See :meth:`LieTensor` for types of Lie Algebra and Lie Group.</span>
+
+<span class="sd">    See :meth:`Exp` for Exponential mapping of Lie Algebra.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        The following operations are equivalent.</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3()</span>
+<span class="sd">        &gt;&gt;&gt; a = torch.randn(6)</span>
+<span class="sd">        &gt;&gt;&gt; x + a</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; pp.add(x, a)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; pp.se3(a).Exp() @ x</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; x + torch.cat([a, torch.randn(1)])</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cumops_"><a class="viewcode-back" href="../../../../generated/pypose.cumops_/#pypose.cumops_">[docs]</a><span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Inplace version of :meth:`pypose.cumops`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">],</span> <span class="nb">input</span>
+    <span class="k">assert</span> <span class="n">dim</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Invalid dim&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">v</span><span class="o">.</span><span class="n">index_copy_</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">ops</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="n">v</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="o">-</span><span class="n">i</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="cummul_"><a class="viewcode-back" href="../../../../generated/pypose.cummul_/#pypose.cummul_">[docs]</a><span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Inplace version of :meth:`pypose.cummul`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cumprod_"><a class="viewcode-back" href="../../../../generated/pypose.cumprod_/#pypose.cumprod_">[docs]</a><span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Inplace version of :meth:`pypose.cumprod`</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cumops"><a class="viewcode-back" href="../../../../generated/pypose.cumops/#pypose.cumops">[docs]</a><span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative user-defined operation of LieTensor along a dimension.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_1~\mathrm{\circ}~x_2 ~\mathrm{\circ}~ \cdots ~\mathrm{\circ}~ x_i,</span>
+
+<span class="sd">    where :math:`\mathrm{\circ}` is the user-defined operation and :math:`x_i,~y_i`</span>
+<span class="sd">    are the :math:`i`-th LieType item along the :obj:`dim` dimension of input and</span>
+<span class="sd">    output, respectively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor</span>
+<span class="sd">        dim (int): the dimension to do the operation over</span>
+<span class="sd">        ops (func): the user-defined operation or function</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LieTensor: LieTensor</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - The users are supposed to provide meaningful operation.</span>
+<span class="sd">        - This function doesn&#39;t check whether the results are valid for mathematical</span>
+<span class="sd">          definition of LieTensor, e.g., quaternion.</span>
+<span class="sd">        - The time complexity of the function is :math:`\mathcal{O}(\log N)`, where</span>
+<span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
+<span class="sd">        &gt;&gt;&gt; input.cumprod(dim = 0)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
+<span class="sd">                [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumops(input, 0, lambda a, b : a @ b)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
+<span class="sd">                [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cummul"><a class="viewcode-back" href="../../../../generated/pypose.cummul/#pypose.cummul">[docs]</a><span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative multiplication (*) of LieTensor along a dimension.</span>
+
+<span class="sd">    * Left multiplication:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_i * x_{i-1} * \cdots * x_1,</span>
+
+<span class="sd">    * Right multiplication:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_1 * x_2 * \cdots * x_i,</span>
+<span class="sd">        </span>
+<span class="sd">    where :math:`x_i,~y_i` are the :math:`i`-th LieType item along the :obj:`dim`</span>
+<span class="sd">    dimension of input and output, respectively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor</span>
+<span class="sd">        dim (int): the dimension to do the multiplication over</span>
+<span class="sd">        left (bool, optional): whether perform left multiplication in :obj:`cummul`.</span>
+<span class="sd">            If set it to :obj:`False`, this function performs right multiplication.</span>
+<span class="sd">            Defaul: ``True``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LieTensor: The LieTensor</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - The time complexity of the function is :math:`\mathcal{O}(\log N)`, where</span>
+<span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    </span>
+<span class="sd">        * Left multiplication with :math:`\text{input} \in` :obj:`SE3`</span>
+
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cummul(input, dim=0)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
+<span class="sd">                [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
+
+<span class="sd">        * Left multiplication with :math:`\text{input} \in` :obj:`SO3`</span>
+
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SO3(1,2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cummul(input, dim=1, left=False)</span>
+<span class="sd">        SO3Type LieTensor:</span>
+<span class="sd">        tensor([[[-1.8252e-01,  1.6198e-01,  8.3683e-01,  4.9007e-01],</span>
+<span class="sd">                [ 2.0905e-04,  5.2031e-01,  8.4301e-01, -1.3642e-01]]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cumprod"><a class="viewcode-back" href="../../../../generated/pypose.cumprod/#pypose.cumprod">[docs]</a><span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative product (``@``) of LieTensor along a dimension.</span>
+
+<span class="sd">    * Left product:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_i ~\times~ x_{i-1} ~\times~ \cdots ~\times~ x_1,</span>
+<span class="sd">    </span>
+<span class="sd">    * Right product:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_i = x_1 ~\times~ x_2 ~\times~ \cdots ~\times~ x_i,</span>
+
+<span class="sd">    where :math:`\times` denotes the group product (``@``), :math:`x_i,~y_i` are the</span>
+<span class="sd">    :math:`i`-th item along the :obj:`dim` dimension of the input and output LieTensor,</span>
+<span class="sd">    respectively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (LieTensor): the input LieTensor</span>
+<span class="sd">        dim (int): the dimension to do the operation over</span>
+<span class="sd">        left (bool, optional): whether perform left product in :obj:`cumprod`. If set</span>
+<span class="sd">            it to :obj:`False`, this function performs right product. Defaul: ``True``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LieTensor: The LieTensor</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - The time complexity of the function is :math:`\mathcal{O}(\log N)`, where</span>
+<span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        * Left product with :math:`\text{input} \in` :obj:`SE3`</span>
+
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumprod(input, dim=0)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([[-1.9615, -0.1246,  0.3666,  0.0165,  0.2853,  0.3126,  0.9059],</span>
+<span class="sd">                [ 0.7139,  1.3988, -0.1909, -0.1780,  0.4405, -0.6571,  0.5852]])</span>
+
+<span class="sd">        * Right product with :math:`\text{input} \in` :obj:`SO3`</span>
+
+<span class="sd">        &gt;&gt;&gt; input = pp.randn_SO3(1,2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumprod(input, dim=1, left=False)</span>
+<span class="sd">        SO3Type LieTensor:</span>
+<span class="sd">        tensor([[[ 0.5798, -0.1189, -0.2429,  0.7686],</span>
+<span class="sd">                [ 0.7515, -0.1920,  0.5072,  0.3758]]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">@</span> <span class="n">a</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
