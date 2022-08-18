@@ -77,13 +77,9 @@
 <span></span>
 <span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">numbers</span>
 <span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">linalg</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch.utils._pytree</span> <span class="kn">import</span> <span class="n">tree_map</span><span class="p">,</span> <span class="n">tree_flatten</span>
-
 <span class="kn">from</span> <span class="nn">torch.types</span> <span class="kn">import</span> <span class="n">_size</span>
-<span class="kn">from</span> <span class="nn">.common_types</span> <span class="kn">import</span> <span class="n">_size_any_t</span><span class="p">,</span> <span class="n">convert_sig_se</span><span class="p">,</span> <span class="n">convert_sig_sim</span><span class="p">,</span> <span class="n">convert_sig_rxs</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span><span class="p">,</span> <span class="n">linalg</span>
+<span class="kn">from</span> <span class="nn">torch.utils._pytree</span> <span class="kn">import</span> <span class="n">tree_map</span><span class="p">,</span> <span class="n">tree_flatten</span>
 <span class="kn">from</span> <span class="nn">.backends</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">mul</span><span class="p">,</span> <span class="n">adj</span>
 <span class="kn">from</span> <span class="nn">.backends</span> <span class="kn">import</span> <span class="n">adjT</span><span class="p">,</span> <span class="n">jinvp</span><span class="p">,</span> <span class="n">act3</span><span class="p">,</span> <span class="n">act4</span><span class="p">,</span> <span class="n">toMatrix</span>
 <span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span><span class="p">,</span> <span class="n">cumops</span><span class="p">,</span> <span class="n">cummul</span><span class="p">,</span> <span class="n">cumprod</span>
@@ -95,6 +91,7 @@
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_Act4</span><span class="p">,</span> <span class="n">SE3_Act4</span><span class="p">,</span> <span class="n">RxSO3_Act4</span><span class="p">,</span> <span class="n">Sim3_Act4</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_Mul</span><span class="p">,</span> <span class="n">SE3_Mul</span><span class="p">,</span> <span class="n">RxSO3_Mul</span><span class="p">,</span> <span class="n">Sim3_Mul</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_Inv</span><span class="p">,</span> <span class="n">SE3_Inv</span><span class="p">,</span> <span class="n">RxSO3_Inv</span><span class="p">,</span> <span class="n">Sim3_Inv</span>
+<span class="kn">from</span> <span class="nn">.common_types</span> <span class="kn">import</span> <span class="n">_size_any_t</span><span class="p">,</span> <span class="n">convert_sig_se</span><span class="p">,</span> <span class="n">convert_sig_sim</span><span class="p">,</span> <span class="n">convert_sig_rxs</span>
 
 
 <span class="n">HANDLED_FUNCTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;__getitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;__setitem__&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">,</span>
