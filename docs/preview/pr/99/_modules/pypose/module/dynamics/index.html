@@ -148,33 +148,49 @@
 
 <span class="sd">    Example:</span>
 
-<span class="sd">        A simple linear time-varying system.</span>
+<span class="sd">        A simple linear time-varying system.  Here we just show an example for advancing one</span>
+<span class="sd">        time step of the system at a given time step and computing the linearization.</span>
+<span class="sd">        For generating one trajecotry given a series of inputs and advanced use of linearization,</span>
+<span class="sd">        see the `examples` folder.</span>
 
 <span class="sd">        &gt;&gt;&gt; import math</span>
 <span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
 <span class="sd">        &gt;&gt;&gt; import torch</span>
 <span class="sd">        &gt;&gt;&gt; class Floquet(pp.module.System):</span>
-<span class="sd">        ...    def __init__(self):</span>
-<span class="sd">        ...        super(Floquet, self).__init__()</span>
+<span class="sd">        ...     def __init__(self):</span>
+<span class="sd">        ...         super(Floquet, self).__init__()</span>
 <span class="sd">        ...</span>
-<span class="sd">        ...    def state_transition(self, state, input, t):</span>
-<span class="sd">        ...        cc = torch.cos(2*math.pi*t/100)</span>
-<span class="sd">        ...        ss = torch.sin(2*math.pi*t/100)</span>
-<span class="sd">        ...        A = torch.tensor([</span>
-<span class="sd">        ...            [1., cc/10],</span>
-<span class="sd">        ...            [cc/10, 1.]])</span>
-<span class="sd">        ...        B = torch.tensor([</span>
-<span class="sd">        ...            [ss],</span>
-<span class="sd">        ...            [1.]])</span>
-<span class="sd">        ...        return (state.matmul(A) + B.matmul(input)).squeeze()</span>
+<span class="sd">        ...     def state_transition(self, state, input, t):</span>
+<span class="sd">        ...         cc = torch.cos(2*math.pi*t/100)</span>
+<span class="sd">        ...         ss = torch.sin(2*math.pi*t/100)</span>
+<span class="sd">        ...         A = torch.tensor([</span>
+<span class="sd">        ...             [1., cc/10],</span>
+<span class="sd">        ...             [cc/10, 1.]])</span>
+<span class="sd">        ...         B = torch.tensor([</span>
+<span class="sd">        ...             [ss],</span>
+<span class="sd">        ...             [1.]])</span>
+<span class="sd">        ...         return (state.matmul(A) + B.matmul(input)).squeeze()</span>
 <span class="sd">        ...</span>
-<span class="sd">        ...    def observation(self, state, input, t):</span>
-<span class="sd">        ...        return state + t</span>
+<span class="sd">        ...     def observation(self, state, input, t):</span>
+<span class="sd">        ...         return state + t</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt;    solver = Floquet()</span>
-<span class="sd">        &gt;&gt;&gt;    input = torch.sin(2*math.pi*8./50.)</span>
-<span class="sd">        &gt;&gt;&gt;    state_curr = torch.tensor([1, 1])</span>
-<span class="sd">        &gt;&gt;&gt;    state_next, obs_next = solver(state_curr, input)</span>
+<span class="sd">        &gt;&gt;&gt; solver = Floquet()</span>
+<span class="sd">        &gt;&gt;&gt; time_curr = 8.       # We start from t=8, and advance one step to t=9</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.sin(2*math.pi*torch.tensor(time_curr)/50.)</span>
+<span class="sd">        &gt;&gt;&gt; state_curr = torch.tensor([1., 1.])</span>
+<span class="sd">        &gt;&gt;&gt; solver.reset(t=time_curr)</span>
+<span class="sd">        &gt;&gt;&gt; state_next, obser_curr = solver(state_curr, input)</span>
+<span class="sd">        &gt;&gt;&gt; solver.set_ref_point()</span>
+<span class="sd">        &gt;&gt;&gt; print(state_next)</span>
+<span class="sd">        &gt;&gt;&gt; print(obser_curr)</span>
+<span class="sd">        &gt;&gt;&gt; print(solver.A)</span>
+<span class="sd">        &gt;&gt;&gt; print(solver.B)</span>
+<span class="sd">        tensor([1.4944, 1.9320])</span>
+<span class="sd">        tensor([9., 9.])</span>
+<span class="sd">        tensor([[1.0000, 0.0844],</span>
+<span class="sd">                [0.0844, 1.0000]])</span>
+<span class="sd">        tensor([[0.5358],</span>
+<span class="sd">                [1.0000]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -199,7 +215,8 @@
 <span class="sd">            time varying system. One can directly access the current time via the property :obj:`t`.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_time</span><span class="p">),</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_time</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="System.state_transition"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.state_transition">[docs]</a>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -253,12 +270,12 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="n">ref_state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ref_state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">if</span> <span class="n">ref_input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">ref_input</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="k">if</span> <span class="n">ref_t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ref_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_time</span> <span class="k">if</span> <span class="n">ref_t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ref_t</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sys_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            System time, automatically advanced by :obj:`forward_hook`.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
