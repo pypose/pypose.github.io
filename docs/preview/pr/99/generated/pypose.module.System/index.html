@@ -86,48 +86,44 @@
 <h1>pypose.module.System<a class="headerlink" href="#pypose-module-system" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.System">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">System</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System" title="Permalink to this definition"></a></dt>
-<dd><p>The general base class of discrete system dynamics model.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">System</span></span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System" title="Permalink to this definition"></a></dt>
+<dd><p>The base class of a general discrete-time system dynamics model.</p>
 <p>The state transision function <span class="math">\(\mathbf{f}\)</span> and observation functions
 <span class="math">\(\mathbf{g}\)</span> are given by:</p>
 <div class="math">
 \[\begin{aligned}
-    \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k,\mathbf{u}_k,t_k), \\
-    \mathbf{y}_{k}   &= \mathbf{g}(\mathbf{x}_k,\mathbf{u}_k,t_k),
+    \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k), \\
+    \mathbf{y}_{k}   &= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k),
 \end{aligned}
 
 \]</div>
 <p>where <span class="math">\(k\)</span>, <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span>, <span class="math">\(\mathbf{y}\)</span> are the time
 step, states, inputs, and observations, respectively.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether the system is time-varying. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-</dd>
-</dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Here we choose to work with a time-discrete system, since typically in numerical
+<p>Here we choose to work with a discrete-time system, since typically in numerical
 simulations and control applications, the dynamical systems are usually discretized
 in time.</p>
+<p>The first time step is <strong>0</strong>.</p>
 </div>
-<p>To use the class, the user should define two methods <a class="reference internal" href="#pypose.module.System.state_transition" title="pypose.module.System.state_transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_transition</span></code></a> and
+<p>To use the class, the user need to define two methods <a class="reference internal" href="#pypose.module.System.state_transition" title="pypose.module.System.state_transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_transition</span></code></a> and
 <a class="reference internal" href="#pypose.module.System.observation" title="pypose.module.System.observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code></a>, which are used in the <a class="reference internal" href="#pypose.module.System.forward" title="pypose.module.System.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> method. The <a class="reference internal" href="#pypose.module.System.forward" title="pypose.module.System.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
 method advances the dynamical system by one time step, and is the function that is
 back-propagated in the learning process.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>Linearization</strong></p>
-<p>This class provides a means to linearize the system at a reference point
-<span class="math">\(\chi^*=(\mathbf{x}^*,\mathbf{u}^*,t^*)\)</span> along a trajectory. Consider a point
-<span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x},\mathbf{u}^*+\delta\mathbf{u},t^*)\)</span> near
+<p>This class provides an approach to linearize the system at a reference point
+<span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a trajectory. Consider a point
+<span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*+\delta\mathbf{u}, t^*)\)</span> near
 <span class="math">\(\chi^*\)</span>. We have</p>
 <div class="math">
 \[\begin{aligned}
-\mathbf{f}(\mathbf{x},\mathbf{u},t^*) &\approx \mathbf{f}(\mathbf{x}^*,
-    \mathbf{u}^*,t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+\mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &\approx \mathbf{f}(\mathbf{x}^*,
+    \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
     \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}
     {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\
-&= \mathbf{f}(\mathbf{x}^*,\mathbf{u}^*,t^*) + \mathbf{A}(\mathbf{x}
+&= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A}(\mathbf{x}
     - \mathbf{x}^*) + \mathbf{B}(\mathbf{u}-\mathbf{u}^*) \\
 &= \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1
 \end{aligned}
@@ -135,20 +131,49 @@ back-propagated in the learning process.</p>
 \]</div>
 <p>and</p>
 <div class="math">
-\[\mathbf{g}(\mathbf{x},\mathbf{u},t^*) \approx \mathbf{C}\mathbf{x} \
+\[\mathbf{g}(\mathbf{x}, \mathbf{u}, t^*) \approx \mathbf{C}\mathbf{x} \
             + \mathbf{D}\mathbf{u} + \mathbf{c}_2
 
 \]</div>
 <p>One can directly call those properties <a class="reference internal" href="#pypose.module.System.A" title="pypose.module.System.A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">A</span></code></a>, <a class="reference internal" href="#pypose.module.System.B" title="pypose.module.System.B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B</span></code></a>, <a class="reference internal" href="#pypose.module.System.C" title="pypose.module.System.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#pypose.module.System.D" title="pypose.module.System.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">D</span></code></a>,
 <a class="reference internal" href="#pypose.module.System.c1" title="pypose.module.System.c1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c1</span></code></a>, and <a class="reference internal" href="#pypose.module.System.c2" title="pypose.module.System.c2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2</span></code></a>.</p>
 <p>The notion of linearization is slightly different from that in dynamical system
-theory. First, the linearization is done for any arbitrary point, not just at
+theory. First, the linearization can be done for arbitrary point(s), not limit to
 the equilibrium point(s), and therefore the extra constant terms <span class="math">\(\mathbf{c}_1\)</span>
-and <span class="math">\(\mathbf{c}_2\)</span> are produced. Second, the linearized equations are written
-for the full states and inputs, <span class="math">\(\mathbf{x}\)</span> and <span class="math">\(\mathbf{u}\)</span>, instead
-of their perturbation terms, <span class="math">\(\delta \mathbf{x}\)</span> and <span class="math">\(\delta \mathbf{u}\)</span>
+and <span class="math">\(\mathbf{c}_2\)</span> are produced. Second, the linearized equations are represented
+by the full states and inputs: <span class="math">\(\mathbf{x}\)</span> and <span class="math">\(\mathbf{u}\)</span>, rather than
+the perturbation format: <span class="math">\(\delta \mathbf{x}\)</span> and <span class="math">\(\delta \mathbf{u}\)</span>
 so that the model is consistent with, e.g., the LTI model and the iterative LQR
 solver.</p>
+</div>
+<p class="rubric">Example</p>
+<p>A simple linear time-varying system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Floquet</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>       <span class="nb">super</span><span class="p">(</span><span class="n">Floquet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">... </span>   <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>       <span class="n">cc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">... </span>       <span class="n">ss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">... </span>       <span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="n">cc</span><span class="o">/</span><span class="mi">10</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="n">cc</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]])</span>
+<span class="gp">... </span>       <span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="n">ss</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="mf">1.</span><span class="p">]])</span>
+<span class="gp">... </span>       <span class="k">return</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">B</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">... </span>   <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>       <span class="k">return</span> <span class="n">state</span> <span class="o">+</span> <span class="n">t</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">solver</span> <span class="o">=</span> <span class="n">Floquet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">8.</span><span class="o">/</span><span class="mf">50.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">state_curr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">state_next</span><span class="p">,</span> <span class="n">obs_next</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">state_curr</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+</pre></div>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pypose.module.System.A">
@@ -196,7 +221,7 @@ solver.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">c1</span></span><a class="headerlink" href="#pypose.module.System.c1" title="Permalink to this definition"></a></dt>
 <dd><p>Constant term generated by state-transition.</p>
 <div class="math">
-\[\mathbf{c}_1 = \mathbf{f}(\mathbf{x}^*,\mathbf{u}^*,t^*)
+\[\mathbf{c}_1 = \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*)
                - \mathbf{A}\mathbf{x}^* - \mathbf{B}\mathbf{u}^*
 
 \]</div>
@@ -207,7 +232,7 @@ solver.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">c2</span></span><a class="headerlink" href="#pypose.module.System.c2" title="Permalink to this definition"></a></dt>
 <dd><p>Constant term generated by observation.</p>
 <div class="math">
-\[\mathbf{c}_2 = \mathbf{g}(\mathbf{x}^*,\mathbf{u}^*,t^*)
+\[\mathbf{c}_2 = \mathbf{g}(\mathbf{x}^*, \mathbf{u}^*, t^*)
                - \mathbf{C}\mathbf{x}^* - \mathbf{D}\mathbf{u}^*
 
 \]</div>
@@ -215,28 +240,31 @@ solver.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.System.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.forward" title="Permalink to this definition"></a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Defines the computation performed at every call that advances the system by one time step.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <a class="reference internal" href="#pypose.module.System.forward" title="pypose.module.System.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> method implicitly increments the time step via <code class="xref py py-obj docutils literal notranslate"><span class="pre">forward_hook</span></code>.
-As a result, in the implementations of <a class="reference internal" href="#pypose.module.System.state_transition" title="pypose.module.System.state_transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_transition</span></code></a> and <a class="reference internal" href="#pypose.module.System.observation" title="pypose.module.System.observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code></a>,
-one does not need to include the time as the input; instead, one can directly access
-the current time via the data member <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.t</span></code>.</p>
+<p>The <a class="reference internal" href="#pypose.module.System.forward" title="pypose.module.System.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> method implicitly increments the time step via <a class="reference internal" href="#pypose.module.System.forward_hook" title="pypose.module.System.forward_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward_hook</span></code></a>.
+<a class="reference internal" href="#pypose.module.System.state_transition" title="pypose.module.System.state_transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_transition</span></code></a> and <a class="reference internal" href="#pypose.module.System.observation" title="pypose.module.System.observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code></a> still accept time for the flexiblity such as
+time varying system. One can directly access the current time via the property <a class="reference internal" href="#pypose.module.System.t" title="pypose.module.System.t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code></a>.</p>
 </div>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.System.forward_hook">
+<span class="sig-name descname"><span class="pre">forward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.forward_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.forward_hook" title="Permalink to this definition"></a></dt>
+<dd><p>Automatically advances the time step.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.System.observation">
-<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.observation" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.observation" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> – Tensor
-The state of the dynamical system</p></li>
-<li><p><strong>input</strong> – Tensor
-The input to the dynamical system</p></li>
+<li><p><strong>state</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The state of the dynamical system</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The input to the dynamical system</p></li>
+<li><p><strong>t</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The time step of the dynamical system.  Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -248,39 +276,42 @@ The input to the dynamical system</p></li>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The users need to define this method and can access the current time via the data
-member <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.t</span></code>.</p>
+<p>The users need to define this method and can access the current time via the property <a class="reference internal" href="#pypose.module.System.t" title="pypose.module.System.t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code></a>.</p>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.System.set_linearization_point">
-<span class="sig-name descname"><span class="pre">set_linearization_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.set_linearization_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.set_linearization_point" title="Permalink to this definition"></a></dt>
-<dd><p>Function to set the point about which the system is to be linearized.</p>
+<dt class="sig sig-object py" id="pypose.module.System.set_ref_point">
+<span class="sig-name descname"><span class="pre">set_ref_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.set_ref_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.set_ref_point" title="Permalink to this definition"></a></dt>
+<dd><p>Function to set the reference point for linearization.</p>
+<p>If <cite>ref_state = None</cite> the reference point is the one from the most recent time step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> (<em>Tensor</em>) – The state of the dynamical system</p></li>
-<li><p><strong>input</strong> (<em>Tensor</em>) – The input to the dynamical system</p></li>
-<li><p><strong>t</strong> (<em>Tensor</em>) – The time step of the dynamical system</p></li>
+<li><p><strong>ref_state</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The state of the dynamical system.  Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ref_input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The input to the dynamical system.  Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ref_t</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The time step of the dynamical system.  Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For nonlinear systems, the users have to call this function before getting the linearized system.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.System.state_transition">
-<span class="sig-name descname"><span class="pre">state_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.state_transition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.state_transition" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">state_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#System.state_transition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.System.state_transition" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> – Tensor
-The state of the dynamical system</p></li>
-<li><p><strong>input</strong> – Tensor
-The input to the dynamical system</p></li>
+<li><p><strong>state</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The state of the dynamical system</p></li>
+<li><p><strong>input</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The input to the dynamical system</p></li>
+<li><p><strong>t</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The time step of the dynamical system.  Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -292,9 +323,14 @@ The input to the dynamical system</p></li>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The users need to define this method and can access the current time via the data
-member <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.t</span></code>.</p>
+<p>The users need to define this method and can access the current time via the property <a class="reference internal" href="#pypose.module.System.t" title="pypose.module.System.t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code></a>.</p>
 </div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pypose.module.System.t">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#pypose.module.System.t" title="Permalink to this definition"></a></dt>
+<dd><p>System time, automatically advanced by <a class="reference internal" href="#pypose.module.System.forward_hook" title="pypose.module.System.forward_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward_hook</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
