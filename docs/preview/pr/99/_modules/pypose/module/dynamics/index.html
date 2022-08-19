@@ -147,6 +147,7 @@
 <span class="sd">        solver.</span>
 
 <span class="sd">    Example:</span>
+
 <span class="sd">        A simple linear time-varying system.</span>
 
 <span class="sd">        &gt;&gt;&gt; import math</span>
@@ -155,7 +156,7 @@
 <span class="sd">        &gt;&gt;&gt; class Floquet(pp.module.System):</span>
 <span class="sd">        ...    def __init__(self):</span>
 <span class="sd">        ...        super(Floquet, self).__init__()</span>
-<span class="sd">``</span>
+<span class="sd">        ...</span>
 <span class="sd">        ...    def state_transition(self, state, input, t):</span>
 <span class="sd">        ...        cc = torch.cos(2*math.pi*t/100)</span>
 <span class="sd">        ...        ss = torch.sin(2*math.pi*t/100)</span>
@@ -166,10 +167,10 @@
 <span class="sd">        ...            [ss],</span>
 <span class="sd">        ...            [1.]])</span>
 <span class="sd">        ...        return (state.matmul(A) + B.matmul(input)).squeeze()</span>
-
+<span class="sd">        ...</span>
 <span class="sd">        ...    def observation(self, state, input, t):</span>
 <span class="sd">        ...        return state + t</span>
-
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt;    solver = Floquet()</span>
 <span class="sd">        &gt;&gt;&gt;    input = torch.sin(2*math.pi*8./50.)</span>
 <span class="sd">        &gt;&gt;&gt;    state_curr = torch.tensor([1, 1])</span>
