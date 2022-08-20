@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.euler2SO3 &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/katex.min.js"></script>
+        <script src="../../_static/auto-render.min.js"></script>
+        <script src="../../_static/katex_autorenderer.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.vec2skew" href="../pypose.vec2skew/" />
+    <link rel="prev" title="pypose.from_matrix" href="../pypose.from_matrix/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../convert/">Convert</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pypose.mat2SO3/">pypose.mat2SO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.mat2SE3/">pypose.mat2SE3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.mat2Sim3/">pypose.mat2Sim3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.mat2RxSO3/">pypose.mat2RxSO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.from_matrix/">pypose.from_matrix</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.euler2SO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.vec2skew/">pypose.vec2skew</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.tensor/">pypose.tensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.translation/">pypose.translation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.rotation/">pypose.rotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.scale/">pypose.scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.matrix/">pypose.matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../convert/">Convert</a> &raquo;</li>
+      <li>pypose.euler2SO3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/pypose.euler2SO3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pypose-euler2so3">
+<h1>pypose.euler2SO3<a class="headerlink" href="#pypose-euler2so3" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pypose.euler2SO3">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">euler2SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">euler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#euler2SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.euler2SO3" title="Permalink to this definition"></a></dt>
+<dd><p>Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>euler</strong> (<em>Tensor</em>) – the euler angles to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the converted SO3Type LieTensor.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
+</dd>
+</dl>
+<dl>
+<dt>Shape:</dt><dd><p>Input: <code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">3)</span></code></p>
+<p>Output: <code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">4)</span></code></p>
+</dd>
+</dl>
+<div class="math">
+\[{\displaystyle \mathbf{y}_i={
+\begin{bmatrix}\,
+\sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\\,
+\cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\\,
+\cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\\,
+\cos(\alpha_i)\cos(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\sin(\beta_i)\sin(\gamma_i)
+\end{bmatrix}}},
+
+\]</div>
+<p>where the <span class="math">\(i\)</span>-th item of input <span class="math">\(\mathbf{x}_i = [\alpha_i, \beta_i, \gamma_i]\)</span>
+are roll, pitch, and yaw, respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The last dimension of the input tensor has to be 3.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">euler2SO3</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+<span class="go">SO3Type LieTensor:</span>
+<span class="go">tensor([[-0.4873,  0.1162,  0.4829,  0.7182],</span>
+<span class="go">        [ 0.3813,  0.4059, -0.2966,  0.7758]], dtype=torch.float64, grad_fn=&lt;AliasBackward0&gt;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../pypose.from_matrix/" class="btn btn-neutral float-left" title="pypose.from_matrix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pypose.vec2skew/" class="btn btn-neutral float-right" title="pypose.vec2skew" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
