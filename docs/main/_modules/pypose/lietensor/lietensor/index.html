@@ -6,7 +6,7 @@
   <title>pypose.lietensor.lietensor &mdash; PyPose 0.0.1 documentation</title>
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -17,8 +17,8 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../../../_static/katex.min.js"></script>
+        <script src="../../../../_static/auto-render.min.js"></script>
         <script src="../../../../_static/katex_autorenderer.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex/" />
@@ -1114,11 +1114,12 @@
 <span class="sd">            gradient. Default: True</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.Parameter(pp.randn_so3(2))</span>
-<span class="sd">        &gt;&gt;&gt; x.sum().backward() # Just test. There is no physical meaning</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; x = pp.Parameter(pp.randn_SO3(2))</span>
+<span class="sd">        &gt;&gt;&gt; x.Log().sum().backward()</span>
 <span class="sd">        &gt;&gt;&gt; x.grad</span>
-<span class="sd">        tensor([[1., 1., 1.],</span>
-<span class="sd">                [1., 1., 1.]])</span>
+<span class="sd">        tensor([[0.8590, 1.4069, 0.6261, 0.0000],</span>
+<span class="sd">                [1.2869, 1.0748, 0.5385, 0.0000]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ltype</span>
