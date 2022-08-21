@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.optim.functional.modjac &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/katex.min.js"></script>
+        <script src="../../_static/auto-render.min.js"></script>
+        <script src="../../_static/katex_autorenderer.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="prev" title="pypose.optim.scheduler.StopOnPlateau" href="../pypose.optim.scheduler.StopOnPlateau/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GaussNewton/">pypose.optim.GaussNewton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GN/">pypose.optim.GN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LevenbergMarquardt/">pypose.optim.LevenbergMarquardt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LM/">pypose.optim.LM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.PINV/">pypose.optim.solver.PINV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.LSTSQ/">pypose.optim.solver.LSTSQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.Cholesky/">pypose.optim.solver.Cholesky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Constant/">pypose.optim.strategy.Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Adaptive/">pypose.optim.strategy.Adaptive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.TrustRegion/">pypose.optim.strategy.TrustRegion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Huber/">pypose.optim.kernel.Huber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.PseudoHuber/">pypose.optim.kernel.PseudoHuber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Cauchy/">pypose.optim.kernel.Cauchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.FastTriggs/">pypose.optim.corrector.FastTriggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.Triggs/">pypose.optim.corrector.Triggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/">pypose.optim.scheduler.StopOnPlateau</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.optim.functional.modjac</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../optim/">Optimization</a> &raquo;</li>
+      <li>pypose.optim.functional.modjac</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/pypose.optim.functional.modjac.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pypose-optim-functional-modjac">
+<h1>pypose.optim.functional.modjac<a class="headerlink" href="#pypose-optim-functional-modjac" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pypose.optim.functional.modjac">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.functional.</span></span><span class="sig-name descname"><span class="pre">modjac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vectorize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reverse-mode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/functional/#modjac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.functional.modjac" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the model Jacobian with respect to the model parameters.</p>
+<p>For a parametric model <span class="math">\(\bm{f}(\bm{\theta}, \bm{x})\)</span>, where <span class="math">\(\bm{\theta}\)</span> is
+the learnable parameter and <span class="math">\(\bm{x}\)</span> is the input, it computes the
+Jacobian of the <span class="math">\(i\)</span>-th output and <span class="math">\(j\)</span>-th parameter as</p>
+<div class="math">
+\[{\displaystyle \mathbf{J}_{i,j} =
+{\begin{bmatrix}
+    {\dfrac {\partial \bm{f}_{i,1}}{\partial \bm{\theta}_{j,1}}} &amp;
+    \cdots&amp;{\dfrac {\partial \bm{f}_{i,1}}{\partial \bm{\theta}_{j,n}}}\\
+    \vdots &amp;\ddots &amp;\vdots \\
+    {\dfrac {\partial \bm{f}_{i,m}}{\partial \bm{\theta}_{j,1}}}&amp;
+    \cdots &amp;{\dfrac {\partial \bm{f}_{i,m}}{\partial \bm{\theta}_{j,n}}}
+\end{bmatrix}}}.
+
+\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – a PyTorch model that takes Tensor or LieTensor
+input and returns a tuple of Tensors/LieTensors or a Tensor/LieTensor.</p></li>
+<li><p><strong>input</strong> (<em>tuple of Tensors/LieTensors</em><em> or </em><em>Tensor/LieTensor</em>) – input to the
+model. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>create_graph</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the Jacobian will be
+computed in a differentiable manner. Note that when <code class="docutils literal notranslate"><span class="pre">strict</span></code> is
+<code class="docutils literal notranslate"><span class="pre">False</span></code>, the result can not require gradients or be disconnected
+from the input.  Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>strict</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, an error will be raised when we
+detect that there exists an input such that all the outputs are
+independent of it. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, we return a Tensor of zeros as the
+jacobian for said input, which is the expected mathematical value.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>vectorize</strong> (<em>bool</em><em>, </em><em>optional</em>) – When computing the jacobian, usually we invoke
+<code class="docutils literal notranslate"><span class="pre">autograd.grad</span></code> once per row of the jacobian. If this flag is
+<code class="docutils literal notranslate"><span class="pre">True</span></code>, we perform only a single <code class="docutils literal notranslate"><span class="pre">autograd.grad</span></code> call with
+<code class="docutils literal notranslate"><span class="pre">batched_grad=True</span></code> which uses the vmap prototype feature.
+Though this should lead to performance improvements in many cases,
+because this feature is still experimental, there may be performance
+cliffs. See <code class="xref py py-func docutils literal notranslate"><span class="pre">torch.autograd.grad()</span></code>’s <code class="docutils literal notranslate"><span class="pre">batched_grad</span></code> parameter for
+more information.</p></li>
+<li><p><strong>strategy</strong> (<em>str</em><em>, </em><em>optional</em>) – Set to <code class="docutils literal notranslate"><span class="pre">&quot;forward-mode&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;reverse-mode&quot;</span></code> to
+determine whether the Jacobian will be computed with forward or reverse
+mode AD. Currently, <code class="docutils literal notranslate"><span class="pre">&quot;forward-mode&quot;</span></code> requires <code class="docutils literal notranslate"><span class="pre">vectorized=True</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;reverse-mode&quot;</span></code>. If <code class="docutils literal notranslate"><span class="pre">func</span></code> has more outputs than
+input, <code class="docutils literal notranslate"><span class="pre">&quot;forward-mode&quot;</span></code> tends to be more performant. Otherwise,
+prefer to use <code class="docutils literal notranslate"><span class="pre">&quot;reverse-mode&quot;</span></code>.</p></li>
+<li><p><strong>flatten</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, all module parameters and outputs
+are flattened and concatenated to form a single vector. The Jacobian
+will be computed with respect to this single flattened vectors, thus
+a single Tensor will be returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if there is a single
+parameter and output, this will be a single Tensor containing the
+Jacobian for the linearized parameter and output. If there are more
+than one parameters, then the Jacobian will be a tuple of Tensors.
+If there are more than one outputs (even if there is only one parameter),
+then the Jacobian will be a tuple of tuple of Tensors where <code class="docutils literal notranslate"><span class="pre">Jacobian[i][j]</span></code>
+will contain the Jacobian of the <code class="docutils literal notranslate"><span class="pre">i</span></code>th output and <code class="docutils literal notranslate"><span class="pre">j</span></code>th parameter
+and will have as size the concatenation of the sizes of the corresponding
+output and the corresponding parameter and will have same dtype and device as the
+corresponding parameter. If strategy is <code class="docutils literal notranslate"><span class="pre">forward-mode</span></code>, the dtype will be
+that of the output; otherwise, the parameters.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Jacobian (Tensor or nested tuple of Tensors)</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The function <a class="reference internal" href="#pypose.optim.functional.modjac" title="pypose.optim.functional.modjac"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modjac</span></code></a> calculate Jacobian of model parameters.
+This is in contrast to PyTorch’s function <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.autograd.functional.jacobian.html">jacobian</a>,
+which computes the Jacobian of a given Python function.</p>
+</div>
+<p class="rubric">Example</p>
+<p>Calculates Jacobian with respect to all model parameters.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+<span class="go">(tensor([[[[[[[0.3365]]]]]]]), tensor([[[[1.]]]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">]</span>
+<span class="go">[torch.Size([1, 1, 1, 1, 1, 1, 1]), torch.Size([1, 1, 1, 1])]</span>
+</pre></div>
+</div>
+<p>Function with flattened parameters returns a combined Jacobian.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">tensor([[-0.4162,  0.0968,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [-0.6042,  1.1886,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 1.4623,  0.7389,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 1.0716,  2.4293,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000, -0.4162,  0.0968,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000, -0.6042,  1.1886,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  1.4623,  0.7389,  0.0000,  1.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  1.0716,  2.4293,  0.0000,  1.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([8, 6])</span>
+</pre></div>
+</div>
+<p>Calculate Jacobian with respect to parameter of <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.LieTensor</span></code></a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PoseTransform</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span> <span class="o">=</span> <span class="n">PoseTransform</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">tensor([[ 0.4670,  0.7041,  0.0029,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [-0.6591,  0.4554, -0.2566,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [-0.2477,  0.0670,  0.9535,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.8593,  0.2672,  0.3446],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000, -0.2417,  0.9503, -0.1154],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000, -0.3630, -0.0179,  0.9055],</span>
+<span class="go">        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([8, 6])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../pypose.optim.scheduler.StopOnPlateau/" class="btn btn-neutral float-left" title="pypose.optim.scheduler.StopOnPlateau" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
