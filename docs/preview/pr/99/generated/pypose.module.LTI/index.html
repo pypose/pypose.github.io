@@ -100,8 +100,7 @@
 </ul>
 </dd>
 </dl>
-<p>Every linear time-invariant lumped system can be described by a set of equations
-(state-space equation) of the form:</p>
+<p>A linear time-invariant lumped system can be described by state-space equation of the form:</p>
 <div class="math">
 \[\begin{align*}
     \mathbf{z} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1 \\
@@ -109,26 +108,24 @@
 \end{align*}
 
 \]</div>
-<p>where we use <span class="math">\(\mathbf{x}\)</span> and <span class="math">\(\mathbf{u}\)</span> to represent state and input
-of the current timestamp of LTI system.</p>
-<p>Here, we consider the discrete-time system dynamics.</p>
+<p>where <span class="math">\(\mathbf{x}\)</span> and <span class="math">\(\mathbf{u}\)</span> are state and input of the current
+timestamp of LTI system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>According to the actual physical meaning, the dimensions of A, B, C, D must be
-the consistent, whether in batch or not. <a class="reference internal" href="#pypose.module.LTI.A" title="pypose.module.LTI.A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">A</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.B" title="pypose.module.LTI.B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.C" title="pypose.module.LTI.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.D" title="pypose.module.LTI.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">D</span></code></a>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">u</span></code> could be a single input or in a batch. In the batch case,
-their dimensions must be consistent so that they can be multiplied for each channel.</p>
-<p>Here, variables are given as row vectors.</p>
+<p>The variables including state and input are row vectors, which is the last dimension of
+a Tensor. <a class="reference internal" href="#pypose.module.LTI.A" title="pypose.module.LTI.A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">A</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.B" title="pypose.module.LTI.B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.C" title="pypose.module.LTI.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#pypose.module.LTI.D" title="pypose.module.LTI.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">D</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">u</span></code> could be a single
+matrix or batched matrices. In the batch case, their dimensions must be consistent so that
+they can be multiplied for each channel.</p>
 </div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LTI</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 <span class="go">tensor([[[-8.5639,  0.0523, -0.2576]],</span>
