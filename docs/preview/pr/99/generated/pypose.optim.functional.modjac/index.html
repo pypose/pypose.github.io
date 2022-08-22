@@ -7,7 +7,7 @@
   <title>pypose.optim.functional.modjac &mdash; PyPose 0.0.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -18,8 +18,8 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js"></script>
+        <script src="../../_static/katex.min.js"></script>
+        <script src="../../_static/auto-render.min.js"></script>
         <script src="../../_static/katex_autorenderer.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex/" />
@@ -178,7 +178,7 @@ which computes the Jacobian of a given Python function.</p>
 <p>Calculates Jacobian with respect to all model parameters.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 <span class="go">(tensor([[[[[[[0.3365]]]]]]]), tensor([[[[1.]]]]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">]</span>
 <span class="go">[torch.Size([1, 1, 1, 1, 1, 1, 1]), torch.Size([1, 1, 1, 1])]</span>
@@ -187,7 +187,7 @@ which computes the Jacobian of a given Python function.</p>
 <p>Function with flattened parameters returns a combined Jacobian.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">tensor([[-0.4162,  0.0968,  0.0000,  0.0000,  1.0000,  0.0000],</span>
 <span class="go">        [-0.6042,  1.1886,  0.0000,  0.0000,  1.0000,  0.0000],</span>
 <span class="go">        [ 1.4623,  0.7389,  0.0000,  0.0000,  1.0000,  0.0000],</span>
@@ -210,7 +210,7 @@ which computes the Jacobian of a given Python function.</p>
 <span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span> <span class="o">=</span> <span class="n">PoseTransform</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">J</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">tensor([[ 0.4670,  0.7041,  0.0029,  0.0000,  0.0000,  0.0000],</span>
 <span class="go">        [-0.6591,  0.4554, -0.2566,  0.0000,  0.0000,  0.0000],</span>
 <span class="go">        [-0.2477,  0.0670,  0.9535,  0.0000,  0.0000,  0.0000],</span>
