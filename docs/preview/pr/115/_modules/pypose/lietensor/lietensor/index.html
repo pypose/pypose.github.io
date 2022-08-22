@@ -1117,14 +1117,15 @@
 <span class="sd">    Args:</span>
 <span class="sd">        data (LieTensor): parameter LieTensor.</span>
 <span class="sd">        requires_grad (bool, optional): if the parameter requires</span>
-<span class="sd">            gradient. Default: True</span>
+<span class="sd">            gradient. Default: ``True``</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.Parameter(pp.randn_so3(2))</span>
-<span class="sd">        &gt;&gt;&gt; x.sum().backward() # Just test. There is no physical meaning</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; x = pp.Parameter(pp.randn_SO3(2))</span>
+<span class="sd">        &gt;&gt;&gt; x.Log().sum().backward()</span>
 <span class="sd">        &gt;&gt;&gt; x.grad</span>
-<span class="sd">        tensor([[1., 1., 1.],</span>
-<span class="sd">                [1., 1., 1.]])</span>
+<span class="sd">        tensor([[0.8590, 1.4069, 0.6261, 0.0000],</span>
+<span class="sd">                [1.2869, 1.0748, 0.5385, 0.0000]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ltype</span>
