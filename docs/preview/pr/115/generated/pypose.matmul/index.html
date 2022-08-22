@@ -117,7 +117,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.matmul">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">matmul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/basics/#matmul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.matmul" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates matrix product of input and other</p>
+<dd><p>Performs matrix multiplication with input LieTensor and other</p>
 <div class="math">
 \[\bm{y}_i =
 \bm{x}_i \times \bm{a}_i
@@ -125,8 +125,6 @@
 \]</div>
 <p>where <span class="math">\(\bm{x}\)</span> is the <code class="docutils literal notranslate"><span class="pre">input</span></code> LieTensor, <span class="math">\(\bm{a}\)</span> is the <code class="docutils literal notranslate"><span class="pre">other</span></code> value,
 and <span class="math">\(\bm{y}\)</span> is the output value.</p>
-<p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> &#64; <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> -&gt; <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> (group multiplication)</p>
-<p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> &#64; <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> -&gt; <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> (group action)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -135,23 +133,89 @@ and <span class="math">\(\bm{y}\)</span> is the output value.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the product with the same type as <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
+<dd class="field-even"><p>the product of <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor/LieTensor</p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>/<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p>
 </dd>
 </dl>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">List of <a class="reference internal" href="#pypose.matmul" title="pypose.matmul"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.matmul</span></code></a> cases</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 7%" />
+<col style="width: 33%" />
+<col style="width: 7%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>input <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p></th>
+<th class="head"><p>&#64;</p></th>
+<th class="head"><p>other</p></th>
+<th class="head"><p><span class="math">\(=\)</span></p></th>
+<th class="head"><p>output</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Lie Group</p></td>
+<td><p>&#64;</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times3}}\)</span></p></td>
+<td><p><span class="math">\(=\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Lie Group</p></td>
+<td><p>&#64;</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times4}}\)</span></p></td>
+<td><p><span class="math">\(=\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Lie Algebra or Lie Group</p></td>
+<td><p>&#64;</p></td>
+<td><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p></td>
+<td><p><span class="math">\(=\)</span></p></td>
+<td><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<p>See <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Act()</span></code></a> for multiplying by a Tensor.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<p>The following operations are equivalent.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">a</span>
+<span class="go">(so3Type LieTensor:</span>
+<span class="go">LieTensor([ 0.6835,  0.6479, -1.0084]), so3Type LieTensor:</span>
+<span class="go">LieTensor([-2.7218,  0.2900, -0.2014]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">@</span> <span class="n">a</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">LieTensor([-1.8603,  0.1879,  0.2031])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-<span class="go">tensor([-0.7160, -1.3886, -0.9513,  1.8266])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-<span class="go">SO3Type LieTensor:</span>
-<span class="go">LieTensor([ 0.7985, -1.4480, -1.9396,  0.4313])</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">LieTensor([-1.8603,  0.1879,  0.2031])</span>
 </pre></div>
 </div>
+<ul>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code> &#64; <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times3}}\)</span> <span class="math">\(=\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">a</span>
+<span class="go">(SO3Type LieTensor:</span>
+<span class="go">LieTensor([-0.1576,  0.1065,  0.0651,  0.9796]), tensor([-1.0442,  0.2388,  1.0111]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">@</span> <span class="n">a</span>
+<span class="go">tensor([-0.8599,  0.4530,  1.1068])</span>
+</pre></div>
+</div>
+</li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code> &#64; <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times4}}\)</span> <span class="math">\(=\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">tensor([-1.4010, -0.3532,  0.6713, -0.3036])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">@</span> <span class="n">a</span>
+<span class="go">tensor([-1.1741, -0.2477,  1.0479, -0.3036])</span>
+</pre></div>
+</div>
+</li>
+</ul>
 </dd></dl>
 
 </section>
