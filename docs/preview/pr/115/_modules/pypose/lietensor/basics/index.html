@@ -198,6 +198,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="mul"><a class="viewcode-back" href="../../../../generated/pypose.mul/#pypose.mul">[docs]</a><span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Multiplies input LieTensor by other.</span>
@@ -212,39 +213,30 @@
 <span class="sd">    Args:</span>
 <span class="sd">        input (:obj:`LieTensor`): the input LieTensor (Lie Group or Lie Algebra).</span>
 
-<span class="sd">        other (:obj:`Number`, :obj:`Tensor`, or :obj:`LieTensor`): the value for input to be multiplied by.</span>
+<span class="sd">        other (:obj:`Number`, :obj:`Tensor`, or :obj:`LieTensor`): the value for input to be</span>
+<span class="sd">            multiplied by.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        :obj:`Tensor`/:obj:`LieTensor`: the product of ``input`` and ``other``.</span>
 
 <span class="sd">    .. list-table:: List of :obj:`pypose.mul` cases </span>
-<span class="sd">        :widths: 25 6 30 6 25</span>
+<span class="sd">        :widths: 25 30 25</span>
 <span class="sd">        :header-rows: 1</span>
 
 <span class="sd">        * - input :obj:`LieTensor`</span>
-<span class="sd">          - :math:`*`</span>
 <span class="sd">          - other</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - output</span>
 <span class="sd">        * - Lie Algebra</span>
-<span class="sd">          - :math:`*`</span>
 <span class="sd">          - :obj:`Number`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`Lie Algebra`</span>
 <span class="sd">        * - Lie Group</span>
-<span class="sd">          - :math:`*`</span>
 <span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`Tensor`</span>
 <span class="sd">        * - Lie Group</span>
-<span class="sd">          - :math:`*`</span>
 <span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`Tensor`</span>
 <span class="sd">        * - Lie Algebra or Lie Group</span>
-<span class="sd">          - :math:`*`</span>
 <span class="sd">          - :obj:`LieTensor`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`LieTensor`</span>
 
 <span class="sd">    See :obj:`Act()` for multiplying by a Tensor.</span>
@@ -270,7 +262,8 @@
 <span class="sd">            so3Type LieTensor:</span>
 <span class="sd">            LieTensor([ 1.5090, -5.1231,  3.8919])</span>
 
-<span class="sd">        * :obj:`Lie Group` :math:`*` :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}` :math:`=` :obj:`Tensor`</span>
+<span class="sd">        * :obj:`Lie Group` :math:`*` :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}`</span>
+<span class="sd">          :math:`=` :obj:`Tensor`</span>
 
 <span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3()</span>
 <span class="sd">            &gt;&gt;&gt; a = torch.randn(3)</span>
@@ -280,7 +273,8 @@
 <span class="sd">            &gt;&gt;&gt; x * a</span>
 <span class="sd">            &gt;&gt;&gt; tensor([-1.9929,  1.2682, -1.5167])</span>
 
-<span class="sd">        * :obj:`Lie Group` :math:`*` :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}` :math:`=` :obj:`Tensor`</span>
+<span class="sd">        * :obj:`Lie Group` :math:`*` :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
+<span class="sd">          :math:`=` :obj:`Tensor`</span>
 
 <span class="sd">            &gt;&gt;&gt; a = torch.randn(4)</span>
 <span class="sd">            &gt;&gt;&gt; a</span>
@@ -298,7 +292,8 @@
 <span class="sd">            SO3Type LieTensor:</span>
 <span class="sd">            LieTensor([-0.0935, -0.4392,  0.8670,  0.2162])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">*</span> <span class="n">other</span></div>
+
 
 <div class="viewcode-block" id="matmul"><a class="viewcode-back" href="../../../../generated/pypose.matmul/#pypose.matmul">[docs]</a><span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -320,28 +315,20 @@
 <span class="sd">        :obj:`Tensor`/:obj:`LieTensor`: the product of ``input`` and ``other``.</span>
 
 <span class="sd">    .. list-table:: List of :obj:`pypose.matmul` cases </span>
-<span class="sd">        :widths: 25 6 30 6 25</span>
+<span class="sd">        :widths: 25 30 25</span>
 <span class="sd">        :header-rows: 1</span>
 
 <span class="sd">        * - input :obj:`LieTensor`</span>
-<span class="sd">          - @</span>
 <span class="sd">          - other</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - output</span>
 <span class="sd">        * - Lie Group</span>
-<span class="sd">          - @</span>
 <span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`Tensor`</span>
 <span class="sd">        * - Lie Group</span>
-<span class="sd">          - @</span>
 <span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`Tensor`</span>
 <span class="sd">        * - Lie Algebra or Lie Group</span>
-<span class="sd">          - @</span>
 <span class="sd">          - :obj:`LieTensor`</span>
-<span class="sd">          - :math:`=` </span>
 <span class="sd">          - :obj:`LieTensor`</span>
 
 <span class="sd">    See :obj:`Act()` for multiplying by a Tensor.</span>
@@ -362,7 +349,8 @@
 <span class="sd">        so3Type LieTensor:</span>
 <span class="sd">        LieTensor([-1.8603,  0.1879,  0.2031])</span>
 
-<span class="sd">        * :obj:`Lie Group` @ :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}` :math:`=` :obj:`Tensor`</span>
+<span class="sd">        * :obj:`Lie Group` @ :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}`</span>
+<span class="sd">          :math:`=` :obj:`Tensor`</span>
 
 <span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3()</span>
 <span class="sd">            &gt;&gt;&gt; a = torch.randn(3)</span>
@@ -372,7 +360,8 @@
 <span class="sd">            &gt;&gt;&gt; x @ a</span>
 <span class="sd">            tensor([-0.8599,  0.4530,  1.1068])</span>
 
-<span class="sd">        * :obj:`Lie Group` @ :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}` :math:`=` :obj:`Tensor`</span>
+<span class="sd">        * :obj:`Lie Group` @ :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
+<span class="sd">          :math:`=` :obj:`Tensor`</span>
 
 <span class="sd">            &gt;&gt;&gt; a = torch.randn(4)</span>
 <span class="sd">            &gt;&gt;&gt; a </span>
@@ -380,7 +369,8 @@
 <span class="sd">            &gt;&gt;&gt; x @ a</span>
 <span class="sd">            tensor([-1.1741, -0.2477,  1.0479, -0.3036])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="fm">__matmul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">@</span> <span class="n">other</span></div>
+
 
 <div class="viewcode-block" id="cumops_"><a class="viewcode-back" href="../../../../generated/pypose.cumops_/#pypose.cumops_">[docs]</a><span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
