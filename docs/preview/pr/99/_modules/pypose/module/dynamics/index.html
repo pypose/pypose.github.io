@@ -84,7 +84,7 @@
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    The base class of a general discrete-time system dynamics model.</span>
 <span class="sd">    </span>
-<span class="sd">    The state transision function :math:`\mathbf{f}` and observation functions</span>
+<span class="sd">    The state transision function :math:`\mathbf{f}` and observation function</span>
 <span class="sd">    :math:`\mathbf{g}` are given by:</span>
 
 <span class="sd">    .. math::</span>
@@ -94,11 +94,11 @@
 <span class="sd">        \end{aligned}</span>
 
 <span class="sd">    where :math:`k`, :math:`\mathbf{x}`, :math:`\mathbf{u}`, :math:`\mathbf{y}` are the time</span>
-<span class="sd">    step, states, inputs, and observations, respectively.</span>
+<span class="sd">    step, state(s), input(s), and observation(s), respectively.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        To use the class, the users need to inherit this class and define methods</span>
-<span class="sd">        :obj:`state_transition` and :obj:`observation`, which are automaticall called by</span>
+<span class="sd">        To use the class, users need to inherit this class and define methods</span>
+<span class="sd">        :obj:`state_transition` and :obj:`observation`, which are automatically called by</span>
 <span class="sd">        internal :obj:`forward` method.</span>
 <span class="sd">        The system timestamp (starting from **0**) is also self-added automatically once</span>
 <span class="sd">        the :obj:`forward` method is called.</span>
@@ -206,7 +206,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            The :obj:`forward` method implicitly increments the time step via :obj:`forward_hook`.</span>
 <span class="sd">            :obj:`state_transition` and :obj:`observation` still accept time for the flexiblity</span>
-<span class="sd">            such as time varying system. One can directly access the current system time via the</span>
+<span class="sd">            such as time-varying system. One can directly access the current system time via the</span>
 <span class="sd">            property :obj:`systime`.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
@@ -218,7 +218,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The state of the dynamical system</span>
 <span class="sd">            input (:obj:`Tensor`): The input to the dynamical system</span>
-<span class="sd">            t (:obj:`Tensor`): The time step of the dynamical system.  Default: :obj:`None`.</span>
+<span class="sd">            t (:obj:`Tensor`): The time step of the dynamical system.  Default: ``None``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Tensor: The state of the system at next time step</span>
@@ -234,7 +234,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The state of the dynamical system</span>
 <span class="sd">            input (:obj:`Tensor`): The input to the dynamical system</span>
-<span class="sd">            t (:obj:`Tensor`): The time step of the dynamical system.  Default: :obj:`None`.</span>
+<span class="sd">            t (:obj:`Tensor`): The time step of the dynamical system.  Default: ``None``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Tensor: The observation of the system at the current step</span>
@@ -428,7 +428,7 @@
 
 <div class="viewcode-block" id="LTI.observation"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.observation">[docs]</a>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Return observation of LTI system at current step.</span>
+<span class="sd">        Return the observation of LTI system at current time step.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u} + \mathbf{c}_2 \\</span>
