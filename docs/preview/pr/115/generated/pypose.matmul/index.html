@@ -161,13 +161,127 @@ and <span class="math">\(\bm{y}\)</span> is the output value.</p>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times4}}\)</span></p></td>
 <td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Lie Algebra or Lie Group</p></td>
-<td><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p></td>
-<td><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p></td>
+<tr class="row-even"><td><p>Lie Group</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span> <span class="pre">(input.ltype)</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code></p></td>
 </tr>
 </tbody>
 </table>
 <p>See <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Act()</span></code></a> for multiplying by a Tensor.</p>
+<p>For multpilying by a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code>, see below:</p>
+<ul>
+<li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code>
+(input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>):</p>
+<blockquote>
+<div><div class="math">
+\[\bm{x} = [q_x, q_y, q_z, q_w] = q_xi + q_yj + q_zk + q_w,
+
+\]</div>
+<div class="math">
+\[\bm{a} = [q_x', q_y', q_z', q_w'] = q_x'i + q_y'j + q_z'k + q_w',
+
+\]</div>
+<p>where <span class="math">\(\bm{i}\)</span>, <span class="math">\(\bm{j}\)</span>, <span class="math">\(\bm{k}\)</span>, and <span class="math">\(\bm{1}\)</span>
+represent the standard basis of quaternions and</p>
+<div class="math">
+\[{i}^2 = {j}^2 = {k}^2 = {ijk} = -1,
+
+\]</div>
+<p>Using these definitions, the product of these quaternions yields</p>
+<div class="math">
+\[\bm{x} \times \bm{a} =
+(q_xi + q_yj + q_zk + q_w) \times (q_x'i + q_y'j + q_z'k + q_w'),
+
+\]</div>
+<p>And rearranging terms simplifies this product to</p>
+<div class="math">
+\[(\bm{x} \times \bm{a})_{xyz} =
+q_{xyz} \times q_{xyz}' + q_wq_{xyz}' + q_w'q_{xyz},
+
+\]</div>
+<div class="math">
+\[(\bm{x} \times \bm{a})_{w} =
+q_wq_w' - q_{xyz} \cdot q_{xyz}',
+
+\]</div>
+<div class="math">
+\[\bm{x} \times \bm{a} =
+q_wq_w' - q_{xyz} \cdot q_{xyz}' + q_wq_{xyz}' + q_w'q_{xyz} +
+q_{xyz} \times q_{xyz}'
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
+(input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>):</p>
+<blockquote>
+<div><div class="math">
+\[\bm{x} = [t_x, t_y, t_z, q_x, q_y, q_z, q_w],
+
+\]</div>
+<div class="math">
+\[\bm{a} = [t_x', t_y', t_z', q_x', q_y', q_z', q_w'],
+
+\]</div>
+<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> to calculate the
+quaternion of the product <span class="math">\((\bm{x} \times \bm{a})_{q}\)</span>, and,
+calculates the translational vector with the method below,</p>
+<div class="math">
+\[\bm{x}_{t} = [t_x, t_y, t_z],
+
+\]</div>
+<div class="math">
+\[\bm{a}_{t} = [t_x', t_y', t_z'],
+
+\]</div>
+<div class="math">
+\[\bm{x}_{q} = [q_x, q_y, q_z, q_w],
+
+\]</div>
+<div class="math">
+\[(\bm{x} \times \bm{a})_{t} = \bm{x}_q \times \bm{a}_t + \bm{x}_t
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
+(input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>)</p>
+<blockquote>
+<div><div class="math">
+\[\bm{x} = [q_x, q_y, q_z, q_w, s],
+
+\]</div>
+<div class="math">
+\[\bm{a} = [q_x', q_y', q_z', q_w', s'],
+
+\]</div>
+<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> to calculate the
+quaternion of the product <span class="math">\((\bm{x} \times \bm{a})_{q}\)</span>, and</p>
+<div class="math">
+\[(\bm{x} \times \bm{a})_{s} = ss'
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code>
+(input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
+<blockquote>
+<div><div class="math">
+\[\bm{x} = [t_x, t_y, t_z, q_x, q_y, q_z, q_w, s],
+
+\]</div>
+<div class="math">
+\[\bm{x} = [t_x', t_y', t_z', q_x', q_y', q_z', q_w', s'],
+
+\]</div>
+<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> to calculate the
+quaternion and scaling factor of the product <span class="math">\((\bm{x} \times \bm{a})_{q, s}\)</span>,
+using an SE3 type instead of an SO3 type. Uses the same calculations as with
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code> to calculate the translational vector of the product
+<span class="math">\((\bm{x} \times \bm{a})_{t}\)</span>.</p>
+</div></blockquote>
+</li>
+</ul>
 <p class="rubric">Examples</p>
 <p>The following operations are equivalent.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">()</span>
