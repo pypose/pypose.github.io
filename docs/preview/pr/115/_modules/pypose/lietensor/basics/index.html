@@ -236,8 +236,11 @@
 <span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
 <span class="sd">          - :obj:`Tensor`</span>
 <span class="sd">        * - Lie Group</span>
-<span class="sd">          - :obj:`Lie Group (input.ltype)` </span>
+<span class="sd">          - :obj:`Lie Group` </span>
 <span class="sd">          - :obj:`Lie Group`</span>
+
+<span class="sd">    When multiplying a Lie Group by another Lie Group, they must have the </span>
+<span class="sd">    same Lie type.</span>
 
 <span class="sd">    See :obj:`Act()` for multiplying by a Tensor.</span>
 
@@ -247,11 +250,14 @@
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SO3`):</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{x} = [q_x, q_y, q_z, q_w] = q_xi + q_yj + q_zk + q_w,</span>
+<span class="sd">            q_i = [q_i^x, q_i^y, q_i^z, q_i^w],</span>
+<span class="sd">            </span>
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{a} = [q_x&#39;, q_y&#39;, q_z&#39;, q_w&#39;] = q_x&#39;i + q_y&#39;j + q_z&#39;k + q_w&#39;,</span>
+<span class="sd">            \bm{x}_i = [q_i] = q_i^xi + q_i^yj + q_i^zk + q_i^w,</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            \bm{a}_i = [q_i&#39;] = q_i^{x&#39;}i + q_i^{y&#39;}j + q_i^{z&#39;}k + q_i^{w&#39;},</span>
 
-<span class="sd">        where :math:`\bm{i}`, :math:`\bm{j}`, :math:`\bm{k}`, and :math:`\bm{1}` </span>
+<span class="sd">        and :math:`i`, :math:`j`, :math:`k`, and :math:`1` </span>
 <span class="sd">        represent the standard basis of quaternions and </span>
 
 <span class="sd">        .. math::</span>
@@ -260,90 +266,64 @@
 <span class="sd">        Using these definitions, the product of these quaternions is</span>
 <span class="sd">        </span>
 <span class="sd">        .. math:: </span>
-<span class="sd">            \bm{x} \ast \bm{a} = </span>
-<span class="sd">            (q_xi + q_yj + q_zk + q_w) \ast (q_x&#39;i + q_y&#39;j + q_z&#39;k + q_w&#39;),</span>
-<span class="sd">        </span>
-<span class="sd">        And rearranging terms simplifies this product to</span>
+<span class="sd">            \bm{y}_i = </span>
+<span class="sd">            (q_i^xi + q_i^yj + q_i^zk + q_i^w) \ast (q_i^{x&#39;}i + q_i^{y&#39;}j + q_i^{z&#39;}k + q_i^{w&#39;}),</span>
+
+<span class="sd">        Using the Hamilton product, we have the following</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{xyz} = </span>
-<span class="sd">            q_{xyz} \times q_{xyz}&#39; + q_wq_{xyz}&#39; + q_w&#39;q_{xyz},</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{w} = </span>
-<span class="sd">            q_wq_w&#39; - q_{xyz} \cdot q_{xyz}&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            \bm{x} \ast \bm{a} = </span>
-<span class="sd">            q_wq_w&#39; - q_{xyz} \cdot q_{xyz}&#39; + q_wq_{xyz}&#39; + q_w&#39;q_{xyz} + </span>
-<span class="sd">            q_{xyz} \times q_{xyz}&#39;</span>
-
-<span class="sd">        Alternatively, using the Hamilton product, we have the following</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_w} = q_wq_w&#39; - q_xq_x&#39; - q_yq_y&#39; - q_zq_z&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_x} = q_wq_x&#39; + q_xq_w&#39; + q_yq_z&#39; - q_zq_y&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_y} = q_wq_y&#39; - q_xq_z&#39; + q_yq_w&#39; + q_zq_x,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_z} = q_wq_z&#39; + q_xq_y&#39; - q_yq_x&#39; + q_zq_w&#39;,</span>
+<span class="sd">            {\displaystyle \bm{y}_i={\begin{bmatrix}</span>
+<span class="sd">              q_i^wq_i^{w&#39;} &amp; -q_i^xq_i^{x&#39;} &amp; -q_i^yq_i^{y&#39;} &amp; -q_i^zq_i^{z&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{x&#39;} &amp; q_i^xq_i^{w&#39;} &amp; q_i^yq_i^{z&#39;} &amp; -q_i^zq_i^{y&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{y&#39;} &amp; -q_i^xq_i^{z&#39;} &amp; q_i^yq_i^{w&#39;} &amp; q_i^zq_i^{x&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{z&#39;} &amp; q_i^xq_i^{y&#39;} &amp; -q_i^yq_i^{x&#39;} &amp; q_i^zq_i^{w&#39;}</span>
+<span class="sd">              \end{bmatrix}</span>
+<span class="sd">            }}</span>
 
 <span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`SE3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SE3`):</span>
 
+<span class="sd">        .. math:: </span>
+<span class="sd">            t_i = [t_i^x, t_i^y, t_i^z],</span>
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{x} = [t_x, t_y, t_z, q_x, q_y, q_z, q_w],</span>
+<span class="sd">            \bm{x}_i = [t_i, q_i],</span>
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{a} = [t_x&#39;, t_y&#39;, t_z&#39;, q_x&#39;, q_y&#39;, q_z&#39;, q_w&#39;],</span>
+<span class="sd">            \bm{a}_i = [t_i&#39;, q_i&#39;],</span>
 
 <span class="sd">        Peforms same calculations as with :obj:`SO3_type` to calculate the </span>
-<span class="sd">        quaternion of the product :math:`(\bm{x} \ast \bm{a})_{q}`, and, </span>
-<span class="sd">        calculates the translational vector with the method below,</span>
+<span class="sd">        quaternion of the product, and, calculates the translational vector </span>
+<span class="sd">        with the method below,</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{x}_{t} = [t_x, t_y, t_z],</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            \bm{a}_{t} = [t_x&#39;, t_y&#39;, t_z&#39;],</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            \bm{x}_{q} = [q_x, q_y, q_z, q_w],</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{t} = \bm{x}_q \ast \bm{a}_t + \bm{x}_t</span>
+<span class="sd">            \bm{y}_i = [q_i \ast t_i&#39; + t_i, q_i * q_i&#39;]</span>
 <span class="sd">            </span>
 <span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`RxSO3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`RxSO3`)</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{x} = [q_x, q_y, q_z, q_w, s],</span>
+<span class="sd">            \bm{x}_i = [q_i, s_i]</span>
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{a} = [q_x&#39;, q_y&#39;, q_z&#39;, q_w&#39;, s&#39;],</span>
+<span class="sd">            \bm{a}_i = [q_i&#39;, s_i&#39;]</span>
 
 <span class="sd">        Peforms same calculations as with :obj:`SO3_type` to calculate the </span>
-<span class="sd">        quaternion of the product :math:`(\bm{x} \ast \bm{a})_{q}`, and </span>
+<span class="sd">        quaternion of the product </span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{s} = ss&#39;</span>
+<span class="sd">            \bm{y}_i = [q_i \ast q_i&#39;, s_is_i&#39;]</span>
 
 <span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`Sim3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`Sim3`):</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{x} = [t_x, t_y, t_z, q_x, q_y, q_z, q_w, s],</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            \bm{a} = [t_x&#39;, t_y&#39;, t_z&#39;, q_x&#39;, q_y&#39;, q_z&#39;, q_w&#39;, s&#39;],</span>
-<span class="sd">        </span>
-<span class="sd">        Based off of the calculations for the previous types, we have the following</span>
+<span class="sd">            \bm{x}_i = [t_i, q_i, s_i],</span>
+<span class="sd">            \bm{a}_i = [t_i&#39;, q_i&#39;, s_i&#39;]</span>
+
+<span class="sd">        Peforms same calculations as with :obj:`RxSO3_type` to calculate the </span>
+<span class="sd">        quaternion and scaling factor of the product, and uses same :obj:`SE3_type` </span>
+<span class="sd">        calculations for the translational vector.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_w} = q_wq_w&#39; - q_xq_x&#39; - q_yq_y&#39; - q_zq_z&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_x} = q_wq_x&#39; + q_xq_w&#39; + q_yq_z&#39; - q_zq_y&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_y} = q_wq_y&#39; - q_xq_z&#39; + q_yq_w&#39; + q_zq_x,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{q_z} = q_wq_z&#39; + q_xq_y&#39; - q_yq_x&#39; + q_zq_w&#39;,</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{s} = ss&#39;</span>
-<span class="sd">        .. math::</span>
-<span class="sd">            (\bm{x} \ast \bm{a})_{t} = \bm{x}_q \ast \bm{a}_t + \bm{x}_t</span>
+<span class="sd">            \bm{y}_i = [q_i \ast t_i&#39; + t_i, q_i \ast q_i&#39;, s_is_i&#39;] </span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        The following operations are equivalent.</span>
@@ -399,7 +379,7 @@
     <span class="k">return</span> <span class="nb">input</span> <span class="o">*</span> <span class="n">other</span></div>
 
 
-<div class="viewcode-block" id="matmul"><a class="viewcode-back" href="../../../../generated/pypose.matmul/#pypose.matmul">[docs]</a><span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Performs matrix multiplication with input LieTensor and other</span>
 
@@ -577,7 +557,7 @@
 <span class="sd">            &gt;&gt;&gt; x @ a</span>
 <span class="sd">            tensor([-1.1741, -0.2477,  1.0479, -0.3036])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="nb">input</span> <span class="o">@</span> <span class="n">other</span></div>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">@</span> <span class="n">other</span>
 
 
 <div class="viewcode-block" id="cumops_"><a class="viewcode-back" href="../../../../generated/pypose.cumops_/#pypose.cumops_">[docs]</a><span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
