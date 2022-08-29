@@ -116,14 +116,14 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.mul">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/basics/#mul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.mul" title="Permalink to this definition"></a></dt>
-<dd><p>Multiplies input LieTensor by other.</p>
+<dd><p>Multiply input LieTensor by other.</p>
 <div class="math">
 \[\bm{y}_i =
 \bm{x}_i \ast \bm{a}_i
 
 \]</div>
-<p>where <span class="math">\(\bm{x}\)</span> is the <code class="docutils literal notranslate"><span class="pre">input</span></code> LieTensor, <span class="math">\(\bm{a}\)</span> is the <code class="docutils literal notranslate"><span class="pre">other</span></code> value,
-and <span class="math">\(\bm{y}\)</span> is the output value.</p>
+<p>where <span class="math">\(\bm{x}\)</span> is the <code class="docutils literal notranslate"><span class="pre">input</span></code> LieTensor, <span class="math">\(\bm{a}\)</span> is the <code class="docutils literal notranslate"><span class="pre">other</span></code> Tensor or
+LieTensor, and <span class="math">\(\bm{y}\)</span> is the output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -173,117 +173,100 @@ multiplied by.</p></li>
 </table>
 <p>When multiplying a Lie Group by another Lie Group, they must have the
 same Lie type.</p>
-<p>See <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Act()</span></code></a> for multiplying by a Tensor.</p>
-<p>For multpilying by a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code>, see below:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>When <code class="docutils literal notranslate"><span class="pre">other</span></code> is a Tensor, this operator is equivalent to <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Act()</span></code></a>.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">other</span></code> is a number and <code class="docutils literal notranslate"><span class="pre">input</span></code> is a Lie Algebra, this operator performs
+simple element-wise multiplication.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">input</span></code> is a Lie Group, more details are shown below.</p></li>
+</ul>
+</div>
 <ul>
 <li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code>
 (input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>):</p>
-<blockquote>
-<div><div class="math">
-\[q_i = [q_i^x, q_i^y, q_i^z, q_i^w],
-
-\]</div>
-<div class="math">
-\[\bm{x}_i = [q_i] = q_i^xi + q_i^yj + q_i^zk + q_i^w,
-
-\]</div>
-<div class="math">
-\[\bm{a}_i = [q_i'] = q_i^{x'}i + q_i^{y'}j + q_i^{z'}k + q_i^{w'},
-
-\]</div>
-<p>and <span class="math">\(i\)</span>, <span class="math">\(j\)</span>, <span class="math">\(k\)</span>, and <span class="math">\(1\)</span>
-represent the standard basis of quaternions and</p>
-<div class="math">
-\[{i}^2 = {j}^2 = {k}^2 = {ijk} = -1,
-
-\]</div>
-<p>Using these definitions, the product of these quaternions is</p>
-<div class="math">
-\[\bm{y}_i =
-(q_i^xi + q_i^yj + q_i^zk + q_i^w) \ast (q_i^{x'}i + q_i^{y'}j + q_i^{z'}k + q_i^{w'}),
-
-\]</div>
-<p>Using the Hamilton product, we have the following</p>
 <div class="math">
 \[{\displaystyle \bm{y}_i={\begin{bmatrix}
-  q_i^wq_i^{w'} & -q_i^xq_i^{x'} & -q_i^yq_i^{y'} & -q_i^zq_i^{z'}\\
-  q_i^wq_i^{x'} & q_i^xq_i^{w'} & q_i^yq_i^{z'} & -q_i^zq_i^{y'}\\
-  q_i^wq_i^{y'} & -q_i^xq_i^{z'} & q_i^yq_i^{w'} & q_i^zq_i^{x'}\\
-  q_i^wq_i^{z'} & q_i^xq_i^{y'} & -q_i^yq_i^{x'} & q_i^zq_i^{w'}
-  \end{bmatrix}
-}}
+      q_i^wq_i^{w'} - q_i^xq_i^{x'} -q_i^yq_i^{y'} - q_i^zq_i^{z'}\\
+      q_i^wq_i^{x'} + q_i^xq_i^{w'} +q_i^yq_i^{z'} - q_i^zq_i^{y'}\\
+      q_i^wq_i^{y'} - q_i^xq_i^{z'} +q_i^yq_i^{w'} + q_i^zq_i^{x'}\\
+      q_i^wq_i^{z'} + q_i^xq_i^{y'} -q_i^yq_i^{x'} + q_i^zq_i^{w'}
+      \end{bmatrix}
+}^T},
 
 \]</div>
-</div></blockquote>
+<p>where <span class="math">\(\bm{x}_i = [q_i^x, q_i^y, q_i^z, q_i^w]\)</span> and
+<span class="math">\(\bm{a}_i = [q_i^{x'}, q_i^{y'}, q_i^{z'}, q_i^{w'}]\)</span> are the <code class="docutils literal notranslate"><span class="pre">input</span></code>
+and <code class="docutils literal notranslate"><span class="pre">other</span></code> LieTensor, respectively</p>
 </li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><span class="math">\(\mathbf{y}_i\)</span> can be simply derived by taking the complex number multiplication.</p>
+<div class="math">
+\[\bm{y}_i =
+(q_i^x\mathbf{i} + q_i^y\mathbf{j} + q_i^z\mathbf{k} + q_i^w) \ast
+(q_i^{x'}\mathbf{i} + q_i^{y'}\mathbf{j} + q_i^{z'}\mathbf{k} + q_i^{w'}),
+
+\]</div>
+<p>where and <span class="math">\(\mathbf{i}\)</span> <span class="math">\(\mathbf{j}\)</span>, and <span class="math">\(\mathbf{k}\)</span> are the imaginary
+units.</p>
+<div class="math">
+\[\mathbf{i}^2 = \mathbf{j}^2 = \mathbf{k}^2 = \mathbf{ijk} = -1
+
+\]</div>
+</div>
+<ul>
 <li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
 (input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>):</p>
 <blockquote>
 <div><div class="math">
-\[t_i = [t_i^x, t_i^y, t_i^z],
+\[\bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i' + \mathbf{t}_i,
+            \mathbf{q}_i * \mathbf{q}_i']
 
 \]</div>
-<div class="math">
-\[\bm{x}_i = [t_i, q_i],
-
-\]</div>
-<div class="math">
-\[\bm{a}_i = [t_i', q_i'],
-
-\]</div>
-<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> to calculate the
-quaternion of the product, and, calculates the translational vector
-with the method below,</p>
-<div class="math">
-\[\bm{y}_i = [q_i \ast t_i' + t_i, q_i * q_i']
-
-\]</div>
+<p>where <span class="math">\(\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i]\)</span> and
+<span class="math">\(\bm{a}_i = [\mathbf{t}_i', \mathbf{q}_i']\)</span> are the <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">other</span></code>
+LieTensor, respectively; <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(\mathbf{t}_i'\)</span> and
+<span class="math">\(\mathbf{q}_i\)</span>, <span class="math">\(\mathbf{q}_i'\)</span> are their translation and <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3</span></code></a>
+parts, respectively; the operator <span class="math">\(\ast\)</span> denotes the obj:<cite>SO3_type</cite>
+multiplication introduced above.</p>
 </div></blockquote>
 </li>
 <li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
 (input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>)</p>
 <blockquote>
 <div><div class="math">
-\[\bm{x}_i = [q_i, s_i]
+\[\bm{y}_i = [\mathbf{q}_i * \mathbf{q}_i', s_is_i']
 
 \]</div>
-<div class="math">
-\[\bm{a}_i = [q_i', s_i']
-
-\]</div>
-<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> to calculate the
-quaternion of the product</p>
-<div class="math">
-\[\bm{y}_i = [q_i \ast q_i', s_is_i']
-
-\]</div>
+<p>where <span class="math">\(s_i\)</span> and <span class="math">\(s_i'\)</span> are the scale parts of the <code class="docutils literal notranslate"><span class="pre">input</span></code> and
+<code class="docutils literal notranslate"><span class="pre">other</span></code> LieTensor, respectively.</p>
 </div></blockquote>
 </li>
 <li><p>Input <span class="math">\(\bm{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code>
 (input <span class="math">\(\bm{x}\)</span> is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
 <blockquote>
 <div><div class="math">
-\[\bm{x}_i = [t_i, q_i, s_i],
-\bm{a}_i = [t_i', q_i', s_i']
+\[\bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i' + \mathbf{t}_i,
+                \mathbf{q}_i * \mathbf{q}_i', s_is_i']
 
 \]</div>
-<p>Peforms same calculations as with <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> to calculate the
-quaternion and scaling factor of the product, and uses same <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
-calculations for the translational vector.</p>
-<div class="math">
-\[\bm{y}_i = [q_i \ast t_i' + t_i, q_i \ast q_i', s_is_i']
-
-\]</div>
+<p>where <span class="math">\(\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i, s_i]\)</span> and
+<span class="math">\(\bm{a}_i = [\mathbf{t}_i', \mathbf{q}_i', s_i']\)</span> are the <code class="docutils literal notranslate"><span class="pre">input</span></code> and
+<code class="docutils literal notranslate"><span class="pre">other</span></code> LieTensor, respectively.</p>
 </div></blockquote>
 </li>
 </ul>
 <p class="rubric">Examples</p>
-<p>The following operations are equivalent.</p>
+<ul>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Algebra</span></code> <span class="math">\(*\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code> <span class="math">\(\mapsto\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Algebra</span></code></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">so3Type LieTensor:</span>
 <span class="go">LieTensor([ 0.3018, -1.0246,  0.7784])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The following two operations are equivalent.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">*</span> <span class="n">a</span>
 <span class="go">so3Type LieTensor:</span>
 <span class="go">LieTensor([ 1.5090, -5.1231,  3.8919])</span>
@@ -292,37 +275,8 @@ calculations for the translational vector.</p>
 <span class="go">LieTensor([ 1.5090, -5.1231,  3.8919])</span>
 </pre></div>
 </div>
-<ul>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Algebra</span></code> <span class="math">\(*\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Number</span></code> <span class="math">\(=\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Algebra</span></code></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">*</span> <span class="n">a</span>
-<span class="go">so3Type LieTensor:</span>
-<span class="go">LieTensor([ 1.5090, -5.1231,  3.8919])</span>
-</pre></div>
-</div>
 </li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code> <span class="math">\(*\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times3}}\)</span>
-<span class="math">\(=\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">a</span>
-<span class="go">(SO3Type LieTensor:</span>
-<span class="go">LieTensor([0.0092, 0.3450, 0.7255, 0.5954]), tensor([ 2.2862,  0.8660, -1.3799]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">*</span> <span class="n">a</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.9929</span><span class="p">,</span>  <span class="mf">1.2682</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5167</span><span class="p">])</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lie</span> <span class="pre">Group</span></code> <span class="math">\(*\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> <span class="math">\(\in \mathbb{R^{*\times4}}\)</span>
-<span class="math">\(=\)</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">tensor([-1.4565,  0.3828, -0.6383,  1.4504])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">*</span> <span class="n">a</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1755</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.6004</span><span class="p">,</span>  <span class="mf">0.2886</span><span class="p">,</span>  <span class="mf">1.4504</span><span class="p">])</span>
-</pre></div>
-</div>
-</li>
-<li><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> <span class="math">\(*\)</span> <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> <span class="math">\(=\)</span> <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p>
+<li><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> <span class="math">\(*\)</span> <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> <span class="math">\(\mapsto\)</span> <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">SO3Type LieTensor:</span>
