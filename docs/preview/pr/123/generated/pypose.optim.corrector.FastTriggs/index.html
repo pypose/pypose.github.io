@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.optim.corrector.FastTriggs &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/katex.min.js"></script>
+        <script src="../../_static/auto-render.min.js"></script>
+        <script src="../../_static/katex_autorenderer.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.optim.corrector.Triggs" href="../pypose.optim.corrector.Triggs/" />
+    <link rel="prev" title="pypose.optim.kernel.Cauchy" href="../pypose.optim.kernel.Cauchy/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GaussNewton/">pypose.optim.GaussNewton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.GN/">pypose.optim.GN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LevenbergMarquardt/">pypose.optim.LevenbergMarquardt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.LM/">pypose.optim.LM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.PINV/">pypose.optim.solver.PINV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.LSTSQ/">pypose.optim.solver.LSTSQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.solver.Cholesky/">pypose.optim.solver.Cholesky</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Constant/">pypose.optim.strategy.Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.Adaptive/">pypose.optim.strategy.Adaptive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.strategy.TrustRegion/">pypose.optim.strategy.TrustRegion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Huber/">pypose.optim.kernel.Huber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.PseudoHuber/">pypose.optim.kernel.PseudoHuber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.kernel.Cauchy/">pypose.optim.kernel.Cauchy</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.optim.corrector.FastTriggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.corrector.Triggs/">pypose.optim.corrector.Triggs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/">pypose.optim.scheduler.StopOnPlateau</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.optim.functional.modjac/">pypose.optim.functional.modjac</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../optim/">Optimization</a> &raquo;</li>
+      <li>pypose.optim.corrector.FastTriggs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/pypose.optim.corrector.FastTriggs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pypose-optim-corrector-fasttriggs">
+<h1>pypose.optim.corrector.FastTriggs<a class="headerlink" href="#pypose-optim-corrector-fasttriggs" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pypose.optim.corrector.FastTriggs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.corrector.</span></span><span class="sig-name descname"><span class="pre">FastTriggs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/corrector/#FastTriggs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.corrector.FastTriggs" title="Permalink to this definition"></a></dt>
+<dd><p>Faster yet stable version of Triggs correction of model residual and Jacobian.</p>
+<div class="math">
+\[\begin{align*}
+    \mathbf{R}_i^\rho &= \sqrt{\rho'(c_i)} \mathbf{R}_i\\
+    \mathbf{J}_i^\rho &= \sqrt{\rho'(c_i)} \mathbf{J}_i
+\end{align*},
+
+\]</div>
+<p>where <span class="math">\(\mathbf{R}_i\)</span> and <span class="math">\(\mathbf{J}_i\)</span> are the <span class="math">\(i\)</span>-th item of the
+model residual and Jacobian, respectively. <span class="math">\(\rho()\)</span> is the kernel function and
+<span class="math">\(c_i = \mathbf{R}_i^T\mathbf{R}_i\)</span> is the point to compute the gradient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kernel</strong> (<em>nn.Module</em>) – the robust kernel (cost) function.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This implementation has a faster and numerically stable solution than <a class="reference internal" href="../pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs" title="pypose.optim.corrector.Triggs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Triggs()</span></code></a>.
+It removes the kernel’s 2nd order derivatives (often negative), which can lead a 2nd
+order optimizer unstable. It basically aims to solve</p>
+<div class="math">
+\[\bm{\theta}^* = \arg\min_{\bm{\theta}} \mathbf{g}(\bm{x})
+            = \arg\min_{\bm{\theta}} \sum_i \rho(\mathbf{R}_i^T \mathbf{R}_i),
+
+\]</div>
+<p>where <span class="math">\(\mathbf{R}_i = \bm{f}(\bm{\theta},\bm{x}_i) - \bm{y}_i\)</span> and
+<span class="math">\(\bm{f}(\bm{\theta}, \bm{x})\)</span> is the model, <span class="math">\(\bm{\theta}\)</span> is the parameters
+to be optimized, <span class="math">\(\bm{x}\)</span> is the model inputs, <span class="math">\(\bm{y}\)</span> is the model targets.
+Considering the 1st order Taylor expansion of the model
+<span class="math">\(\bm{f}(\bm{\theta}+\bm{\delta})\approx\bm{f}(\bm{\theta})+\mathbf{J}_i\bm{\delta}\)</span>.
+If we take <span class="math">\(c_i = \mathbf{R}_i^T \mathbf{R}_i\)</span> and set the first derivative of
+<span class="math">\(\mathbf{g}(\bm{\delta})\)</span> to zero, we have</p>
+<div class="math">
+\[\frac{\partial \bm{g}}{\partial \bm{\delta}}
+= \sum_i \frac{\partial \rho}{\partial c_i} \frac{\partial c_i}{\partial \bm{\delta}}
+= \bm{0}
+
+\]</div>
+<p>This leads to</p>
+<div class="math">
+\[\sum_i \frac{\partial \rho}{\partial c_i} \mathbf{J}_i^T \mathbf{J}_i \bm{\delta}
+= - \sum_i \frac{\partial \rho}{\partial c_i} \mathbf{J}_i^T \mathbf{R}_i
+
+\]</div>
+<p>Rearrange the gradient of <span class="math">\(\rho\)</span>, we have</p>
+<div class="math">
+\[\sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T
+    \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right) \bm{\delta}
+= - \sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T
+    \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{R}_i\right)
+
+\]</div>
+<p>This gives us the corrected model residual <span class="math">\(\mathbf{R}_i^\rho\)</span> and Jacobian
+<span class="math">\(\mathbf{J}_i^\rho\)</span>, which ends with the same problem formulation as the
+standard 2nd order optimizers such as <a class="reference internal" href="../pypose.optim.GN/#pypose.optim.GN" title="pypose.optim.GN"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.GN()</span></code></a> and
+<a class="reference internal" href="../pypose.optim.LM/#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.LM()</span></code></a>.</p>
+<div class="math">
+\[\sum_i {\mathbf{J}_i^\rho}^T \mathbf{J}_i^\rho \bm{\delta}
+= - \sum_i {\mathbf{J}_i^\rho}^T \mathbf{R}_i^\rho
+
+\]</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.optim.corrector.FastTriggs.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/corrector/#FastTriggs.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.corrector.FastTriggs.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<em>Tensor</em>) – the model residual.</p></li>
+<li><p><strong>J</strong> (<em>Tensor</em>) – the model Jacobian.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the corrected model residual and model Jacobian.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Tensors</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The users basically only need to call the constructor, while the <a class="reference internal" href="#pypose.optim.corrector.FastTriggs.forward" title="pypose.optim.corrector.FastTriggs.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward()</span></code></a>
+function is not supposed to be directly called by PyPose users. It will be called
+internally by optimizers such as <a class="reference internal" href="../pypose.optim.GN/#pypose.optim.GN" title="pypose.optim.GN"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.GN()</span></code></a> and <a class="reference internal" href="../pypose.optim.LM/#pypose.optim.LM" title="pypose.optim.LM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.optim.LM()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../pypose.optim.kernel.Cauchy/" class="btn btn-neutral float-left" title="pypose.optim.kernel.Cauchy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pypose.optim.corrector.Triggs/" class="btn btn-neutral float-right" title="pypose.optim.corrector.Triggs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
