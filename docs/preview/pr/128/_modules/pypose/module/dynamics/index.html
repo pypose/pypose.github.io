@@ -81,7 +81,7 @@
 
 
 <div class="viewcode-block" id="System"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System">[docs]</a><span class="k">class</span> <span class="nc">System</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    The base class of a general discrete-time system dynamics model.</span>
 <span class="sd">    </span>
 <span class="sd">    The state transision function :math:`\mathbf{f}` and observation function</span>
@@ -185,22 +185,26 @@
 <span class="sd">                [0.0844, 1.0000]])</span>
 <span class="sd">        tensor([[0.5358],</span>
 <span class="sd">                [1.0000]])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        More practical examples can be found at `examples/module/dynamics</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/dynamics&gt;`_.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vectorize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;reverse-mode&quot;</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_t&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;strategy&#39;</span><span class="p">:</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_t&#39;</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_hook</span><span class="p">)</span>
 
 <div class="viewcode-block" id="System.forward_hook"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.forward_hook">[docs]</a>    <span class="k">def</span> <span class="nf">forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Automatically advances the time step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="System.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Defines the computation performed at every call that advances the system by one time step.</span>
 
 <span class="sd">        Note:</span>
@@ -208,15 +212,13 @@
 <span class="sd">            :obj:`state_transition` and :obj:`observation` still accept time for the flexiblity</span>
 <span class="sd">            such as time-varying system. One can directly access the current system time via the</span>
 <span class="sd">            property :obj:`systime`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">),</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">),</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="System.state_transition"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.state_transition">[docs]</a>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The state of the dynamical system</span>
 <span class="sd">            input (:obj:`Tensor`): The input to the dynamical system</span>
@@ -228,13 +230,11 @@
 <span class="sd">        Note:</span>
 <span class="sd">            The users need to define this method and can access the current time via the property</span>
 <span class="sd">            :obj:`systime`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;The users need to define their own state transition method&quot;</span>
-        <span class="p">)</span></div>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The users need to define their own state transition method&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="System.observation"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.observation">[docs]</a>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The state of the dynamical system</span>
 <span class="sd">            input (:obj:`Tensor`): The input to the dynamical system</span>
@@ -246,16 +246,14 @@
 <span class="sd">        Note:</span>
 <span class="sd">            The users need to define this method and can access the current system time via the</span>
 <span class="sd">            property :obj:`systime`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;The users need to define their own observation method&quot;</span>
-        <span class="p">)</span></div>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The users need to define their own observation method&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
 <div class="viewcode-block" id="System.set_refpoint"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.set_refpoint">[docs]</a>    <span class="k">def</span> <span class="nf">set_refpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to set the reference point for linearization.</span>
 
 <span class="sd">        Args: </span>
@@ -272,106 +270,92 @@
 <span class="sd">        Warning:</span>
 <span class="sd">            For nonlinear systems, the users have to call this function before getting the</span>
 <span class="sd">            linearized system.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="p">)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">t</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">systime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            System time, automatically advanced by :obj:`forward_hook`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Linear/linearized system state matrix.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{A} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\chi^*}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Linear/linearized system input matrix.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{B} = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{u}} \right|_{\chi^*}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Linear/linearized system output matrix.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{C} = \left. \frac{\partial \mathbf{g}}{\partial \mathbf{x}} \right|_{\chi^*}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">)</span>
-
+ 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Linear/Linearized system observation matrix.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{D} = \left. \frac{\partial \mathbf{g}}</span>
 <span class="sd">                                {\partial \mathbf{u}} \right|_{\chi^*}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Constant term generated by state-transition.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{c}_1 = \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*)</span>
 <span class="sd">                           - \mathbf{A}\mathbf{x}^* - \mathbf{B}\mathbf{u}^*</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Potential performance loss here - self.A and self.B involves jacobian eval</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ref_f</span>
-            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
-            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
-        <span class="p">)</span>
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_f</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
+    
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Constant term generated by observation.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{c}_2 = \mathbf{g}(\mathbf{x}^*, \mathbf{u}^*, t^*)</span>
 <span class="sd">                           - \mathbf{C}\mathbf{x}^* - \mathbf{D}\mathbf{u}^*</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Potential performance loss here - self.C and self.D involves jacobian eval</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span>
-            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
-            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LTI"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI">[docs]</a><span class="k">class</span> <span class="nc">LTI</span><span class="p">(</span><span class="n">System</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Discrete-time Linear Time-Invariant (LTI) system.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
@@ -417,53 +401,53 @@
 
 <span class="sd">    Note:</span>
 <span class="sd">        In this general example, all variables are in a batch. User definable as appropriate.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
+<span class="sd">    Note:</span>
+<span class="sd">        More practical examples can be found at `examples/module/dynamics</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/dynamics&gt;`_.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LTI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">C</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">D</span><span class="o">.</span><span class="n">ndim</span>
-        <span class="p">),</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
+        <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">C</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">D</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span> <span class="o">=</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span>
-
+    
 <div class="viewcode-block" id="LTI.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform one step advance for the LTI system.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="nb">input</span><span class="o">.</span><span class="n">ndim</span>
-            <span class="p">),</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">state</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="nb">input</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span>  <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LTI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LTI.state_transition"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.state_transition">[docs]</a>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform one step of LTI state transition.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{z} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1 \\</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span></div>
 
 <div class="viewcode-block" id="LTI.observation"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.observation">[docs]</a>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Return the observation of LTI system at current time step.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u} + \mathbf{c}_2 \\</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        System state matrix :obj:`A`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_A</span>
 
     <span class="nd">@A</span><span class="o">.</span><span class="n">setter</span>
@@ -472,9 +456,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        System input matrix :obj:`B`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_B</span>
 
     <span class="nd">@B</span><span class="o">.</span><span class="n">setter</span>
@@ -483,9 +467,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        System output matrix :obj:`C`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_C</span>
 
     <span class="nd">@C</span><span class="o">.</span><span class="n">setter</span>
@@ -494,9 +478,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        System observation matrix :obj:`D`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_D</span>
 
     <span class="nd">@D</span><span class="o">.</span><span class="n">setter</span>
@@ -505,9 +489,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Constant input :obj:`c1`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c1</span>
 
     <span class="nd">@c1</span><span class="o">.</span><span class="n">setter</span>
@@ -516,55 +500,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Constant output :obj:`c2`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c2</span>
 
     <span class="nd">@c2</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_c2</span> <span class="o">=</span> <span class="n">c2</span></div>
-
-
-<div class="viewcode-block" id="LTINoise"><a class="viewcode-back" href="../../../../generated/pypose.module.LTINoise/#pypose.module.LTINoise">[docs]</a><span class="k">class</span> <span class="nc">LTINoise</span><span class="p">(</span><span class="n">LTI</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Discrete-time Linear Time-Invariant (LTI) system with process and measurement noise. </span>
-<span class="sd">    See :obj:`LTI` for more information.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        Q (:obj:`Tensor`): The process noise covariance</span>
-<span class="sd">        R (:obj:`Tensor`): The measurement noise covariance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">c1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LTINoise</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
-        <span class="c1"># both are square matricies</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Q</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">R</span><span class="p">)</span>
-
-<div class="viewcode-block" id="LTINoise.state_transition"><a class="viewcode-back" href="../../../../generated/pypose.module.LTINoise/#pypose.module.LTINoise.state_transition">[docs]</a>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform one step of LTI state transition.</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{w} \sim (0, \mathbf{Q}) \\</span>
-<span class="sd">            \mathbf{z} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1 + \mathbf{w}</span>
-<span class="sd">        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">@</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># gaussian noise</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span> <span class="o">+</span> <span class="n">w</span></div>
-
-<div class="viewcode-block" id="LTINoise.observation"><a class="viewcode-back" href="../../../../generated/pypose.module.LTINoise/#pypose.module.LTINoise.observation">[docs]</a>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the observation of LTI system at current time step.</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{v} \sim (0, \mathbf{R}) \\</span>
-<span class="sd">            \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u} + \mathbf{c}_2 + \mathbf{v}</span>
-<span class="sd">        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">@</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># gaussian noise</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span> <span class="o">+</span> <span class="n">v</span></div></div>
 </pre></div>
 
            </div>
