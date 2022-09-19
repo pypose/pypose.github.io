@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pypose.LieTensor &mdash; PyPose 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/katex.min.js"></script>
+        <script src="../../_static/auto-render.min.js"></script>
+        <script src="../../_static/katex_autorenderer.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.Parameter" href="../pypose.Parameter/" />
+    <link rel="prev" title="LieTensor" href="../../lietensor/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../" class="icon icon-home"> PyPose
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../lietensor/">LieTensor</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pypose.LieTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.Parameter/">pypose.Parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.SO3/">pypose.SO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.so3/">pypose.so3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.SE3/">pypose.SE3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.se3/">pypose.se3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.Sim3/">pypose.Sim3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.sim3/">pypose.sim3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.RxSO3/">pypose.RxSO3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pypose.rxso3/">pypose.rxso3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">PyPose</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../lietensor/">LieTensor</a> &raquo;</li>
+      <li>pypose.LieTensor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/generated/pypose.LieTensor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pypose-lietensor">
+<h1>pypose.LieTensor<a class="headerlink" href="#pypose-lietensor" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pypose.LieTensor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">LieTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor" title="Permalink to this definition"></a></dt>
+<dd><p>A sub-class of <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.Tensor</span></code> to represent Lie Algebra and Lie Group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, or ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’) – <p>A
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object, or constructing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>
+object from <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, which defines tensor data, or from
+‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’, which defines tensor shape.</p>
+<p>The shape of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object should be compatible
+with Lie Type <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code>, otherwise error will be raised.</p>
+</p></li>
+<li><p><strong>ltype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code>) – Lie Type, either <strong>Lie Group</strong> or <strong>Lie Algebra</strong> is listed below:</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>LieTensor corresponding to Lie Type <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code>.</p>
+</dd>
+</dl>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> for <strong>Lie Group</strong></span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Representation</p></th>
+<th class="head"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code></p></th>
+<th class="head"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></th>
+<th class="head"><p>Alias Class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Rotation</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">4)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Translation + Rotation</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">7)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Translation + Rotation + Scale</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">8)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Rotation + Scale</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">5)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> for <strong>Lie Algebra</strong></span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Representation</p></th>
+<th class="head"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code></p></th>
+<th class="head"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></th>
+<th class="head"><p>Alias Class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Rotation</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">3)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">so3()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Translation + Rotation</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">6)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">se3()</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Translation + Rotation + Scale</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">7)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.sim3/#pypose.sim3" title="pypose.sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim3()</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Rotation + Scale</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">4)</span></code></p></td>
+<td><p><a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rxso3()</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In most of the cases, Lie Group should be used. Lie Algebra is used only
+when it needs to be optimized by back-propagation via gradients: in this
+case, LieTensor is taken as <a class="reference internal" href="../pypose.Parameter/#pypose.Parameter" title="pypose.Parameter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Parameter()</span></code></a> in a module, which follows
+PyTorch traditions.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Two attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code> and <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> are available for LieTensor.
+The only differece is the <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> hides the last dimension of <code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code>,
+since <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> takes the data in the last dimension as a single <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> item.</p>
+<p>See LieTensor method <a class="reference internal" href="#pypose.LieTensor.lview" title="pypose.LieTensor.lview"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lview()</span></code></a> for more details.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">pp</span><span class="o">.</span><span class="n">so3_type</span><span class="p">)</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([[ 0.9520,  0.4517,  0.5834],</span>
+<span class="go">        [-0.8106,  0.8197,  0.7077],</span>
+<span class="go">        [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
+</pre></div>
+</div>
+<p>Alias class for specific LieTensor is recommended:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([[ 0.9520,  0.4517,  0.5834],</span>
+<span class="go">        [-0.8106,  0.8197,  0.7077],</span>
+<span class="go">        [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
+</pre></div>
+</div>
+<p>See more alias classes at <a class="reference external" href="#id1">Table 1 for Lie Group</a>  and <a class="reference external" href="#id2">Table 2 for Lie Algebra</a>.</p>
+<p>Other constructors:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>From list.</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([0., 0., 0.])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>From ints.</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([[0., 0., 0.],</span>
+<span class="go">        [0., 0., 0.]])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Alias class for LieTensor is recommended.
+For example, the following usage is equivalent:</p>
+<ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pp.LieTensor(tensor,</span> <span class="pre">ltype=pp.so3_type)</span></code></p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pp.so3(tensor)</span></code> (This is preferred).</p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All attributes from Tensor are available for LieTensor, e.g., <code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_grad</span></code>. See more details at
+<a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html">tensor attributes</a>.</p>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># All Tensor attributes are available for LieTensor</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([[-1.5948,  0.3113, -0.9807]], device=&#39;cuda:0&#39;, dtype=torch.float64,</span>
+<span class="go">    grad_fn=&lt;AliasBackward0&gt;)</span>
+</pre></div>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Act">
+<span class="sig-name descname"><span class="pre">Act</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Act"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Act" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Act/#pypose.Act" title="pypose.Act"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Act()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Adj">
+<span class="sig-name descname"><span class="pre">Adj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Adj" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Adj/#pypose.Adj" title="pypose.Adj"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Adj()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.AdjT">
+<span class="sig-name descname"><span class="pre">AdjT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.AdjT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.AdjT" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.AdjT/#pypose.AdjT" title="pypose.AdjT"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.AdjT()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Exp">
+<span class="sig-name descname"><span class="pre">Exp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Exp" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Exp()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Inv">
+<span class="sig-name descname"><span class="pre">Inv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Inv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Inv" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Inv/#pypose.Inv" title="pypose.Inv"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Inv()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Jinvp">
+<span class="sig-name descname"><span class="pre">Jinvp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Jinvp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Jinvp" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Jinvp/#pypose.Jinvp" title="pypose.Jinvp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Jinvp()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Jr">
+<span class="sig-name descname"><span class="pre">Jr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Jr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Jr" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Jr/#pypose.Jr" title="pypose.Jr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Jr()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Log">
+<span class="sig-name descname"><span class="pre">Log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Log" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Log()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.Retr">
+<span class="sig-name descname"><span class="pre">Retr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.Retr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.Retr" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.Retr/#pypose.Retr" title="pypose.Retr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Retr()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.add" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.add/#pypose.add" title="pypose.add"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.add()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.add_">
+<span class="sig-name descname"><span class="pre">add_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.add_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.add_" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.add_/#pypose.add_" title="pypose.add_"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.add_()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cummul">
+<span class="sig-name descname"><span class="pre">cummul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cummul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cummul" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.cummul/#pypose.cummul" title="pypose.cummul"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cummul()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cummul_">
+<span class="sig-name descname"><span class="pre">cummul_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cummul_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cummul_" title="Permalink to this definition"></a></dt>
+<dd><p>Inplace version of <a class="reference internal" href="../pypose.cummul/#pypose.cummul" title="pypose.cummul"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cummul()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cumops">
+<span class="sig-name descname"><span class="pre">cumops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cumops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cumops" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.cumops/#pypose.cumops" title="pypose.cumops"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cumops()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cumops_">
+<span class="sig-name descname"><span class="pre">cumops_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cumops_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cumops_" title="Permalink to this definition"></a></dt>
+<dd><p>Inplace version of <a class="reference internal" href="../pypose.cumops/#pypose.cumops" title="pypose.cumops"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cumops()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cumprod">
+<span class="sig-name descname"><span class="pre">cumprod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cumprod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cumprod" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.cumprod/#pypose.cumprod" title="pypose.cumprod"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cumprod()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.cumprod_">
+<span class="sig-name descname"><span class="pre">cumprod_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.cumprod_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.cumprod_" title="Permalink to this definition"></a></dt>
+<dd><p>Inplace version of <a class="reference internal" href="../pypose.cumprod/#pypose.cumprod" title="pypose.cumprod"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.cumprod()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.identity_">
+<span class="sig-name descname"><span class="pre">identity_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.identity_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.identity_" title="Permalink to this definition"></a></dt>
+<dd><p>Inplace set the LieTensor to identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self</span></code> LieTensor</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The translation part, if there is, is set to zeros, while the
+rotation part is set to identity quaternion.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">SO3Type LieTensor:</span>
+<span class="go">tensor([[-0.0724,  0.1970,  0.0022,  0.9777],</span>
+<span class="go">        [ 0.3492,  0.4998, -0.5310,  0.5885]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identity_</span><span class="p">()</span>
+<span class="go">SO3Type LieTensor:</span>
+<span class="go">tensor([[0., 0., 0., 1.],</span>
+<span class="go">        [0., 0., 0., 1.]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pypose.LieTensor.lshape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lshape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Size</span></em><a class="headerlink" href="#pypose.LieTensor.lshape" title="Permalink to this definition"></a></dt>
+<dd><p>LieTensor Shape (shape of torch.Tensor by ignoring the last dimension)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>torch.Size</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The only difference from <code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code> is the last dimension is hidden,
+since <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> takes the last dimension as a single <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> item.</p></li>
+<li><p>The last dimension can also be accessed via <code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor.ltype.dimension</span></code>.</p></li>
+</ul>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">lshape</span>
+<span class="go">torch.Size([2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([2, 7])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span>
+<span class="go">torch.Size([7])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.lview">
+<span class="sig-name descname"><span class="pre">lview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.lview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.lview" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a new LieTensor with the same data as the self tensor but of a different
+<a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shape</strong> (<em>torch.Size</em><em> or </em><em>int</em><em>...</em>) – the desired size</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new lieGroup tensor sharing with the same data as the self tensor but of a
+different shape.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The only difference from <code class="xref py py-meth docutils literal notranslate"><span class="pre">view()</span></code> is the last dimension is hidden.</p>
+<p>See <a class="reference external" href="https://tinyurl.com/mrds8nmd">Tensor.view</a>
+for its usage.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_so3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([2, 2, 3])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">lview</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lshape</span>
+<span class="go">torch.Size([4])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.matrix">
+<span class="sig-name descname"><span class="pre">matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.matrix" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.matrix/#pypose.matrix" title="pypose.matrix"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.matrix()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.new_empty">
+<span class="sig-name descname"><span class="pre">new_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_grad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.new_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.new_empty" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a Tensor of size <code class="xref py py-attr docutils literal notranslate"><span class="pre">size</span></code> filled with uninitialized data.
+By default, the returned Tensor has the same <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.dtype</span></code> and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.device</span></code> as this tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.dtype</span></code>, optional) – the desired type of returned tensor.
+Default: if None, same <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.dtype</span></code> as this tensor.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.device</span></code>, optional) – the desired device of returned tensor.
+Default: if None, same <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.device</span></code> as this tensor.</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on the
+returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span><span class="o">.</span><span class="n">new_empty</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">tensor([[ 5.8182e-18,  4.5765e-41, -1.0545e+30],</span>
+<span class="go">        [ 3.0949e-41,  4.4842e-44,  0.0000e+00]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.rotation">
+<span class="sig-name descname"><span class="pre">rotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.rotation" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.rotation/#pypose.rotation" title="pypose.rotation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.rotation()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.scale" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.scale/#pypose.scale" title="pypose.scale"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.scale()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.tensor">
+<span class="sig-name descname"><span class="pre">tensor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.tensor" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.tensor/#pypose.tensor" title="pypose.tensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.tensor()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.LieTensor.translation">
+<span class="sig-name descname"><span class="pre">translation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor.translation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor.translation" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="../pypose.translation/#pypose.translation" title="pypose.translation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.translation()</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../lietensor/" class="btn btn-neutral float-left" title="LieTensor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pypose.Parameter/" class="btn btn-neutral float-right" title="pypose.Parameter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, PyPose Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
