@@ -5,8 +5,8 @@ permalink: /get-started/cloud-partners/
 background-class: get-started-background
 body-class: get-started
 order: 2
-published: true
-get-started-via-cloud: true
+published: false
+get-started-via-cloud: false
 ---
 
 ## Start via Cloud Partners
