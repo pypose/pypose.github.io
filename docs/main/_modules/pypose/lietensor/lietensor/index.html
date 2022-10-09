@@ -308,8 +308,8 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Exp attribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Lie Group has no Inv attribute&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span> <span class="n">x</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Inv attribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -445,8 +445,6 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Invalid __mul__ operation&#39;</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">SO3_Inv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">SO3_type</span><span class="p">)</span>
@@ -597,8 +595,6 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Invalid __mul__ operation&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">SE3_Inv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">SE3_type</span><span class="p">)</span>
@@ -721,8 +717,6 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Invalid __mul__ operation&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">Sim3_Inv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">Sim3_type</span><span class="p">)</span>
@@ -851,8 +845,6 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Invalid __mul__ operation&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">RxSO3_type</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">RxSO3_Inv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">RxSO3_type</span><span class="p">)</span>
