@@ -1,11 +1,11 @@
 ---
 layout: get_started
-title: Previous PyTorch Versions
+title: Previous PyPose Versions
 permalink: /get-started/previous-versions/
 background-class: get-started-background
 body-class: get-started
 order: 4
-published: true
+published: false
 redirect_from: /previous-versions.html
 ---
 
