@@ -246,7 +246,7 @@
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">so3_type</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">sim3_type</span>
 <span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span>
-<span class="kn">from</span> <span class="nn">.common_types</span> <span class="kn">import</span> <span class="n">_size_any_t</span>
+<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">_size_any_t</span>
 
 
 <span class="k">def</span> <span class="nf">_LieTensor_wrapper_add_docstr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">embedding_doc</span><span class="p">):</span>
@@ -649,21 +649,20 @@
 <div class="viewcode-block" id="randn_SO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SO3/#pypose.randn_SO3">[docs]</a><span class="k">def</span> <span class="nf">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SO3_type` LieTensor filled with the Exponential map of the random</span>
-<span class="sd">    :obj:`so3_type` LieTensor. The corresponding rotation has an evenly distributed rotation axis </span>
-<span class="sd">    and the rotation angle follows normal distribution with 0 mean and :obj:`sigma` standard deviation.</span>
+<span class="sd">    :obj:`so3_type` LieTensor. The generated LieTensor satisfies that the corresponding rotation axis </span>
+<span class="sd">    follows uniform distribution on the standard sphere and the rotation angle follows normal distribution </span>
+<span class="sd">    with 0 mean and standard deviation :obj:`sigma`.</span>
 <span class="sd">    </span>
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\delta_x, \delta_y, \delta_z]) = \mathrm{Exp}([\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \cdot \theta),</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">        \mathrm{data}[*, :] &amp;= \mathrm{Exp}([\delta_x, \delta_y, \delta_z]) \\</span>
+<span class="sd">                            &amp;= \mathrm{Exp}([\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \cdot \theta),</span>
+<span class="sd">        \end{aligned}</span>
 
-<span class="sd">    .. math::</span>
-<span class="sd">        [\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \sim \mathcal{U}_{\mathrm{s}},</span>
-
-<span class="sd">    .. math::</span>
-<span class="sd">        \theta \sim \mathcal{N}(0, \sigma),</span>
-
-<span class="sd">    where :math:`\mathcal{U}_{\mathrm{s}}` denotes uniform distribution on the standard sphere. </span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution and :math:`\mathrm{Exp}()` is the </span>
-<span class="sd">    Exponential map.</span>
+<span class="sd">    where :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` is randomly generated from uniform</span>
+<span class="sd">    distribution :math:`\mathcal{U}_{\mathrm{s}}` on a standard sphere and :math:`\theta`</span>
+<span class="sd">    is generated from a normal distribution :math:`\mathcal{N}(0, \sigma)`, where sigma</span>
+<span class="sd">    (:math:`\sigma`) is the standard deviation. :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    For detailed explanation of generating :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]`, please see </span>
 <span class="sd">    :meth:`pypose.randn_so3()`.</span>
@@ -707,18 +706,17 @@
 <div class="viewcode-block" id="randn_se3"><a class="viewcode-back" href="../../../../generated/pypose.randn_se3/#pypose.randn_se3">[docs]</a><span class="k">def</span> <span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers. The transation part </span>
-<span class="sd">    :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
-<span class="sd">    with mean 0 and standard deviation :obj:`sigma_t`, the rotation part :math:`[\delta_x, \delta_y, \delta_z]` </span>
-<span class="sd">    has an evenly distributed rotation axis and the rotation angle follows normal distribution with </span>
-<span class="sd">    0 mean and :obj:`sigma_r` standard deviation. </span>
+<span class="sd">    satisfies that each element follows normal distribution with 0 mean and :obj:`sigma_t` standard deviation.</span>
+<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
+<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation. </span>
 <span class="sd">    Note that the input argument :obj:`sigma` = (:obj:`sigma_t`, :obj:`sigma_r`).</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z],</span>
 
-<span class="sd">    where :math:`\tau_x, \tau_y, \tau_z \sim \mathcal{N}(0, \sigma_{\rm{t}})` and </span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_t)`, </span>
+<span class="sd">    where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
 <span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`.</span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
@@ -780,10 +778,10 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z]),</span>
 
-<span class="sd">    where :math:`\tau_x, \tau_y, \tau_z \sim \mathcal{N}(0, \sigma_{\rm{t}})` and </span>
-<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`.</span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution and :math:`\mathrm{Exp}()` is the </span>
-<span class="sd">    Exponential map.</span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
+<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
+<span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
@@ -840,11 +838,10 @@
 <div class="viewcode-block" id="randn_sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_sim3/#pypose.randn_sim3">[docs]</a><span class="k">def</span> <span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers. The transation part </span>
-<span class="sd">    :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
-<span class="sd">    with mean 0 and standard deviation :obj:`sigma_t`, the rotation part :math:`[\delta_x, \delta_y, \delta_z]` </span>
-<span class="sd">    has an evenly distributed rotation axis and the rotation angle follows normal distribution with </span>
-<span class="sd">    0 mean and :obj:`sigma_r` standard deviation, and the scale part :math:`\log s` is a </span>
-<span class="sd">    random number from a normal distribution with mean 0 and standard deviation :obj:`sigma_s`.</span>
+<span class="sd">    satisfies that each element follows normal distribution with 0 mean and :obj:`sigma_t` standard deviation. </span>
+<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
+<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation.</span>
+<span class="sd">    The scale part follows normal distribution with 0 mean and :obj:`sigma_s` standard deviation.</span>
 
 <span class="sd">    Note that :obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s` are all from input argument :obj:`sigma`, i.e.,</span>
 <span class="sd">    :obj:`sigma` = (:obj:`sigma_t`, :obj:`sigma_r`, :obj:`sigma_s`).</span>
@@ -852,10 +849,11 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],</span>
 
-<span class="sd">    where :math:`\tau_x, \tau_y, \tau_z \sim \mathcal{N}(0, \sigma_{\rm{t}})`, </span>
-<span class="sd">    :math:`\log s \sim \mathcal{N}(0, \sigma_{\rm{s}})` and </span>
-<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`.</span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution.</span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
+<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
+<span class="sd">    (:math:`\sigma_s`) is the standard deviation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
@@ -917,11 +915,12 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s]),</span>
 
-<span class="sd">    where :math:`\tau_x, \tau_y, \tau_z \sim \mathcal{N}(0, \sigma_{\rm{t}})`, </span>
-<span class="sd">    :math:`\log s \sim \mathcal{N}(0, \sigma_{\rm{s}})` and </span>
-<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`.</span>
-<span class="sd">    :math:`\mathcal{N}(\cdot, \cdot)` denotes normal distribution and :math:`\mathrm{Exp}()` is the </span>
-<span class="sd">    Exponential map.</span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
+<span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
+<span class="sd">    (:math:`\sigma_s`) is the standard deviation. </span>
+<span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
@@ -978,19 +977,18 @@
 <div class="viewcode-block" id="randn_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.randn_rxso3/#pypose.randn_rxso3">[docs]</a><span class="k">def</span> <span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span><span class="n">_size_any_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`rxso3_type` LieTensor filled with random numbers. </span>
-<span class="sd">    The rotation part :math:`[\delta_x, \delta_y, \delta_z]` has an evenly distributed rotation </span>
-<span class="sd">    axis and the rotation angle follows normal distribution with </span>
-<span class="sd">    0 mean and :obj:`sigma_r` standard deviation. The scale part :math:`\log s` is a </span>
-<span class="sd">    random number from a normal distribution with mean 0 and standard deviation :obj:`sigma_s`.</span>
+<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
+<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation.</span>
+<span class="sd">    The scale part follows normal distribution with 0 mean and :obj:`sigma_s` standard deviation.</span>
 <span class="sd">    Note that :obj:`sigma_r` and :obj:`sigma_s` are both from input argument :obj:`sigma`, i.e.,</span>
 <span class="sd">    :obj:`sigma` = (:obj:`sigma_r`, :obj:`sigma_s`).</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log s],</span>
 
-<span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()` and </span>
-<span class="sd">    :math:`\log s \sim \mathcal{N}(0, \sigma_{\mathrm{s}})`. :math:`\mathcal{N}(\cdot, \cdot)` </span>
-<span class="sd">    denotes normal distribution.</span>
+<span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
+<span class="sd">    (:math:`\sigma_s`) is the standard deviation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
@@ -1044,9 +1042,10 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\delta_x, \delta_y, \delta_z, \log s]),</span>
 
-<span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()` and </span>
-<span class="sd">    :math:`\log s \sim \mathcal{N}(0, \sigma_{\mathrm{s}})`. :math:`\mathcal{N}(\cdot, \cdot)` denotes </span>
-<span class="sd">    normal distribution and :math:`\mathrm{Exp}()` is the Exponential map.</span>
+<span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
+<span class="sd">    (:math:`\sigma_s`) is the standard deviation. </span>
+<span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
