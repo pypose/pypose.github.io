@@ -247,11 +247,9 @@
 <h1>pypose.randn_SO3<a class="headerlink" href="#pypose-randn-so3" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.randn_SO3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SO3" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SO3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor filled with the Exponential map of the random
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code> LieTensor. The generated LieTensor satisfies that the corresponding
-rotation axis follows uniform distribution on the standard sphere and the rotation
-angle follows normal distribution with 0 mean and standard deviation <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code> LieTensor.</p>
 <div class="math">
 \[\begin{aligned}
 \mathrm{data}[*, :] &= \mathrm{Exp}([\delta_x, \delta_y, \delta_z]) \\
@@ -260,15 +258,15 @@ angle follows normal distribution with 0 mean and standard deviation <code class
 
 \]</div>
 <p>where <span class="math">\([\delta_x', \delta_y', \delta_z']\)</span> is randomly generated from uniform
-distribution <span class="math">\(\mathcal{U}_{\mathrm{s}}\)</span> on a standard sphere and <span class="math">\(\theta\)</span>
-is generated from a normal distribution <span class="math">\(\mathcal{N}(0, \sigma)\)</span>, where sigma
-(<span class="math">\(\sigma\)</span>) is the standard deviation. <span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map.</p>
-<p>For detailed explanation of generating <span class="math">\([\delta_x', \delta_y', \delta_z']\)</span>, please see
-<a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a>.</p>
+distribution <span class="math">\(\mathcal{U}_{\mathrm{s}}\)</span> on a standard sphere,
+<span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map, <span class="math">\(\theta\)</span> is generated from a normal
+distribution <span class="math">\(\mathcal{N}(0, \sigma)\)</span> where <span class="math">\(\sigma\)</span> (<code class="docutils literal notranslate"><span class="pre">sigma</span></code>) is the
+standard deviation.</p>
+<p>For detailed explanation, please see <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> and <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Exp()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the shape of the output tensor.
+<li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
 Can be a variable number of arguments or a collection like a list or tuple.</p></li>
 <li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – standard deviation for the angle of the generated rotation.
 Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
@@ -287,14 +285,17 @@ for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor</p>
+<dd class="field-even"><p>a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">SO3Type LieTensor:</span>
+<span class="go">LieTensor([ 0.0082,  0.0077, -0.0018,  0.9999], requires_grad=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="go">SO3Type LieTensor:</span>
 <span class="go">tensor([[ 2.6857e-03, -8.3274e-03, -6.0457e-04,  9.9996e-01],</span>
 <span class="go">        [ 3.8711e-02, -6.3148e-02, -1.9388e-02,  9.9706e-01]],</span>
