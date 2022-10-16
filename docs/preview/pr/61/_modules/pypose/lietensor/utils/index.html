@@ -507,7 +507,7 @@
 <span class="sd">        input (LieTensor): the size of input will determine size of the output tensor.</span>
 
 <span class="sd">        sigma (float or (float...), optional): standard deviation for generating random</span>
-<span class="sd">            LieTensors. Default: 1.0.</span>
+<span class="sd">            LieTensors. Default: ``1.0``.</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned Tensor.</span>
 <span class="sd">            Default: if ``None``, defaults to the dtype of input.</span>
@@ -522,7 +522,7 @@
 <span class="sd">            tensor. Default: ``False``.</span>
 
 <span class="sd">        memory_format (torch.memory_format, optional): the desired memory format of returned</span>
-<span class="sd">            Tensor. Default: torch.preserve_format.</span>
+<span class="sd">            Tensor. Default: ``torch.preserve_format``.</span>
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter sigma (:math:`\sigma`) can either be:</span>
@@ -580,7 +580,7 @@
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
 <span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation.</span>
-<span class="sd">            Default: 1.0.</span>
+<span class="sd">            Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
 <span class="sd">            the returned tensor. Default: ``False``.</span>
@@ -588,14 +588,14 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If None, uses a global default</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: ``None``. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -618,18 +618,24 @@
 <span class="sd">            d = \sqrt{(x^2_0+y^2_0+z^2_0)}.</span>
 
 <span class="sd">        Note that the point :math:`[x_0, y_0, z_0]` follows 3-D Gaussian distribution, </span>
-<span class="sd">        which is centrosymmetry about :math:`(0, 0, 0)`. Thus the normalized point </span>
-<span class="sd">        :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` is both centrosymmetry and satisfies </span>
-<span class="sd">        :math:`\delta_x&#39;^2+\delta_y&#39;^2+\delta_z&#39;^2=1`. Therefore we have </span>
+<span class="sd">        which is centrosymmetry with respect to :math:`(0, 0, 0)`. Therefore, we have</span>
+<span class="sd">        :math:`\delta_x&#39;^2+\delta_y&#39;^2+\delta_z&#39;^2=1` and the normalized points follow</span>
+<span class="sd">        uniform distribution on a standard sphere, i.e.,</span>
 <span class="sd">        :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;] \sim \mathcal{U}_{\mathrm{s}}`.</span>
-<span class="sd">        The point :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` can also represent a rotation axis, </span>
-<span class="sd">        which is evenly distributed.</span>
+<span class="sd">        The point :math:`[\delta_x&#39;, \delta_y&#39;, \delta_z&#39;]` can also represent an evenly</span>
+<span class="sd">        sampled rotation axis.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_so3(2, sigma=0.1, requires_grad=True, dtype=torch.float64)</span>
 <span class="sd">        so3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.0344,  0.0177,  0.0252],</span>
 <span class="sd">                [-0.0040,  0.0032,  0.0149]], dtype=torch.float64, requires_grad=True)</span>
+<span class="sd">        &gt;&gt;&gt; pp.randn_so3()</span>
+<span class="sd">        so3Type LieTensor:</span>
+<span class="sd">        LieTensor([ 0.4811, -0.1487, -0.5949])  # Shape (3)</span>
+<span class="sd">        &gt;&gt;&gt; pp.randn_so3(1)</span>
+<span class="sd">        so3Type LieTensor:</span>
+<span class="sd">        LieTensor([[0.0235, 0.0334, 1.2601]])   # Shape (1, 3)</span>
 
 <span class="sd">    .. figure:: /_static/img/lietensor/randn/randn_so3.svg</span>
 <span class="sd">        :height: 1000px</span>
@@ -648,9 +654,9 @@
 <div class="viewcode-block" id="randn_SO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SO3/#pypose.randn_SO3">[docs]</a><span class="k">def</span> <span class="nf">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SO3_type` LieTensor filled with the Exponential map of the random</span>
-<span class="sd">    :obj:`so3_type` LieTensor. The generated LieTensor satisfies that the corresponding rotation axis </span>
-<span class="sd">    follows uniform distribution on the standard sphere and the rotation angle follows normal distribution </span>
-<span class="sd">    with 0 mean and standard deviation :obj:`sigma`.</span>
+<span class="sd">    :obj:`so3_type` LieTensor. The generated LieTensor satisfies that the corresponding </span>
+<span class="sd">    rotation axis follows uniform distribution on the standard sphere and the rotation </span>
+<span class="sd">    angle follows normal distribution with 0 mean and standard deviation :obj:`sigma`.</span>
 <span class="sd">    </span>
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
@@ -670,21 +676,23 @@
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation. Default: 1.0.</span>
+<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation. </span>
+<span class="sd">            Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. </span>
+<span class="sd">            If ``None``, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -704,16 +712,19 @@
 
 <div class="viewcode-block" id="randn_se3"><a class="viewcode-back" href="../../../../generated/pypose.randn_se3/#pypose.randn_se3">[docs]</a><span class="k">def</span> <span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers. The transation part </span>
-<span class="sd">    satisfies that each element follows normal distribution with 0 mean and :obj:`sigma_t` standard deviation.</span>
-<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
-<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation. </span>
+<span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers. The translation part </span>
+<span class="sd">    satisfies that each element follows normal distribution with 0 mean and :obj:`sigma_t` </span>
+<span class="sd">    standard deviation.</span>
+<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform </span>
+<span class="sd">    distribution on the standard sphere and the rotation angle follows normal distribution </span>
+<span class="sd">    with 0 mean and :obj:`sigma_r` standard deviation. </span>
 <span class="sd">    Note that the input argument :obj:`sigma` = (:obj:`sigma_t`, :obj:`sigma_r`).</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z],</span>
 
-<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_t)`, </span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, </span>
 <span class="sd">    where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
 <span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`.</span>
 
@@ -721,22 +732,24 @@
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_t` and :obj:`sigma_r`) for </span>
-<span class="sd">            the two normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation </span>
+<span class="sd">            (:obj:`sigma_t` and :obj:`sigma_r`) </span>
+<span class="sd">            for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -746,15 +759,18 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`se3_type` share the same sigma, i.e., </span>
+<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`se3_type` </span>
+<span class="sd">              share the same sigma, i.e., </span>
 <span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma`.</span>
 
-<span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas are assigned independently, i.e.,</span>
+<span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas are </span>
+<span class="sd">              assigned independently, i.e., </span>
 <span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`).</span>
 
-<span class="sd">            - a ``tuple`` of four floats -- in which case, the specific sigmas for each transation data </span>
-<span class="sd">              are assigned independently, i.e., </span>
-<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
+<span class="sd">            - a ``tuple`` of four floats -- in which case, the specific sigmas for </span>
+<span class="sd">              each translation data are assigned independently, i.e., </span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_se3(2, sigma=(1.0, 0.5))           # sigma = (sigma_t, sigma_r)</span>
@@ -772,13 +788,15 @@
 <div class="viewcode-block" id="randn_SE3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SE3/#pypose.randn_SE3">[docs]</a><span class="k">def</span> <span class="nf">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SE3_type` LieTensor filled with the Exponential map of the random</span>
-<span class="sd">    :obj:`se3_type` LieTensor. The :obj:`se3_type` LieTensor is generated using :meth:`pypose.randn_se3()`.</span>
+<span class="sd">    :obj:`se3_type` LieTensor. The :obj:`se3_type` LieTensor is generated using </span>
+<span class="sd">    :meth:`pypose.randn_se3()`.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z]),</span>
 
 <span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
-<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
+<span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the </span>
+<span class="sd">    standard deviation. </span>
 <span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
 <span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
@@ -786,22 +804,23 @@
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_t` and :obj:`sigma_r`) for </span>
-<span class="sd">            the two normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation </span>
+<span class="sd">            (:obj:`sigma_t` and :obj:`sigma_r`) for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If None, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -811,15 +830,18 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`SE3_type` share the same sigma, i.e., </span>
+<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`SE3_type` </span>
+<span class="sd">              share the same sigma, i.e., </span>
 <span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma`.</span>
 
-<span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas are assigned independently, i.e.,</span>
+<span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas are </span>
+<span class="sd">              assigned independently, i.e.,</span>
 <span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`).</span>
 
-<span class="sd">            - a ``tuple`` of four floats -- in which case, the specific sigmas for each transation data </span>
-<span class="sd">              are assigned independently, i.e., </span>
-<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
+<span class="sd">            - a ``tuple`` of four floats -- in which case, the specific sigmas for</span>
+<span class="sd">              each translation data are assigned independently, i.e., </span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_SE3(2, sigma=(1.0, 2.0))           # sigma = (sigma_t, sigma_r)</span>
@@ -836,14 +858,15 @@
 
 <div class="viewcode-block" id="randn_sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_sim3/#pypose.randn_sim3">[docs]</a><span class="k">def</span> <span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers. The transation part </span>
+<span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers. The translation part </span>
 <span class="sd">    satisfies that each element follows normal distribution with 0 mean and :obj:`sigma_t` standard deviation. </span>
 <span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
-<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation.</span>
-<span class="sd">    The scale part follows normal distribution with 0 mean and :obj:`sigma_s` standard deviation.</span>
+<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` </span>
+<span class="sd">    standard deviation. The scale part follows normal distribution with 0 mean and :obj:`sigma_s` </span>
+<span class="sd">    standard deviation.</span>
 
-<span class="sd">    Note that :obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s` are all from input argument :obj:`sigma`, i.e.,</span>
-<span class="sd">    :obj:`sigma` = (:obj:`sigma_t`, :obj:`sigma_r`, :obj:`sigma_s`).</span>
+<span class="sd">    Note that :obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s` are all from input argument :obj:`sigma`, </span>
+<span class="sd">    i.e., :obj:`sigma` = (:obj:`sigma_t`, :obj:`sigma_r`, :obj:`sigma_s`).</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],</span>
@@ -851,29 +874,31 @@
 <span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
 <span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
-<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
-<span class="sd">    (:math:`\sigma_s`) is the standard deviation.</span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`,</span>
+<span class="sd">    where :obj:`sigma_s` (:math:`\sigma_s`) is the standard deviation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s`) </span>
-<span class="sd">            for the three normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_t`, </span>
+<span class="sd">            :obj:`sigma_r`, and :obj:`sigma_s`) </span>
+<span class="sd">            for the three normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -883,15 +908,20 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`sim3_type` share the same sigma, i.e., </span>
-<span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
+<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`sim3_type` </span>
+<span class="sd">              share the same sigma, i.e., </span>
+<span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` </span>
+<span class="sd">              = :math:`\sigma`.</span>
 
-<span class="sd">            - a ``tuple`` of three floats -- in which case, the specific sigmas for the three parts are </span>
-<span class="sd">              assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">            - a ``tuple`` of three floats -- in which case, the specific sigmas for </span>
+<span class="sd">              the three parts are assigned independently, i.e., </span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{s}}`).</span>
 
-<span class="sd">            - a ``tuple`` of five floats -- in which case, the specific sigmas for each transation </span>
-<span class="sd">              data are also assigned independently, i.e.,</span>
-<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">            - a ``tuple`` of five floats -- in which case, the specific sigmas for </span>
+<span class="sd">              each translation data are also assigned independently, i.e.,</span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_sim3(2, sigma=(1.0, 1.0, 2.0))             # sigma = (sigma_t, sigma_r, sigma_s)</span>
@@ -917,30 +947,32 @@
 <span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, where :obj:`sigma_t` (:math:`\sigma_t`) is the standard deviation. </span>
 <span class="sd">    :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
-<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
-<span class="sd">    (:math:`\sigma_s`) is the standard deviation. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, </span>
+<span class="sd">    where :obj:`sigma_s` (:math:`\sigma_s`) is the standard deviation. </span>
 <span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s`) </span>
-<span class="sd">            for the three normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation</span>
+<span class="sd">            (:obj:`sigma_t`, :obj:`sigma_r`, and :obj:`sigma_s`) </span>
+<span class="sd">            for the three normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -950,15 +982,20 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`Sim3_type` share the same sigma, i.e., </span>
-<span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
+<span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`Sim3_type` </span>
+<span class="sd">              share the same sigma, i.e., </span>
+<span class="sd">              :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` </span>
+<span class="sd">              = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
 
-<span class="sd">            - a ``tuple`` of three floats -- in which case, the specific sigmas for the three parts are </span>
-<span class="sd">              assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">            - a ``tuple`` of three floats -- in which case, the specific sigmas </span>
+<span class="sd">              for the three parts are assigned independently, i.e., </span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{s}}`).</span>
 
-<span class="sd">            - a ``tuple`` of five floats -- in which case, the specific sigmas for each transation </span>
-<span class="sd">              data are also assigned independently, i.e.,</span>
-<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">            - a ``tuple`` of five floats -- in which case, the specific sigmas </span>
+<span class="sd">              for each translation data are also assigned independently, i.e.,</span>
+<span class="sd">              :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_Sim3(2, sigma=(1.0, 1.0, 2.0)) # sigma = (sigma_t, sigma_r, sigma_s)</span>
@@ -976,8 +1013,9 @@
 <div class="viewcode-block" id="randn_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.randn_rxso3/#pypose.randn_rxso3">[docs]</a><span class="k">def</span> <span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`rxso3_type` LieTensor filled with random numbers. </span>
-<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform distribution on the</span>
-<span class="sd">    standard sphere and the rotation angle follows normal distribution with 0 mean and :obj:`sigma_r` standard deviation.</span>
+<span class="sd">    The rotation part satisfies that the corresponding rotation axis follows uniform </span>
+<span class="sd">    distribution on the standard sphere and the rotation angle follows normal distribution </span>
+<span class="sd">    with 0 mean and :obj:`sigma_r` standard deviation.</span>
 <span class="sd">    The scale part follows normal distribution with 0 mean and :obj:`sigma_s` standard deviation.</span>
 <span class="sd">    Note that :obj:`sigma_r` and :obj:`sigma_s` are both from input argument :obj:`sigma`, i.e.,</span>
 <span class="sd">    :obj:`sigma` = (:obj:`sigma_r`, :obj:`sigma_s`).</span>
@@ -986,29 +1024,30 @@
 <span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log s],</span>
 
 <span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
-<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
-<span class="sd">    (:math:`\sigma_s`) is the standard deviation.</span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, </span>
+<span class="sd">    where :obj:`sigma_s` (:math:`\sigma_s`) is the standard deviation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_r`, and :obj:`sigma_s`) for the </span>
-<span class="sd">            two normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_r`, </span>
+<span class="sd">            and :obj:`sigma_s`) for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
+<span class="sd">            Default: ``None``. If ``None``, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). Device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
 
@@ -1019,10 +1058,12 @@
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
 <span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`rxso3_type` share </span>
-<span class="sd">              the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
+<span class="sd">              the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` </span>
+<span class="sd">              = :math:`\sigma`.</span>
 
 <span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts </span>
-<span class="sd">              are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">              are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_rxso3(2, sigma=(1.0, 2.0)) # (sigma_r, sigma_s)</span>
@@ -1036,33 +1077,35 @@
 <div class="viewcode-block" id="randn_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_RxSO3/#pypose.randn_RxSO3">[docs]</a><span class="k">def</span> <span class="nf">randn_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">:</span><span class="n">_size</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`RxSO3_type` LieTensor filled with the Exponential map of the random</span>
-<span class="sd">    :obj:`rxso3_type` LieTensor. The :obj:`rxso3_type` LieTensor is generated using :meth:`randn_rxso3()`.</span>
+<span class="sd">    :obj:`rxso3_type` LieTensor. The :obj:`rxso3_type` LieTensor is generated using </span>
+<span class="sd">    :meth:`randn_rxso3()`.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\delta_x, \delta_y, \delta_z, \log s]),</span>
 
 <span class="sd">    where :math:`[\delta_x, \delta_y, \delta_z]` is generated using :meth:`pypose.randn_so3()`. </span>
-<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, where :obj:`sigma_s`</span>
-<span class="sd">    (:math:`\sigma_s`) is the standard deviation. </span>
+<span class="sd">    :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`, </span>
+<span class="sd">    where :obj:`sigma_s` (:math:`\sigma_s`) is the standard deviation. </span>
 <span class="sd">    :math:`\mathrm{Exp}()` is the Exponential map.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size (int...): a sequence of integers defining the shape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_r`, and :obj:`sigma_s`) for the </span>
-<span class="sd">            two normal distribution. Default: 1.0.</span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:obj:`sigma_r`, </span>
+<span class="sd">            and :obj:`sigma_s`) for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
-<span class="sd">            the returned tensor. Default: &quot;False&quot;.</span>
+<span class="sd">            the returned tensor. Default: ``False``.</span>
 
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: &quot;None&quot;. If None, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
-<span class="sd">            Default: torch.strided.</span>
+<span class="sd">            Default: ``torch.strided``.</span>
 
 <span class="sd">        device (torch.device, optional): the desired device of returned tensor.</span>
 <span class="sd">            Default: &quot;None&quot;. If None, uses the current device for the default tensor</span>
@@ -1076,10 +1119,12 @@
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
 <span class="sd">            - a single ``float`` -- in which all the elements in the :obj:`RxSO3_type` share </span>
-<span class="sd">              the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
+<span class="sd">              the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = </span>
+<span class="sd">              :math:`\sigma`.</span>
 
 <span class="sd">            - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts </span>
-<span class="sd">              are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
+<span class="sd">              are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">              :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.randn_RxSO3(2, sigma=(1.0, 2.0)) # (sigma_r, sigma_s)</span>
