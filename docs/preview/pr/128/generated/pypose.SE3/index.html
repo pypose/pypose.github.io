@@ -255,8 +255,8 @@
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object, or constructing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>
 object from <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, which defines tensor data (see below), or
 from ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’, which defines tensor shape.</p>
-<p>The shape of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object must be <cite>(*, 7)</cite>,
-where <cite>*</cite> is empty, one, or more batched dimensions (the
+<p>The shape of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> object must be <code class="docutils literal notranslate"><span class="pre">(*,</span> <span class="pre">7)</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">*</span></code> is empty, one, or more batched dimensions (the
 <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> of this LieTensor), otherwise error will
 be raised.</p>
 </p>
@@ -268,9 +268,9 @@ representing the rotation with a vector representing the translation.</p>
 \[\mathrm{data}[*, :] = [t_x, t_y, t_z, q_x, q_y, q_z, q_w],
 
 \]</div>
-<p>where <span class="math">\(\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}^T \in \mathbb{R}^3\)</span> is
+<p>where <span class="math">\(\begin{pmatrix} t_x &amp; t_y &amp; t_z \end{pmatrix}\top \in \mathbb{R}^3\)</span> is
 the translation and
-<span class="math">\(\begin{pmatrix} q_x &amp; q_y &amp; q_z &amp; q_w \end{pmatrix}^T\)</span> is the unit
+<span class="math">\(\begin{pmatrix} q_x &amp; q_y &amp; q_z &amp; q_w \end{pmatrix}\top\)</span> is the unit
 quaternion as in <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -282,12 +282,12 @@ quaternion as in <a class="reference internal" href="../pypose.SO3/#pypose.SO3" 
 <span class="go">tensor([0., 0., 0., 0., 0., 0., 1.])</span>
 </pre></div>
 </div>
-<p>If <cite>data</cite> is tensor-like, the last dimension should correspond to the
+<p>If <code class="docutils literal notranslate"><span class="pre">data</span></code> is tensor-like, the last dimension should correspond to the
 7 elements of the above embedding.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>It is not advised to construct SE3 Tensors by specifying storage
-sizes with <cite>int…</cite>, which does not initialize data.</p>
+sizes with ‘<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>…’, which does not initialize data.</p>
 <p>Consider using <a class="reference internal" href="../pypose.randn_SE3/#pypose.randn_SE3" title="pypose.randn_SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.randn_SE3</span></code></a> or
 <a class="reference internal" href="../pypose.identity_SE3/#pypose.identity_SE3" title="pypose.identity_SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.identity_SE3</span></code></a> instead.</p>
 </div>
