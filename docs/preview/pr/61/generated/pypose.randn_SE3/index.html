@@ -257,9 +257,9 @@
 <p>where <span class="math">\([\tau_x, \tau_y, \tau_z]\)</span> is generated from a normal distribution
 <span class="math">\(\mathcal{N}(0, \sigma_t)\)</span>, <span class="math">\([\delta_x, \delta_y, \delta_z]\)</span> is
 generated using <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> with with standard deviation
-<span class="math">\(\sigma_r\)</span>. <span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map. Note that standard deviations
-<span class="math">\(\sigma_t\)</span>, <span class="math">\(\sigma_r\)</span>, and <span class="math">\(\sigma_s\)</span> are specified by
-<code class="docutils literal notranslate"><span class="pre">sigma</span></code> (<span class="math">\(\sigma\)</span>), where we have <span class="math">\(\sigma = (\sigma_t, \sigma_r)\)</span>.</p>
+<span class="math">\(\sigma_r\)</span>, and <span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map. Note that standard
+deviations <span class="math">\(\sigma_t\)</span> and <span class="math">\(\sigma_r\)</span> are specified by <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (<span class="math">\(\sigma\)</span>),
+where <span class="math">\(\sigma = (\sigma_t, \sigma_r)\)</span>.</p>
 <p>For detailed explanation, please see <a class="reference internal" href="../pypose.randn_se3/#pypose.randn_se3" title="pypose.randn_se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_se3()</span></code></a> and <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Exp()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -267,7 +267,8 @@ generated using <a class="reference internal" href="../pypose.randn_so3/#pypose.
 <li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
 Can be a variable number of arguments or a collection like a list or tuple.</p></li>
 <li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation
-(<span class="math">\(\sigma_t\)</span> and <span class="math">\(\sigma_r\)</span>) for the two normal distribution. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+(<span class="math">\(\sigma_t\)</span> and <span class="math">\(\sigma_r\)</span>) for the two normal distribution.
+Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
 <li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
 the returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling</p></li>
@@ -306,11 +307,15 @@ each translation data are assigned independently, i.e.,
 </ul>
 </div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>           <span class="c1"># sigma = (sigma_t, sigma_r)</span>
+<p>For <span class="math">\(\sigma = (\sigma_t, \sigma_r)\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">tensor([[ 0.2947, -1.6990, -0.5535,  0.4439,  0.2777,  0.0518,  0.8504],</span>
 <span class="go">        [ 0.6825,  0.2963,  0.3410,  0.3375, -0.2355,  0.7389, -0.5335]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span> <span class="c1"># sigma = (sigma_tx, sigma_ty, sigma_tz, sigma_r)</span>
+</pre></div>
+</div>
+<p>For <span class="math">\(\sigma = (\sigma_{tx}, \sigma_{ty}, \sigma_{tz}, \sigma_{r})\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">tensor([[-1.5689, -0.6772,  0.3580, -0.2509,  0.8257, -0.4950,  0.1018],</span>
 <span class="go">        [ 0.2613, -2.7613,  0.2151, -0.8802,  0.2619,  0.3044,  0.2531]])</span>
