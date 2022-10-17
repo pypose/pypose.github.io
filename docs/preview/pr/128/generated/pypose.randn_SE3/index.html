@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.randn_like" href="../pypose.randn_like/" />
+    <link rel="next" title="pypose.randn_sim3" href="../pypose.randn_sim3/" />
     <link rel="prev" title="pypose.randn_se3" href="../pypose.randn_se3/" />
 
 <!--
@@ -247,30 +247,39 @@
 <h1>pypose.randn_SE3<a class="headerlink" href="#pypose-randn-se3" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.randn_SE3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SE3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SE3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SE3" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SE3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SE3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SE3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code> LieTensor filled with the Exponential map of the random
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code> LieTensor with normal distribution with mean 0 and variance <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code> LieTensor generated using <a class="reference internal" href="../pypose.randn_se3/#pypose.randn_se3" title="pypose.randn_se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_se3()</span></code></a>.</p>
 <div class="math">
-\[\mathrm{out}_i = \mathrm{Exp}(\mathcal{N}(\mathbf{0}_{6\times 1}, \mathbf{\sigma}_{6\times 1}))
+\[\mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z]),
 
 \]</div>
-<p>The shape of the tensor is defined by the variable argument size.</p>
+<p>where <span class="math">\([\tau_x, \tau_y, \tau_z]\)</span> is generated from a normal distribution
+<span class="math">\(\mathcal{N}(0, \sigma_t)\)</span>, <span class="math">\([\delta_x, \delta_y, \delta_z]\)</span> is
+generated using <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> with with standard deviation
+<span class="math">\(\sigma_r\)</span>, and <span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map. Note that standard
+deviations <span class="math">\(\sigma_t\)</span> and <span class="math">\(\sigma_r\)</span> are specified by <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (<span class="math">\(\sigma\)</span>),
+where <span class="math">\(\sigma = (\sigma_t, \sigma_r)\)</span>.</p>
+<p>For detailed explanation, please see <a class="reference internal" href="../pypose.randn_se3/#pypose.randn_se3" title="pypose.randn_se3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_se3()</span></code></a> and <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Exp()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the shape of the output tensor.
+<li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
 Can be a variable number of arguments or a collection like a list or tuple.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – variance <span class="math">\(\sigma\)</span> of the normal distribution. Default: 1.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation
+(<span class="math">\(\sigma_t\)</span> and <span class="math">\(\sigma_r\)</span>) for the two normal distribution.
+Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
 <li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
-the returned tensor. Default: False.</p></li>
+the returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling</p></li>
 <li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned tensor.
-Default: if None, uses a global default (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If None, uses a global default
+(see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
 <li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned Tensor.
-Default: torch.strided.</p></li>
+Default: <code class="docutils literal notranslate"><span class="pre">torch.strided</span></code>.</p></li>
 <li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
-Default: if None, uses the current device for the default tensor
-type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). device will be the CPU
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses the current device for the default tensor
+type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). Device will be the CPU
 for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 </ul>
 </dd>
@@ -281,11 +290,35 @@ for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 <dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter <span class="math">\(\sigma\)</span> can either be:</p>
+<ul class="simple">
+<li><p>a single <code class="docutils literal notranslate"><span class="pre">float</span></code> – in which all the elements in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
+share the same sigma, i.e.,
+<span class="math">\(\sigma_{\rm{t}}\)</span> = <span class="math">\(\sigma_{\rm{r}}\)</span> = <span class="math">\(\sigma\)</span>.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of two floats – in which case, the specific sigmas are
+assigned independently, i.e.,
+<span class="math">\(\sigma\)</span> = (<span class="math">\(\sigma_{\rm{t}}\)</span>, <span class="math">\(\sigma_{\rm{r}}\)</span>).</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of four floats – in which case, the specific sigmas for
+each translation data are assigned independently, i.e.,
+<span class="math">\(\sigma\)</span> = (<span class="math">\(\sigma_{\rm{tx}}\)</span>, <span class="math">\(\sigma_{\rm{ty}}\)</span>,
+<span class="math">\(\sigma_{\rm{tz}}\)</span>, <span class="math">\(\sigma_{\rm{r}}\)</span>).</p></li>
+</ul>
+</div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<p>For <span class="math">\(\sigma = (\sigma_t, \sigma_r)\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
 <span class="go">SE3Type LieTensor:</span>
-<span class="go">tensor([[-0.0522, -0.0456, -0.1996,  0.0266, -0.0240, -0.0375,  0.9987],</span>
-<span class="go">        [-0.1344, -0.1673,  0.1111, -0.0219, -0.0454,  0.0710,  0.9962]])</span>
+<span class="go">tensor([[ 0.2947, -1.6990, -0.5535,  0.4439,  0.2777,  0.0518,  0.8504],</span>
+<span class="go">        [ 0.6825,  0.2963,  0.3410,  0.3375, -0.2355,  0.7389, -0.5335]])</span>
+</pre></div>
+</div>
+<p>For <span class="math">\(\sigma = (\sigma_{tx}, \sigma_{ty}, \sigma_{tz}, \sigma_{r})\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+<span class="go">SE3Type LieTensor:</span>
+<span class="go">tensor([[-1.5689, -0.6772,  0.3580, -0.2509,  0.8257, -0.4950,  0.1018],</span>
+<span class="go">        [ 0.2613, -2.7613,  0.2151, -0.8802,  0.2619,  0.3044,  0.2531]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -300,7 +333,7 @@ for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.randn_like/" class="btn btn-neutral float-right" title="pypose.randn_like" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.randn_sim3/" class="btn btn-neutral float-right" title="pypose.randn_sim3" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="../pypose.randn_se3/" class="btn btn-neutral" title="pypose.randn_se3" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>

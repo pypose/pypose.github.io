@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.optim.solver.PINV &mdash; PyPose main documentation</title>
+  <title>pypose.randn_sim3 &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.optim.solver.LSTSQ" href="../pypose.optim.solver.LSTSQ/" />
-    <link rel="prev" title="pypose.optim.LM" href="../pypose.optim.LM/" />
+    <link rel="next" title="pypose.randn_Sim3" href="../pypose.randn_Sim3/" />
+    <link rel="prev" title="pypose.randn_SE3" href="../pypose.randn_SE3/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.optim.solver.PINV.html">
+  <a style="color:#F05732" href="generated/pypose.randn_sim3.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -164,10 +164,10 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../basics/">Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
 </ul>
 
             
@@ -209,15 +209,15 @@
       </li>
 
         
-          <li><a href="../../optim/">Optimization</a> &gt;</li>
+          <li><a href="../../basics/">Basics</a> &gt;</li>
         
-      <li>pypose.optim.solver.PINV</li>
+      <li>pypose.randn_sim3</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.optim.solver.PINV.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.randn_sim3.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,72 +243,84 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-optim-solver-pinv">
-<h1>pypose.optim.solver.PINV<a class="headerlink" href="#pypose-optim-solver-pinv" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-randn-sim3">
+<h1>pypose.randn_sim3<a class="headerlink" href="#pypose-randn-sim3" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.optim.solver.PINV">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.solver.</span></span><span class="sig-name descname"><span class="pre">PINV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/solver/#PINV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.solver.PINV" title="Permalink to this definition">¶</a></dt>
-<dd><p>The batched linear solver with pseudo inversion.</p>
+<dt class="sig sig-object py" id="pypose.randn_sim3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_sim3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_sim3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_sim3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code> LieTensor filled with random numbers.</p>
 <div class="math">
-\[\mathbf{A}_i \bm{x}_i = \mathbf{b}_i,
+\[\mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],
 
 \]</div>
-<p>where <span class="math">\(\mathbf{A}_i \in \mathbb{C}^{M \times N}\)</span> and <span class="math">\(\bm{b}_i \in
-\mathbb{C}^{M \times 1}\)</span> are the <span class="math">\(i\)</span>-th item of batched linear equations.</p>
-<p>The solution is given by</p>
-<div class="math">
-\[\bm{x}_i = \mathrm{pinv}(\mathbf{A}_i) \mathbf{b}_i,
-
-\]</div>
-<p>where <span class="math">\(\mathrm{pinv}()\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Moore-Penrose_inverse">pseudo inversion</a> function.</p>
+<p>where translation <span class="math">\([\tau_x, \tau_y, \tau_z]\)</span> is generated from a normal distribution
+<span class="math">\(\mathcal{N}(0, \sigma_t)\)</span>, rotation <span class="math">\([\delta_x, \delta_y, \delta_z]\)</span> is
+generated using <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> with standard deviation <span class="math">\(\sigma_r\)</span>,
+scale <span class="math">\(\log s\)</span> is generated from a normal distribution <span class="math">\(\mathcal{N}(0, \sigma_s)\)</span>.
+Note that standard deviations <span class="math">\(\sigma_t\)</span>, <span class="math">\(\sigma_r\)</span>, and <span class="math">\(\sigma_s\)</span> are
+specified by <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (<span class="math">\(\sigma\)</span>), where <span class="math">\(\sigma=(\sigma_t,\sigma_r,\sigma_s)\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>Tensor</em><em>, </em><em>optional</em>) – the absolute tolerance value. When None it’s considered to
-be zero. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>Tensor</em><em>, </em><em>optional</em>) – the relative tolerance value. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>hermitian</strong> (<em>bool</em><em>, </em><em>optional</em>) – indicates whether <span class="math">\(\mathbf{A}\)</span> is Hermitian if complex or
-symmetric if real. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-</ul>
-</dd>
-</dl>
-<p>More details go to <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.linalg.pinv.html">torch.linalg.pinv</a>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>It is always preferred to use <a class="reference internal" href="../pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ" title="pypose.optim.solver.LSTSQ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LSTSQ()</span></code></a>, which is faster and more numerically stable.</p>
-</div>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">PINV</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-<span class="go">tensor([[[-0.2675],</span>
-<span class="go">         [-0.1897],</span>
-<span class="go">         [ 0.2708]],</span>
-<span class="go">        [[-0.3472],</span>
-<span class="go">         [ 1.1191],</span>
-<span class="go">         [ 0.3301]]])</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.optim.solver.PINV.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/solver/#PINV.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.solver.PINV.forward" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>Tensor</em>) – the input batched tensor.</p></li>
-<li><p><strong>b</strong> (<em>Tensor</em>) – the batched tensor on the right hand side.</p></li>
+<li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
+Can be a variable number of arguments or a collection like a list or tuple.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation (<span class="math">\(\sigma_t\)</span>,
+<span class="math">\(\sigma_r\)</span>, and <span class="math">\(\sigma_s\)</span>) for the three normal distribution.
+Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
+the returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling.</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned tensor.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses a global default
+(see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
+<li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned Tensor.
+Default: <code class="docutils literal notranslate"><span class="pre">torch.strided</span></code>.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses the current device for the default tensor
+type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). Device will be the CPU
+for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the solved batched tensor.</p>
+<dd class="field-even"><p>a <code class="docutils literal notranslate"><span class="pre">sim3_type</span></code> LieTensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
 </dd>
 </dl>
-</dd></dl>
-
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter <span class="math">\(\sigma\)</span> can either be:</p>
+<ul class="simple">
+<li><p>a single <code class="docutils literal notranslate"><span class="pre">float</span></code> – in which all the elements in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code>
+share the same sigma, i.e.,
+<span class="math">\(\sigma_{\rm{t}}\)</span> = <span class="math">\(\sigma_{\rm{r}}\)</span> = <span class="math">\(\sigma_{\rm{s}}\)</span>
+= <span class="math">\(\sigma\)</span>.</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of three floats – in which case, the specific sigmas for
+the three parts are assigned independently, i.e.,
+<span class="math">\(\sigma\)</span> = (<span class="math">\(\sigma_{\rm{t}}\)</span>, <span class="math">\(\sigma_{\rm{r}}\)</span>,
+<span class="math">\(\sigma_{\rm{s}}\)</span>).</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of five floats – in which case, the specific sigmas for
+each translation data are also assigned independently, i.e.,
+<span class="math">\(\sigma\)</span> = (<span class="math">\(\sigma_{\rm{tx}}\)</span>, <span class="math">\(\sigma_{\rm{ty}}\)</span>,
+<span class="math">\(\sigma_{\rm{tz}}\)</span>, <span class="math">\(\sigma_{\rm{r}}\)</span>, <span class="math">\(\sigma_{\rm{s}}\)</span>).</p></li>
+</ul>
+</div>
+<p class="rubric">Example</p>
+<p>For <span class="math">\(\sigma = (\sigma_{\rm{t}}, \sigma_{\rm{r}}, \sigma_{\rm{s}})\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_sim3</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+<span class="go">sim3Type LieTensor:</span>
+<span class="go">LieTensor([ 1.1994, -1.6163, -0.7566, -0.1805,  0.2199, -0.7044, -3.9935])</span>
+</pre></div>
+</div>
+<p>For <span class="math">\(\sigma = (\sigma_{\rm{tx}}, \sigma_{\rm{ty}}, \sigma_{\rm{tz}},
+\sigma_{\rm{r}}, \sigma_{\rm{s})}\)</span></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_sim3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+<span class="go">sim3Type LieTensor:</span>
+<span class="go">tensor([[ 0.3995, -1.9705,  2.6748,  0.5061, -1.4121,  1.1144,  0.5393],</span>
+<span class="go">        [ 0.7968,  0.5076,  1.0034,  0.8263,  1.3350, -0.0851,  2.2611]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -321,10 +333,10 @@ symmetric if real. Default: <code class="docutils literal notranslate"><span cla
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.optim.solver.LSTSQ/" class="btn btn-neutral float-right" title="pypose.optim.solver.LSTSQ" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.randn_Sim3/" class="btn btn-neutral float-right" title="pypose.randn_Sim3" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.optim.LM/" class="btn btn-neutral" title="pypose.optim.LM" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.randn_SE3/" class="btn btn-neutral" title="pypose.randn_SE3" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -362,11 +374,8 @@ symmetric if real. Default: <code class="docutils literal notranslate"><span cla
               <ul>
 
               <ul>
-<li><a class="reference internal" href="#">pypose.optim.solver.PINV</a><ul>
-<li><a class="reference internal" href="#pypose.optim.solver.PINV"><code class="docutils literal notranslate"><span class="pre">PINV</span></code></a><ul>
-<li><a class="reference internal" href="#pypose.optim.solver.PINV.forward"><code class="docutils literal notranslate"><span class="pre">PINV.forward()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">pypose.randn_sim3</a><ul>
+<li><a class="reference internal" href="#pypose.randn_sim3"><code class="docutils literal notranslate"><span class="pre">randn_sim3</span></code></a></li>
 </ul>
 </li>
 </ul>
