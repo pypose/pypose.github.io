@@ -16,7 +16,7 @@ var default_selected_os = getAnchorSelectedOS() || getDefaultSelectedOS();
 var opts = {
   cuda: getPreferredCuda(default_selected_os),
   os: default_selected_os,
-  pm: 'conda',
+  pm: 'pip',
   language: 'python',
   ptbuild: 'stable',
 };
@@ -247,7 +247,7 @@ function commandMessage(key) {
 
   if (!object.hasOwnProperty(key)) {
     $("#command").html(
-      "<pre> # Follow instructions at this URL: https://github.com/pytorch/pytorch#from-source </pre>"
+      "<pre> # Follow instructions at this URL: https://github.com/pypose/pypose </pre>"
     );
   } else if (key.indexOf("lts") == 0  && key.indexOf('rocm') < 0) {
     $("#command").html("<pre>" + object[key] + "</pre>" + lts_notice);
