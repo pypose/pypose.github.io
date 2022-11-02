@@ -83,7 +83,7 @@
       <div class="main-menu">
         <ul>
           <li>
-            <a href="https://pypose.org/">Get Started</a>
+            <a href="https://pypose.org/get-started">Get Started</a>
           </li>
 
           <!-- <li> -->
@@ -97,7 +97,7 @@
           </li>
 
           <li>
-            <a href="https://pypose.org/">About Us</a>
+            <a href="https://pypose.org/about-us">About Us</a>
           </li>
 
           <li>
@@ -247,47 +247,68 @@
 <h1>pypose.randn_SO3<a class="headerlink" href="#pypose-randn-so3" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.randn_SO3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SO3" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_SO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_SO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_SO3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor filled with the Exponential map of the random
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code> LieTensor with normal distribution with mean 0 and variance <code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code> LieTensor.</p>
 <div class="math">
-\[\mathrm{out}_i = \mathrm{Exp}(\mathcal{N}(\mathbf{0}_{3\times 1}, \mathbf{\sigma}_{3\times 1}))
+\[\begin{aligned}
+\mathrm{data}[*, :] &= \mathrm{Exp}([\delta_x, \delta_y, \delta_z]) \\
+                    &= \mathrm{Exp}([\delta_x', \delta_y', \delta_z'] \cdot \theta),
+\end{aligned}
 
 \]</div>
-<p>The shape of the tensor is defined by the variable argument size.</p>
+<p>where <span class="math">\([\delta_x', \delta_y', \delta_z']\)</span> is generated from uniform distribution
+<span class="math">\(\mathcal{U}_{\mathrm{s}}\)</span> on a standard sphere, <span class="math">\(\mathrm{Exp}()\)</span> is the
+Exponential map, <span class="math">\(\theta\)</span> is generated from a normal distribution
+<span class="math">\(\mathcal{N}(0, \sigma)\)</span> where <span class="math">\(\sigma\)</span> (<code class="docutils literal notranslate"><span class="pre">sigma</span></code>) is the standard deviation.</p>
+<p>For detailed explanation, please see <a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> and <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Exp()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the shape of the output tensor.
+<li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
 Can be a variable number of arguments or a collection like a list or tuple.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – variance <span class="math">\(\sigma\)</span> of the normal distribution. Default: 1.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – standard deviation for the angle of the generated rotation.
+Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
 <li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
-the returned tensor. Default: False.</p></li>
+the returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling</p></li>
 <li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned tensor.
-Default: if None, uses a global default (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses a global default (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
 <li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned Tensor.
-Default: torch.strided.</p></li>
+Default: <code class="docutils literal notranslate"><span class="pre">torch.strided</span></code>.</p></li>
 <li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
-Default: if None, uses the current device for the default tensor
-type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). device will be the CPU
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses the current device for the default tensor
+type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). Device will be the CPU
 for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor</p>
+<dd class="field-even"><p>a <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> LieTensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">SO3Type LieTensor:</span>
-<span class="go">tensor([[-0.0060, -0.0517, -0.0070,  0.9986],</span>
-<span class="go">        [ 0.0015,  0.0753,  0.0503,  0.9959]], dtype=torch.float64, requires_grad=True)</span>
+<span class="go">LieTensor([ 0.0082,  0.0077, -0.0018,  0.9999], requires_grad=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="go">SO3Type LieTensor:</span>
+<span class="go">tensor([[ 2.6857e-03, -8.3274e-03, -6.0457e-04,  9.9996e-01],</span>
+<span class="go">        [ 3.8711e-02, -6.3148e-02, -1.9388e-02,  9.9706e-01]],</span>
+<span class="go">        dtype=torch.float64, requires_grad=True)</span>
 </pre></div>
 </div>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../../_images/randn_so3.svg"><img alt="map to buried treasure" height="300px" src="../../_images/randn_so3.svg" width="300px" /></a>
+<figcaption>
+<p><span class="caption-text">Visualization of <a class="reference internal" href="#pypose.randn_SO3" title="pypose.randn_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_SO3()</span></code></a>. A total of 5000 random rotations
+are sampled using <a class="reference internal" href="#pypose.randn_SO3" title="pypose.randn_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_SO3()</span></code></a> and applied to the basepoint
+[0, 0, 1] (shown in blue).</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 </dd></dl>
 
 </section>
@@ -334,19 +355,7 @@ for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <ul>
-                <li>
-                  <a href="https://twitter.com/pypose_org">Find us in Twitter!</a>   
-                </li>
-              <ul>
-
-              <ul>
-<li><a class="reference internal" href="#">pypose.randn_SO3</a><ul>
-<li><a class="reference internal" href="#pypose.randn_SO3"><code class="docutils literal notranslate"><span class="pre">randn_SO3</span></code></a></li>
-</ul>
-</li>
-</ul>
-
+              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
           </div>
         </div>
@@ -489,7 +498,7 @@ for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
             <a href="https://pypose.org/docs/main/index.html">Docs</a>
           </li>
           <li>
-            <a href="https://pypose.org/docs/main/index.html">About Us</a>
+            <a href="https://pypose.org/about-us">About Us</a>
           </li>
           <li>
             <a href="https://github.com/pypose/pypose">Github</a>
