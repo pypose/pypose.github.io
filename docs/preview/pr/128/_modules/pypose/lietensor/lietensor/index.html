@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -1049,13 +1049,6 @@
 <span class="sd">          - :meth:`rxso3`</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        In most of the cases, Lie Group should be used. Lie Algebra is used only</span>
-<span class="sd">        when it needs to be optimized by back-propagation via gradients: in this</span>
-<span class="sd">        case, LieTensor is taken as :meth:`pypose.Parameter` in a module, which follows</span>
-<span class="sd">        PyTorch traditions.</span>
-
-
-<span class="sd">    Note:</span>
 <span class="sd">        Two attributes :obj:`shape` and :obj:`lshape` are available for LieTensor.</span>
 <span class="sd">        The only differece is the :obj:`lshape` hides the last dimension of :obj:`shape`,</span>
 <span class="sd">        since :obj:`lshape` takes the data in the last dimension as a single :obj:`ltype` item.</span>
@@ -1117,6 +1110,12 @@
 <span class="sd">            so3Type LieTensor:</span>
 <span class="sd">            tensor([[-1.5948,  0.3113, -0.9807]], device=&#39;cuda:0&#39;, dtype=torch.float64,</span>
 <span class="sd">                grad_fn=&lt;AliasBackward0&gt;)</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        In most of the cases, Lie Group is expected to be used, therefore we only provide</span>
+<span class="sd">        `converting functions &lt;https://pypose.org/docs/main/convert/&gt;`_ between Lie Groups</span>
+<span class="sd">        and other data structures, e.g., transformation matrix, Euler angle, etc. The users</span>
+<span class="sd">        can convert data between Lie Group and Lie algebra with :obj:`Exp` and :obj:`Log`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="p">:</span><span class="n">LieType</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="s1">&#39;The last dimension of a LieTensor has to be &#39;</span> \
