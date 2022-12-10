@@ -30,7 +30,7 @@
   <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
@@ -344,13 +344,6 @@ with Lie Type <code class="xref py py-obj docutils literal notranslate"><span cl
 </table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In most of the cases, Lie Group should be used. Lie Algebra is used only
-when it needs to be optimized by back-propagation via gradients: in this
-case, LieTensor is taken as <a class="reference internal" href="../pypose.Parameter/#pypose.Parameter" title="pypose.Parameter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.Parameter()</span></code></a> in a module, which follows
-PyTorch traditions.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
 <p>Two attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code> and <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> are available for LieTensor.
 The only differece is the <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> hides the last dimension of <code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code>,
 since <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypose.LieTensor.lshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lshape</span></code></a> takes the data in the last dimension as a single <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> item.</p>
@@ -418,6 +411,13 @@ For example, the following usage is equivalent:</p>
 <span class="go">    grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In most of the cases, Lie Group is expected to be used, therefore we only provide
+<a class="reference external" href="https://pypose.org/docs/main/convert/">converting functions</a> between Lie Groups
+and other data structures, e.g., transformation matrix, Euler angle, etc. The users
+can convert data between Lie Group and Lie algebra with <a class="reference internal" href="../pypose.Exp/#pypose.Exp" title="pypose.Exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exp</span></code></a> and <a class="reference internal" href="../pypose.Log/#pypose.Log" title="pypose.Log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Log</span></code></a>.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.LieTensor.Act">
