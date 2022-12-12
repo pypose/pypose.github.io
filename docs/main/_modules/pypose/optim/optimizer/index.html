@@ -238,6 +238,7 @@
               
   <h1>Source code for pypose.optim.optimizer</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">bmv</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">finfo</span>
 <span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">modjac</span>
 <span class="kn">from</span> <span class="nn">.strategy</span> <span class="kn">import</span> <span class="n">TrustRegion</span>
@@ -295,14 +296,14 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span> <span class="o">@</span> <span class="n">error</span>
+            <span class="n">residual</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">weight</span><span class="p">),</span> <span class="n">error</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
-            <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">@</span> <span class="n">error</span>
+            <span class="n">residual</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">residual</span> <span class="o">=</span> <span class="n">error</span>
-        <span class="k">return</span> <span class="n">residual</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">residual</span>
 
     <span class="k">def</span> <span class="nf">kernel_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="c1"># eps is to prevent grad of sqrt() from being inf</span>
