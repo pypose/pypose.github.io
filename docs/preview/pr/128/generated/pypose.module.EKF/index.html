@@ -247,116 +247,161 @@
 <h1>pypose.module.EKF<a class="headerlink" href="#pypose-module-ekf" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.EKF">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EKF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/kalman/#EKF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linearized Extended Kalman Filter.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code></a>) – The noisy system model to estimate using this filter.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EKF.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/kalman/#EKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates filter one timestep.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EKF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/kalman/#EKF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs Batched Extended Kalman Filter (EKF).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – estimated system state of previous timestep</p></li>
-<li><p><strong>y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system observation at current timestep (measurement)</p></li>
-<li><p><strong>P</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – state covariance of previous timestep</p></li>
-<li><p><strong>U</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system input at current timestep</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code></a>) – The system model to be estimated, a subclass of
+<a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.module.System</span></code></a>.</p></li>
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system transition noise.
+Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system observation noise.
+Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>estimated system state at current timestep (posteriori state estimate)
-P (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>): estimated state covariance at current timestep (posteriori covariance)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>x (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
-</dd>
 </dl>
-<p>Uses a Linearized System Model, thus it is a Linearized Extended Kalman Filter.
-If not defined, <a class="reference internal" href="../pypose.module.System/#pypose.module.System.A" title="pypose.module.System.A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System.A</span></code></a>, <a class="reference internal" href="../pypose.module.System/#pypose.module.System.B" title="pypose.module.System.B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System.B</span></code></a>, <a class="reference internal" href="../pypose.module.System/#pypose.module.System.C" title="pypose.module.System.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System.C</span></code></a> are computed each call using torch.autograd.functional.jacobian(), see <a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code></a></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To use this filter, your System subclass must define Q (process noise covariance) and R (measurement noise covariance).
-Your System should add noise to the returned state and observation by the following equations:</p>
+<p>A non-linear system can be described as</p>
 <div class="math">
-\[w_k \sim (0, Q) \\
-x_k = x_k + w_k
+\[\begin{aligned}
+    \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,
+    \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\
+    \mathbf{y}_{k} &= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,
+    \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
+\end{aligned}
 
 \]</div>
+<p>It will be linearized automatically:</p>
 <div class="math">
-\[v_k \sim (0, R) \\
-y_k = y_k + v_k
+\[\begin{align*}
+    \mathbf{z}_{k+1} = \mathbf{A}_{k}\mathbf{x}_{k} + \mathbf{B}_{k}\mathbf{u}_{k}
+                     + \mathbf{c}_{k}^1 + \mathbf{w}_k\\
+    \mathbf{y}_{k} = \mathbf{C}_{k}\mathbf{x}_{k} + \mathbf{D}_{k}\mathbf{u}_{k}
+                   + \mathbf{c}_{k}^2 + \mathbf{v}_k\\
+\end{align*}
 
 \]</div>
-</div>
-<p>For each <a class="reference internal" href="#pypose.module.EKF.forward" title="pypose.module.EKF.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward()</span></code></a> call, the Kalman Filter Equations are executed as follows:</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Since System.x is a row-vector, before doing these calculations, x is transposed into a column vector.</p>
-</div>
-<ol class="arabic simple">
-<li><p>Predict State (Priori State Estimate) using State Transition Equation.</p></li>
+<p>EKF can be described as the following five equations, where the subscript <span class="math">\(\cdot_{k}\)</span>
+is omited for simplicity.</p>
+<ol class="arabic">
+<li><p>Priori State Estimation.</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{x}^{-} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Priori Covariance Propagation.</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P}^{-} = \mathbf{A}\mathbf{P}\mathbf{A}^{T} + \mathbf{Q}
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Update Kalman Gain</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{K} = \mathbf{P}\mathbf{C}^{T}
+            (\mathbf{C}\mathbf{P} \mathbf{C}^{T} + \mathbf{R})^{-1}
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Posteriori State Estimation</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y} -
+            \mathbf{C}\mathbf{x}^{-} - \mathbf{D}\mathbf{u} - \mathbf{c}_2)
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>Posteriori Covariance Estimation</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}
+
+\]</div>
+</div></blockquote>
+</li>
 </ol>
-<div class="math">
-\[\mathbf{x} = f(x_{k-1}, U_k)
-
-\]</div>
-<p>For a Linear System, that is:</p>
-<div class="math">
-\[\mathbf{x} = \mathbf{A}\mathbf{x_{k-1}} + \mathbf{B}\mathbf{U}
-
-\]</div>
-<ol class="arabic simple" start="2">
-<li><p>Predict State Covariance.</p></li>
-</ol>
-<div class="math">
-\[\mathbf{P} = \mathbf{A}\mathbf{P}\mathbf{A}^{T} + \mathbf{Q}
-
-\]</div>
-<ol class="arabic simple" start="3">
-<li><p>Update Kalman Gain</p></li>
-</ol>
-<div class="math">
-\[\mathbf{K} = \mathbf{P}\mathbf{C}^{T} (\mathbf{C}\mathbf{P}\mathbf{C}^{T} + \mathbf{R})^{-1}
-
-\]</div>
-<ol class="arabic simple" start="4">
-<li><p>Correction Step (Posteriori State Estimate)</p></li>
-</ol>
-<div class="math">
-\[\mathbf{x} = \mathbf{x} + \mathbf{K} (\mathbf{y} - \mathbf{C}\mathbf{x}) \\
-\mathbf{P} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}
-
-\]</div>
+<p>where superscript <span class="math">\(\cdot^{-}\)</span> and <span class="math">\(\cdot^{+}\)</span> denote the priori and
+posteriori estimation, respectively.</p>
 <p class="rubric">Example</p>
 <ol class="arabic simple">
 <li><p>Initialize model and filter</p></li>
 </ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">System</span><span class="p">()</span>  <span class="c1"># System model</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">filter</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">EKF</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Calculate filter over one timestep</p></li>
+<li><p>Calculate filter for one iteration</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># u is system input</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">state</span><span class="p">,</span> <span class="n">observation</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>  <span class="c1"># model measurement</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">est_state</span><span class="p">,</span> <span class="n">P</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">est_state</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Implementation is based on section 5.1 of this book</p>
+<p>Implementation is based on Section 5.1 of this book</p>
 <ul class="simple">
-<li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/0470045345.fmatter">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>, Cleveland State University, 2006</p></li>
+<li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/0470045345.fmatter">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>,
+Cleveland State University, 2006</p></li>
 </ul>
 </div>
+<dl class="py property">
+<dt class="sig sig-object py" id="pypose.module.EKF.Q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#pypose.module.EKF.Q" title="Permalink to this definition">¶</a></dt>
+<dd><p>The covariance of system transition noise.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pypose.module.EKF.R">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#pypose.module.EKF.R" title="Permalink to this definition">¶</a></dt>
+<dd><p>The covariance of system observation noise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.EKF.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/kalman/#EKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs one step estimation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – estimated system state of previous step</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system observation at current step (measurement)</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system input at current step</p></li>
+<li><p><strong>P</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – state estimation covariance of previous step</p></li>
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system transition model</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system observation model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>posteriori state and covariance estimation</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.EKF.set_uncertainty">
+<span class="sig-name descname"><span class="pre">set_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/kalman/#EKF.set_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.set_uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the covariance matrices of transition noise and observation noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – batched square covariance matrices of transition noise.</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – batched square covariance matrices of observation noise.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -408,7 +453,10 @@ y_k = y_k + v_k
               <ul>
 <li><a class="reference internal" href="#">pypose.module.EKF</a><ul>
 <li><a class="reference internal" href="#pypose.module.EKF"><code class="docutils literal notranslate"><span class="pre">EKF</span></code></a><ul>
+<li><a class="reference internal" href="#pypose.module.EKF.Q"><code class="docutils literal notranslate"><span class="pre">EKF.Q</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.EKF.R"><code class="docutils literal notranslate"><span class="pre">EKF.R</span></code></a></li>
 <li><a class="reference internal" href="#pypose.module.EKF.forward"><code class="docutils literal notranslate"><span class="pre">EKF.forward()</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.EKF.set_uncertainty"><code class="docutils literal notranslate"><span class="pre">EKF.set_uncertainty()</span></code></a></li>
 </ul>
 </li>
 </ul>
