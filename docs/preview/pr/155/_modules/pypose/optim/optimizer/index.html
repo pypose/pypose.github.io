@@ -337,8 +337,7 @@
 <span class="sd">                \bm{x}~(\text{input}), \bm{y}~(\text{target}), \rho~(\text{kernel})              \\</span>
 <span class="sd">            &amp;\rule{113mm}{0.4pt}                                                                 \\</span>
 <span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
-<span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial } {\partial \bm{\theta}_{t-1}}}</span>
-<span class="sd">                          \left(\bm{f}\right)                                                    \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial \bm{f} } {\partial \bm{\theta}_{t-1}}}             \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{R} = \bm{f(\bm{\theta}_{t-1}, \bm{x})}-\bm{y}                  \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{R}, \mathbf{J}=\mathrm{corrector}(\rho, \mathbf{R}, \mathbf{J})\\</span>
 <span class="sd">            &amp;\hspace{5mm} \bm{\delta} = \mathrm{solver}(\mathbf{W}\mathbf{J}, -\mathbf{W}\mathbf{R})                 \\</span>
@@ -513,18 +512,15 @@
 <span class="sd">                           \epsilon_{l}~(\text{max})                                             \\</span>
 <span class="sd">            &amp;\rule{113mm}{0.4pt}                                                                 \\</span>
 <span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
-<span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial } {\partial \bm{\theta}_{t-1}}}</span>
-<span class="sd">                          \left(\sqrt{\mathbf{W}}\bm{f}\right)~(\sqrt{\cdot}</span>
-<span class="sd">                          \text{is the Cholesky decomposition})                                  \\</span>
-<span class="sd">            &amp;\hspace{5mm} \mathbf{A} \leftarrow (\mathbf{J}^T \mathbf{J})</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{J} \leftarrow {\dfrac {\partial \bm{f}} {\partial \bm{\theta}_{t-1}}}       \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{A} \leftarrow (\mathbf{J}^T \mathbf{W} \mathbf{J})</span>
 <span class="sd">                                     .\mathrm{diagnal\_clamp(\epsilon_{s}, \epsilon_{l})}        \\</span>
-<span class="sd">            &amp;\hspace{5mm} \mathbf{R} = \sqrt{\mathbf{W}}</span>
-<span class="sd">                        (\bm{f(\bm{\theta}_{t-1}, \bm{x})}-\bm{y})                               \\</span>
+<span class="sd">            &amp;\hspace{5mm} \mathbf{R} = \bm{f(\bm{\theta}_{t-1}, \bm{x})}-\bm{y}                               \\</span>
 <span class="sd">            &amp;\hspace{5mm} \mathbf{R}, \mathbf{J}=\mathrm{corrector}(\rho, \mathbf{R}, \mathbf{J})\\</span>
 <span class="sd">            &amp;\hspace{5mm} \textbf{while}~\text{first iteration}~\textbf{or}~</span>
 <span class="sd">                                         \text{loss not decreasing}                              \\</span>
 <span class="sd">            &amp;\hspace{10mm} \mathbf{A} \leftarrow \mathbf{A} + \lambda \mathrm{diag}(\mathbf{A})  \\</span>
-<span class="sd">            &amp;\hspace{10mm} \bm{\delta} = \mathrm{solver}(\mathbf{A}, -\mathbf{J}^T\mathbf{R})    \\</span>
+<span class="sd">            &amp;\hspace{10mm} \bm{\delta} = \mathrm{solver}(\mathbf{A}, -\mathbf{J}^T \mathbf{W} \mathbf{R})     \\</span>
 <span class="sd">            &amp;\hspace{10mm} \lambda \leftarrow \mathrm{strategy}(\lambda,\text{model information})\\</span>
 <span class="sd">            &amp;\hspace{10mm} \bm{\theta}_t \leftarrow \bm{\theta}_{t-1} + \bm{\delta}              \\</span>
 <span class="sd">            &amp;\hspace{10mm} \textbf{if}~\text{loss not decreasing}~\textbf{and}~</span>
