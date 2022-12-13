@@ -309,17 +309,46 @@
 <span class="sd">    posteriori estimation, respectively.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        1. Initialize model and filter</span>
+<span class="sd">        1. Define a Nonlinear Time Invariant (NTI) system model</span>
 
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; model = pp.module.System()  # System model</span>
-<span class="sd">        &gt;&gt;&gt; filter = pp.module.EKF(model)</span>
+<span class="sd">        &gt;&gt;&gt; class NTI(pp.module.System):</span>
+<span class="sd">        ...     def __init__(self):</span>
+<span class="sd">        ...         super().__init__()</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     def state_transition(self, state, input, t=None):</span>
+<span class="sd">        ...         return state.cos() + input</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     def observation(self, state, input, t):</span>
+<span class="sd">        ...         return state.sin() + input</span>
 
-<span class="sd">        2. Calculate filter for one iteration</span>
+<span class="sd">        2. Create a model and filter</span>
 
-<span class="sd">        &gt;&gt;&gt; # u is system input</span>
-<span class="sd">        &gt;&gt;&gt; state, observation = model(state, u)  # model measurement</span>
-<span class="sd">        &gt;&gt;&gt; est_state, P = filter(est_state, observation, P, u)</span>
+<span class="sd">        &gt;&gt;&gt; model = NTI()</span>
+<span class="sd">        &gt;&gt;&gt; ekf = pp.module.EKF(model)</span>
+
+<span class="sd">        3. Prepare data</span>
+
+<span class="sd">        &gt;&gt;&gt; T, N = 5, 2 # steps, state dim</span>
+<span class="sd">        &gt;&gt;&gt; states = torch.zeros(T, N)</span>
+<span class="sd">        &gt;&gt;&gt; inputs = torch.randn(T, N)</span>
+<span class="sd">        &gt;&gt;&gt; observ = torch.zeros(T, N)</span>
+<span class="sd">        &gt;&gt;&gt; # std of transition, observation, and estimation</span>
+<span class="sd">        &gt;&gt;&gt; q, r, p = 0.1, 0.1, 10</span>
+<span class="sd">        &gt;&gt;&gt; Q = torch.eye(N) * q**2</span>
+<span class="sd">        &gt;&gt;&gt; R = torch.eye(N) * r**2</span>
+<span class="sd">        &gt;&gt;&gt; P = torch.eye(N).repeat(T, 1, 1) * p**2</span>
+<span class="sd">        &gt;&gt;&gt; estim = torch.randn(T, N) * p</span>
+
+<span class="sd">        4. Perform EKF prediction. Note that estimation error becomes smaller with more steps.</span>
+
+<span class="sd">        &gt;&gt;&gt; for i in range(T - 1):</span>
+<span class="sd">        ...     w = q * torch.randn(N) # transition noise</span>
+<span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
+<span class="sd">        ...     states[i+1], observ[i] = model(states[i] + w, inputs[i])</span>
+<span class="sd">        ...     estim[i+1], cov[i+1] = ekf(estim[i], observ[i] + v, inputs[i], cov[i], Q, R)</span>
+<span class="sd">        ... print(&#39;Est error:&#39;, (states-estim).norm(dim=-1))</span>
+<span class="sd">        Est error: tensor([5.7655, 5.3436, 3.5947, 0.3359, 0.0639])</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Implementation is based on Section 5.1 of this book</span>
