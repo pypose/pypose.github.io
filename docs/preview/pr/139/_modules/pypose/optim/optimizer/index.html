@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.2.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.2.1 &#x25BC</a>
     </div>
     
 
@@ -238,6 +238,7 @@
               
   <h1>Source code for pypose.optim.optimizer</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">bmv</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">finfo</span>
 <span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">modjac</span>
 <span class="kn">from</span> <span class="nn">.strategy</span> <span class="kn">import</span> <span class="n">TrustRegion</span>
@@ -274,7 +275,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_forward</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_weight</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
@@ -295,14 +296,14 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span> <span class="o">@</span> <span class="n">error</span>
+            <span class="n">residual</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">weight</span><span class="p">),</span> <span class="n">error</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">):</span>
-            <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">@</span> <span class="n">error</span>
+            <span class="n">residual</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">residual</span> <span class="o">=</span> <span class="n">error</span>
-        <span class="k">return</span> <span class="n">residual</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">residual</span>
 
     <span class="k">def</span> <span class="nf">kernel_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="c1"># eps is to prevent grad of sqrt() from being inf</span>
@@ -746,7 +747,8 @@
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+              
+              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
             </div>
           </div>
         </div>
