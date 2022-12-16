@@ -247,11 +247,15 @@
 <h1>pypose.euler<a class="headerlink" href="#pypose-euler" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.euler">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#euler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.euler" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0002</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#euler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.euler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert batched LieTensor into Euler angles (roll, pitch, yaw).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inputs</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>) – the input LieTensor.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>) – the input LieTensor.</p></li>
+<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – the threshold to avoid the sigularity caused
+by gimbal lock.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the batched Euler angles in radians.</p>
@@ -268,6 +272,10 @@
 and z (yaw) axis (counterclockwise). There is always more than one
 solution that can result in the same orientation, while this function
 only returns one of them.</p>
+<p>When the pitch angle approximate +/- 90 degree (north/south pole),
+there will be sigularity problem due to the gimbal lock.
+Please check this website for more details:
+<a class="reference external" href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler">euclideanspace</a>.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
