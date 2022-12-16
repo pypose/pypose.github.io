@@ -253,8 +253,8 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputs</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>) – the input LieTensor.</p></li>
-<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – the threshold to avoid the sigularity caused
-by gimbal lock.</p></li>
+<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – the threshold to avoid the sigularity caused
+by gimbal lock. Default: 2e-4.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -272,10 +272,9 @@ by gimbal lock.</p></li>
 and z (yaw) axis (counterclockwise). There is always more than one
 solution that can result in the same orientation, while this function
 only returns one of them.</p>
-<p>When the pitch angle approximate +/- 90 degree (north/south pole),
-there will be sigularity problem due to the gimbal lock.
-Please check this website for more details:
-<a class="reference external" href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler">euclideanspace</a>.</p>
+<p>When the pitch angle is around <span class="math">\(\pm \frac{\pi}{2}\)</span> (north/south pole),
+there will be sigularity problem due to the <a class="reference external" href="https://en.wikipedia.org/wiki/Gimbal_lock">gimbal lock</a> and some information can be
+found in <a class="reference external" href="https://tinyurl.com/py8frs6v">this pape</a>.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
