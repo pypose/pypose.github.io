@@ -1021,14 +1021,14 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">2e-4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert batched LieTensor into Euler angles (roll, pitch, yaw).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
-<span class="sd">        eps (:obj:`float`): the threshold to avoid the sigularity caused </span>
-<span class="sd">            by gimbal lock.</span>
+<span class="sd">        eps (:obj:`float`, optional): the threshold to avoid the sigularity caused </span>
+<span class="sd">            by gimbal lock. Default: 2e-4.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        :obj:`Tensor`: the batched Euler angles in radians.</span>
@@ -1041,11 +1041,11 @@
 <span class="sd">        and z (yaw) axis (counterclockwise). There is always more than one</span>
 <span class="sd">        solution that can result in the same orientation, while this function</span>
 <span class="sd">        only returns one of them.</span>
-<span class="sd">        </span>
-<span class="sd">        When the pitch angle approximate +/- 90 degree (north/south pole), </span>
-<span class="sd">        there will be sigularity problem due to the gimbal lock.</span>
-<span class="sd">        Please check this website for more details: </span>
-<span class="sd">        `euclideanspace &lt;http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler&gt;`_.</span>
+
+<span class="sd">        When the pitch angle is around :math:`\pm \frac{\pi}{2}` (north/south pole), </span>
+<span class="sd">        there will be sigularity problem due to the `gimbal lock</span>
+<span class="sd">        &lt;https://en.wikipedia.org/wiki/Gimbal_lock&gt;`_ and some information can be</span>
+<span class="sd">        found in `this pape &lt;https://tinyurl.com/py8frs6v&gt;`_.</span>
 
 <span class="sd">    Example:</span>
 
@@ -1063,8 +1063,8 @@
 <span class="sd">        tensor([ 1.2676, -0.4783, -0.3596])</span>
 
 <span class="sd">    See :obj:`euler2SO3` for more information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">euler</span><span class="p">()</span></div>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">euler</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span></div>
 </pre></div>
 
              </article>
