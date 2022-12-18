@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.2.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.2.1 &#x25BC</a>
     </div>
     
 
@@ -848,7 +848,7 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        euler (Tensor): the euler angles to convert.</span>
+<span class="sd">        euler (Tensor): the euler angles in radians to convert.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        LieTensor: the converted SO3Type LieTensor.</span>
@@ -861,9 +861,9 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        {\displaystyle \mathbf{y}_i={</span>
 <span class="sd">        \begin{bmatrix}\,</span>
-<span class="sd">        \sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\\,</span>
-<span class="sd">        \cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\\,</span>
-<span class="sd">        \cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\\,</span>
+<span class="sd">        \sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\</span>
+<span class="sd">        \cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\</span>
+<span class="sd">        \cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\</span>
 <span class="sd">        \cos(\alpha_i)\cos(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\sin(\beta_i)\sin(\gamma_i)</span>
 <span class="sd">        \end{bmatrix}}},</span>
 
@@ -871,7 +871,12 @@
 <span class="sd">    are roll, pitch, and yaw, respectively.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The last dimension of the input tensor has to be 3.</span>
+<span class="sd">        The last dimension of the input tensor has to be 3. The Euler angle takes the rotation</span>
+<span class="sd">        sequence of x (roll), y (pitch), then z (yaw) axis (counterclockwise).</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Any given rotation has two possible quaternion representations. If one is known, the other</span>
+<span class="sd">        is just the negative of all four terms. This function only returns one of them.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; input = torch.randn(2, 3, requires_grad=True, dtype=torch.float64)</span>
@@ -879,6 +884,8 @@
 <span class="sd">        SO3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.4873,  0.1162,  0.4829,  0.7182],</span>
 <span class="sd">                [ 0.3813,  0.4059, -0.2966,  0.7758]], dtype=torch.float64, grad_fn=&lt;AliasBackward0&gt;)</span>
+
+<span class="sd">    See :obj:`euler` for more information.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">euler</span><span class="p">):</span>
         <span class="n">euler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">euler</span><span class="p">)</span>
@@ -901,7 +908,7 @@
 <span class="sd">    Convert a :obj:`LieTensor` into a :obj:`torch.Tensor` without changing data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        inputs (LieTensor): the input LieTensor.</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        Tensor: the torch.Tensor form of LieTensor.</span>
@@ -919,12 +926,15 @@
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the translation part from a :obj:`LieTensor`.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
+
 <span class="sd">    Return:</span>
 <span class="sd">        Tensor: the batched translation vectors.</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        The :obj:`SO3`, :obj:`so3`, :obj:`RxSO3`, and :obj:`rxso3` types do not contain translation. </span>
-<span class="sd">        Calling :obj:`translation()` on these types will return zero vector(s).</span>
+<span class="sd">        The :obj:`SO3`, :obj:`so3`, :obj:`RxSO3`, and :obj:`rxso3` types do not contain</span>
+<span class="sd">        translation. Calling :obj:`translation()` on these types will return zero vector(s).</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3(2)</span>
@@ -943,6 +953,9 @@
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the rotation part from a :obj:`LieTensor`.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
+
 <span class="sd">    Return:</span>
 <span class="sd">        SO3: the batched quaternions.</span>
 
@@ -959,6 +972,9 @@
 <div class="viewcode-block" id="scale"><a class="viewcode-back" href="../../../../generated/pypose.scale/#pypose.scale">[docs]</a><span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the scale part from a :obj:`LieTensor`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        Tensor: the batched scale scalars.</span>
@@ -981,9 +997,13 @@
 <span class="sd">        &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">scale</span><span class="p">()</span></div>
 
+
 <div class="viewcode-block" id="matrix"><a class="viewcode-back" href="../../../../generated/pypose.matrix/#pypose.matrix">[docs]</a><span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert a :obj:`LieTensor` into matrix form.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        Tensor: the batched matrix form (torch.Tensor) of LieTensor.</span>
@@ -999,6 +1019,52 @@
 <span class="sd">                 [-0.4603,  0.4130,  0.7858]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert batched LieTensor into Euler angles (roll, pitch, yaw).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
+<span class="sd">        eps (:obj:`float`, optional): the threshold to avoid the sigularity caused </span>
+<span class="sd">            by gimbal lock. Default: 2e-4.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`Tensor`: the batched Euler angles in radians.</span>
+
+<span class="sd">    Supported input type: :obj:`so3`, :obj:`SO3`, :obj:`se3`, :obj:`SE3`,</span>
+<span class="sd">    :obj:`sim3`, :obj:`Sim3`, :obj:`rxso3`, and :obj:`RxSO3`.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        The Euler angle takes the rotation sequence of x (roll), y (pitch),</span>
+<span class="sd">        and z (yaw) axis (counterclockwise). There is always more than one</span>
+<span class="sd">        solution that can result in the same orientation, while this function</span>
+<span class="sd">        only returns one of them.</span>
+
+<span class="sd">        When the pitch angle is around :math:`\pm \frac{\pi}{2}` (north/south pole), </span>
+<span class="sd">        there will be sigularity problem due to the `gimbal lock</span>
+<span class="sd">        &lt;https://en.wikipedia.org/wiki/Gimbal_lock&gt;`_ and some information can be</span>
+<span class="sd">        found in `this pape &lt;https://tinyurl.com/py8frs6v&gt;`_.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3()</span>
+<span class="sd">        &gt;&gt;&gt; x.euler()  # equivalent to pp.euler(x)</span>
+<span class="sd">        tensor([-0.6599,  0.2749, -0.3263])</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_Sim3(2)</span>
+<span class="sd">        &gt;&gt;&gt; x.euler()  # equivalent to pp.euler(x)</span>
+<span class="sd">        tensor([[-0.2701, -0.8006, -0.4150],</span>
+<span class="sd">                [ 2.1550,  0.1768,  0.9368]])</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_rxso3()</span>
+<span class="sd">        &gt;&gt;&gt; x.euler()  # equivalent to pp.euler(x)</span>
+<span class="sd">        tensor([ 1.2676, -0.4783, -0.3596])</span>
+
+<span class="sd">    See :obj:`euler2SO3` for more information.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">euler</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span></div>
 </pre></div>
 
              </article>
@@ -1033,7 +1099,8 @@
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+              
+              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
             </div>
           </div>
         </div>
