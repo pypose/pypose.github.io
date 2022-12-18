@@ -251,7 +251,7 @@
 <dd><p>Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>euler</strong> (<em>Tensor</em>) – the euler angles to convert.</p>
+<dd class="field-odd"><p><strong>euler</strong> (<em>Tensor</em>) – the euler angles in radians to convert.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the converted SO3Type LieTensor.</p>
@@ -268,9 +268,9 @@
 <div class="math">
 \[{\displaystyle \mathbf{y}_i={
 \begin{bmatrix}\,
-\sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\\,
-\cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\\,
-\cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\\,
+\sin(\alpha_i)\cos(\beta_i)\cos(\gamma_i) - \cos(\alpha_i)\sin(\beta_i)\sin(\gamma_i)\\
+\cos(\alpha_i)\sin(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\cos(\beta_i)\sin(\gamma_i)\\
+\cos(\alpha_i)\cos(\beta_i)\sin(\gamma_i) - \sin(\alpha_i)\sin(\beta_i)\cos(\gamma_i)\\
 \cos(\alpha_i)\cos(\beta_i)\cos(\gamma_i) + \sin(\alpha_i)\sin(\beta_i)\sin(\gamma_i)
 \end{bmatrix}}},
 
@@ -279,7 +279,13 @@
 are roll, pitch, and yaw, respectively.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The last dimension of the input tensor has to be 3.</p>
+<p>The last dimension of the input tensor has to be 3. The Euler angle takes the rotation
+sequence of x (roll), y (pitch), then z (yaw) axis (counterclockwise).</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Any given rotation has two possible quaternion representations. If one is known, the other
+is just the negative of all four terms. This function only returns one of them.</p>
 </div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -289,6 +295,7 @@ are roll, pitch, and yaw, respectively.</p>
 <span class="go">        [ 0.3813,  0.4059, -0.2966,  0.7758]], dtype=torch.float64, grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
+<p>See <a class="reference internal" href="../pypose.euler/#pypose.euler" title="pypose.euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">euler</span></code></a> for more information.</p>
 </dd></dl>
 
 </section>

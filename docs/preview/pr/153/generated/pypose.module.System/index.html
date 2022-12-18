@@ -306,41 +306,42 @@ so that the model is consistent with, e.g., the LTI model and the iterative LQR
 solver. More details go to <a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>.</p>
 </div>
 <p class="rubric">Example</p>
-<p>A simple linear time-varying system.  Here we just show an example for advancing one
-time step of the system at a given time step and computing the linearization.
-For generating one trajecotry given a series of inputs and advanced use of linearization,
-see the <cite>examples</cite> folder.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<p>A simple linear time-varying system.  Here we show an example for advancing one
+time step of the system at a given time step and computing the linearization.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Floquet</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="nb">super</span><span class="p">(</span><span class="n">Floquet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">cc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="n">ss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>        <span class="n">cc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">ss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+<span class="gp">...</span>
 <span class="gp">... </span>        <span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span>   <span class="mf">1.</span><span class="p">,</span> <span class="n">cc</span><span class="o">/</span><span class="mi">10</span><span class="p">],</span>
-<span class="gp">... </span>                          <span class="p">[</span><span class="n">cc</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span>    <span class="mf">1.</span><span class="p">]])</span>
+<span class="gp">... </span>                          <span class="p">[</span><span class="n">cc</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span>    <span class="mf">1.</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">ss</span><span class="p">],</span>
-<span class="gp">... </span>                          <span class="p">[</span><span class="mf">1.</span><span class="p">]])</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">B</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+<span class="gp">... </span>                          <span class="p">[</span><span class="mf">1.</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span> <span class="o">+</span> <span class="n">t</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">Floquet</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time_curr</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1"># We start from t = 8, and advance one step to t = 9</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">time_curr</span><span class="p">)</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">state_curr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="n">time_curr</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">state_next</span><span class="p">,</span> <span class="n">obser_curr</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">state_curr</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start from t = 8, and advance one step to t = 9.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">state_next</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">obser_curr</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">system</span> <span class="o">=</span> <span class="n">Floquet</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">t</span> <span class="o">=</span> <span class="n">step</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">,</span> <span class="n">observation</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">system</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">)</span>        <span class="c1"># Next state</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span> <span class="c1"># Observation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>    <span class="c1"># Linearized state matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>    <span class="c1"># Linearized input matrix</span>
 <span class="go">tensor([1.4944, 1.9320])</span>
 <span class="go">tensor([9., 9.])</span>
 <span class="go">tensor([[1.0000, 0.0844],</span>
@@ -351,7 +352,8 @@ see the <cite>examples</cite> folder.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>More practical examples can be found at <a class="reference external" href="https://github.com/pypose/pypose/tree/main/examples/module/dynamics">examples/module/dynamics</a>.</p>
+<p>For generating one trajecotry given a series of inputs, advanced use of
+linearization, and more practical examples can be found at <a class="reference external" href="https://github.com/pypose/pypose/tree/main/examples/module/dynamics">examples/module/dynamics</a>.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pypose.module.System.A">
@@ -427,6 +429,11 @@ see the <cite>examples</cite> folder.</p>
 such as time-varying system. One can directly access the current system time via the
 property <a class="reference internal" href="#pypose.module.System.systime" title="pypose.module.System.systime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systime</span></code></a>.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To introduce noise in a model, redefine this method via
+subclassing. See example in <code class="docutils literal notranslate"><span class="pre">examples/module/ekf/tank_robot.py</span></code>.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -456,7 +463,8 @@ property <a class="reference internal" href="#pypose.module.System.systime" titl
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The users need to define this method and can access the current system time via the
-property <a class="reference internal" href="#pypose.module.System.systime" title="pypose.module.System.systime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systime</span></code></a>.</p>
+property <a class="reference internal" href="#pypose.module.System.systime" title="pypose.module.System.systime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systime</span></code></a>. Don’t introduce system transision noise in this function,
+as it will be used for linearizing the system automaticalluy.</p>
 </div>
 </dd></dl>
 
@@ -476,7 +484,7 @@ the the most recent timestamp is taken. Default: <code class="docutils literal n
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p>The <code class="docutils literal notranslate"><span class="pre">self</span></code> module.</p>
 </dd>
 </dl>
 <div class="admonition warning">
@@ -507,7 +515,8 @@ linearized system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The users need to define this method and can access the current time via the property
-<a class="reference internal" href="#pypose.module.System.systime" title="pypose.module.System.systime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systime</span></code></a>.</p>
+<a class="reference internal" href="#pypose.module.System.systime" title="pypose.module.System.systime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systime</span></code></a>. Don’t introduce system transision noise in this function, as it will
+be used for linearizing the system automaticalluy.</p>
 </div>
 </dd></dl>
 
