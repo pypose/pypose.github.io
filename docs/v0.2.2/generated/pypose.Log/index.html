@@ -1,0 +1,755 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.Log &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.Inv" href="../pypose.Inv/" />
+    <link rel="prev" title="pypose.Exp" href="../pypose.Exp/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.2.2 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="generated/pypose.Log.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../basics/">Basics</a> &gt;</li>
+        
+      <li>pypose.Log</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/pypose.Log.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <section id="pypose-log">
+<h1>pypose.Log<a class="headerlink" href="#pypose-log" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pypose.Log">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">Log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#Log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.Log" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Logarithm map for <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> (Lie Group).</p>
+<div class="math">
+\[\mathrm{Log}: \mathcal{G} \mapsto \mathcal{g}
+
+\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><em>LieTensor</em></a>) – the input LieTensor (Lie Group)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the output LieTensor (Lie Algebra)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
+</dd>
+</dl>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">List of supported <span class="math">\(\mathrm{Log}\)</span> map</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 9%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>input <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code></p></th>
+<th class="head"><p><span class="math">\(\mathcal{G}\)</span> (Lie Group)</p></th>
+<th class="head"><p><span class="math">\(\mapsto\)</span></p></th>
+<th class="head"><p><span class="math">\(\mathcal{g}\)</span> (Lie Algebra)</p></th>
+<th class="head"><p>output <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times4}\)</span></p></td>
+<td><p><span class="math">\(\mapsto\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times3}\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">so3_type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times7}\)</span></p></td>
+<td><p><span class="math">\(\mapsto\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times6}\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">se3_type</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times8}\)</span></p></td>
+<td><p><span class="math">\(\mapsto\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times7}\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3_type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code></p></td>
+<td><p><span class="math">\(\mathcal{G}\in\mathbb{R}^{*\times5}\)</span></p></td>
+<td><p><span class="math">\(\mapsto\)</span></p></td>
+<td><p><span class="math">\(\mathcal{g}\in\mathbb{R}^{*\times4}\)</span></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function <a class="reference internal" href="#pypose.Log" title="pypose.Log"><code class="xref py py-func docutils literal notranslate"><span class="pre">Log()</span></code></a> is different from <code class="xref py py-func docutils literal notranslate"><span class="pre">log()</span></code>, which returns
+a new torch tensor with the logarithm of the elements of the input tensor.</p>
+</div>
+<ul>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SO3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(w_i\)</span>, <span class="math">\(\boldsymbol{\nu}_i\)</span> be the scalar and vector parts of
+<span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<p>If <span class="math">\(\|\boldsymbol{\nu}_i\| &gt; \text{eps}\)</span>:</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{y}_i =
+    \left\{
+        \begin{array}{ll}
+            2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|
+            \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,
+                \quad \|w_i\| > \text{eps}, \\
+            \mathrm{sign}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}
+                \boldsymbol{\nu}_i, \quad \|w_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+</div></blockquote>
+<p>otherwise:</p>
+<div class="math">
+\[\mathbf{y}_i = 2\left( \frac{1}{w_i} -
+    \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SE3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(\mathbf{q}_i\)</span> be the translation and rotation parts of
+<span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div class="math">
+\[\mathbf{y}_i = \left[\mathbf{J}_i^{-1}\mathbf{t}_i, \mathrm{Log}(\mathbf{q}_i) \right],
+
+\]</div>
+<p>where <span class="math">\(\mathrm{Log}\)</span> is the Logarithm map for <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> input and
+<span class="math">\(\mathbf{J}_i\)</span> is the left Jacobian for <code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3_type</span></code> input.</p>
+</div></blockquote>
+</li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code>
+(input <span class="math">\(\mathbf{x}\)</span> is an instance of <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RxSO3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{q}_i\)</span>, <span class="math">\(s_i\)</span> be the rotation and scale parts of
+<span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\mathbf{y}\)</span> be the output.</p>
+<div class="math">
+\[\mathbf{y}_i = \left[\mathrm{Log}(\mathbf{q}_i), \log(s_i) \right].
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>If input <span class="math">\(\mathbf{x}\)</span>’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">ltype</span></code> is <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> (input <span class="math">\(\mathbf{x}\)</span>
+is an instance of <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Sim3()</span></code></a>):</p>
+<blockquote>
+<div><p>Let <span class="math">\(\mathbf{t}_i\)</span>, <span class="math">\(^s\mathbf{q}_i\)</span> be the translation and <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a>
+parts of <span class="math">\(\mathbf{x}_i\)</span>, respectively; <span class="math">\(\boldsymbol{\phi}_i\)</span>,
+<span class="math">\(\sigma_i\)</span> be the corresponding Lie Algebra of the SO3 and scale part of
+<span class="math">\(^s\mathbf{q}_i\)</span>, <span class="math">\(\boldsymbol{\Phi}_i\)</span> be the skew matrix of
+<span class="math">\(\boldsymbol{\phi}_i\)</span>, <span class="math">\(\boldsymbol{\phi}_i\)</span> can be represented as
+<span class="math">\(\theta_i\mathbf{n}_i\)</span>, <span class="math">\(s_i = e^\sigma_i\)</span>, <span class="math">\(\mathbf{y}\)</span> be the
+output.</p>
+<div class="math">
+\[\mathbf{y}_i = \left[^s\mathbf{W}_i^{-1}\mathbf{t}_i,
+    \mathrm{Log}(^s\mathbf{q}_i) \right],
+
+\]</div>
+<p>where</p>
+<blockquote>
+<div><div class="math">
+\[^s\mathbf{W}_i = A\boldsymbol{\Phi}_i + B\boldsymbol{\Phi}_i^2 + C\mathbf{I}
+
+\]</div>
+</div></blockquote>
+<p>in which if <span class="math">\(\|\sigma_i\| &gt; \text{eps}\)</span>:</p>
+<div class="math">
+\[A = \left\{
+        \begin{array}{ll}
+            \frac{s_i\sin\theta_i\sigma_i + (1-s_i\cos\theta_i)\theta_i}
+            {\theta_i(\sigma_i^2 + \theta_i^2)}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{(\sigma_i-1)s_i+1}{\sigma_i^2}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[B =
+\left\{
+    \begin{array}{ll}
+        \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}
+        {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2},
+            \quad \|\theta_i\| > \text{eps}, \\
+        \frac{s_i\sigma_i^2/2 + s_i-1-\sigma_i s_i}{\sigma_i^3},
+            \quad \|\theta_i\| \leq \text{eps},
+    \end{array}
+\right.
+
+\]</div>
+<div class="math">
+\[C = \frac{e^{\sigma_i} - 1}{\sigma_i}\mathbf{I}
+
+\]</div>
+<p>otherwise:</p>
+<div class="math">
+\[A = \left\{
+        \begin{array}{ll}
+            \frac{1-\cos\theta_i}{\theta_i^2}, \quad \|\theta_i\| > \text{eps}, \\
+            \frac{1}{2}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[B = \left\{
+        \begin{array}{ll}
+            \frac{\theta_i - \sin\theta_i}{\theta_i^3},
+                \quad \|\theta_i\| > \text{eps}, \\
+            \frac{1}{6}, \quad \|\theta_i\| \leq \text{eps},
+        \end{array}
+    \right.
+
+\]</div>
+<div class="math">
+\[C = 1
+
+\]</div>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <span class="math">\(\mathrm{arctan}\)</span>-based Logarithm map implementation thanks to the paper:</p>
+<ul class="simple">
+<li><p>C. Hertzberg et al., <a class="reference external" href="https://doi.org/10.1016/j.inffus.2011.08.003">Integrating Generic Sensor Fusion Algorithms with Sound State
+Representation through Encapsulation of Manifolds</a>, Information Fusion, 2013.</p></li>
+</ul>
+<p>Assume we have a unit rotation axis <span class="math">\(\mathbf{n}\)</span> and rotation angle
+<span class="math">\(\theta~(0\leq\theta&lt;2\pi)\)</span>, then the corresponding quaternion with
+unit norm <span class="math">\(\mathbf{q}\)</span> can be represented as</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{q} = \left[\sin(\theta/2) \mathbf{n}, \cos(\theta/2) \right]
+
+\]</div>
+</div></blockquote>
+<p>Therefore, given a quaternion <span class="math">\(\mathbf{q}=[\boldsymbol{\nu}, w]\)</span>, where
+<span class="math">\(\boldsymbol{\nu}\)</span> is the vector part, <span class="math">\(w\)</span> is the scalar part, to find
+the corresponding rotation vector, the rotation angle <span class="math">\(\theta\)</span> can be obtained as</p>
+<blockquote>
+<div><div class="math">
+\[\theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\|
+= \sin(\theta/2),
+
+\]</div>
+</div></blockquote>
+<p>The unit rotation axis <span class="math">\(\mathbf{n}\)</span> can be obtained as <span class="math">\(\mathbf{n} =
+\frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}\)</span>.
+Hence, the corresponding rotation vector is</p>
+<blockquote>
+<div><div class="math">
+\[\theta \mathbf{n} = 2\frac{\mathrm{arctan}
+(\|\boldsymbol{\nu}\|/w)}{\|\boldsymbol{\nu}\|}\boldsymbol{\nu}.
+
+\]</div>
+</div></blockquote>
+<p>More details about <span class="math">\(^s\mathbf{W}_i\)</span> in <code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3_type</span></code> can be found in Eq. (5.7):</p>
+<ul class="simple">
+<li><p>H. Strasdat, <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf">Local accuracy and global consistency for efficient visual SLAM</a>,
+Dissertation. Department of Computing, Imperial College London, 2012.</p></li>
+</ul>
+</div>
+<p class="rubric">Example</p>
+<ul>
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3</span></code></a> <span class="math">\(\mapsto\)</span> <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">so3</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<span class="go">so3Type LieTensor:</span>
+<span class="go">tensor([-0.3060,  0.2344,  1.2724])</span>
+</pre></div>
+</div>
+</li>
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <a class="reference internal" href="../pypose.SE3/#pypose.SE3" title="pypose.SE3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SE3</span></code></a> <span class="math">\(\mapsto\)</span> <a class="reference internal" href="../pypose.se3/#pypose.se3" title="pypose.se3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">se3</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<span class="go">se3Type LieTensor:</span>
+<span class="go">tensor([[ 0.2958, -0.0840, -1.4733,  0.7004,  0.4483, -0.9009],</span>
+<span class="go">        [ 0.0850, -0.1020, -1.2616, -1.0524, -1.2031,  0.8377]])</span>
+</pre></div>
+</div>
+</li>
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a> <span class="math">\(\mapsto\)</span> <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_RxSO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<span class="go">rxso3Type LieTensor:</span>
+<span class="go">tensor([[-1.3755,  0.3525, -2.2367,  0.5409],</span>
+<span class="go">        [ 0.5929, -0.3250, -0.7394,  1.0965]])</span>
+</pre></div>
+</div>
+</li>
+<li><p><span class="math">\(\mathrm{Log}\)</span>: <a class="reference internal" href="../pypose.Sim3/#pypose.Sim3" title="pypose.Sim3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sim3</span></code></a> <span class="math">\(\mapsto\)</span> <a class="reference internal" href="../pypose.sim3/#pypose.sim3" title="pypose.sim3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim3</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_Sim3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span> <span class="c1"># equivalent to: pp.Log(x)</span>
+<span class="go">sim3Type LieTensor:</span>
+<span class="go">tensor([[-0.1747, -0.3698,  0.2000,  0.1735,  0.6220,  1.1852, -0.6402],</span>
+<span class="go">        [-0.8685, -0.1717,  1.2139, -0.8385, -2.2957, -1.9545,  0.8474]])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd></dl>
+
+</section>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../pypose.Inv/" class="btn btn-neutral float-right" title="pypose.Inv" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="../pypose.Exp/" class="btn btn-neutral" title="pypose.Exp" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">pypose.Log</a><ul>
+<li><a class="reference internal" href="#pypose.Log"><code class="docutils literal notranslate"><span class="pre">Log</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+         <script src="../../_static/jquery.js"></script>
+         <script src="../../_static/underscore.js"></script>
+         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../_static/doctools.js"></script>
+         <script src="../../_static/sphinx_highlight.js"></script>
+         <script src="../../_static/katex.min.js"></script>
+         <script src="../../_static/auto-render.min.js"></script>
+         <script src="../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
