@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.2.1 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.2.2 &#x25BC</a>
     </div>
     
 
@@ -310,7 +310,7 @@
 <span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
 <span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
 <span class="sd">                (raw sensor input with gravity).</span>
-<span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation.</span>
+<span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
 <span class="sd">            gyro_cov (torch.Tensor, optional): covariance matrix of angular rate.</span>
 <span class="sd">                If not given, the default state in constructor will be used.</span>
 <span class="sd">            acc_cov (torch.Tensor, optional): covariance matrix of linear acceleration.</span>
@@ -327,7 +327,7 @@
 
 <span class="sd">            - init_state (Optional): The initial state of the integration. It contains</span>
 <span class="sd">              :code:`pos`: initial position, :code:`rot`: initial rotation, :code:`vel`: initial</span>
-<span class="sd">              velocity, with the shape :math:`(B, H_{in})`</span>
+<span class="sd">              velocity, with the shape :math:`(B, H_{in})`.</span>
 
 <span class="sd">            - output: a :obj:`dict` of integrated state including ``pos``: position,</span>
 <span class="sd">              ``rot``: rotation, and ``vel``: velocity, each of which has a shape</span>
@@ -522,13 +522,13 @@
                 <span class="n">Rij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="c1"># default is None</span>
 
             <span class="k">if</span> <span class="n">Rij</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">Rij</span> <span class="o">=</span> <span class="n">Rij</span> <span class="o">*</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="n">Rij</span> <span class="o">*</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">Rij</span> <span class="o">=</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">]</span>
 
             <span class="n">cov_input_state</span> <span class="o">=</span><span class="p">{</span>
                 <span class="s1">&#39;Rij&#39;</span><span class="p">:</span> <span class="n">Rij</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                <span class="s1">&#39;Rk&#39;</span><span class="p">:</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;dr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+                <span class="s1">&#39;Rk&#39;</span><span class="p">:</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
                 <span class="s1">&#39;Ha&#39;</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">vec2skew</span><span class="p">(</span><span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span>
                 <span class="s1">&#39;dt&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> 
             <span class="p">}</span>
@@ -546,10 +546,56 @@
 
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">cov</span><span class="p">}</span></div>
 
-    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Integrate the IMU sensor signals gyroscope (angular rate</span>
+<span class="sd">        :math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame to</span>
+<span class="sd">        calculate the increments on the rotation (:math:`\Delta r`), velocity (:math:`\Delta v`)</span>
+<span class="sd">        and position (:math:`\Delta p`) of the IMU states.</span>
+<span class="sd">        The IMU rotation of the body frame (:code:`\rot`) is optional,</span>
+<span class="sd">        which can be utilized to compensate the gravity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dt (torch.Tensor): time interval from last update.</span>
+<span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
+<span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">                (raw sensor input with gravity).</span>
+<span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
+<span class="sd">            init_rot (:obj:`pypose.SO3`, optional): the initial orientation of the IMU state.</span>
+<span class="sd">                If not given, the initial state in constructor will be used.</span>
+
+<span class="sd">        Shape:</span>
+<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape with</span>
+<span class="sd">              :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where :math:`B` is</span>
+<span class="sd">              the batch size (or the number of IMU), :math:`F` is the number of frames</span>
+<span class="sd">              (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
+
+<span class="sd">            - init_rot: The initial orientation of the integration, which helps to </span>
+<span class="sd">              compensate for the gravity. It contains the shape :math:`(B, H_{in})`. </span>
+
+<span class="sd">            - rot: The ground truth orientation of the integration. If this parameter is</span>
+<span class="sd">              given, the integrator will use the ground truth orientation to compensate the gravity.</span>
+
+<span class="sd">            - output: a :obj:`dict` of integrated state including ``a``: acceleration in the body frame</span>
+<span class="sd">              without gravity ``Dp``: position increments, ``Dr``: rotation increments, ``Dv``: velocity </span>
+<span class="sd">              increments, ``w``: rotation velocity and ``t``: time increments, each of which has a shape</span>
+<span class="sd">              :math:`(B, F, H_{out})`, where :math:`H_{out}` is the signal dimension.</span>
+<span class="sd">             </span>
+
+<span class="sd">        Integration:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                {\Delta}r_{ij} &amp;= \int_{t \in [t_i, t_j]} w_k \ dt \\</span>
+<span class="sd">                {\Delta}v_{ij} &amp;= \int_{t \in [t_i, t_j]} R_{k} a_k \ dt \\</span>
+<span class="sd">                {\Delta}p_{ij} &amp;= \int\int_{t \in [t_i, t_j]} R_{k} a_k\ dt^2\  \\</span>
+<span class="sd">            \end{align*}</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">B</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">dr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">gyro</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">incre_r</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">dr</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">gyro</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">incre_r</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">):</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">rot</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span>
@@ -570,16 +616,50 @@
         <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">incre_t</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
-                <span class="s1">&#39;t&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;dr&#39;</span><span class="p">:</span> <span class="n">dr</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;Dp&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dv&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dr&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
+                <span class="s1">&#39;t&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IMUPreintegrator.predict"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.predict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propogate the next IMU state from the initial IMU state (:obj:`init_state`) with </span>
+<span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and :math:`\Delta{r}`).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            init_state (Dict): the initial state of the integration. The dictionary</span>
+<span class="sd">                should be in form of :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
+<span class="sd">                torch.Tensor}`.</span>
+<span class="sd">            integrate (Dict): the preintegrated IMU measurements. The dictionary</span>
+<span class="sd">                should be in form of :obj:`{&#39;Dp&#39;: torch.Tensor, &#39;Dr&#39;: pypose.SO3, &#39;Dv&#39;:</span>
+<span class="sd">                torch.Tensor, &#39;t&#39;: torch.Tensor}`.</span>
+
+<span class="sd">        Shape:</span>
+<span class="sd">            - init_state: The initial state of the integration. It contains :code:`pos`: initial position,</span>
+<span class="sd">              :code:`rot`: initial rotation, :code:`vel`: initial velocity, with the shape :math:`(B, H_{in})`.</span>
+
+<span class="sd">            - integrate: The preintegrated IMU measurements. It contains :obj:`Dp`, :obj:`Dv` :obj:`Dr`</span>
+<span class="sd">              and :obj:`t`, with the shape :math:`(B, F, H_{out})`. It follows the output of the </span>
+<span class="sd">              function :obj:`integrate`.</span>
+
+<span class="sd">            - output: a :obj:`dict` of integrated state including ``pos``: position,</span>
+<span class="sd">              ``rot``: rotation, and ``vel``: velocity, each of which has a shape</span>
+<span class="sd">              :math:`(B, F, H_{out})`, where :math:`H_{out}` is the signal dimension.</span>
+
+<span class="sd">        Propagation:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                R_j &amp;= {\Delta}R_{ij} * R_i                                                     \\</span>
+<span class="sd">                v_j &amp;= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\</span>
+<span class="sd">                p_j &amp;= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span>
-        <span class="p">}</span>
+            <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dv&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span>
+        <span class="p">}</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">propagate_cov</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">,</span> <span class="n">init_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">):</span>
@@ -669,9 +749,6 @@
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
          <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-         <script src="../../../../_static/jquery.js"></script>
-         <script src="../../../../_static/underscore.js"></script>
-         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../../../_static/doctools.js"></script>
          <script src="../../../../_static/sphinx_highlight.js"></script>
          <script src="../../../../_static/katex.min.js"></script>
