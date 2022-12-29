@@ -6,7 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -35,7 +35,7 @@
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
     <link rel="next" title="Optimization" href="../../optim/" />
-    <link rel="prev" title="pypose.module.LTI" href="../pypose.module.LTI/" />
+    <link rel="prev" title="pypose.module.EKF" href="../pypose.module.EKF/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -128,7 +128,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.2.1 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.2.2 &#x25BC</a>
     </div>
     
 
@@ -250,7 +250,7 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">IMUPreintegrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos=tensor([0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot=SO3Type</span> <span class="pre">LieTensor:</span> <span class="pre">LieTensor([0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel=tensor([0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gravity=9.81007</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro_cov=1.024e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_cov=0.0064</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_cov=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset=False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies preintegration over IMU input signals.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
 <li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a>.</p></li>
@@ -278,13 +278,13 @@ their measurement covariance for gyroscope <span class="math">\(C_{g}\)</span> a
 <span class="math">\(C_{\mathbf{a}}\)</span>. Known IMU rotation estimation <span class="math">\(R\)</span> can be provided for
 better precision.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt</strong> (<em>torch.Tensor</em>) – time interval from last update.</p></li>
 <li><p><strong>gyro</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
 <li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
 (raw sensor input with gravity).</p></li>
-<li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation.</p></li>
+<li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation on the body frame.</p></li>
 <li><p><strong>gyro_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of angular rate.
 If not given, the default state in constructor will be used.</p></li>
 <li><p><strong>acc_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of linear acceleration.
@@ -303,7 +303,7 @@ the batch size (or the number of IMU), <span class="math">\(F\)</span> is the nu
 (measurements), and <span class="math">\(H_{in}\)</span> is the raw sensor signals.</p></li>
 <li><p>init_state (Optional): The initial state of the integration. It contains
 <code class="code docutils literal notranslate"><span class="pre">pos</span></code>: initial position, <code class="code docutils literal notranslate"><span class="pre">rot</span></code>: initial rotation, <code class="code docutils literal notranslate"><span class="pre">vel</span></code>: initial
-velocity, with the shape <span class="math">\((B, H_{in})\)</span></p></li>
+velocity, with the shape <span class="math">\((B, H_{in})\)</span>.</p></li>
 <li><p>output: a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> of integrated state including <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position,
 <code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, and <code class="docutils literal notranslate"><span class="pre">vel</span></code>: velocity, each of which has a shape
 <span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is the signal dimension.
@@ -460,10 +460,6 @@ Takes as input the IMU values and calculates the preintegrated IMU measurements.
 </div>
 <p>Preintegrated IMU odometry from the KITTI dataset with and without known rotation.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><figure class="align-default">
 <a class="reference internal image-reference" href="../../_images/imu-known-rot.png"><img alt="../../_images/imu-known-rot.png" src="../../_images/imu-known-rot.png" style="width: 300px;" /></a>
@@ -484,6 +480,97 @@ Takes as input the IMU values and calculates the preintegrated IMU measurements.
 </div>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.integrate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gyro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.integrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrate the IMU sensor signals gyroscope (angular rate
+<span class="math">\(\omega\)</span>), linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in body frame to
+calculate the increments on the rotation (<span class="math">\(\Delta r\)</span>), velocity (<span class="math">\(\Delta v\)</span>)
+and position (<span class="math">\(\Delta p\)</span>) of the IMU states.
+The IMU rotation of the body frame (<code class="code docutils literal notranslate"><span class="pre">rot</span></code>) is optional,
+which can be utilized to compensate the gravity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> (<em>torch.Tensor</em>) – time interval from last update.</p></li>
+<li><p><strong>gyro</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
+<li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
+(raw sensor input with gravity).</p></li>
+<li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation on the body frame.</p></li>
+<li><p><strong>init_rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – the initial orientation of the IMU state.
+If not given, the initial state in constructor will be used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>input (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dt</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">gyro</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">acc</span></code>): This layer supports the input shape with
+<span class="math">\((B, F, H_{in})\)</span>, <span class="math">\((F, H_{in})\)</span> and <span class="math">\((H_{in})\)</span>, where <span class="math">\(B\)</span> is
+the batch size (or the number of IMU), <span class="math">\(F\)</span> is the number of frames
+(measurements), and <span class="math">\(H_{in}\)</span> is the raw sensor signals.</p></li>
+<li><p>init_rot: The initial orientation of the integration, which helps to
+compensate for the gravity. It contains the shape <span class="math">\((B, H_{in})\)</span>.</p></li>
+<li><p>rot: The ground truth orientation of the integration. If this parameter is
+given, the integrator will use the ground truth orientation to compensate the gravity.</p></li>
+<li><p>output: a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> of integrated state including <code class="docutils literal notranslate"><span class="pre">a</span></code>: acceleration in the body frame
+without gravity <code class="docutils literal notranslate"><span class="pre">Dp</span></code>: position increments, <code class="docutils literal notranslate"><span class="pre">Dr</span></code>: rotation increments, <code class="docutils literal notranslate"><span class="pre">Dv</span></code>: velocity
+increments, <code class="docutils literal notranslate"><span class="pre">w</span></code>: rotation velocity and <code class="docutils literal notranslate"><span class="pre">t</span></code>: time increments, each of which has a shape
+<span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is the signal dimension.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Integration:</p>
+<div class="math">
+\[\begin{align*}
+    {\Delta}r_{ij} &= \int_{t \in [t_i, t_j]} w_k \ dt \\
+    {\Delta}v_{ij} &= \int_{t \in [t_i, t_j]} R_{k} a_k \ dt \\
+    {\Delta}p_{ij} &= \int\int_{t \in [t_i, t_j]} R_{k} a_k\ dt^2\  \\
+\end{align*}
+
+\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.IMUPreintegrator.predict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/imu_preintegrator/#IMUPreintegrator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IMUPreintegrator.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propogate the next IMU state from the initial IMU state (<code class="xref py py-obj docutils literal notranslate"><span class="pre">init_state</span></code>) with
+the preintegrated IMU measurements (<span class="math">\(\Delta{p}\)</span>, <span class="math">\(\Delta{v}\)</span> and <span class="math">\(\Delta{r}\)</span>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> (<em>Dict</em>) – the initial state of the integration. The dictionary
+should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'pos':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'rot':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'vel':</span>
+<span class="pre">torch.Tensor}</span></code>.</p></li>
+<li><p><strong>integrate</strong> (<em>Dict</em>) – the preintegrated IMU measurements. The dictionary
+should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'Dp':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'Dr':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'Dv':</span>
+<span class="pre">torch.Tensor,</span> <span class="pre">'t':</span> <span class="pre">torch.Tensor}</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>init_state: The initial state of the integration. It contains <code class="code docutils literal notranslate"><span class="pre">pos</span></code>: initial position,
+<code class="code docutils literal notranslate"><span class="pre">rot</span></code>: initial rotation, <code class="code docutils literal notranslate"><span class="pre">vel</span></code>: initial velocity, with the shape <span class="math">\((B, H_{in})\)</span>.</p></li>
+<li><p>integrate: The preintegrated IMU measurements. It contains <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dp</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dv</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dr</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code>, with the shape <span class="math">\((B, F, H_{out})\)</span>. It follows the output of the
+function <a class="reference internal" href="#pypose.module.IMUPreintegrator.integrate" title="pypose.module.IMUPreintegrator.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate</span></code></a>.</p></li>
+<li><p>output: a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> of integrated state including <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position,
+<code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, and <code class="docutils literal notranslate"><span class="pre">vel</span></code>: velocity, each of which has a shape
+<span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is the signal dimension.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Propagation:</p>
+<div class="math">
+\[\begin{align*}
+    R_j &= {\Delta}R_{ij} * R_i                                                     \\
+    v_j &= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\
+    p_j &= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\
+\end{align*}
+
+\]</div>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -499,7 +586,7 @@ Takes as input the IMU values and calculates the preintegrated IMU measurements.
         <a href="../../optim/" class="btn btn-neutral float-right" title="Optimization" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.module.LTI/" class="btn btn-neutral" title="pypose.module.LTI" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.module.EKF/" class="btn btn-neutral" title="pypose.module.EKF" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -534,6 +621,8 @@ Takes as input the IMU values and calculates the preintegrated IMU measurements.
 <li><a class="reference internal" href="#">pypose.module.IMUPreintegrator</a><ul>
 <li><a class="reference internal" href="#pypose.module.IMUPreintegrator"><code class="docutils literal notranslate"><span class="pre">IMUPreintegrator</span></code></a><ul>
 <li><a class="reference internal" href="#pypose.module.IMUPreintegrator.forward"><code class="docutils literal notranslate"><span class="pre">IMUPreintegrator.forward()</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.IMUPreintegrator.integrate"><code class="docutils literal notranslate"><span class="pre">IMUPreintegrator.integrate()</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.IMUPreintegrator.predict"><code class="docutils literal notranslate"><span class="pre">IMUPreintegrator.predict()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -555,9 +644,6 @@ Takes as input the IMU values and calculates the preintegrated IMU measurements.
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
          <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-         <script src="../../_static/jquery.js"></script>
-         <script src="../../_static/underscore.js"></script>
-         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../_static/doctools.js"></script>
          <script src="../../_static/sphinx_highlight.js"></script>
          <script src="../../_static/katex.min.js"></script>
