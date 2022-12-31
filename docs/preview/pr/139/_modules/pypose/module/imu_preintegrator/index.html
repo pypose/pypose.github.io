@@ -249,18 +249,79 @@
 <span class="sd">    Args:</span>
 <span class="sd">        pos (torch.Tensor, optional): initial position. Default: :obj:`torch.zeros(3)`.</span>
 <span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`.</span>
-<span class="sd">        vel (torch.Tensor, optional): initial position. Default: torch.zeros(3).</span>
-<span class="sd">        gravity (float, optional): the gravity acceleration. Default: 9.81007.</span>
-<span class="sd">        gyro_cov: covariance of the gyroscope. Default: (3.2e-3)**2.</span>
-<span class="sd">            Use the form :obj:`torch.Tensor(gyro_cov_x, gyro_cov_y, gyro_cov_z)`, </span>
-<span class="sd">            if the covariance on the three axes are different.</span>
-<span class="sd">        acc_cov: covariance of the accelerator. Default: (8e-2)**2. </span>
-<span class="sd">            Use the form :obj:`torch.Tensor(acc_cov_x, acc_cov_y,acc_cov_z)`, </span>
-<span class="sd">            if the covariance on the three axes are different.</span>
+<span class="sd">        vel (torch.Tensor, optional): initial position. Default: ``torch.zeros(3)``.</span>
+<span class="sd">        gravity (float, optional): the gravity acceleration. Default: ``9.81007``.</span>
+<span class="sd">        gyro_cov: covariance of the gyroscope. Use a three-element tensor, if the covariance</span>
+<span class="sd">            on the three axes are different.  Default: ``(3.2e-3)**2``.</span>
+<span class="sd">        acc_cov: covariance of the accelerator. Use a three-element tensor, if the covariance</span>
+<span class="sd">            on the three axes are different. Default: ``(8e-2)**2``.</span>
 <span class="sd">        prop_cov (Bool, optional): flag to propagate the covariance matrix. Default: ``True``.</span>
 <span class="sd">        reset (Bool, optional): flag to reset the initial states after the :obj:`forward`</span>
 <span class="sd">            function is called. If ``False``, the integration starts from the last integration.</span>
 <span class="sd">            This flag is ignored if :obj:`init_state` is not ``None``. Default: ``False``.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        1. Preintegrator Initialization</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; p = torch.zeros(3)    # Initial Position</span>
+<span class="sd">        &gt;&gt;&gt; r = pp.identity_SO3() # Initial rotation</span>
+<span class="sd">        &gt;&gt;&gt; v = torch.zeros(3)    # Initial Velocity</span>
+<span class="sd">        &gt;&gt;&gt; integrator = pp.module.IMUPreintegrator(p, r, v)</span>
+
+<span class="sd">        2. Get IMU measurement</span>
+
+<span class="sd">        &gt;&gt;&gt; ang = torch.tensor([0.1,0.1,0.1]) # angular velocity </span>
+<span class="sd">        &gt;&gt;&gt; acc = torch.tensor([0.1,0.1,0.1]) # acceleration</span>
+<span class="sd">        &gt;&gt;&gt; rot = pp.mat2SO3(torch.eye(3))    # Rotation (Optional)</span>
+<span class="sd">        &gt;&gt;&gt; dt = torch.tensor([0.002])        # Time difference between two measurements</span>
+
+<span class="sd">        3. Preintegrating IMU measurements.</span>
+<span class="sd">        Takes as input the IMU values and calculates the preintegrated IMU measurements.</span>
+
+<span class="sd">        &gt;&gt;&gt; states = integrator(dt, ang, acc, rot)</span>
+<span class="sd">        {&#39;rot&#39;: SO3Type LieTensor:</span>
+<span class="sd">        tensor([[[1.0000e-04, 1.0000e-04, 1.0000e-04, 1.0000e+00]]]),</span>
+<span class="sd">        &#39;vel&#39;: tensor([[[ 0.0002,  0.0002, -0.0194]]]),</span>
+<span class="sd">        &#39;pos&#39;: tensor([[[ 2.0000e-07,  2.0000e-07, -1.9420e-05]]]),</span>
+<span class="sd">        &#39;cov&#39;: tensor([[[ 5.7583e-11, -5.6826e-19, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [-5.6826e-19,  5.7583e-11, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [-5.6827e-19, -5.6827e-19,  5.7583e-11,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-09, -3.3346e-20,</span>
+<span class="sd">                          -1.0588e-19,  8.0000e-12,  1.5424e-23, -1.0340e-22],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -1.3922e-19,  8.0000e-09,</span>
+<span class="sd">                          0.0000e+00, -8.7974e-23,  8.0000e-12,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0588e-19,</span>
+<span class="sd">                          8.0000e-09,  0.0000e+00, -1.0340e-22,  8.0000e-12],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-12,  1.5424e-23,</span>
+<span class="sd">                          -1.0340e-22,  8.0000e-15, -1.2868e-26,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -8.7974e-23,  8.0000e-12,</span>
+<span class="sd">                          0.0000e+00, -1.2868e-26,  8.0000e-15,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0340e-22,</span>
+<span class="sd">                          8.0000e-12,  0.0000e+00,  0.0000e+00,  8.0000e-15]]])}</span>
+
+<span class="sd">    Preintegrated IMU odometry from the KITTI dataset with and without known rotation.</span>
+
+<span class="sd">    .. list-table::</span>
+
+<span class="sd">        * - .. figure:: /_static/img/module/imu/imu-known-rot.png</span>
+<span class="sd">                :width: 300</span>
+
+<span class="sd">            Fig. 1. Known Rotation.</span>
+
+<span class="sd">          - .. figure:: /_static/img/module/imu/imu-unknown-rot.png</span>
+<span class="sd">                :width: 300</span>
+
+<span class="sd">            Fig. 2. Estimated Rotation.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The examples generating the above figures can be found at `examples/module/imu</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/imu&gt;`_.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(),</span>
@@ -432,69 +493,6 @@
 <span class="sd">              Maximum-a-posteriori Estimation</span>
 <span class="sd">              &lt;https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf&gt;`_, Technical Report</span>
 <span class="sd">              GT-IRIM-CP&amp;R-2015-001, 2015.</span>
-
-<span class="sd">        Example:</span>
-
-<span class="sd">            1. Preintegrator Initialization</span>
-
-<span class="sd">            &gt;&gt;&gt; import torch</span>
-<span class="sd">            &gt;&gt;&gt; import pypose as pp</span>
-<span class="sd">            &gt;&gt;&gt; p = torch.zeros(3)    # Initial Position</span>
-<span class="sd">            &gt;&gt;&gt; r = pp.identity_SO3() # Initial rotation</span>
-<span class="sd">            &gt;&gt;&gt; v = torch.zeros(3)    # Initial Velocity</span>
-<span class="sd">            &gt;&gt;&gt; integrator = pp.module.IMUPreintegrator(p, r, v)</span>
-
-<span class="sd">            2. Get IMU measurement</span>
-
-<span class="sd">            &gt;&gt;&gt; ang = torch.tensor([0.1,0.1,0.1]) # angular velocity </span>
-<span class="sd">            &gt;&gt;&gt; acc = torch.tensor([0.1,0.1,0.1]) # acceleration</span>
-<span class="sd">            &gt;&gt;&gt; rot = pp.mat2SO3(torch.eye(3))    # Rotation (Optional)</span>
-<span class="sd">            &gt;&gt;&gt; dt = torch.tensor([0.002])        # Time difference between two measurements</span>
-
-<span class="sd">            3. Preintegrating IMU measurements.</span>
-<span class="sd">            Takes as input the IMU values and calculates the preintegrated IMU measurements.</span>
-
-<span class="sd">            &gt;&gt;&gt; states = integrator(dt, ang, acc, rot)</span>
-<span class="sd">            {&#39;rot&#39;: SO3Type LieTensor:</span>
-<span class="sd">            tensor([[[1.0000e-04, 1.0000e-04, 1.0000e-04, 1.0000e+00]]]),</span>
-<span class="sd">            &#39;vel&#39;: tensor([[[ 0.0002,  0.0002, -0.0194]]]),</span>
-<span class="sd">            &#39;pos&#39;: tensor([[[ 2.0000e-07,  2.0000e-07, -1.9420e-05]]]),</span>
-<span class="sd">            &#39;cov&#39;: tensor([[[ 5.7583e-11, -5.6826e-19, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
-<span class="sd">                              0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
-<span class="sd">                            [-5.6826e-19,  5.7583e-11, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
-<span class="sd">                              0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
-<span class="sd">                            [-5.6827e-19, -5.6827e-19,  5.7583e-11,  0.0000e+00,  0.0000e+00,</span>
-<span class="sd">                              0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-09, -3.3346e-20,</span>
-<span class="sd">                             -1.0588e-19,  8.0000e-12,  1.5424e-23, -1.0340e-22],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -1.3922e-19,  8.0000e-09,</span>
-<span class="sd">                              0.0000e+00, -8.7974e-23,  8.0000e-12,  0.0000e+00],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0588e-19,</span>
-<span class="sd">                              8.0000e-09,  0.0000e+00, -1.0340e-22,  8.0000e-12],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-12,  1.5424e-23,</span>
-<span class="sd">                             -1.0340e-22,  8.0000e-15, -1.2868e-26,  0.0000e+00],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -8.7974e-23,  8.0000e-12,</span>
-<span class="sd">                              0.0000e+00, -1.2868e-26,  8.0000e-15,  0.0000e+00],</span>
-<span class="sd">                            [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0340e-22,</span>
-<span class="sd">                              8.0000e-12,  0.0000e+00,  0.0000e+00,  8.0000e-15]]])}</span>
-
-<span class="sd">        Preintegrated IMU odometry from the KITTI dataset with and without known rotation.</span>
-
-<span class="sd">        .. list-table::</span>
-
-<span class="sd">            * - .. figure:: /_static/img/module/imu/imu-known-rot.png</span>
-<span class="sd">                    :width: 300</span>
-
-<span class="sd">                Fig. 1. Known Rotation.</span>
-
-<span class="sd">              - .. figure:: /_static/img/module/imu/imu-unknown-rot.png</span>
-<span class="sd">                    :width: 300</span>
-
-<span class="sd">                Fig. 2. Estimated Rotation.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            The examples generating the above figures can be found at `examples/module/imu</span>
-<span class="sd">            &lt;https://github.com/pypose/pypose/tree/main/examples/module/imu&gt;`_.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">gyro</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span>
         <span class="n">acc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">acc</span><span class="p">);</span> <span class="n">gyro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">gyro</span><span class="p">)</span>
@@ -556,6 +554,13 @@
 <span class="sd">        The IMU rotation of the body frame (:code:`\rot`) is optional,</span>
 <span class="sd">        which can be utilized to compensate the gravity.</span>
 
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                {\Delta}r_{ij} &amp;= \int_{t \in [t_i, t_j]} w_k \ dt \\</span>
+<span class="sd">                {\Delta}v_{ij} &amp;= \int_{t \in [t_i, t_j]} R_{k} a_k \ dt \\</span>
+<span class="sd">                {\Delta}p_{ij} &amp;= \int\int_{t \in [t_i, t_j]} R_{k} a_k\ dt^2\  \\</span>
+<span class="sd">            \end{align*}</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            dt (torch.Tensor): time interval from last update.</span>
 <span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
@@ -566,35 +571,28 @@
 <span class="sd">                If not given, the initial state in constructor will be used.</span>
 
 <span class="sd">        Shape:</span>
-<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape with</span>
-<span class="sd">              :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where :math:`B` is</span>
-<span class="sd">              the batch size (or the number of IMU), :math:`F` is the number of frames</span>
-<span class="sd">              (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
+<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape</span>
+<span class="sd">              with :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where</span>
+<span class="sd">              :math:`B` is the batch size (or the number of IMU), :math:`F` is the number of</span>
+<span class="sd">              frames (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
 
 <span class="sd">            - init_rot: The initial orientation of the integration, which helps to </span>
 <span class="sd">              compensate for the gravity. It contains the shape :math:`(B, H_{in})`. </span>
 
 <span class="sd">            - rot: The ground truth orientation of the integration. If this parameter is</span>
-<span class="sd">              given, the integrator will use the ground truth orientation to compensate the gravity.</span>
+<span class="sd">              given, the integrator will use the ground truth orientation to compensate the</span>
+<span class="sd">              gravity.</span>
 
-<span class="sd">            - output: a :obj:`dict` of integrated state including ``a``: acceleration in the body frame</span>
-<span class="sd">              without gravity ``Dp``: position increments, ``Dr``: rotation increments, ``Dv``: velocity </span>
-<span class="sd">              increments, ``w``: rotation velocity and ``t``: time increments, each of which has a shape</span>
-<span class="sd">              :math:`(B, F, H_{out})`, where :math:`H_{out}` is the signal dimension.</span>
-<span class="sd">             </span>
-
-<span class="sd">        Integration:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                {\Delta}r_{ij} &amp;= \int_{t \in [t_i, t_j]} w_k \ dt \\</span>
-<span class="sd">                {\Delta}v_{ij} &amp;= \int_{t \in [t_i, t_j]} R_{k} a_k \ dt \\</span>
-<span class="sd">                {\Delta}p_{ij} &amp;= \int\int_{t \in [t_i, t_j]} R_{k} a_k\ dt^2\  \\</span>
-<span class="sd">            \end{align*}</span>
-<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            ``dict``: integrated state including ``a``: acceleration in the body frame</span>
+<span class="sd">            without gravity ``Dp``: position increments, ``Dr``: rotation increments,</span>
+<span class="sd">            ``Dv``: velocity increments, ``w``: rotation velocity and ``t``: time increments,</span>
+<span class="sd">            each of which has a shape :math:`(B, F, H_{out})`, where :math:`H_{out}` is the</span>
+<span class="sd">            signal dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">B</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">gyro</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dr</span> <span class="o">=</span>  <span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">gyro</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">dr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">incre_r</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">):</span>
@@ -623,7 +621,15 @@
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propogate the next IMU state from the initial IMU state (:obj:`init_state`) with </span>
-<span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and :math:`\Delta{r}`).</span>
+<span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and</span>
+<span class="sd">        :math:`\Delta{r}`).</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                R_j &amp;= {\Delta}R_{ij} * R_i                                                     \\</span>
+<span class="sd">                v_j &amp;= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\</span>
+<span class="sd">                p_j &amp;= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\</span>
+<span class="sd">            \end{align*}</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            init_state (Dict): the initial state of the integration. The dictionary</span>
@@ -634,26 +640,18 @@
 <span class="sd">                torch.Tensor, &#39;t&#39;: torch.Tensor}`.</span>
 
 <span class="sd">        Shape:</span>
-<span class="sd">            - init_state: The initial state of the integration. It contains :code:`pos`: initial position,</span>
-<span class="sd">              :code:`rot`: initial rotation, :code:`vel`: initial velocity, with the shape :math:`(B, H_{in})`.</span>
+<span class="sd">            - init_state: The initial state of the integration. It contains :code:`pos`: initial</span>
+<span class="sd">              position, :code:`rot`: initial rotation, :code:`vel`: initial velocity, with the</span>
+<span class="sd">              shape :math:`(B, H_{in})`.</span>
 
-<span class="sd">            - integrate: The preintegrated IMU measurements. It contains :obj:`Dp`, :obj:`Dv` :obj:`Dr`</span>
-<span class="sd">              and :obj:`t`, with the shape :math:`(B, F, H_{out})`. It follows the output of the </span>
-<span class="sd">              function :obj:`integrate`.</span>
+<span class="sd">            - integrate: The preintegrated IMU measurements. It contains :obj:`Dp`, :obj:`Dv`,</span>
+<span class="sd">              :obj:`Dr`, and :obj:`t`, with the shape :math:`(B, F, H_{out})`. It follows the</span>
+<span class="sd">              output of the function :obj:`integrate`.</span>
 
-<span class="sd">            - output: a :obj:`dict` of integrated state including ``pos``: position,</span>
-<span class="sd">              ``rot``: rotation, and ``vel``: velocity, each of which has a shape</span>
-<span class="sd">              :math:`(B, F, H_{out})`, where :math:`H_{out}` is the signal dimension.</span>
-
-<span class="sd">        Propagation:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                R_j &amp;= {\Delta}R_{ij} * R_i                                                     \\</span>
-<span class="sd">                v_j &amp;= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\</span>
-<span class="sd">                p_j &amp;= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\</span>
-<span class="sd">            \end{align*}</span>
-
+<span class="sd">        Return:</span>
+<span class="sd">            ``dict``: integrated state including ``pos``: position, ``rot``: rotation, and</span>
+<span class="sd">            ``vel``: velocity, each of which has a shape :math:`(B, F, H_{out})`, where</span>
+<span class="sd">            :math:`H_{out}` is the signal dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">],</span>
