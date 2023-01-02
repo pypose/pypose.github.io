@@ -252,16 +252,18 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pos</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
-<li><p><strong>rot</strong> (<em>pypose.SO3</em><em>, </em><em>optional</em>) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a>.</p></li>
-<li><p><strong>vel</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – initial position. Default: <code class="docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
-<li><p><strong>gravity</strong> (<em>float</em><em>, </em><em>optional</em>) – the gravity acceleration. Default: <code class="docutils literal notranslate"><span class="pre">9.81007</span></code>.</p></li>
-<li><p><strong>gyro_cov</strong> – covariance of the gyroscope. Use a three-element tensor, if the covariance
-on the three axes are different.  Default: <code class="docutils literal notranslate"><span class="pre">(3.2e-3)**2</span></code>.</p></li>
-<li><p><strong>acc_cov</strong> – covariance of the accelerator. Use a three-element tensor, if the covariance
-on the three axes are different. Default: <code class="docutils literal notranslate"><span class="pre">(8e-2)**2</span></code>.</p></li>
-<li><p><strong>prop_cov</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to propagate the covariance matrix. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>reset</strong> (<em>Bool</em><em>, </em><em>optional</em>) – flag to reset the initial states after the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
+<li><p><strong>pos</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, optional) – initial position. Default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
+<li><p><strong>rot</strong> (<code class="docutils literal notranslate"><span class="pre">pypose.SO3</span></code>, optional) – initial rotation. Default: <a class="reference internal" href="../pypose.identity_SO3/#pypose.identity_SO3" title="pypose.identity_SO3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.identity_SO3()</span></code></a>.</p></li>
+<li><p><strong>vel</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, optional) – initial position. Default: <code class="docutils literal notranslate"><span class="pre">torch.zeros(3)</span></code>.</p></li>
+<li><p><strong>gravity</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – the gravity acceleration. Default: <code class="docutils literal notranslate"><span class="pre">9.81007</span></code>.</p></li>
+<li><p><strong>gyro_cov</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> or <code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – covariance of the gyroscope.
+Use a three-element tensor, if the covariance on the three axes are different.
+Default: <code class="docutils literal notranslate"><span class="pre">(3.2e-3)**2</span></code>.</p></li>
+<li><p><strong>acc_cov</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>  or <code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – covariance of the accelerator.
+Use a three-element tensor, if the covariance on the three axes are different.
+Default: <code class="docutils literal notranslate"><span class="pre">(8e-2)**2</span></code>.</p></li>
+<li><p><strong>prop_cov</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – flag to propagate the covariance matrix. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>reset</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – flag to reset the initial states after the <a class="reference internal" href="#pypose.module.IMUPreintegrator.forward" title="pypose.module.IMUPreintegrator.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>
 function is called. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the integration starts from the last integration.
 This flag is ignored if <code class="xref py py-obj docutils literal notranslate"><span class="pre">init_state</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
@@ -346,16 +348,16 @@ better precision.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dt</strong> (<em>torch.Tensor</em>) – time interval from last update.</p></li>
-<li><p><strong>gyro</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
-<li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
+<li><p><strong>dt</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – time interval from last update.</p></li>
+<li><p><strong>gyro</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
+<li><p><strong>acc</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
 (raw sensor input with gravity).</p></li>
 <li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation on the body frame.</p></li>
-<li><p><strong>gyro_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of angular rate.
+<li><p><strong>gyro_cov</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, optional) – covariance matrix of angular rate.
 If not given, the default state in constructor will be used.</p></li>
-<li><p><strong>acc_cov</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – covariance matrix of linear acceleration.
+<li><p><strong>acc_cov</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, optional) – covariance matrix of linear acceleration.
 If not given, the default state in constructor will be used.</p></li>
-<li><p><strong>init_state</strong> (<em>Dict</em><em>, </em><em>optional</em>) – the initial state of the integration. The dictionary
+<li><p><strong>init_state</strong> (<code class="docutils literal notranslate"><span class="pre">dict</span></code>, optional) – the initial state of the integration. The dictionary
 should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'pos':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'rot':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'vel':</span>
 <span class="pre">torch.Tensor}</span></code>. If not given, the initial state in constructor will be used.</p></li>
 </ul>
@@ -498,9 +500,9 @@ which can be utilized to compensate the gravity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dt</strong> (<em>torch.Tensor</em>) – time interval from last update.</p></li>
+<li><p><strong>dt</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – time interval from last update.</p></li>
 <li><p><strong>gyro</strong> (<em>torch.Tensor</em>) – angular rate (<span class="math">\(\omega\)</span>) in IMU body frame.</p></li>
-<li><p><strong>acc</strong> (<em>torch.Tensor</em>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
+<li><p><strong>acc</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – linear acceleration (<span class="math">\(\mathbf{a}\)</span>) in IMU body frame
 (raw sensor input with gravity).</p></li>
 <li><p><strong>rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – known IMU rotation on the body frame.</p></li>
 <li><p><strong>init_rot</strong> (<a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.SO3</span></code></a>, optional) – the initial orientation of the IMU state.
@@ -524,7 +526,7 @@ gravity.</p></li>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>integrated state including <code class="docutils literal notranslate"><span class="pre">a</span></code>: acceleration in the body frame
+<dd class="field-odd"><p>integrated states including <code class="docutils literal notranslate"><span class="pre">a</span></code>: acceleration in the body frame
 without gravity <code class="docutils literal notranslate"><span class="pre">Dp</span></code>: position increments, <code class="docutils literal notranslate"><span class="pre">Dr</span></code>: rotation increments,
 <code class="docutils literal notranslate"><span class="pre">Dv</span></code>: velocity increments, <code class="docutils literal notranslate"><span class="pre">w</span></code>: rotation velocity and <code class="docutils literal notranslate"><span class="pre">Dt</span></code>: time increments,
 each of which has a shape <span class="math">\((B, F, H_{out})\)</span>, where <span class="math">\(H_{out}\)</span> is the
@@ -553,10 +555,10 @@ the preintegrated IMU measurements (<span class="math">\(\Delta{p}\)</span>, <sp
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>init_state</strong> (<em>Dict</em>) – the initial state of the integration. The dictionary
+<li><p><strong>init_state</strong> (<code class="docutils literal notranslate"><span class="pre">dict</span></code>) – the initial state of the integration. The dictionary
 should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'pos':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'rot':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'vel':</span>
 <span class="pre">torch.Tensor}</span></code>.</p></li>
-<li><p><strong>integrate</strong> (<em>Dict</em>) – the preintegrated IMU measurements. The dictionary
+<li><p><strong>integrate</strong> (<code class="docutils literal notranslate"><span class="pre">dict</span></code>) – the preintegrated IMU measurements. The dictionary
 should be in form of <code class="xref py py-obj docutils literal notranslate"><span class="pre">{'Dp':</span> <span class="pre">torch.Tensor,</span> <span class="pre">'Dr':</span> <span class="pre">pypose.SO3,</span> <span class="pre">'Dv':</span>
 <span class="pre">torch.Tensor,</span> <span class="pre">'Dt':</span> <span class="pre">torch.Tensor}</span></code>.</p></li>
 </ul>
@@ -575,7 +577,7 @@ output of the function <a class="reference internal" href="#pypose.module.IMUPre
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>integrated state including <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position, <code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, and
+<dd class="field-odd"><p>integrated states including <code class="docutils literal notranslate"><span class="pre">pos</span></code>: position, <code class="docutils literal notranslate"><span class="pre">rot</span></code>: rotation, and
 <code class="docutils literal notranslate"><span class="pre">vel</span></code>: velocity, each of which has a shape <span class="math">\((B, F, H_{out})\)</span>, where
 <span class="math">\(H_{out}\)</span> is the signal dimension.</p>
 </dd>
