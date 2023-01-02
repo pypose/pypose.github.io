@@ -269,7 +269,7 @@
                      <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;select_scatter&#39;</span><span class="p">,</span> <span class="s1">&#39;index_put&#39;</span><span class="p">,</span><span class="s1">&#39;index_put_&#39;</span><span class="p">,</span> <span class="s1">&#39;copy_&#39;</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">LieType</span><span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39;LieTensor Type Base Class&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;LieTensor Type Base Class&#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">manifold</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dimension</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">dimension</span><span class="p">])</span> <span class="c1"># Data dimension</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">embedding</span><span class="p">])</span> <span class="c1"># Embedding dimension</span>
@@ -314,7 +314,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Inv attribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; action on a points tensor(*, 3[4]) (homogeneous)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; action on a points tensor(*, 3[4]) (homogeneous)&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Lie Group has no Act attribute&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Act attribute.&quot;</span><span class="p">)</span>
@@ -330,13 +330,13 @@
         <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">*</span> <span class="n">X</span>
 
     <span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; X * Exp(a) = Exp(Adj) * X &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39; X * Exp(a) = Exp(Adj) * X &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Lie Group has no Adj attribute&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Adj attribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Exp(a) * X = X * Exp(AdjT) &#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39; Exp(a) * X = X * Exp(AdjT) &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Lie Group has no AdjT attribute&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no AdjT attribute.&quot;</span><span class="p">)</span>
@@ -347,7 +347,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Instance has no Jinvp attribute.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; To 4x4 matrix &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; To 4x4 matrix &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_manifold</span> <span class="k">else</span> <span class="nb">input</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">view</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
@@ -500,7 +500,7 @@
         <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">LieTensor</span><span class="p">(</span><span class="n">other</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">ltype</span><span class="o">=</span><span class="n">so3_type</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">*</span> <span class="nb">input</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; To 3x3 matrix &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; To 3x3 matrix &quot;&quot;&quot;</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">view</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
         <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">I</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
@@ -514,7 +514,7 @@
         <span class="k">return</span> <span class="n">X</span>
 
     <span class="k">def</span> <span class="nf">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Right jacobian of SO(3)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">Jr</span><span class="p">()</span>
@@ -549,7 +549,7 @@
         <span class="k">return</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">data</span> <span class="o">/</span> <span class="n">dist</span> <span class="o">*</span> <span class="n">theta</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">so3_type</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; To 3x3 matrix &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; To 3x3 matrix &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">view</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
@@ -559,7 +559,7 @@
         <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Right jacobian of so(3)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">K</span> <span class="o">=</span> <span class="n">vec2skew</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -982,7 +982,7 @@
 
 
 <div class="viewcode-block" id="LieTensor"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor">[docs]</a><span class="k">class</span> <span class="nc">LieTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; A sub-class of :obj:`torch.Tensor` to represent Lie Algebra and Lie Group.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; A sub-class of :obj:`torch.Tensor` to represent Lie Algebra and Lie Group.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (:obj:`Tensor`, or :obj:`list`, or &#39;:obj:`int`...&#39;): A</span>
@@ -1163,7 +1163,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lshape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        LieTensor Shape (shape of torch.Tensor by ignoring the last dimension)</span>
 
 <span class="sd">        Returns:</span>
@@ -1187,7 +1187,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="LieTensor.lview"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.lview">[docs]</a>    <span class="k">def</span> <span class="nf">lview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Returns a new LieTensor with the same data as the self tensor but of a different</span>
 <span class="sd">        :obj:`lshape`.</span>
 
@@ -1214,37 +1214,37 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Exp"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Exp">[docs]</a>    <span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Exp`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Exp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Log"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Log">[docs]</a>    <span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Log`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Inv"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Inv">[docs]</a>    <span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Inv`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Inv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Act"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Act">[docs]</a>    <span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Act`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.add"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.add`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">other</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">other</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.add_"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.add_">[docs]</a>    <span class="k">def</span> <span class="nf">add_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.add_`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">other</span><span class="p">)</span></div>
@@ -1253,13 +1253,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.mul`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.matmul`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">):</span>
@@ -1268,67 +1268,67 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LieTensor.Retr"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Retr">[docs]</a>    <span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Retr`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Retr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Adj"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Adj">[docs]</a>    <span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Adj`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.AdjT"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.AdjT">[docs]</a>    <span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.AdjT`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Jinvp"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Jinvp">[docs]</a>    <span class="k">def</span> <span class="nf">Jinvp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Jinvp`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Jinvp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.Jr"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.Jr">[docs]</a>    <span class="k">def</span> <span class="nf">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.Jr`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">Jr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.tensor"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.tensor">[docs]</a>    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.tensor`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.matrix"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.matrix">[docs]</a>    <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.matrix`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.translation"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.translation">[docs]</a>    <span class="k">def</span> <span class="nf">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.translation`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.rotation"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.rotation">[docs]</a>    <span class="k">def</span> <span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.rotation`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.scale"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.scale`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.euler"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.euler">[docs]</a>    <span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        See :meth:`pypose.euler`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
@@ -1342,18 +1342,21 @@
         <span class="n">t3</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">t4</span> <span class="o">=</span> <span class="p">(</span><span class="n">ww</span> <span class="o">+</span> <span class="n">xx</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">yy</span> <span class="o">+</span> <span class="n">zz</span><span class="p">)</span>
 
-        <span class="n">roll</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span>
-        <span class="n">pitch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">t2</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="c1"># sigularity when pitch angle ~ +/-pi/2</span>
-        <span class="n">flag</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">&lt;</span> <span class="n">t2</span> <span class="o">&lt;</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">eps</span>
+        <span class="n">roll1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span>
+        <span class="n">roll2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">eps</span>
         <span class="n">yaw1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">t3</span><span class="p">,</span> <span class="n">t4</span><span class="p">)</span>
         <span class="n">yaw2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        
+        <span class="n">roll</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">roll1</span><span class="p">,</span> <span class="n">roll2</span><span class="p">)</span>
+        <span class="n">pitch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">t2</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">yaw</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">yaw1</span><span class="p">,</span> <span class="n">yaw2</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">roll</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">yaw</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.identity_"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.identity_">[docs]</a>    <span class="k">def</span> <span class="nf">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Inplace set the LieTensor to identity.</span>
 
 <span class="sd">        Return:</span>
@@ -1377,44 +1380,44 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">identity_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cumops"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cumops">[docs]</a>    <span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See :func:`pypose.cumops`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cummul"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cummul">[docs]</a>    <span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See :func:`pypose.cummul`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cummul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cumprod"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cumprod">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See :func:`pypose.cumprod`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cumops_"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cumops_">[docs]</a>    <span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inplace version of :func:`pypose.cumops`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cumops_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cummul_"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cummul_">[docs]</a>    <span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inplace version of :func:`pypose.cummul`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cummul_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LieTensor.cumprod_"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.cumprod_">[docs]</a>    <span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inplace version of :func:`pypose.cumprod`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">cumprod_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../../../generated/pypose.Parameter/#pypose.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A kind of LieTensor that is to be considered a module parameter.</span>
 
 <span class="sd">    Parameters are of :meth:`LieTensor` and :meth:`torch.nn.Parameter`,</span>
