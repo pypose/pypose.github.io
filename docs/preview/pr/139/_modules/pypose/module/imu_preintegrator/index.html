@@ -243,7 +243,7 @@
 
 
 <div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator">[docs]</a><span class="k">class</span> <span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
 <span class="sd">    Args:</span>
@@ -359,7 +359,7 @@
         <span class="k">return</span> <span class="n">obj</span>
 
 <div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propagate IMU states from duration (:math:`\delta t`), gyroscope (angular rate</span>
 <span class="sd">        :math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame, as well as</span>
 <span class="sd">        their measurement covariance for gyroscope :math:`C_{g}` and acceleration</span>
@@ -502,7 +502,7 @@
         <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">init_state</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">,</span> <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vel</span><span class="p">}</span>
 
-        <span class="n">inte_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">,</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">])</span>
+        <span class="n">inte_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">rot</span><span class="p">,</span> <span class="n">init_rot</span> <span class="o">=</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">])</span>
         <span class="n">predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">inte_state</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_cov</span><span class="p">:</span>
@@ -544,9 +544,8 @@
 
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">cov</span><span class="p">}</span></div>
 
-<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Integrate the IMU sensor signals gyroscope (angular rate</span>
 <span class="sd">        :math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame to</span>
 <span class="sd">        calculate the increments on the rotation (:math:`\Delta r`), velocity (:math:`\Delta v`)</span>
@@ -577,7 +576,7 @@
 <span class="sd">              frames (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
 
 <span class="sd">            - init_rot: The initial orientation of the integration, which helps to </span>
-<span class="sd">              compensate for the gravity. It contains the shape :math:`(B, H_{in})`. </span>
+<span class="sd">              compensate for the gravity. It contains the shape :math:`(B, H_{in})`. d</span>
 
 <span class="sd">            - rot: The ground truth orientation of the integration. If this parameter is</span>
 <span class="sd">              given, the integrator will use the ground truth orientation to compensate the</span>
@@ -586,7 +585,7 @@
 <span class="sd">        Return:</span>
 <span class="sd">            ``dict``: integrated state including ``a``: acceleration in the body frame</span>
 <span class="sd">            without gravity ``Dp``: position increments, ``Dr``: rotation increments,</span>
-<span class="sd">            ``Dv``: velocity increments, ``w``: rotation velocity and ``t``: time increments,</span>
+<span class="sd">            ``Dv``: velocity increments, ``w``: rotation velocity and ``Dt``: time increments,</span>
 <span class="sd">            each of which has a shape :math:`(B, F, H_{out})`, where :math:`H_{out}` is the</span>
 <span class="sd">            signal dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -615,11 +614,11 @@
         <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">incre_t</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;Dp&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dv&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dr&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
-                <span class="s1">&#39;t&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span></div>
+                <span class="s1">&#39;Dt&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span></div>
 
 <div class="viewcode-block" id="IMUPreintegrator.predict"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.predict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propogate the next IMU state from the initial IMU state (:obj:`init_state`) with </span>
 <span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and</span>
 <span class="sd">        :math:`\Delta{r}`).</span>
@@ -645,7 +644,7 @@
 <span class="sd">              shape :math:`(B, H_{in})`.</span>
 
 <span class="sd">            - integrate: The preintegrated IMU measurements. It contains :obj:`Dp`, :obj:`Dv`,</span>
-<span class="sd">              :obj:`Dr`, and :obj:`t`, with the shape :math:`(B, F, H_{out})`. It follows the</span>
+<span class="sd">              :obj:`Dr`, and :obj:`Dt`, with the shape :math:`(B, F, H_{out})`. It follows the</span>
 <span class="sd">              output of the function :obj:`integrate`.</span>
 
 <span class="sd">        Return:</span>
@@ -656,7 +655,7 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">],</span>
             <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dv&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dt&#39;</span><span class="p">],</span>
         <span class="p">}</span></div>
 
     <span class="nd">@classmethod</span>
