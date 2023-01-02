@@ -247,16 +247,18 @@
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pos (torch.Tensor, optional): initial position. Default: :obj:`torch.zeros(3)`.</span>
-<span class="sd">        rot (pypose.SO3, optional): initial rotation. Default: :meth:`pypose.identity_SO3`.</span>
-<span class="sd">        vel (torch.Tensor, optional): initial position. Default: ``torch.zeros(3)``.</span>
-<span class="sd">        gravity (float, optional): the gravity acceleration. Default: ``9.81007``.</span>
-<span class="sd">        gyro_cov: covariance of the gyroscope. Use a three-element tensor, if the covariance</span>
-<span class="sd">            on the three axes are different.  Default: ``(3.2e-3)**2``.</span>
-<span class="sd">        acc_cov: covariance of the accelerator. Use a three-element tensor, if the covariance</span>
-<span class="sd">            on the three axes are different. Default: ``(8e-2)**2``.</span>
-<span class="sd">        prop_cov (Bool, optional): flag to propagate the covariance matrix. Default: ``True``.</span>
-<span class="sd">        reset (Bool, optional): flag to reset the initial states after the :obj:`forward`</span>
+<span class="sd">        pos (``torch.Tensor``, optional): initial position. Default: :obj:`torch.zeros(3)`.</span>
+<span class="sd">        rot (``pypose.SO3``, optional): initial rotation. Default: :meth:`pypose.identity_SO3`.</span>
+<span class="sd">        vel (``torch.Tensor``, optional): initial position. Default: ``torch.zeros(3)``.</span>
+<span class="sd">        gravity (``float``, optional): the gravity acceleration. Default: ``9.81007``.</span>
+<span class="sd">        gyro_cov (``torch.Tensor`` or ``float``, optional): covariance of the gyroscope.</span>
+<span class="sd">            Use a three-element tensor, if the covariance on the three axes are different.</span>
+<span class="sd">            Default: ``(3.2e-3)**2``.</span>
+<span class="sd">        acc_cov (``torch.Tensor``  or ``float``, optional): covariance of the accelerator.</span>
+<span class="sd">            Use a three-element tensor, if the covariance on the three axes are different.</span>
+<span class="sd">            Default: ``(8e-2)**2``.</span>
+<span class="sd">        prop_cov (``bool``, optional): flag to propagate the covariance matrix. Default: ``True``.</span>
+<span class="sd">        reset (``bool``, optional): flag to reset the initial states after the :obj:`forward`</span>
 <span class="sd">            function is called. If ``False``, the integration starts from the last integration.</span>
 <span class="sd">            This flag is ignored if :obj:`init_state` is not ``None``. Default: ``False``.</span>
 
@@ -367,16 +369,16 @@
 <span class="sd">        better precision.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dt (torch.Tensor): time interval from last update.</span>
-<span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
-<span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">            dt (``torch.Tensor``): time interval from last update.</span>
+<span class="sd">            gyro (``torch.Tensor``): angular rate (:math:`\omega`) in IMU body frame.</span>
+<span class="sd">            acc (``torch.Tensor``): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
 <span class="sd">                (raw sensor input with gravity).</span>
 <span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
-<span class="sd">            gyro_cov (torch.Tensor, optional): covariance matrix of angular rate.</span>
+<span class="sd">            gyro_cov (``torch.Tensor``, optional): covariance matrix of angular rate.</span>
 <span class="sd">                If not given, the default state in constructor will be used.</span>
-<span class="sd">            acc_cov (torch.Tensor, optional): covariance matrix of linear acceleration.</span>
+<span class="sd">            acc_cov (``torch.Tensor``, optional): covariance matrix of linear acceleration.</span>
 <span class="sd">                If not given, the default state in constructor will be used.</span>
-<span class="sd">            init_state (Dict, optional): the initial state of the integration. The dictionary</span>
+<span class="sd">            init_state (``dict``, optional): the initial state of the integration. The dictionary</span>
 <span class="sd">                should be in form of :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
 <span class="sd">                torch.Tensor}`. If not given, the initial state in constructor will be used.</span>
 
@@ -561,9 +563,9 @@
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dt (torch.Tensor): time interval from last update.</span>
+<span class="sd">            dt (``torch.Tensor``): time interval from last update.</span>
 <span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
-<span class="sd">            acc (torch.Tensor): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">            acc (``torch.Tensor``): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
 <span class="sd">                (raw sensor input with gravity).</span>
 <span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
 <span class="sd">            init_rot (:obj:`pypose.SO3`, optional): the initial orientation of the IMU state.</span>
@@ -583,7 +585,7 @@
 <span class="sd">              gravity.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            ``dict``: integrated state including ``a``: acceleration in the body frame</span>
+<span class="sd">            ``dict``: integrated states including ``a``: acceleration in the body frame</span>
 <span class="sd">            without gravity ``Dp``: position increments, ``Dr``: rotation increments,</span>
 <span class="sd">            ``Dv``: velocity increments, ``w``: rotation velocity and ``Dt``: time increments,</span>
 <span class="sd">            each of which has a shape :math:`(B, F, H_{out})`, where :math:`H_{out}` is the</span>
@@ -631,10 +633,10 @@
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            init_state (Dict): the initial state of the integration. The dictionary</span>
+<span class="sd">            init_state (``dict``): the initial state of the integration. The dictionary</span>
 <span class="sd">                should be in form of :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
 <span class="sd">                torch.Tensor}`.</span>
-<span class="sd">            integrate (Dict): the preintegrated IMU measurements. The dictionary</span>
+<span class="sd">            integrate (``dict``): the preintegrated IMU measurements. The dictionary</span>
 <span class="sd">                should be in form of :obj:`{&#39;Dp&#39;: torch.Tensor, &#39;Dr&#39;: pypose.SO3, &#39;Dv&#39;:</span>
 <span class="sd">                torch.Tensor, &#39;Dt&#39;: torch.Tensor}`.</span>
 
@@ -648,7 +650,7 @@
 <span class="sd">              output of the function :obj:`integrate`.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            ``dict``: integrated state including ``pos``: position, ``rot``: rotation, and</span>
+<span class="sd">            ``dict``: integrated states including ``pos``: position, ``rot``: rotation, and</span>
 <span class="sd">            ``vel``: velocity, each of which has a shape :math:`(B, F, H_{out})`, where</span>
 <span class="sd">            :math:`H_{out}` is the signal dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
