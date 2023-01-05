@@ -1,14 +1,15 @@
 # Installing on Linux
 {:.no_toc}
 
-PyTorch can be installed and used on various Linux distributions. Depending on your system and compute requirements, your experience with PyTorch on Linux may vary in terms of processing time. It is recommended, but not required, that your Linux system has an NVIDIA GPU in order to harness the full power of PyTorch's [CUDA](https://developer.nvidia.com/cuda-zone) [support](https://pytorch.org/tutorials/beginner/blitz/tensor_tutorial.html?highlight=cuda#cuda-tensors)..
+PyPose can be installed and used on various Linux distributions. Depending on your system and compute requirements, your experience with PyPose on Linux may vary in terms of processing time. It is recommended, but not required, that your Linux system has an NVIDIA GPU in order to harness the full power of PyPose's [CUDA](https://developer.nvidia.com/cuda-zone) support.
+<!-- [support](https://PyPose.org/tutorials/beginner/blitz/tensor_tutorial.html?highlight=cuda#cuda-tensors). -->
 
 ## Prerequisites
-{: #linux-prerequisites}
+<!-- {: #linux-prerequisites}
 
 ### Supported Linux Distributions
 
-PyTorch is supported on Linux distributions that use [glibc](https://www.gnu.org/software/libc/) >= v2.17, which include the following:
+PyPose is supported on Linux distributions that use [glibc](https://www.gnu.org/software/libc/) >= v2.17, which include the following:
 
 * [Arch Linux](https://www.archlinux.org/download/), minimum version 2012-07-15
 * [CentOS](https://www.centos.org/download/), minimum version 7.3-1611
@@ -20,7 +21,7 @@ PyTorch is supported on Linux distributions that use [glibc](https://www.gnu.org
 * [Slackware](http://www.slackware.com/getslack/), minimum version 14.2
 * [Ubuntu](https://www.ubuntu.com/download/desktop), minimum version 13.04
 
-> The install instructions here will generally apply to all supported Linux distributions. An example difference is that your distribution may support `yum` instead of `apt`. The specific examples shown were run on an Ubuntu 18.04 machine.
+> The install instructions here will generally apply to all supported Linux distributions. An example difference is that your distribution may support `yum` instead of `apt`. The specific examples shown were run on an Ubuntu 18.04 machine. -->
 
 ### Python
 {: #linux-python}
@@ -42,12 +43,14 @@ sudo apt install python
 
 > It is recommended that you use Python 3.6, 3.7 or 3.8, which can be installed via any of the mechanisms above .
 
-> If you use [Anaconda](#anaconda) to install PyTorch, it will install a sandboxed version of Python that will be used for running PyTorch applications.
+<!-- > If you use [Anaconda](#anaconda) to install PyPose, it will install a sandboxed version of Python that will be used for running PyPose applications. -->
 
 ### Package Manager
 {: #linux-package-manager}
 
-To install the PyTorch binaries, you will need to use one of two supported package managers: [Anaconda](https://www.anaconda.com/download/#linux) or [pip](https://pypi.org/project/pip/). Anaconda is the recommended package manager as it will provide you all of the PyTorch dependencies in one, sandboxed install, including Python.
+To install the PyPose binaries, you will need to use one of two supported package managers: [Anaconda](https://www.anaconda.com/download/#linux) or [pip](https://pypi.org/project/pip/). 
+
+<!-- Anaconda is the recommended package manager as it will provide you all of the PyPose dependencies in one, sandboxed install, including Python.
 
 #### Anaconda
 
@@ -60,7 +63,7 @@ sh Miniconda3-latest-Linux-x86_64.sh
 # and follow the prompts. The defaults are generally good.`
 ```
 
-> You may have to open a new terminal or re-source your `~/.bashrc `to get access to the `conda` command.
+> You may have to open a new terminal or re-source your `~/.bashrc `to get access to the `conda` command. -->
 
 #### pip
 
@@ -77,18 +80,18 @@ sudo apt install python3-pip
 ## Installation
 {: #linux-installation}
 
-### Anaconda
+<!-- ### Anaconda
 {: #linux-anaconda}
 
 #### No CUDA
 
-To install PyTorch via Anaconda, and do not have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system or do not require CUDA, in the above selector, choose OS: Linux, Package: Conda and CUDA: None.
+To install PyPose via Anaconda, and do not have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system or do not require CUDA, in the above selector, choose OS: Linux, Package: Conda and CUDA: None.
 Then, run the command that is presented to you.
 
 #### With CUDA
 
-To install PyTorch via Anaconda, and you do have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system, in the above selector, choose OS: Linux, Package: Conda and the CUDA version suited to your machine. Often, the latest CUDA version is better.
-Then, run the command that is presented to you.
+To install PyPose via Anaconda, and you do have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system, in the above selector, choose OS: Linux, Package: Conda and the CUDA version suited to your machine. Often, the latest CUDA version is better.
+Then, run the command that is presented to you. -->
 
 
 ### pip
@@ -96,37 +99,31 @@ Then, run the command that is presented to you.
 
 #### No CUDA
 
-To install PyTorch via pip, and do not have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system or do not require CUDA, in the above selector, choose OS: Linux, Package: Pip and CUDA: None.
+To install PyPose via pip, and do not have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system or do not require CUDA, in the above selector, choose OS: Linux, Package: Pip and CUDA: None.
 Then, run the command that is presented to you.
 
 #### With CUDA
 
-To install PyTorch via pip, and do have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system, in the above selector, choose OS: Linux, Package: Pip and the CUDA version suited to your machine. Often, the latest CUDA version is better.
+To install PyPose via pip, and do have a [CUDA-capable](https://developer.nvidia.com/cuda-zone) system, in the above selector, choose OS: Linux, Package: Pip and the CUDA version suited to your machine. Often, the latest CUDA version is better.
 Then, run the command that is presented to you.
 
 ## Verification
 {: #linux-verification}
 
-To ensure that PyTorch was installed correctly, we can verify the installation by running sample PyTorch code. Here we will construct a randomly initialized tensor.
+To ensure that PyPose was installed correctly, we can verify the installation by running sample PyPose code. Here we will construct a randomly initialized tensor.
 
 
 ```python
-import torch
-x = torch.rand(5, 3)
-print(x)
+>>> import torch, pypose as pp
+
+>>> # A random so(3) LieTensor
+>>> r = pp.randn_so3(2, requires_grad=True)
+    so3Type LieTensor:
+    tensor([[ 0.1606,  0.0232, -1.5516],
+            [-0.0807, -0.7184, -0.1102]], requires_grad=True)
 ```
 
-The output should be something similar to:
-
-```
-tensor([[0.3380, 0.3845, 0.3217],
-        [0.8337, 0.9050, 0.2650],
-        [0.2979, 0.7141, 0.9069],
-        [0.1449, 0.1132, 0.1375],
-        [0.4675, 0.3947, 0.1426]])
-```
-
-Additionally, to check if your GPU driver and CUDA is enabled and accessible by PyTorch, run the following commands to return whether or not the CUDA driver is enabled:
+Additionally, to check if your GPU driver and CUDA is enabled and accessible by PyPose, run the following commands to return whether or not the CUDA driver is enabled:
 
 ```python
 import torch
@@ -136,13 +133,13 @@ torch.cuda.is_available()
 ## Building from source
 {: #linux-from-source}
 
-For the majority of PyTorch users, installing from a pre-built binary via a package manager will provide the best experience. However, there are times when you may want to install the bleeding edge PyTorch code, whether for testing or actual development on the PyTorch core. To install the latest PyTorch code, you will need to [build PyTorch from source](https://github.com/pytorch/pytorch#from-source).
+For the majority of PyPose users, installing from a pre-built binary via a package manager will provide the best experience. However, there are times when you may want to install the bleeding edge PyPose code, whether for testing or actual development on the PyPose core. To install the latest PyPose code, you will need to [build PyPose from source](https://github.com/pypose/pypose#from-source).
 
-### Prerequisites
+<!-- ### Prerequisites
 {: #linux-prerequisites-2}
 
 1. Install [Anaconda](#anaconda)
 2. Install [CUDA](https://developer.nvidia.com/cuda-downloads), if your machine has a [CUDA-enabled GPU](https://developer.nvidia.com/cuda-gpus).
-3. Follow the steps described here: [https://github.com/pytorch/pytorch#from-source](https://github.com/pytorch/pytorch#from-source)
+3. Follow the steps described here: [https://github.com/PyPose/PyPose#from-source](https://github.com/PyPose/PyPose#from-source)
 
-You can verify the installation as described [above](#linux-verification).
+You can verify the installation as described [above](#linux-verification). -->

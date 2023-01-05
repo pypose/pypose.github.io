@@ -5,7 +5,7 @@ permalink: /get-started/mobile/
 background-class: get-started-background
 body-class: get-started
 order: 5
-published: true
+published: false
 ---
 
 ## Get Started with PyTorch Mobile
