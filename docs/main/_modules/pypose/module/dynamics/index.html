@@ -537,15 +537,15 @@
 <span class="sd">        B (:obj:`Tensor`): The input matrix of LTI system.</span>
 <span class="sd">        C (:obj:`Tensor`): The output matrix of LTI system.</span>
 <span class="sd">        D (:obj:`Tensor`): The observation matrix of LTI system,</span>
-<span class="sd">        c1 (:obj:`Tensor`): The constant input of LTI system,</span>
-<span class="sd">        c2 (:obj:`Tensor`): The constant output of LTI system.</span>
+<span class="sd">        c1 (:obj:`Tensor`, optional): The constant input of LTI system. Default: ``None``</span>
+<span class="sd">        c2 (:obj:`Tensor`, optional): The constant output of LTI system. Default: ``None``</span>
 
 <span class="sd">    A linear time-invariant lumped system can be described by state-space equation of the form:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">            \mathbf{z} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1 \\</span>
-<span class="sd">            \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u} + \mathbf{c}_2 \\</span>
+<span class="sd">            \mathbf{x}_{k+1} = \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1 \\</span>
+<span class="sd">            \mathbf{y}_k     = \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2 \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{x}` and :math:`\mathbf{u}` are state and input of the current</span>
@@ -573,7 +573,7 @@
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; state = torch.randn(Bd, Sd, device=device)</span>
 <span class="sd">        &gt;&gt;&gt; input = torch.randn(Bd, Id, device=device)</span>
-<span class="sd">        &gt;&gt;&gt; lti(state, input)</span>
+<span class="sd">        &gt;&gt;&gt; state, observation = lti(state, input)</span>
 <span class="sd">        tensor([[[-8.5639,  0.0523, -0.2576]],</span>
 <span class="sd">                [[ 4.1013, -1.5452, -0.0233]]]), </span>
 <span class="sd">        tensor([[[-3.5780, -2.2970, -2.9314]], </span>
@@ -601,6 +601,13 @@
 <div class="viewcode-block" id="LTI.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform one step advance for the LTI system.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``tuple`` of Tensor: The state and observation of the system in next time step.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div>
 
@@ -609,84 +616,34 @@
 <span class="sd">        Perform one step of LTI state transition.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{z} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1</span>
+<span class="sd">            \mathbf{x}_{k+1} = \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``Tensor``: The state the system in next time step.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span></div>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c1</span></div>
 
 <div class="viewcode-block" id="LTI.observation"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI.observation">[docs]</a>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Return the observation of LTI system at current time step.</span>
+<span class="sd">        Return the observation of LTI system.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u} + \mathbf{c}_2</span>
+<span class="sd">            \mathbf{y}_k = \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``Tensor``: The observation of the system in next time step.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        System state matrix :obj:`A`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_A</span>
-
-    <span class="nd">@A</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_A</span> <span class="o">=</span> <span class="n">A</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        System input matrix :obj:`B`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_B</span>
-
-    <span class="nd">@B</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">B</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_B</span> <span class="o">=</span> <span class="n">B</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        System output matrix :obj:`C`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_C</span>
-
-    <span class="nd">@C</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_C</span> <span class="o">=</span> <span class="n">C</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        System observation matrix :obj:`D`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_D</span>
-
-    <span class="nd">@D</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_D</span> <span class="o">=</span> <span class="n">D</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Constant input :obj:`c1`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c1</span>
-
-    <span class="nd">@c1</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_c1</span> <span class="o">=</span> <span class="n">c1</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Constant output :obj:`c2`</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c2</span>
-
-    <span class="nd">@c2</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_c2</span> <span class="o">=</span> <span class="n">c2</span></div>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c2</span></div></div>
 </pre></div>
 
              </article>
