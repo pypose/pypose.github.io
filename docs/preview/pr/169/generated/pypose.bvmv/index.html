@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.bmv &mdash; PyPose main documentation</title>
+  <title>pypose.bvmv &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.bvmv" href="../pypose.bvmv/" />
-    <link rel="prev" title="pypose.mul" href="../pypose.mul/" />
+    <link rel="next" title="pypose.pm" href="../pypose.pm/" />
+    <link rel="prev" title="pypose.bmv" href="../pypose.bmv/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.bmv.html">
+  <a style="color:#F05732" href="generated/pypose.bvmv.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,13 +211,13 @@
         
           <li><a href="../../basics/">Basics</a> &gt;</li>
         
-      <li>pypose.bmv</li>
+      <li>pypose.bvmv</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.bmv.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.bvmv.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,40 +243,56 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-bmv">
-<h1>pypose.bmv<a class="headerlink" href="#pypose-bmv" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-bvmv">
+<h1>pypose.bvmv<a class="headerlink" href="#pypose-bvmv" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.bmv">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">bmv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/basics/ops/#bmv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.bmv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs batched matrix-vector product.</p>
+<dt class="sig sig-object py" id="pypose.bvmv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">bvmv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lvec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/basics/ops/#bvmv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.bvmv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs batched vector-matrix-vector product.</p>
+<div class="math">
+\[\text{out}_i = \mathbf{v}_i^{l\text{T}} \times \mathbf{M}_i \times \mathbf{v}_i^r
+
+\]</div>
+<p>where <span class="math">\(\text{out}_i\)</span> is a scalar and <span class="math">\(\mathbf{v}_i^l, \mathbf{M}_i,
+\mathbf{v}_i^r\)</span> are the i-th batched tensors with shape (n), (n, m), and (m),
+respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>lvec</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – left vectors to be multiplied.</p></li>
 <li><p><strong>mat</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – matrices to be multiplied.</p></li>
-<li><p><strong>vec</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – vectors to be multiplied.</p></li>
+<li><p><strong>rvec</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – right vectors to be multiplied.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the output tensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>out (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">mat</span></code> has to be a (<span class="math">\(\cdots\times n \times m\)</span>) tensor,
-the <code class="docutils literal notranslate"><span class="pre">vec</span></code> has to be a (<span class="math">\(\cdots\times m\)</span>) tensor,
-and <code class="docutils literal notranslate"><span class="pre">out</span></code> will be a (<span class="math">\(\cdots\times n\)</span>) tensor.
-Different from <code class="docutils literal notranslate"><span class="pre">torch.mv</span></code>, which is not broadcast, this function
-is broadcast and supports batched product.</p>
+<p>the <code class="docutils literal notranslate"><span class="pre">lvec</span></code> has to be a (<span class="math">\(\cdots\times n\)</span>) tensor,
+The <code class="docutils literal notranslate"><span class="pre">mat</span></code> has to be a (<span class="math">\(\cdots\times n \times m\)</span>) tensor,
+the <code class="docutils literal notranslate"><span class="pre">rvec</span></code> has to be a (<span class="math">\(\cdots\times m\)</span>) tensor,
+and <code class="docutils literal notranslate"><span class="pre">out</span></code> will be a (<span class="math">\(\cdots\)</span>) or at least a 1D tensor.</p>
 </div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vec</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">torch.Size([2, 2, 3])</span>
+<span class="go">torch.Size([1])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">torch.Size([2, 2])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -291,10 +307,10 @@ is broadcast and supports batched product.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.bvmv/" class="btn btn-neutral float-right" title="pypose.bvmv" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.pm/" class="btn btn-neutral float-right" title="pypose.pm" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.mul/" class="btn btn-neutral" title="pypose.mul" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.bmv/" class="btn btn-neutral" title="pypose.bmv" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -326,8 +342,8 @@ is broadcast and supports batched product.</p>
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">pypose.bmv</a><ul>
-<li><a class="reference internal" href="#pypose.bmv"><code class="docutils literal notranslate"><span class="pre">bmv</span></code></a></li>
+<li><a class="reference internal" href="#">pypose.bvmv</a><ul>
+<li><a class="reference internal" href="#pypose.bvmv"><code class="docutils literal notranslate"><span class="pre">bvmv</span></code></a></li>
 </ul>
 </li>
 </ul>
