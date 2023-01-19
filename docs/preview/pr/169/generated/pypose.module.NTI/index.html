@@ -248,7 +248,88 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.NTI">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">NTI</span></span><a class="reference internal" href="../../_modules/pypose/module/dynamics/#NTI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.NTI" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py property">
+<dd><p>The non-linear discrete-time invariant (NTI) system dynamics model.</p>
+<p>The state transision function <span class="math">\(\mathbf{f}\)</span> and observation function
+<span class="math">\(\mathbf{g}\)</span> are given by:</p>
+<div class="math">
+\[\begin{aligned}
+    \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k), \\
+    \mathbf{y}_{k}   &= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k),
+\end{aligned}
+
+\]</div>
+<p>where <span class="math">\(k\)</span>, <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span>, <span class="math">\(\mathbf{y}\)</span> are the time
+step, state(s), input(s), and observation(s), respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To use the class, users need to inherit this class and define methods
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">state_transition</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code>, which are automatically called by
+internal <a class="reference internal" href="#pypose.module.NTI.forward" title="pypose.module.NTI.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> method.
+The system timestamp (starting from <strong>0</strong>) is also self-added automatically once
+the <a class="reference internal" href="#pypose.module.NTI.forward" title="pypose.module.NTI.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a> method is called.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class provides automatic <strong>linearlization</strong> at a reference point
+<span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*)\)</span> along a trajectory.
+One can directly call those linearized system matrices as properties including
+<a class="reference internal" href="#pypose.module.NTI.A" title="pypose.module.NTI.A"><code class="xref py py-obj docutils literal notranslate"><span class="pre">A</span></code></a>, <a class="reference internal" href="#pypose.module.NTI.B" title="pypose.module.NTI.B"><code class="xref py py-obj docutils literal notranslate"><span class="pre">B</span></code></a>, <a class="reference internal" href="#pypose.module.NTI.C" title="pypose.module.NTI.C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C</span></code></a>, <a class="reference internal" href="#pypose.module.NTI.D" title="pypose.module.NTI.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">D</span></code></a>, <a class="reference internal" href="#pypose.module.NTI.c1" title="pypose.module.NTI.c1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c1</span></code></a>, and <a class="reference internal" href="#pypose.module.NTI.c2" title="pypose.module.NTI.c2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c2</span></code></a>, after calling
+a method <a class="reference internal" href="#pypose.module.NTI.set_refpoint" title="pypose.module.NTI.set_refpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_refpoint</span></code></a>.</p>
+<p>Consider a point
+<span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*+\delta\mathbf{u})\)</span> near
+<span class="math">\(\chi^*\)</span>. We have</p>
+<div class="math">
+\[\begin{aligned}
+\mathbf{f}(\mathbf{x}, \mathbf{u}) &\approx \mathbf{f}(\mathbf{x}^*,
+    \mathbf{u}^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+    \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}
+    {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\
+&= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*) + \mathbf{A}(\mathbf{x}
+    - \mathbf{x}^*) + \mathbf{B}(\mathbf{u}-\mathbf{u}^*) \\
+&= \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1
+\end{aligned}
+
+\]</div>
+<p>and</p>
+<div class="math">
+\[\mathbf{g}(\mathbf{x}, \mathbf{u}) \approx \mathbf{C}\mathbf{x} \
+            + \mathbf{D}\mathbf{u} + \mathbf{c}_2
+
+\]</div>
+<p>The notion of linearization is slightly different from that in dynamical system
+theory. First, the linearization can be done for arbitrary point(s), not limit to
+the equilibrium point(s), and therefore the extra constant terms <span class="math">\(\mathbf{c}_1\)</span>
+and <span class="math">\(\mathbf{c}_2\)</span> are produced. Second, the linearized equations are represented
+by the full states and inputs: <span class="math">\(\mathbf{x}\)</span> and <span class="math">\(\mathbf{u}\)</span>, rather than
+the perturbation format: <span class="math">\(\delta \mathbf{x}\)</span> and <span class="math">\(\delta \mathbf{u}\)</span>
+so that the model is consistent with, e.g., the LTI model and the iterative LQR
+solver. More details go to <a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>.</p>
+</div>
+<p class="rubric">Example</p>
+<p>A simple nonlinear time-invarant system.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyNTI</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">NTI</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">MyNTI</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current</span><span class="p">,</span> <span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">,</span> <span class="n">observation</span> <span class="o">=</span> <span class="n">lti</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For generating one trajecotry given a series of inputs, advanced use of
+linearization, and more practical examples can be found at <a class="reference external" href="https://github.com/pypose/pypose/tree/main/examples/module/dynamics">examples/module/dynamics</a>.</p>
+</div>
+<dl class="py property">
 <dt class="sig sig-object py" id="pypose.module.NTI.A">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#pypose.module.NTI.A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear/linearized system state matrix.</p>
