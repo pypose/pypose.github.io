@@ -1,6 +1,6 @@
 docsearch({
-  apiKey: "e3b73ac141dff0b0fd27bdae9055bc73",
-  indexName: "pytorch",
+  apiKey: "014864aca4b426377e200f2222f239c5",
+  indexName: "prod_pypose",
   inputSelector: "#hub-search-input",
   algoliaOptions: { facetFilters: ["tags:hub"] },
   debug: false // Set debug to true if you want to inspect the dropdown
