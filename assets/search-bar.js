@@ -1,13 +1,13 @@
 docsearch({
-  apiKey: "e3b73ac141dff0b0fd27bdae9055bc73",
-  indexName: "pytorch",
+  apiKey: "014864aca4b426377e200f2222f239c5",
+  indexName: "prod_pypose",
   inputSelector: "#search-input",
   debug: false // Set debug to true if you want to inspect the dropdown
 });
 
 docsearch({
-  apiKey: 'e3b73ac141dff0b0fd27bdae9055bc73',
-  indexName: 'pytorch',
+  apiKey: '014864aca4b426377e200f2222f239c5',
+  indexName: 'prod_pypose',
   inputSelector: '#mobile-search-input',
   algoliaOptions: {
     hitsPerPage: 5
