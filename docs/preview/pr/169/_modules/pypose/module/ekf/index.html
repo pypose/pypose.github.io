@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.module.kalman &mdash; PyPose main documentation</title>
+  <title>pypose.module.ekf &mdash; PyPose main documentation</title>
   
 
   
@@ -146,7 +146,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="_modules/pypose/module/kalman.html">
+  <a style="color:#F05732" href="_modules/pypose/module/ekf.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -208,7 +208,7 @@
         
           <li><a href="../../../">Module code</a> &gt;</li>
         
-      <li>pypose.module.kalman</li>
+      <li>pypose.module.ekf</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
@@ -236,7 +236,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <h1>Source code for pypose.module.kalman</h1><div class="highlight"><pre>
+  <h1>Source code for pypose.module.ekf</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">bmv</span>
@@ -368,23 +368,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_uncertainty</span><span class="p">(</span><span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="EKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs one step estimation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step</span>
-<span class="sd">            y (:obj:`Tensor`): system observation at current step (measurement)</span>
-<span class="sd">            u (:obj:`Tensor`): system input at current step</span>
-<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step</span>
-<span class="sd">            Q (:obj:`Tensor`, optional): covariance of system transition model</span>
-<span class="sd">            R (:obj:`Tensor`, optional): covariance of system observation model</span>
+<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step.</span>
+<span class="sd">            y (:obj:`Tensor`): system observation at current step (measurement).</span>
+<span class="sd">            u (:obj:`Tensor`): system input at current step.</span>
+<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step.</span>
+<span class="sd">            Q (:obj:`Tensor`, optional): covariance of system transition model. Default: ``None``</span>
+<span class="sd">            R (:obj:`Tensor`, optional): covariance of system observation model. Default: ``None``</span>
+<span class="sd">            t (:obj:`Tensor`, optional): timestep of system (only for time variant system).</span>
+<span class="sd">                Default: ``None``</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">B</span>
         <span class="n">C</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">D</span>

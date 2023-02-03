@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.module.EKF &mdash; PyPose main documentation</title>
+  <title>pypose.module.UKF &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.module.UKF" href="../pypose.module.UKF/" />
-    <link rel="prev" title="pypose.module.NTV" href="../pypose.module.NTV/" />
+    <link rel="next" title="pypose.module.LQR" href="../pypose.module.LQR/" />
+    <link rel="prev" title="pypose.module.EKF" href="../pypose.module.EKF/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.module.EKF.html">
+  <a style="color:#F05732" href="generated/pypose.module.UKF.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,13 +211,13 @@
         
           <li><a href="../../modules/">Modules</a> &gt;</li>
         
-      <li>pypose.module.EKF</li>
+      <li>pypose.module.UKF</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.module.EKF.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.module.UKF.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,12 +243,12 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-module-ekf">
-<h1>pypose.module.EKF<a class="headerlink" href="#pypose-module-ekf" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-module-ukf">
+<h1>pypose.module.UKF<a class="headerlink" href="#pypose-module-ukf" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.module.EKF">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EKF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ekf/#EKF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs Batched Extended Kalman Filter (EKF).</p>
+<dt class="sig sig-object py" id="pypose.module.UKF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">UKF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msqrt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ukf/#UKF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.UKF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs Batched Unscented Kalman Filter (UKF).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -271,62 +271,119 @@ Ignored if provided during each iteration. Default: <code class="docutils litera
 \end{aligned}
 
 \]</div>
-<p>It will be linearized automatically:</p>
-<div class="math">
-\[\begin{align*}
-    \mathbf{z}_{k+1} = \mathbf{A}_{k}\mathbf{x}_{k} + \mathbf{B}_{k}\mathbf{u}_{k}
-                     + \mathbf{c}_{k}^1 + \mathbf{w}_k\\
-    \mathbf{y}_{k} = \mathbf{C}_{k}\mathbf{x}_{k} + \mathbf{D}_{k}\mathbf{u}_{k}
-                   + \mathbf{c}_{k}^2 + \mathbf{v}_k\\
-\end{align*}
-
-\]</div>
-<p>EKF can be described as the following five equations, where the subscript <span class="math">\(\cdot_{k}\)</span>
+<p>UKF can be described as the following equations, where the subscript <span class="math">\(\cdot_{k}\)</span>
 is omited for simplicity.</p>
-<ol class="arabic">
-<li><p>Priori State Estimation.</p>
-<blockquote>
-<div><div class="math">
-\[\mathbf{x}^{-} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1
-
-\]</div>
-</div></blockquote>
-</li>
-<li><p>Priori Covariance Propagation.</p>
-<blockquote>
-<div><div class="math">
-\[\mathbf{P}^{-} = \mathbf{A}\mathbf{P}\mathbf{A}^{T} + \mathbf{Q}
-
-\]</div>
-</div></blockquote>
-</li>
-<li><p>Update Kalman Gain</p>
-<blockquote>
-<div><div class="math">
-\[\mathbf{K} = \mathbf{P}\mathbf{C}^{T}
-            (\mathbf{C}\mathbf{P} \mathbf{C}^{T} + \mathbf{R})^{-1}
-
-\]</div>
-</div></blockquote>
-</li>
-<li><p>Posteriori State Estimation</p>
-<blockquote>
-<div><div class="math">
-\[\mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y} -
-            \mathbf{C}\mathbf{x}^{-} - \mathbf{D}\mathbf{u} - \mathbf{c}_2)
-
-\]</div>
-</div></blockquote>
-</li>
-<li><p>Posteriori Covariance Estimation</p>
-<blockquote>
-<div><div class="math">
-\[\mathbf{P} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}
-
-\]</div>
-</div></blockquote>
-</li>
+<ol class="arabic simple">
+<li><p>Sigma Points.</p></li>
 </ol>
+<blockquote>
+<div><div class="math">
+\[\begin{aligned}
+     & \mathbf{x}^{\left ( i \right ) } = \mathbf{x}^{+} +
+         \mathbf{\check{x}}^{\left(i \right)}, & \quad i=0,...,2n\\
+     & \mathbf{\check{x}}^{\left (i \right)} = \mathbf{0}, & \quad i=0 \\
+     & \mathbf{\check{x}}^{\left (i \right)} = \left(\sqrt{(n+\kappa)P} \right)_{i}^{T},
+      & \quad i= 1, ..., n \\
+     & \mathbf{\check{x}}^{\left(i \right)} = -\left(\sqrt{(n+\kappa)P} \right)_{i}^{T},
+          & \quad i=n+1, ..., 2n \\
+\end{aligned}
+
+\]</div>
+</div></blockquote>
+<p>where <span class="math">\(\left(\sqrt{(n+\kappa)P}\right) _{i}\)</span> is the <span class="math">\(i\)</span>-th row of
+<span class="math">\(\left(\sqrt{(n+\kappa)P}\right)\)</span> and <span class="math">\(n\)</span> is the dimension of state <span class="math">\(\mathbf{x}\)</span>.</p>
+<p>Their weighting cofficients are given as</p>
+<blockquote>
+<div><div class="math">
+\[\begin{aligned}
+    &W^{(0)} = \frac{\kappa}{n+\kappa}, & \quad i = 0\\
+    &W^{(i)} = \frac{1}{2(n+\kappa)}, & \quad i = 1,...,2n\\
+\end{aligned}
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Priori State Estimation.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{x}^{-} = \sum_{i=0}^{2n} W^{(i)} f(\mathbf{x}^{(i)}, \mathbf{u}, t)
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Priori Covariance.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P}^{-} = \sum_{i=0}^{2n} W^{(i)}
+    \left(\mathbf{x}^{(i)} - \mathbf{x}^{-} \right)
+    \left(\mathbf{x}^{(i)} - \mathbf{x}^- \right)^T + \mathbf{Q}
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>Observational Estimation.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\begin{aligned}
+    & \mathbf{y}^{(i)} = g \left( \mathbf{x}^{(i)}, \mathbf{u}, t \right),
+        & \quad i = 0, \cdots, 2n \\
+    & \bar{\mathbf{y}} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}^{(i)}
+\end{aligned}
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>Observational Covariance.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P}_{y} = \sum_{i=0}^{2n} W^{(i)}
+    \left(\mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)
+    \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T + \mathbf{R}
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li><p>Priori and Observation Covariance:</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P}_{xy} = \sum_{i=0}^{2n} W^{(i)}
+    \left( \mathbf{x}^{(i)} - \mathbf{x}^- \right)
+    \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="7">
+<li><p>Kalman Gain</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{K} = \mathbf{P}_{xy}\mathbf{P}_{y}^{-1}
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="8">
+<li><p>Posteriori State Estimation.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y}- \bar{\mathbf{y}})
+
+\]</div>
+</div></blockquote>
+<ol class="arabic simple" start="9">
+<li><p>Posteriori Covariance Estimation.</p></li>
+</ol>
+<blockquote>
+<div><div class="math">
+\[\mathbf{P} = \mathbf{P}^{-} - \mathbf{K}\mathbf{P}_{y}\mathbf{K}^T
+
+\]</div>
+</div></blockquote>
 <p>where superscript <span class="math">\(\cdot^{-}\)</span> and <span class="math">\(\cdot^{+}\)</span> denote the priori and
 posteriori estimation, respectively.</p>
 <p class="rubric">Example</p>
@@ -349,7 +406,7 @@ posteriori estimation, respectively.</p>
 <li><p>Create a model and filter</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">NTI</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ekf</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">EKF</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ukf</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">UKF</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
@@ -368,47 +425,34 @@ posteriori estimation, respectively.</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Perform EKF prediction. Note that estimation error becomes smaller with more steps.</p></li>
+<li><p>Perform UKF prediction. Note that estimation error becomes smaller with more steps.</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">w</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># transition noise</span>
 <span class="gp">... </span>    <span class="n">v</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># observation noise</span>
 <span class="gp">... </span>    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ekf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ukf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 <span class="gp">... </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Est error:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">states</span> <span class="o">-</span> <span class="n">estim</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">Est error: tensor([5.7655, 5.3436, 3.5947, 0.3359, 0.0639])</span>
+<span class="go">Est error: tensor([8.8161, 9.0322, 5.4756, 2.2453, 0.9141])</span>
 </pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Don’t introduce noise in <code class="docutils literal notranslate"><span class="pre">System</span></code> methods <code class="docutils literal notranslate"><span class="pre">state_transition</span></code> and <code class="docutils literal notranslate"><span class="pre">observation</span></code>
-for filter testing, as those methods are used for automatically linearizing the system
-by the parent class <code class="docutils literal notranslate"><span class="pre">pypose.module.System</span></code>, unless your system model explicitly
-introduces noise.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Implementation is based on Section 5.1 of this book</p>
+<p>Implementation is based on Section 14.3 of this book</p>
 <ul class="simple">
 <li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/0470045345.fmatter">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>,
 Cleveland State University, 2006</p></li>
 </ul>
 </div>
-<dl class="py property">
-<dt class="sig sig-object py" id="pypose.module.EKF.Q">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#pypose.module.EKF.Q" title="Permalink to this definition">¶</a></dt>
-<dd><p>The covariance of system transition noise.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="pypose.module.EKF.R">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#pypose.module.EKF.R" title="Permalink to this definition">¶</a></dt>
-<dd><p>The covariance of system observation noise.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.UKF.compute_cov">
+<span class="sig-name descname"><span class="pre">compute_cov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ukf/#UKF.compute_cov"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.UKF.compute_cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute covariance of two set of variables.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EKF.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ekf/#EKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.forward" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pypose.module.UKF.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ukf/#UKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.UKF.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs one step estimation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -417,10 +461,12 @@ Cleveland State University, 2006</p></li>
 <li><p><strong>y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system observation at current step (measurement).</p></li>
 <li><p><strong>u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – system input at current step.</p></li>
 <li><p><strong>P</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – state estimation covariance of previous step.</p></li>
-<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system transition model. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
-<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system observation model. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
-<li><p><strong>t</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – timestep of system (only for time variant system).
-Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system transition model.</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – covariance of system observation model.</p></li>
+<li><p><strong>t</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – timestamp for ths system to estimate. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>k</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – a parameter for weighting the sigma points.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code> is given, then <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">-</span> <span class="pre">n</span></code> is adopted (<code class="docutils literal notranslate"><span class="pre">n</span></code> is the state dimension),
+which is best for Gaussian noise model. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -433,15 +479,22 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EKF.set_uncertainty">
-<span class="sig-name descname"><span class="pre">set_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ekf/#EKF.set_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.set_uncertainty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the covariance matrices of transition noise and observation noise.</p>
+<dt class="sig sig-object py" id="pypose.module.UKF.sigma_weight_points">
+<span class="sig-name descname"><span class="pre">sigma_weight_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ukf/#UKF.sigma_weight_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.UKF.sigma_weight_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute sigma point and its weights</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – batched square covariance matrices of transition noise.</p></li>
-<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – batched square covariance matrices of observation noise.</p></li>
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – estimated system state of previous step</p></li>
+<li><p><strong>P</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – state estimation covariance of previous step</p></li>
+<li><p><strong>k</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – parameter for weighting sigma points.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sigma points and their weights</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -458,10 +511,10 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.module.UKF/" class="btn btn-neutral float-right" title="pypose.module.UKF" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.module.LQR/" class="btn btn-neutral float-right" title="pypose.module.LQR" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.module.NTV/" class="btn btn-neutral" title="pypose.module.NTV" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.module.EKF/" class="btn btn-neutral" title="pypose.module.EKF" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -493,12 +546,11 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">pypose.module.EKF</a><ul>
-<li><a class="reference internal" href="#pypose.module.EKF"><code class="docutils literal notranslate"><span class="pre">EKF</span></code></a><ul>
-<li><a class="reference internal" href="#pypose.module.EKF.Q"><code class="docutils literal notranslate"><span class="pre">EKF.Q</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EKF.R"><code class="docutils literal notranslate"><span class="pre">EKF.R</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EKF.forward"><code class="docutils literal notranslate"><span class="pre">EKF.forward()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EKF.set_uncertainty"><code class="docutils literal notranslate"><span class="pre">EKF.set_uncertainty()</span></code></a></li>
+<li><a class="reference internal" href="#">pypose.module.UKF</a><ul>
+<li><a class="reference internal" href="#pypose.module.UKF"><code class="docutils literal notranslate"><span class="pre">UKF</span></code></a><ul>
+<li><a class="reference internal" href="#pypose.module.UKF.compute_cov"><code class="docutils literal notranslate"><span class="pre">UKF.compute_cov()</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.UKF.forward"><code class="docutils literal notranslate"><span class="pre">UKF.forward()</span></code></a></li>
+<li><a class="reference internal" href="#pypose.module.UKF.sigma_weight_points"><code class="docutils literal notranslate"><span class="pre">UKF.sigma_weight_points()</span></code></a></li>
 </ul>
 </li>
 </ul>
