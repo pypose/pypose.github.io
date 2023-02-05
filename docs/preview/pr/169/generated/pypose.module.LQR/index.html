@@ -249,29 +249,29 @@
 <dt class="sig sig-object py" id="pypose.module.LQR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">LQR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Quadratic Regulator (LQR) with Dynamic Programming.</p>
+<p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
+<span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
+of the optimization problem.</p>
+<div class="math">
+\[\begin{align*}
+    \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}
+    \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
+    \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init},
+    \ \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{f}_t \\
+\end{align*}
+
+\]</div>
+<p>where <span class="math">\(\mathbf{\tau}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}\)</span>,
+<span class="math">\(\mathbf{F}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}\)</span>,
+<span class="math">\(\mathbf{f}\)</span> = <span class="math">\(\mathbf{c}_1\)</span>.</p>
+<p>From a policy learning perspective, this can be interpreted as a module with unknown parameters
+<span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
+which can be integrated into a larger end-to-end learning system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>system</strong> (<em>instance</em>) – The system to be soved by LQR.</p>
 </dd>
 </dl>
-<p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
-<span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
-of the optimization problem
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">begin</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-    \<span class="n">mathbf</span><span class="p">{</span>\<span class="n">tau</span><span class="p">}</span><span class="n">_</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="n">T</span><span class="p">}</span><span class="o">^*</span> <span class="o">=</span> \<span class="n">mathop</span><span class="p">{</span>\<span class="n">arg</span>\<span class="nb">min</span><span class="p">}</span>\<span class="n">limits_</span><span class="p">{</span>\<span class="n">tau_</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="n">T</span><span class="p">}}</span> \<span class="nb">sum</span>\<span class="n">limits_t</span>\<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="mi">2</span><span class="p">}</span>
-    \<span class="n">mathbf</span><span class="p">{</span>\<span class="n">tau</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_t</span>\<span class="n">mathbf</span><span class="p">{</span>\<span class="n">tau</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">p</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span>\<span class="n">tau</span><span class="p">}</span><span class="n">_t</span> \\
-    \<span class="n">mathrm</span><span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="p">}</span> \<span class="n">quad</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_1</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_</span><span class="p">{</span><span class="n">init</span><span class="p">},</span>
-    \ \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_</span><span class="p">{</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">F</span><span class="p">}</span><span class="n">_t</span>\<span class="n">mathbf</span><span class="p">{</span>\<span class="n">tau</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">f</span><span class="p">}</span><span class="n">_t</span> \\
-\<span class="n">end</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-</pre></div>
-</div>
-<p>where <span class="math">\(\mathbf{\tau}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}\)</span>,
-<span class="math">\(\mathbf{F}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}\)</span>,
-<span class="math">\(\mathbf{f}\)</span> = <span class="math">\(\mathbf{c}_1\)</span>.
-From a policy learning perspective, this can be interpreted as a module with unknown parameters
-<span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
-which can be integrated into a larger end-to-end learning system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Here, we consider the system sent to LQR as a linear system in each small horizon.
@@ -304,33 +304,23 @@ dynamic programming (DP), etc. Here, we implement the DP method.</p>
 <span class="go">              [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
 <span class="go">              [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
 <span class="go">              [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
+<span class="go">             [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
+<span class="go">              [-0.6356,  0.0539,  0.7264, -0.5048],</span>
+<span class="go">              [-0.2275, -0.1649,  0.3872, -0.4614],</span>
+<span class="go">              [ 0.2697, -0.3576,  0.0999, -0.4594],</span>
+<span class="go">              [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
+<span class="go">u =  tensor([[[ 1.0405,  0.1586, -0.1282],</span>
+<span class="go">              [-1.4845, -0.5745,  0.2523],</span>
+<span class="go">              [-0.6322, -0.3281, -0.3620],</span>
+<span class="go">              [-1.6768,  2.4054, -0.1047],</span>
+<span class="go">              [-1.7948,  3.5269,  9.0703]],</span>
+<span class="go">             [[-0.1795,  0.9153,  1.7066],</span>
+<span class="go">              [ 0.0814,  0.4004,  0.7114],</span>
+<span class="go">              [ 0.0435,  0.5782,  1.0127],</span>
+<span class="go">              [-0.3017, -0.2897,  0.7251],</span>
+<span class="go">              [-0.0728,  0.7290, -0.3117]]])</span>
 </pre></div>
 </div>
-<blockquote>
-<div><dl class="simple">
-<dt>[[-0.9744,  0.4976,  0.0603, -0.5258],</dt><dd><p>[-0.6356,  0.0539,  0.7264, -0.5048],
-[-0.2275, -0.1649,  0.3872, -0.4614],
-[ 0.2697, -0.3576,  0.0999, -0.4594],
-[ 0.3916, -2.0832,  0.0701, -0.5407]]])</p>
-</dd>
-</dl>
-</div></blockquote>
-<dl>
-<dt>u =  tensor([[[ 1.0405,  0.1586, -0.1282],</dt><dd><blockquote>
-<div><p>[-1.4845, -0.5745,  0.2523],
-[-0.6322, -0.3281, -0.3620],
-[-1.6768,  2.4054, -0.1047],
-[-1.7948,  3.5269,  9.0703]],</p>
-</div></blockquote>
-<dl class="simple">
-<dt>[[-0.1795,  0.9153,  1.7066],</dt><dd><p>[ 0.0814,  0.4004,  0.7114],
-[ 0.0435,  0.5782,  1.0127],
-[-0.3017, -0.2897,  0.7251],
-[-0.0728,  0.7290, -0.3117]]])</p>
-</dd>
-</dl>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
@@ -340,25 +330,25 @@ dynamic programming (DP), etc. Here, we implement the DP method.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.lqr_backward">
 <span class="sig-name descname"><span class="pre">lqr_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_backward" title="Permalink to this definition">¶</a></dt>
-<dd><p>The backward recursion of the dynamic programming to solve LQR.
-for <span class="math">\(\t\)</span> = <span class="math">\(\T\)</span> to 1:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">begin</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">C</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">F</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">V</span><span class="p">}</span><span class="n">_t</span><span class="o">+</span><span class="mi">1</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">F</span><span class="p">}</span><span class="n">_t</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">q</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">c</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">F</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">V</span><span class="p">}</span><span class="n">_t</span><span class="o">+</span><span class="mi">1</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">f</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">F</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">v</span><span class="p">}</span><span class="n">_t</span><span class="o">+</span><span class="mi">1</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> <span class="o">-</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> <span class="o">-</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">V</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">v</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span> <span class="o">+</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span><span class="o">^</span>\<span class="n">top</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">Q</span><span class="p">}</span><span class="n">_</span><span class="p">{</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span><span class="p">}</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="n">_t</span> \\
-\<span class="n">end</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-</pre></div>
-</div>
+<dd><p>The backward recursion of the dynamic programming to solve LQR.</p>
+<p>for <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
+<div class="math">
+\[\begin{align*}
+    \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
+    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1} \\
+    \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
+    \mathbf{k}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\
+    \mathbf{V}_t &= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}
+        + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t
+        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\
+    \mathbf{v}_t &= \mathbf{q}_{\mathbf{x}_t}
+        + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t
+        + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\
+\end{align*}
+
+\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -379,15 +369,15 @@ for <span class="math">\(\t\)</span> = <span class="math">\(\T\)</span> to 1:
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.lqr_forward">
 <span class="sig-name descname"><span class="pre">lqr_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>The forward recursion of the dynamic programming to solve LQR.
-for <span class="math">\(\t\)</span> = 1 to <span class="math">\(\T\)</span>:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">begin</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span> <span class="o">=</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">K</span><span class="p">}</span><span class="n">_t</span>\<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span> <span class="o">+</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="n">_t</span> \\
-    \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="o">+</span><span class="mi">1</span> <span class="o">=</span> <span class="n">f</span> \<span class="n">left</span><span class="p">(</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">x</span><span class="p">}</span><span class="n">_t</span><span class="p">,</span> \<span class="n">mathbf</span><span class="p">{</span><span class="n">u</span><span class="p">}</span><span class="n">_t</span> \<span class="n">right</span><span class="p">)</span> \\
-\<span class="n">end</span><span class="p">{</span><span class="n">aligned</span><span class="p">}</span>
-</pre></div>
-</div>
+<dd><p>The forward recursion of the dynamic programming to solve LQR.</p>
+<p>for <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
+<div class="math">
+\[\begin{align*}
+    \mathbf{u}_t &= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\
+    \mathbf{x}_{t+1} &= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\
+\end{align*}
+
+\]</div>
 <p>where <span class="math">\(f \left( \mathbf{x}_t, \mathbf{u}_t \right)\)</span> represents the system dynamics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

@@ -246,25 +246,27 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Linear Quadratic Regulator (LQR) with Dynamic Programming.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        system (instance): The system to be soved by LQR.</span>
-
 <span class="sd">    LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` = </span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}` </span>
-<span class="sd">    of the optimization problem</span>
+<span class="sd">    of the optimization problem.</span>
+
 <span class="sd">    .. math::</span>
-<span class="sd">        \begin{aligned}</span>
+<span class="sd">        \begin{align*}</span>
 <span class="sd">            \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
 <span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
 <span class="sd">            \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init}, </span>
 <span class="sd">            \ \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{f}_t \\</span>
-<span class="sd">        \end{aligned}</span>
+<span class="sd">        \end{align*}</span>
 <span class="sd">    where :math:`\mathbf{\tau}` = :math:`\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}`, </span>
 <span class="sd">    :math:`\mathbf{F}` = :math:`\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}`, </span>
 <span class="sd">    :math:`\mathbf{f}` = :math:`\mathbf{c}_1`.</span>
+
 <span class="sd">    From a policy learning perspective, this can be interpreted as a module with unknown parameters</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`, </span>
 <span class="sd">    which can be integrated into a larger end-to-end learning system.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        system (instance): The system to be soved by LQR.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Here, we consider the system sent to LQR as a linear system in each small horizon. </span>
@@ -298,19 +300,16 @@
 <span class="sd">                      [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
 <span class="sd">                      [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
 <span class="sd">                      [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
-
 <span class="sd">                     [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
 <span class="sd">                      [-0.6356,  0.0539,  0.7264, -0.5048],</span>
 <span class="sd">                      [-0.2275, -0.1649,  0.3872, -0.4614],</span>
 <span class="sd">                      [ 0.2697, -0.3576,  0.0999, -0.4594],</span>
 <span class="sd">                      [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
-<span class="sd">        </span>
 <span class="sd">        u =  tensor([[[ 1.0405,  0.1586, -0.1282],</span>
 <span class="sd">                      [-1.4845, -0.5745,  0.2523],</span>
 <span class="sd">                      [-0.6322, -0.3281, -0.3620],</span>
 <span class="sd">                      [-1.6768,  2.4054, -0.1047],</span>
 <span class="sd">                      [-1.7948,  3.5269,  9.0703]],</span>
-
 <span class="sd">                     [[-0.1795,  0.9153,  1.7066],</span>
 <span class="sd">                      [ 0.0814,  0.4004,  0.7114],</span>
 <span class="sd">                      [ 0.0435,  0.5782,  1.0127],</span>
@@ -333,22 +332,24 @@
 <div class="viewcode-block" id="LQR.lqr_backward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.lqr_backward">[docs]</a>    <span class="k">def</span> <span class="nf">lqr_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        The backward recursion of the dynamic programming to solve LQR.</span>
-<span class="sd">        for :math:`\t` = :math:`\T` to 1:</span>
+
+<span class="sd">        for :math:`t` = :math:`T` to 1:</span>
+
 <span class="sd">        .. math::</span>
-<span class="sd">            \begin{aligned}</span>
-<span class="sd">                \mathbf{Q}_t = \mathbf{C}_t + \mathbf{F}_t^\top\mathbf{V}_t+1\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t = \mathbf{c}_t + \mathbf{F}_t^\top\mathbf{V}_t+1\mathbf{f}_t + \mathbf{F}_t^\top\mathbf{v}_t+1 \\</span>
-<span class="sd">                \mathbf{K}_t = -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t = -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\</span>
-<span class="sd">                \mathbf{V}_t = \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t} + </span>
-<span class="sd">                \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t + </span>
-<span class="sd">                \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} + </span>
-<span class="sd">                \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\</span>
-<span class="sd">                \mathbf{v}_t = \mathbf{q}_{\mathbf{x}_t} + </span>
-<span class="sd">                \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t + </span>
-<span class="sd">                \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t} + </span>
-<span class="sd">                \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\</span>
-<span class="sd">            \end{aligned}</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1} \\</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\</span>
+<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\</span>
+<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t} </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\</span>
+<span class="sd">            \end{align*}</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            Q (:obj:`Tensor`): The matrix of quadratic parameter.</span>
@@ -391,12 +392,14 @@
 <div class="viewcode-block" id="LQR.lqr_forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.lqr_forward">[docs]</a>    <span class="k">def</span> <span class="nf">lqr_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        The forward recursion of the dynamic programming to solve LQR.</span>
-<span class="sd">        for :math:`\t` = 1 to :math:`\T`:</span>
+
+<span class="sd">        for :math:`t` = 1 to :math:`T`:</span>
+
 <span class="sd">        .. math::</span>
-<span class="sd">            \begin{aligned}</span>
-<span class="sd">                \mathbf{u}_t = \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
-<span class="sd">                \mathbf{x}_t+1 = f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\</span>
-<span class="sd">            \end{aligned}</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
+<span class="sd">                \mathbf{x}_{t+1} &amp;= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\</span>
+<span class="sd">            \end{align*}</span>
 <span class="sd">        where :math:`f \left( \mathbf{x}_t, \mathbf{u}_t \right)` represents the system dynamics.</span>
 
 <span class="sd">        Args:</span>
