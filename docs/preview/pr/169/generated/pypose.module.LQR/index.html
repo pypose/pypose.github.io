@@ -247,7 +247,7 @@
 <h1>pypose.module.LQR<a class="headerlink" href="#pypose-module-lqr" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.LQR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">LQR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">LQR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear Quadratic Regulator (LQR) with Dynamic Programming.</p>
 <p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
 <span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
@@ -263,7 +263,12 @@ of the optimization problem.</p>
 \]</div>
 <p>where <span class="math">\(\mathbf{\tau}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}\)</span>,
 <span class="math">\(\mathbf{F}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}\)</span>,
-<span class="math">\(\mathbf{f}\)</span> = <span class="math">\(\mathbf{c}_1\)</span>.</p>
+<span class="math">\(\mathbf{f}\)</span> = <span class="math">\(\mathbf{c}_1\)</span>.
+<span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span> are the state and input of the system;
+<span class="math">\(\mathbf{A}\)</span>, <span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
+<span class="math">\(\mathbf{c}_1\)</span> is the constant input of the linear system;
+<span class="math">\(\mathbf{Q}\)</span> is the weight matrix of the quadratic term;
+<span class="math">\(\mathbf{p}\)</span> is the weight vector of the first-order term.</p>
 <p>From a policy learning perspective, this can be interpreted as a module with unknown parameters
 <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
 which can be integrated into a larger end-to-end learning system.</p>
@@ -292,9 +297,8 @@ which can be integrated into a larger end-to-end learning system.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">n_state</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LTI</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">LQR</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="n">lti</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">LQR</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="n">lti</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_batch</span><span class="o">=</span><span class="n">n_batch</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;u = &quot;</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
 <span class="go">x =  tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
 <span class="go">              [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
@@ -320,20 +324,22 @@ which can be integrated into a larger end-to-end learning system.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform one step advance for the LQR problem.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.lqr_backward">
-<span class="sig-name descname"><span class="pre">lqr_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_backward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lqr_backward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_backward" title="Permalink to this definition">¶</a></dt>
 <dd><p>The backward recursion of the dynamic programming to solve LQR.</p>
 <p>for <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
 <div class="math">
 \[\begin{align*}
     \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
-    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1} \\
-    \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
+    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t +
+    \mathbf{F}_t^\top\mathbf{v}_{t+1} \\
+    \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t,
+    \mathbf{x}_t} \\
     \mathbf{k}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\
     \mathbf{V}_t &= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}
         + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t
@@ -349,13 +355,13 @@ which can be integrated into a larger end-to-end learning system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The matrix of quadratic parameter.</p></li>
-<li><p><strong>p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The constant vector of quadratic parameter.</p></li>
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight matrix of the quadratic term.</p></li>
+<li><p><strong>p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight vector of the first-order term.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The status feedback controller <span class="math">\(\mathbf{K}\)</span> and
-<span class="math">\(\mathbf{k}\)</span> at all steps.</p>
+<dd class="field-even"><p>The state feedback controller <span class="math">\(\mathbf{K}\)</span> and
+<span class="math">\(\mathbf{k}\)</span> gain of all steps.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Tuple of Tensor</p>
@@ -365,7 +371,7 @@ which can be integrated into a larger end-to-end learning system.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.lqr_forward">
-<span class="sig-name descname"><span class="pre">lqr_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lqr_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.lqr_forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.lqr_forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>The forward recursion of the dynamic programming to solve LQR.</p>
 <p>for <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
 <div class="math">
@@ -375,7 +381,15 @@ which can be integrated into a larger end-to-end learning system.</p>
 \end{align*}
 
 \]</div>
-<p>where <span class="math">\(f \left( \mathbf{x}_t, \mathbf{u}_t \right)\)</span> represents the system dynamics.</p>
+<p>where <span class="math">\(f \left( \mathbf{x}_t, \mathbf{u}_t \right)\)</span> represents the discrete-time
+system dynamics.</p>
+<p>Based on these, we can calculate the quadratic costs of the system over the time horizon:</p>
+<div class="math">
+\[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
+\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t
+
+\]</div>
+<p>where <span class="math">\(\mathbf{\tau}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -386,9 +400,9 @@ which can be integrated into a larger end-to-end learning system.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The state of the dynamical system <span class="math">\(\mathbf{x}\)</span>,
-the input to the dynamical system <span class="math">\(\mathbf{u}\)</span>,
-and the costs to the dynamical system <span class="math">\(\mathbf{c}\)</span>.</p>
+<dd class="field-even"><p>The solved state sequence of the dynamical system over the the time horizon
+<span class="math">\(\mathbf{x}\)</span>, the solved input sequence of the dynamical system over the the time horizon
+<span class="math">\(\mathbf{u}\)</span>, and the quadratic costs of the system over the time horizon <span class="math">\(\mathbf{c}\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Tuple of Tensor</p>
