@@ -257,17 +257,17 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
 <span class="sd">            \mathbf{x}_{t+1} &amp;= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t </span>
-<span class="sd">                                                         + \mathbf{c}^{1}_t          \\</span>
+<span class="sd">                                                         + \mathbf{c}_{1t}          \\</span>
 <span class="sd">            \mathbf{y}_t &amp;= \mathbf{C}_t\mathbf{x}_t + \mathbf{D}_t\mathbf{u}_t</span>
-<span class="sd">                                                     + \mathbf{c}^{2}_t              \\</span>
+<span class="sd">                                                     + \mathbf{c}_{2t}              \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the linear system; </span>
 <span class="sd">    :math:`\mathbf{y}` is the observation of the linear system; :math:`\mathbf{A}`,</span>
 <span class="sd">    :math:`\mathbf{B}` are the state matrix and input matrix of the linear system;</span>
 <span class="sd">    :math:`\mathbf{C}`, :math:`\mathbf{D}` are the output matrix and observation matrix of the</span>
-<span class="sd">    linear system; :math:`\mathbf{c}_1`, :math:`\mathbf{c}_2` are the constant input and constant</span>
-<span class="sd">    output of the linear system, and :math:`\cdot_{t}` is the time step.</span>
+<span class="sd">    linear system; :math:`\mathbf{c}_{1t}`, :math:`\mathbf{c}_{2t}` are the constant input and</span>
+<span class="sd">    constant output of the linear system, and :math:`t` is the time step.</span>
 
 <span class="sd">    LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` = </span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}` </span>
@@ -275,14 +275,15 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">            \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
-<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
-<span class="sd">            \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{\text{init}}, \\</span>
-<span class="sd">            \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
+<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
+<span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
+<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{\text{init}}, \\</span>
+<span class="sd">          \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
 <span class="sd">        \end{align*}</span>
 
-<span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t \end{bmatrix}`, </span>
-<span class="sd">    :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
+<span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
+<span class="sd">    \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t</span>
+<span class="sd">    \end{bmatrix}`.</span>
 
 <span class="sd">    The LQR process can be summarised as a backward and a forward recursion.</span>
 
@@ -293,19 +294,20 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
 <span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{c}_{1t} + </span>
-<span class="sd">                \mathbf{F}_t^\top\mathbf{v}_{t+1} \\</span>
-<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, </span>
-<span class="sd">                \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
+<span class="sd">                                        \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1} </span>
+<span class="sd">                                                     \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1} </span>
+<span class="sd">                                                           \mathbf{q}_{\mathbf{u}_t}         \\</span>
 <span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t} </span>
 <span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t </span>
 <span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t   \\</span>
 <span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t} </span>
 <span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t </span>
 <span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t} </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t   \\</span>
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">    - The forward recursion.</span>
@@ -344,7 +346,8 @@
 <span class="sd">        &gt;&gt;&gt; Q = torch.randn(n_batch, T, n_sc, n_sc)</span>
 <span class="sd">        &gt;&gt;&gt; Q = torch.matmul(Q.mT, Q)</span>
 <span class="sd">        &gt;&gt;&gt; p = torch.randn(n_batch, T, n_sc)</span>
-<span class="sd">        &gt;&gt;&gt; A = torch.tile(torch.eye(n_state) + 0.2*torch.randn(n_state, n_state), (n_batch, 1, 1))</span>
+<span class="sd">        &gt;&gt;&gt; r = 0.2 * torch.randn(n_state, n_state)</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.tile(torch.eye(n_state) + r, (n_batch, 1, 1))</span>
 <span class="sd">        &gt;&gt;&gt; B = torch.randn(n_batch, n_state, n_ctrl)</span>
 <span class="sd">        &gt;&gt;&gt; C = torch.tile(torch.eye(n_state), (n_batch, 1, 1))</span>
 <span class="sd">        &gt;&gt;&gt; D = torch.tile(torch.zeros(n_state, n_ctrl), (n_batch, 1, 1))</span>
@@ -403,8 +406,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
-<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the quadratic</span>
-<span class="sd">            costs :math:`\mathbf{c}` over the time horizon.</span>
+<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the associated</span>
+<span class="sd">            quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_backward</span><span class="p">()</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_forward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
