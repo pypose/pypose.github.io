@@ -256,15 +256,16 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1 \\</span>
-<span class="sd">            \mathbf{y}_k &amp;= \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2 \\</span>
+<span class="sd">            \mathbf{x}_{t+1} &amp;= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\</span>
+<span class="sd">            \mathbf{y}_t &amp;= \mathbf{C}_t\mathbf{x}_t + \mathbf{D}_t\mathbf{u}_t + \mathbf{c}_{2t} \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the linear system; </span>
 <span class="sd">    :math:`\mathbf{y}` is the observation of the linear system; </span>
 <span class="sd">    :math:`\mathbf{A}`, :math:`\mathbf{B}` are the state matrix and input matrix of the linear system; </span>
 <span class="sd">    :math:`\mathbf{C}`, :math:`\mathbf{D}` are the output matrix and observation matrix of the linear system;</span>
-<span class="sd">    :math:`\mathbf{c}_1`, :math:`\mathbf{c}_2` are the constant input and constant output of the linear system.</span>
+<span class="sd">    :math:`\mathbf{c}`, :math:`\mathbf{c}` are the constant input and constant output of the linear system. </span>
+<span class="sd">    The subscript :math:`\cdot_{t}` is omited for simplicity.</span>
 
 <span class="sd">    LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` = </span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}` </span>
@@ -275,11 +276,10 @@
 <span class="sd">            \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
 <span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
 <span class="sd">            \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init}, \\</span>
-<span class="sd">            \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{f}_t \\</span>
+<span class="sd">            \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
 <span class="sd">        \end{align*}</span>
-<span class="sd">    where :math:`\mathbf{\tau}` = :math:`\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}`, </span>
-<span class="sd">    :math:`\mathbf{F}` = :math:`\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}`, </span>
-<span class="sd">    :math:`\mathbf{f}` = :math:`\mathbf{c}_1`. </span>
+<span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t \end{bmatrix}`, </span>
+<span class="sd">    :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
 <span class="sd">    </span>
 <span class="sd">    From a policy learning perspective, this can be interpreted as a module with unknown parameters</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`, </span>
@@ -294,7 +294,7 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
 <span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + </span>
+<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{c}_{1t} + </span>
 <span class="sd">                \mathbf{F}_t^\top\mathbf{v}_{t+1} \\</span>
 <span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, </span>
 <span class="sd">                \mathbf{x}_t} \\</span>
@@ -316,16 +316,22 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
 <span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
-<span class="sd">                \mathbf{x}_{t+1} &amp;= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\</span>
+<span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\</span>
 <span class="sd">            \end{align*}</span>
-<span class="sd">    where :math:`f \left( \mathbf{x}_t, \mathbf{u}_t \right)` represents the discrete-time linear </span>
-<span class="sd">    system dynamics.</span>
 
 <span class="sd">    Based on these, we can calculate the quadratic costs of the system over the time horizon:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
 <span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The discrete-time system to be solved by LQR could be both linear time-invariant (LTI) system and </span>
+<span class="sd">        linear time-varying (LTV) system. For LTI system, :math:`\mathbf{A}_t` = :math:`\mathbf{A}`, </span>
+<span class="sd">        :math:`\mathbf{B}_t` = :math:`\mathbf{B}`, :math:`\mathbf{C}_t` = :math:`\mathbf{C}`, </span>
+<span class="sd">        :math:`\mathbf{D}_t` = :math:`\mathbf{D}`, :math:`\mathbf{c}_{1t}` = :math:`\mathbf{c}_{1}`, </span>
+<span class="sd">        :math:`\mathbf{c}_{2t}` = :math:`\mathbf{c}_2`, :math:`{\forall}`:math:`t`; otherwise it is the LTV </span>
+<span class="sd">        system.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation is based on pp.24-32 of the slides: </span>
