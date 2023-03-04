@@ -246,9 +246,29 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Linear Quadratic Regulator (LQR) with Dynamic Programming.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        system (:obj:`instance`): The system to be soved by LQR.</span>
+<span class="sd">        Q (:obj:`Tensor`): The weight matrix of the quadratic term.</span>
+<span class="sd">        p (:obj:`Tensor`): The weight vector of the first-order term.</span>
+<span class="sd">        T (:obj:`int`): Time steps of system.</span>
+
+<span class="sd">    A discrete-time linear system can be described as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1 \\</span>
+<span class="sd">            \mathbf{y}_k &amp;= \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2 \\</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    where :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the linear system; </span>
+<span class="sd">    :math:`\mathbf{y}` is the observation of the linear system; </span>
+<span class="sd">    :math:`\mathbf{A}`, :math:`\mathbf{B}` are the state matrix and input matrix of the linear system; </span>
+<span class="sd">    :math:`\mathbf{C}`, :math:`\mathbf{D}` are the output matrix and observation matrix of the linear system;</span>
+<span class="sd">    :math:`\mathbf{c}_1`, :math:`\mathbf{c}_2` are the constant input and constant output of the linear system.</span>
+
 <span class="sd">    LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` = </span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}` </span>
-<span class="sd">    of the optimization problem.</span>
+<span class="sd">    for the linear system of the optimization problem.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
@@ -257,22 +277,55 @@
 <span class="sd">            \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init}, \\</span>
 <span class="sd">            \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{f}_t \\</span>
 <span class="sd">        \end{align*}</span>
-
 <span class="sd">    where :math:`\mathbf{\tau}` = :math:`\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}`, </span>
 <span class="sd">    :math:`\mathbf{F}` = :math:`\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}`, </span>
 <span class="sd">    :math:`\mathbf{f}` = :math:`\mathbf{c}_1`. </span>
-<span class="sd">    :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the system; </span>
-<span class="sd">    :math:`\mathbf{A}`, :math:`\mathbf{B}` are the state matrix and input matrix of the linear system; </span>
-<span class="sd">    :math:`\mathbf{c}_1` is the constant input of the linear system; </span>
-<span class="sd">    :math:`\mathbf{Q}` is the weight matrix of the quadratic term; </span>
-<span class="sd">    :math:`\mathbf{p}` is the weight vector of the first-order term.</span>
-
+<span class="sd">    </span>
 <span class="sd">    From a policy learning perspective, this can be interpreted as a module with unknown parameters</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`, </span>
 <span class="sd">    which can be integrated into a larger end-to-end learning system.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        system (instance): The system to be soved by LQR.</span>
+<span class="sd">    The LQR process can be summarised as backward recursion and forward recursion.</span>
+
+<span class="sd">    1. The backward recursion of the dynamic programming to solve LQR.</span>
+<span class="sd">        </span>
+<span class="sd">        for :math:`t` = :math:`T` to 1:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + </span>
+<span class="sd">                \mathbf{F}_t^\top\mathbf{v}_{t+1} \\</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, </span>
+<span class="sd">                \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\</span>
+<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\</span>
+<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t} </span>
+<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t} </span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">    2. The forward recursion of the dynamic programming to solve LQR.</span>
+
+<span class="sd">        for :math:`t` = 1 to :math:`T`:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
+<span class="sd">                \mathbf{x}_{t+1} &amp;= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\</span>
+<span class="sd">            \end{align*}</span>
+<span class="sd">    where :math:`f \left( \mathbf{x}_t, \mathbf{u}_t \right)` represents the discrete-time linear </span>
+<span class="sd">    system dynamics.</span>
+
+<span class="sd">    Based on these, we can calculate the quadratic costs of the system over the time horizon:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
+<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation is based on pp.24-32 of the slides: </span>
@@ -337,43 +390,22 @@
 <div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform one step advance for the LQR problem.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_init (:obj:`Tensor`): The initial state of the system.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of :obj:`Tensor`: The solved state sequence of the dynamical system over the the time horizon </span>
+<span class="sd">            :math:`\mathbf{x}`, the solved input sequence of the dynamical system over the the time horizon </span>
+<span class="sd">            :math:`\mathbf{u}`, and the quadratic costs of the system over the time horizon :math:`\mathbf{c}`.</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_backward</span><span class="p">()</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_forward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div>
 
-<div class="viewcode-block" id="LQR.lqr_backward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.lqr_backward">[docs]</a>    <span class="k">def</span> <span class="nf">lqr_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        The backward recursion of the dynamic programming to solve LQR.</span>
+    <span class="k">def</span> <span class="nf">lqr_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-<span class="sd">        for :math:`t` = :math:`T` to 1:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t + </span>
-<span class="sd">                \mathbf{F}_t^\top\mathbf{v}_{t+1} \\</span>
-<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t, </span>
-<span class="sd">                \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{q}_{\mathbf{u}_t} \\</span>
-<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t} </span>
-<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t \\</span>
-<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t} </span>
-<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t} </span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t \\</span>
-<span class="sd">            \end{align*}</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            Q (:obj:`Tensor`): The weight matrix of the quadratic term.</span>
-<span class="sd">            p (:obj:`Tensor`): The weight vector of the first-order term.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Tuple of Tensor: The state feedback controller :math:`\mathbf{K}` and </span>
-<span class="sd">            :math:`\mathbf{k}` gain of all steps.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Q: (B*, T, N, N), p: (B*, T, N), where B* can be any batch dimensions, e.g., (2, 3)</span>
         <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -402,41 +434,9 @@
             <span class="n">V</span> <span class="o">=</span> <span class="n">Qxx</span> <span class="o">+</span> <span class="n">Qxu</span> <span class="o">@</span> <span class="n">Kt</span> <span class="o">+</span> <span class="n">Kt</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">Qux</span> <span class="o">+</span> <span class="n">Kt</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">Quu</span> <span class="o">@</span> <span class="n">Kt</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">qx</span>  <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">Qxu</span><span class="p">,</span> <span class="n">kt</span><span class="p">)</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">Kt</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">qu</span><span class="p">)</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">Kt</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">Quu</span><span class="p">,</span> <span class="n">kt</span><span class="p">)</span>
             
-        <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span></div>
+        <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span>
 
-<div class="viewcode-block" id="LQR.lqr_forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.lqr_forward">[docs]</a>    <span class="k">def</span> <span class="nf">lqr_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        The forward recursion of the dynamic programming to solve LQR.</span>
-
-<span class="sd">        for :math:`t` = 1 to :math:`T`:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
-<span class="sd">                \mathbf{x}_{t+1} &amp;= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\</span>
-<span class="sd">            \end{align*}</span>
-
-<span class="sd">        where :math:`f \left( \mathbf{x}_t, \mathbf{u}_t \right)` represents the discrete-time </span>
-<span class="sd">        system dynamics.</span>
-
-<span class="sd">        Based on these, we can calculate the quadratic costs of the system over the time horizon:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
-<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
-<span class="sd">        where :math:`\mathbf{\tau}` = :math:`\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}`.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            Q (:obj:`Tensor`): The matrix of quadratic parameter.</span>
-<span class="sd">            p (:obj:`Tensor`): The constant of quadratic parameter.</span>
-<span class="sd">            K (:obj:`Tensor`): The matrix of status feedback controller at all steps.</span>
-<span class="sd">            k (:obj:`Tensor`): The constant of status feedback controller at all steps.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Tuple of Tensor: The solved state sequence of the dynamical system over the the time horizon </span>
-<span class="sd">            :math:`\mathbf{x}`, the solved input sequence of the dynamical system over the the time horizon </span>
-<span class="sd">            :math:`\mathbf{u}`, and the quadratic costs of the system over the time horizon :math:`\mathbf{c}`.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">lqr_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">device</span>
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span>
@@ -457,7 +457,7 @@
             <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">xt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">ut</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">bvmv</span><span class="p">(</span><span class="n">xut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:,:],</span> <span class="n">xut</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">xut</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div></div>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div>
 </pre></div>
 
              </article>
