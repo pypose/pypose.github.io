@@ -262,40 +262,39 @@
 <p>A discrete-time linear system can be described as:</p>
 <div class="math">
 \[\begin{align*}
-    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\
-    \mathbf{y}_t &= \mathbf{C}_t\mathbf{x}_t + \mathbf{D}_t\mathbf{u}_t + \mathbf{c}_{2t} \\
+    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t
+                                                 + \mathbf{c}^{1}_t          \\
+    \mathbf{y}_t &= \mathbf{C}_t\mathbf{x}_t + \mathbf{D}_t\mathbf{u}_t
+                                             + \mathbf{c}^{2}_t              \\
 \end{align*}
 
 \]</div>
 <p>where <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span> are the state and input of the linear system;
-<span class="math">\(\mathbf{y}\)</span> is the observation of the linear system;
-<span class="math">\(\mathbf{A}\)</span>, <span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
-<span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span> are the output matrix and observation matrix of the linear system;
-<span class="math">\(\mathbf{c}\)</span>, <span class="math">\(\mathbf{c}\)</span> are the constant input and constant output of the linear system.
-The subscript <span class="math">\(\cdot_{t}\)</span> is omited for simplicity.</p>
+<span class="math">\(\mathbf{y}\)</span> is the observation of the linear system; <span class="math">\(\mathbf{A}\)</span>,
+<span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
+<span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span> are the output matrix and observation matrix of the
+linear system; <span class="math">\(\mathbf{c}_1\)</span>, <span class="math">\(\mathbf{c}_2\)</span> are the constant input and constant
+output of the linear system, and <span class="math">\(\cdot_{t}\)</span> is the time step.</p>
 <p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
 <span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
-for the linear system of the optimization problem.</p>
+for the linear system of the optimization problem:</p>
 <div class="math">
 \[\begin{align*}
     \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}
     \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
-    \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init}, \\
+    \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{\text{init}}, \\
     \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
 <p>where <span class="math">\(\mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t \end{bmatrix}\)</span>,
 <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>.</p>
-<p>From a policy learning perspective, this can be interpreted as a module with unknown parameters
-<span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
-which can be integrated into a larger end-to-end learning system.</p>
-<p>The LQR process can be summarised as backward recursion and forward recursion.</p>
-<ol class="arabic">
-<li><p>The backward recursion of the dynamic programming to solve LQR.</p>
+<p>The LQR process can be summarised as a backward and a forward recursion.</p>
+<ul>
+<li><p>The backward recursion.</p>
+<p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
 <blockquote>
-<div><p>for <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
-<div class="math">
+<div><div class="math">
 \[\begin{align*}
     \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
     \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{c}_{1t} +
@@ -316,20 +315,21 @@ which can be integrated into a larger end-to-end learning system.</p>
 \]</div>
 </div></blockquote>
 </li>
-<li><p>The forward recursion of the dynamic programming to solve LQR.</p>
+<li><p>The forward recursion.</p>
+<p>For <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
 <blockquote>
-<div><p>for <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
-<div class="math">
+<div><div class="math">
 \[\begin{align*}
     \mathbf{u}_t &= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\
-    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\
+    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t
+                                                 + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
 </div></blockquote>
 </li>
-</ol>
-<p>Based on these, we can calculate the quadratic costs of the system over the time horizon:</p>
+</ul>
+<p>Then quadratic costs of the system over the time horizon:</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
@@ -339,17 +339,15 @@ which can be integrated into a larger end-to-end learning system.</p>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The discrete-time system to be solved by LQR could be both linear time-invariant (LTI) system and
-linear time-varying (LTV) system. For LTI system, <span class="math">\(\mathbf{A}_t\)</span> = <span class="math">\(\mathbf{A}\)</span>,
-<span class="math">\(\mathbf{B}_t\)</span> = <span class="math">\(\mathbf{B}\)</span>, <span class="math">\(\mathbf{C}_t\)</span> = <span class="math">\(\mathbf{C}\)</span>,
-<span class="math">\(\mathbf{D}_t\)</span> = <span class="math">\(\mathbf{D}\)</span>, <span class="math">\(\mathbf{c}_{1t}\)</span> = <span class="math">\(\mathbf{c}_{1}\)</span>,
-<span class="math">\(\mathbf{c}_{2t}\)</span> = <span class="math">\(\mathbf{c}_2\)</span>, <span class="math">\({\forall}\)</span><span class="math">\(t\)</span>; otherwise it is the LTV
-system.</p>
+<p>The discrete-time system to be solved by LQR could be both either linear time-invariant
+(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system.</p>
 </div>
+<p>From the learning perspective, this can be interpreted as a module with unknown parameters
+<span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
+which can be integrated into a larger end-to-end learning system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The implementation is based on pp.24-32 of the slides:
-<a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf</a></p>
+<p>The implementation is based on page 24-32 of <a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">Optimal Control and Planning</a>.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span>
@@ -358,13 +356,14 @@ system.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_state</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_state</span><span class="p">,</span> <span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_state</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_state</span><span class="p">,</span> <span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">n_state</span><span class="p">,</span> <span class="n">n_ctrl</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_state</span><span class="p">,</span> <span class="n">n_ctrl</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">n_state</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LTI</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">LQR</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="n">lti</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
@@ -394,15 +393,15 @@ system.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform one step advance for the LQR problem.</p>
+<dd><p>Performs LQR for the linear system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The solved state sequence of the dynamical system over the the time horizon
-<span class="math">\(\mathbf{x}\)</span>, the solved input sequence of the dynamical system over the the time horizon
-<span class="math">\(\mathbf{u}\)</span>, and the quadratic costs of the system over the time horizon <span class="math">\(\mathbf{c}\)</span>.</p>
+<dd class="field-even"><p>A list of tensors including the solved state sequence
+<span class="math">\(\mathbf{x}\)</span>, the solved input sequence <span class="math">\(\mathbf{u}\)</span>, and the quadratic
+costs <span class="math">\(\mathbf{c}\)</span> over the time horizon.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
