@@ -262,8 +262,8 @@
 <p>A discrete-time linear system can be described as:</p>
 <div class="math">
 \[\begin{align*}
-    \mathbf{x}_{k+1} &= \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1 \\
-    \mathbf{y}_k &= \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2 \\
+    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\
+    \mathbf{y}_t &= \mathbf{C}_t\mathbf{x}_t + \mathbf{D}_t\mathbf{u}_t + \mathbf{c}_{2t} \\
 \end{align*}
 
 \]</div>
@@ -271,7 +271,8 @@
 <span class="math">\(\mathbf{y}\)</span> is the observation of the linear system;
 <span class="math">\(\mathbf{A}\)</span>, <span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
 <span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span> are the output matrix and observation matrix of the linear system;
-<span class="math">\(\mathbf{c}_1\)</span>, <span class="math">\(\mathbf{c}_2\)</span> are the constant input and constant output of the linear system.</p>
+<span class="math">\(\mathbf{c}\)</span>, <span class="math">\(\mathbf{c}\)</span> are the constant input and constant output of the linear system.
+The subscript <span class="math">\(\cdot_{t}\)</span> is omited for simplicity.</p>
 <p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
 <span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
 for the linear system of the optimization problem.</p>
@@ -280,13 +281,12 @@ for the linear system of the optimization problem.</p>
     \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}
     \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
     \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{init}, \\
-    \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{f}_t \\
+    \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
-<p>where <span class="math">\(\mathbf{\tau}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x} \\ \mathbf{u} \end{bmatrix}\)</span>,
-<span class="math">\(\mathbf{F}\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A} &amp; \mathbf{B} \end{bmatrix}\)</span>,
-<span class="math">\(\mathbf{f}\)</span> = <span class="math">\(\mathbf{c}_1\)</span>.</p>
+<p>where <span class="math">\(\mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t \end{bmatrix}\)</span>,
+<span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>.</p>
 <p>From a policy learning perspective, this can be interpreted as a module with unknown parameters
 <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
 which can be integrated into a larger end-to-end learning system.</p>
@@ -298,7 +298,7 @@ which can be integrated into a larger end-to-end learning system.</p>
 <div class="math">
 \[\begin{align*}
     \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
-    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{f}_t +
+    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{c}_{1t} +
     \mathbf{F}_t^\top\mathbf{v}_{t+1} \\
     \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}\mathbf{Q}_{\mathbf{u}_t,
     \mathbf{x}_t} \\
@@ -322,15 +322,13 @@ which can be integrated into a larger end-to-end learning system.</p>
 <div class="math">
 \[\begin{align*}
     \mathbf{u}_t &= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\
-    \mathbf{x}_{t+1} &= f \left( \mathbf{x}_t, \mathbf{u}_t \right) \\
+    \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
 </div></blockquote>
 </li>
 </ol>
-<p>where <span class="math">\(f \left( \mathbf{x}_t, \mathbf{u}_t \right)\)</span> represents the discrete-time linear
-system dynamics.</p>
 <p>Based on these, we can calculate the quadratic costs of the system over the time horizon:</p>
 <blockquote>
 <div><div class="math">
@@ -339,6 +337,15 @@ system dynamics.</p>
 
 \]</div>
 </div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The discrete-time system to be solved by LQR could be both linear time-invariant (LTI) system and
+linear time-varying (LTV) system. For LTI system, <span class="math">\(\mathbf{A}_t\)</span> = <span class="math">\(\mathbf{A}\)</span>,
+<span class="math">\(\mathbf{B}_t\)</span> = <span class="math">\(\mathbf{B}\)</span>, <span class="math">\(\mathbf{C}_t\)</span> = <span class="math">\(\mathbf{C}\)</span>,
+<span class="math">\(\mathbf{D}_t\)</span> = <span class="math">\(\mathbf{D}\)</span>, <span class="math">\(\mathbf{c}_{1t}\)</span> = <span class="math">\(\mathbf{c}_{1}\)</span>,
+<span class="math">\(\mathbf{c}_{2t}\)</span> = <span class="math">\(\mathbf{c}_2\)</span>, <span class="math">\({\forall}\)</span><span class="math">\(t\)</span>; otherwise it is the LTV
+system.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The implementation is based on pp.24-32 of the slides:
