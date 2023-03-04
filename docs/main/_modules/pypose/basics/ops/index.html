@@ -241,19 +241,19 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">LieTensor</span>
 
 
-<div class="viewcode-block" id="bmv"><a class="viewcode-back" href="../../../../generated/pypose.bmv/#pypose.bmv">[docs]</a><span class="k">def</span> <span class="nf">bmv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="bmv"><a class="viewcode-back" href="../../../../generated/pypose.bmv/#pypose.bmv">[docs]</a><span class="k">def</span> <span class="nf">bmv</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Performs batched matrix-vector product.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        input (:obj:`Tensor`): matrices to be multiplied.</span>
+<span class="sd">        mat (:obj:`Tensor`): matrices to be multiplied.</span>
 <span class="sd">        vec (:obj:`Tensor`): vectors to be multiplied.</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        out (:obj:`Tensor`): the output tensor.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The ``input`` has to be a (:math:`\cdots\times n \times m`) tensor,</span>
+<span class="sd">        The ``mat`` has to be a (:math:`\cdots\times n \times m`) tensor,</span>
 <span class="sd">        the ``vec`` has to be a (:math:`\cdots\times m`) tensor,</span>
 <span class="sd">        and ``out`` will be a (:math:`\cdots\times n`) tensor.</span>
 <span class="sd">        Different from ``torch.mv``, which is not broadcast, this function</span>
@@ -266,11 +266,60 @@
 <span class="sd">        &gt;&gt;&gt; out.shape</span>
 <span class="sd">        torch.Size([2, 2, 3])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="nb">input</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Input arguments invalid&#39;</span>
-    <span class="k">assert</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;matrix-vector shape invalid&#39;</span>
-    <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="nb">input</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Input arguments invalid&#39;</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;matrix-vector shape invalid&#39;</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">mat</span>
     <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">vec</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bvmv"><a class="viewcode-back" href="../../../../generated/pypose.bvmv/#pypose.bvmv">[docs]</a><span class="k">def</span> <span class="nf">bvmv</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">rvec</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Performs batched vector-matrix-vector product.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \text{out}_i = \mathbf{v}_i^{l\text{T}} \times \mathbf{M}_i \times \mathbf{v}_i^r</span>
+
+<span class="sd">    where :math:`\text{out}_i` is a scalar and :math:`\mathbf{v}_i^l, \mathbf{M}_i,</span>
+<span class="sd">    \mathbf{v}_i^r` are the i-th batched tensors with shape (n), (n, m), and (m),</span>
+<span class="sd">    respectively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lvec (:obj:`Tensor`): left vectors to be multiplied.</span>
+<span class="sd">        mat (:obj:`Tensor`): matrices to be multiplied.</span>
+<span class="sd">        rvec (:obj:`Tensor`): right vectors to be multiplied.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`Tensor`: the output tensor.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        the ``lvec`` has to be a (:math:`\cdots\times n`) tensor,</span>
+<span class="sd">        The ``mat`` has to be a (:math:`\cdots\times n \times m`) tensor,</span>
+<span class="sd">        the ``rvec`` has to be a (:math:`\cdots\times m`) tensor,</span>
+<span class="sd">        and ``out`` will be a (:math:`\cdots`) or at least a 1D tensor.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; v1 = torch.randn(4)</span>
+<span class="sd">        &gt;&gt;&gt; mat = torch.randn(4, 5)</span>
+<span class="sd">        &gt;&gt;&gt; v2 = torch.randn(5)</span>
+<span class="sd">        &gt;&gt;&gt; out = pp.bvmv(v1, mat, v2)</span>
+<span class="sd">        &gt;&gt;&gt; out.shape</span>
+<span class="sd">        torch.Size([1])</span>
+
+<span class="sd">        &gt;&gt;&gt; v1 = torch.randn(1, 2, 4)</span>
+<span class="sd">        &gt;&gt;&gt; mat = torch.randn(2, 2, 4, 5)</span>
+<span class="sd">        &gt;&gt;&gt; v2 = torch.randn(2, 1, 5)</span>
+<span class="sd">        &gt;&gt;&gt; out = pp.bvmv(v1, mat, v2)</span>
+<span class="sd">        &gt;&gt;&gt; out.shape</span>
+<span class="sd">        torch.Size([2, 2])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">lvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">rvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Shape invalid&#39;</span>
+    <span class="k">assert</span> <span class="n">lvec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">rvec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">lvec</span> <span class="o">=</span> <span class="n">lvec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">lvec</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">mat</span>
+    <span class="n">rvec</span> <span class="o">=</span> <span class="n">rvec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">rvec</span>
+    <span class="n">lvec</span><span class="p">,</span> <span class="n">rvec</span> <span class="o">=</span> <span class="n">lvec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">rvec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">((</span><span class="n">lvec</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">mat</span> <span class="o">@</span> <span class="n">rvec</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span></div>
 </pre></div>
 
              </article>
