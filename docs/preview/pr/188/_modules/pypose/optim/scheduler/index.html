@@ -242,6 +242,26 @@
 
 
 <span class="k">class</span> <span class="nc">_Scheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">WrapperOfContinual</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a temporary workaround for triggering a warning when user use the</span>
+<span class="sd">        continual attribute of the scheduler. After PyPose 0.3.6 release, we change</span>
+<span class="sd">        scheduler.continual to scheduler.continual(). Without this wrapper,</span>
+<span class="sd">        the users can still call scheduler.continual, resulting in unexpected behavior.</span>
+<span class="sd">        This class is used to wrap the iscontinual function of the scheduler, and</span>
+<span class="sd">        prevent any unexpected consequences resulted from this API change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer_obj</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_obj</span> <span class="o">=</span> <span class="n">optimizer_obj</span>
+
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_obj</span><span class="o">.</span><span class="n">iscontinual</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Calling scheduler.continual is deprecated, &#39;</span>
+                               <span class="s1">&#39;please call scheduler.iscontinual() instead. &#39;</span>
+                               <span class="s1">&#39;We will continue using scheduler.continual() in future releases. &#39;</span>
+                               <span class="s1">&#39;This error msg will be removed as well.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
@@ -253,13 +273,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">max_steps</span><span class="p">,</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">continual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Calling scheduler.continual is deprecated, &#39;</span>\
-                           <span class="s1">&#39;please call scheduler.iscontinual() instead. &#39;</span>\
-                           <span class="s1">&#39;We may allow scheduler.continual() in a future release. &#39;</span>\
-                           <span class="s1">&#39;This error msg will be removed as well.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">WrapperOfContinual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">iscontinual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span>
@@ -335,7 +349,7 @@
 <span class="sd">            &gt;&gt;&gt; scheduler = pp.optim.scheduler.StopOnPlateau(optimizer, steps=10, \</span>
 <span class="sd">            &gt;&gt;&gt;                     patience=3, decreasing=1e-3, verbose=True)</span>
 <span class="sd">            ...</span>
-<span class="sd">            &gt;&gt;&gt; while scheduler.iscontinual():</span>
+<span class="sd">            &gt;&gt;&gt; while scheduler.continual():</span>
 <span class="sd">            ...     loss = optimizer.step(input)</span>
 <span class="sd">            ...     scheduler.step(loss)</span>
 <span class="sd">            StopOnPlateau on step 0 Loss 9.337769e+01 --&gt; Loss 3.502787e-05 (reduction/loss: 1.0000e+00).</span>
