@@ -246,6 +246,10 @@
 <div class="viewcode-block" id="System"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System">[docs]</a><span class="k">class</span> <span class="nc">System</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    The base class for a system dynamics model.</span>
+
+<span class="sd">    In most of the cases, users only need to subclass a specific dynamic system,</span>
+<span class="sd">    such as linear time invariant system :meth:`LTI`, Linear Time-Variant :meth:`LTV`,</span>
+<span class="sd">    and a non-linear system :meth:`NLS`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -265,6 +269,12 @@
 <div class="viewcode-block" id="System.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.System/#pypose.module.System.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Defines the computation performed at every call that advances the system by one time step.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The :obj:`forward` method implicitly increments the time step via :obj:`forward_hook`.</span>
+<span class="sd">            :obj:`state_transition` and :obj:`observation` still accept time for the flexiblity</span>
+<span class="sd">            such as time-varying system. One can directly access the current system time via the</span>
+<span class="sd">            property :obj:`systime` or :obj:`_t`.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            To introduce noise in a model, redefine this method via</span>

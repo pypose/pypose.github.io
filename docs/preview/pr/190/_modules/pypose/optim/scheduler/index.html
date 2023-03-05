@@ -242,6 +242,26 @@
 
 
 <span class="k">class</span> <span class="nc">_Scheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Continual</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From PyPose v0.3.6, we change scheduler.continual to scheduler.continual().</span>
+<span class="sd">        This is a temporary workaround for triggering an error when users call continual</span>
+<span class="sd">        attribute of the scheduler. This wrapper will be removed in a future release.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Determining whether to stop an optimizer should be provided here.</span>
+<span class="sd">            This function is only for temporarailiy replacing Scheduler.continual().</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">iscontinual</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Calling scheduler.continual is deprecated, &#39;</span>
+                               <span class="s1">&#39;please call scheduler.continual() instead. &#39;</span>
+                               <span class="s1">&#39;This error msg will be removed in a future release.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
@@ -252,16 +272,15 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">max_steps</span><span class="p">,</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Continual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">continual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">iscontinual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This is a temporary function.</span>
+<span class="sd">        We will change to continual() in a future release.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span>
-
-    <span class="nd">@continual</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">continual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the state of the scheduler as a :class:`dict`.</span>
@@ -334,7 +353,7 @@
 <span class="sd">            &gt;&gt;&gt; scheduler = pp.optim.scheduler.StopOnPlateau(optimizer, steps=10, \</span>
 <span class="sd">            &gt;&gt;&gt;                     patience=3, decreasing=1e-3, verbose=True)</span>
 <span class="sd">            ...</span>
-<span class="sd">            &gt;&gt;&gt; while scheduler.continual:</span>
+<span class="sd">            &gt;&gt;&gt; while scheduler.continual():</span>
 <span class="sd">            ...     loss = optimizer.step(input)</span>
 <span class="sd">            ...     scheduler.step(loss)</span>
 <span class="sd">            StopOnPlateau on step 0 Loss 9.337769e+01 --&gt; Loss 3.502787e-05 (reduction/loss: 1.0000e+00).</span>
@@ -355,7 +374,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopOnPlateau: Maximum steps reached, Quiting..&quot;</span><span class="p">)</span>
 
@@ -365,13 +384,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">patience_count</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopOnPlateau: Maximum patience steps reached, Quiting..&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="s1">&#39;reject_count&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">continual</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopOnPlateau: Maximum rejected steps reached, Quiting..&quot;</span><span class="p">)</span></div>
 
@@ -415,7 +434,7 @@
 <span class="sd">            StopOnPlateau on step 3 Loss 1.525355e-13 --&gt; Loss 6.769275e-14 (reduction/loss: 5.5622e-01).</span>
 <span class="sd">            StopOnPlateau: Maximum patience steps reached, Quiting..</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">continual</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">continual</span><span class="p">():</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span></div></div>
 </pre></div>
