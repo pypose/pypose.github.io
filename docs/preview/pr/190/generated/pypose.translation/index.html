@@ -1,0 +1,504 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.translation &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.rotation" href="../pypose.rotation/" />
+    <link rel="prev" title="pypose.tensor" href="../pypose.tensor/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.3.5 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="generated/pypose.translation.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../convert/">Convert</a> &gt;</li>
+        
+      <li>pypose.translation</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/pypose.translation.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <section id="pypose-translation">
+<h1>pypose.translation<a class="headerlink" href="#pypose-translation" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pypose.translation">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">translation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#translation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.translation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the translation part from a <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>) – the input LieTensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the batched translation vectors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <a class="reference internal" href="../pypose.SO3/#pypose.SO3" title="pypose.SO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO3</span></code></a>, <a class="reference internal" href="../pypose.so3/#pypose.so3" title="pypose.so3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">so3</span></code></a>, <a class="reference internal" href="../pypose.RxSO3/#pypose.RxSO3" title="pypose.RxSO3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3</span></code></a>, and <a class="reference internal" href="../pypose.rxso3/#pypose.rxso3" title="pypose.rxso3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3</span></code></a> types do not contain
+translation. Calling <a class="reference internal" href="#pypose.translation" title="pypose.translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translation()</span></code></a> on these types will return zero vector(s).</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
+<span class="go">tensor([[-0.5358, -1.5421, -0.7224],</span>
+<span class="go">        [ 0.8331, -1.4412,  0.0863]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
+<span class="go">tensor([[0., 0., 0.],</span>
+<span class="go">        [0., 0., 0.]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../pypose.rotation/" class="btn btn-neutral float-right" title="pypose.rotation" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="../pypose.tensor/" class="btn btn-neutral" title="pypose.tensor" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">pypose.translation</a><ul>
+<li><a class="reference internal" href="#pypose.translation"><code class="docutils literal notranslate"><span class="pre">translation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+         <script src="../../_static/doctools.js"></script>
+         <script src="../../_static/sphinx_highlight.js"></script>
+         <script src="../../_static/katex.min.js"></script>
+         <script src="../../_static/auto-render.min.js"></script>
+         <script src="../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
