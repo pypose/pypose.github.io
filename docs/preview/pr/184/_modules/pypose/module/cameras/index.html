@@ -257,9 +257,9 @@
 <span class="sd">    CameraBase defines methods that are common to all camera models:</span>
 <span class="sd">        - `camera_center` that returns the optical center of the camera in</span>
 <span class="sd">            world coordinates</span>
-<span class="sd">        - `world_to_view_transform` which returns a 3D transform from</span>
+<span class="sd">        - `world2camera` which returns a 3D transform from</span>
 <span class="sd">            world coordinates to the camera view coordinates (R, T)</span>
-<span class="sd">        - `full_projection_transform` which composes the projection</span>
+<span class="sd">        - `world2pixel` which composes the projection</span>
 <span class="sd">            transform (P) with the world-to-view transform (R, T)</span>
 
 <span class="sd">    Args:</span>
@@ -279,10 +279,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A tensor of shape (B, 3) where B is the batch size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">world_to_view_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">world2camera</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a.k.a world to view transform.</span>
 <span class="sd">        Take world coordinate points and transform them to camera view coordinate.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            points (torch.Tensor): A tensor of shape (B, N, 3) where B is the batch size.</span>
@@ -291,18 +292,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">pypose</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">points</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">full_projection_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">world2pixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a.k.a full projection transform.</span>
 <span class="sd">        Composes the projection transform (P) with the world-to-view transform (R, T)</span>
 <span class="sd">        Args:</span>
 <span class="sd">            points (torch.Tensor): A tensor of shape (B, N, 3) where B is the batch size.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            points (torch.Tensor): A tensor of shape (B, N, 2) where B is the batch size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world_to_view_transform</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera2pixel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">world2camera</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">projection_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">camera2pixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        a.k.a projection transform.</span>
 <span class="sd">        Transform camera view coordinate points to pixel locations.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            points (torch.Tensor): A tensor of shape (B, N, 3) where B is the batch size.</span>
@@ -311,20 +314,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">reprojection_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pts_w</span><span class="p">,</span> <span class="n">img_pts</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reprojection_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the reprojection error.</span>
 <span class="sd">        Args:</span>
-<span class="sd">            pts_w: The object points in world coordinate. The shape is (..., N, 3).</span>
-<span class="sd">            img_pts: The image points. The shape is (..., N, 2).</span>
+<span class="sd">            points: The object points in world coordinate. The shape is (..., N, 3).</span>
+<span class="sd">            pixels: The image points. The shape is (..., N, 2).</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            error: The reprojection error. The shape is (..., ).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Calculate the image points</span>
-        <span class="n">img_repj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_projection_transform</span><span class="p">(</span><span class="n">pts_w</span><span class="p">)</span>
+        <span class="n">img_repj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
 
-        <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">img_pts</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">error</span>
 
@@ -351,7 +354,7 @@
 <span class="sd">        &gt;&gt;&gt; # instantiate the camera</span>
 <span class="sd">        &gt;&gt;&gt; camera = pypose.module.PerspectiveCameras(pose=pose, intrinsics=projection_matrix)</span>
 <span class="sd">        &gt;&gt;&gt; # transform the points to image coordinates</span>
-<span class="sd">        &gt;&gt;&gt; img_pts = camera.full_projection_transform(pts_w)</span>
+<span class="sd">        &gt;&gt;&gt; img_pts = camera.world2pixel(pts_w)</span>
 <span class="sd">        &gt;&gt;&gt; img_pts</span>
 <span class="sd">        tensor([[5.4998, 3.5000],</span>
 <span class="sd">                [4.4999, 3.5000],</span>
@@ -371,7 +374,7 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PerspectiveCameras.projection_transform"><a class="viewcode-back" href="../../../../generated/pypose.module.PerspectiveCameras/#pypose.module.PerspectiveCameras.projection_transform">[docs]</a>    <span class="k">def</span> <span class="nf">projection_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<div class="viewcode-block" id="PerspectiveCameras.camera2pixel"><a class="viewcode-back" href="../../../../generated/pypose.module.PerspectiveCameras/#pypose.module.PerspectiveCameras.camera2pixel">[docs]</a>    <span class="k">def</span> <span class="nf">camera2pixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transform camera view coordinate points to pixel locations.</span>
 <span class="sd">        Args:</span>
@@ -379,7 +382,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            points (torch.Tensor): A tensor of shape (B, N, 2) where B is the batch size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">img_repj</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">img_repj</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">img_repj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">img_repj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span></div>
 
     <span class="k">def</span> <span class="nf">is_perspective</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
