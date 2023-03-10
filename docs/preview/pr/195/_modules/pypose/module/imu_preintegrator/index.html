@@ -1,0 +1,909 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.module.imu_preintegrator &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.3.6 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/module/imu_preintegrator.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.module.imu_preintegrator</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.module.imu_preintegrator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+
+<div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator">[docs]</a><span class="k">class</span> <span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Applies preintegration over IMU input signals.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pos (``torch.Tensor``, optional): initial position. Default: :obj:`torch.zeros(3)`.</span>
+<span class="sd">        rot (``pypose.SO3``, optional): initial rotation. Default: :meth:`pypose.identity_SO3`.</span>
+<span class="sd">        vel (``torch.Tensor``, optional): initial position. Default: ``torch.zeros(3)``.</span>
+<span class="sd">        gravity (``float``, optional): the gravity acceleration. Default: ``9.81007``.</span>
+<span class="sd">        gyro_cov (``torch.Tensor`` or ``float``, optional): covariance of the gyroscope.</span>
+<span class="sd">            Use a three-element tensor, if the covariance on the three axes are different.</span>
+<span class="sd">            Default: ``(3.2e-3)**2``.</span>
+<span class="sd">        acc_cov (``torch.Tensor``  or ``float``, optional): covariance of the accelerator.</span>
+<span class="sd">            Use a three-element tensor, if the covariance on the three axes are different.</span>
+<span class="sd">            Default: ``(8e-2)**2``.</span>
+<span class="sd">        prop_cov (``bool``, optional): flag to propagate the covariance matrix. Default: ``True``.</span>
+<span class="sd">        reset (``bool``, optional): flag to reset the initial states after the :obj:`forward`</span>
+<span class="sd">            function is called. If ``False``, the integration starts from the last integration.</span>
+<span class="sd">            This flag is ignored if :obj:`init_state` is not ``None``. Default: ``False``.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        1. Preintegrator Initialization</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; p = torch.zeros(3)    # Initial Position</span>
+<span class="sd">        &gt;&gt;&gt; r = pp.identity_SO3() # Initial rotation</span>
+<span class="sd">        &gt;&gt;&gt; v = torch.zeros(3)    # Initial Velocity</span>
+<span class="sd">        &gt;&gt;&gt; integrator = pp.module.IMUPreintegrator(p, r, v)</span>
+
+<span class="sd">        2. Get IMU measurement</span>
+
+<span class="sd">        &gt;&gt;&gt; ang = torch.tensor([0.1,0.1,0.1]) # angular velocity </span>
+<span class="sd">        &gt;&gt;&gt; acc = torch.tensor([0.1,0.1,0.1]) # acceleration</span>
+<span class="sd">        &gt;&gt;&gt; rot = pp.mat2SO3(torch.eye(3))    # Rotation (Optional)</span>
+<span class="sd">        &gt;&gt;&gt; dt = torch.tensor([0.002])        # Time difference between two measurements</span>
+
+<span class="sd">        3. Preintegrating IMU measurements.</span>
+<span class="sd">        Takes as input the IMU values and calculates the preintegrated IMU measurements.</span>
+
+<span class="sd">        &gt;&gt;&gt; states = integrator(dt, ang, acc, rot)</span>
+<span class="sd">        {&#39;rot&#39;: SO3Type LieTensor:</span>
+<span class="sd">        tensor([[[1.0000e-04, 1.0000e-04, 1.0000e-04, 1.0000e+00]]]),</span>
+<span class="sd">        &#39;vel&#39;: tensor([[[ 0.0002,  0.0002, -0.0194]]]),</span>
+<span class="sd">        &#39;pos&#39;: tensor([[[ 2.0000e-07,  2.0000e-07, -1.9420e-05]]]),</span>
+<span class="sd">        &#39;cov&#39;: tensor([[[ 5.7583e-11, -5.6826e-19, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [-5.6826e-19,  5.7583e-11, -5.6827e-19,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [-5.6827e-19, -5.6827e-19,  5.7583e-11,  0.0000e+00,  0.0000e+00,</span>
+<span class="sd">                          0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-09, -3.3346e-20,</span>
+<span class="sd">                          -1.0588e-19,  8.0000e-12,  1.5424e-23, -1.0340e-22],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -1.3922e-19,  8.0000e-09,</span>
+<span class="sd">                          0.0000e+00, -8.7974e-23,  8.0000e-12,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0588e-19,</span>
+<span class="sd">                          8.0000e-09,  0.0000e+00, -1.0340e-22,  8.0000e-12],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  8.0000e-12,  1.5424e-23,</span>
+<span class="sd">                          -1.0340e-22,  8.0000e-15, -1.2868e-26,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00, -8.7974e-23,  8.0000e-12,</span>
+<span class="sd">                          0.0000e+00, -1.2868e-26,  8.0000e-15,  0.0000e+00],</span>
+<span class="sd">                        [ 0.0000e+00,  0.0000e+00,  0.0000e+00,  0.0000e+00, -1.0340e-22,</span>
+<span class="sd">                          8.0000e-12,  0.0000e+00,  0.0000e+00,  8.0000e-15]]])}</span>
+
+<span class="sd">    Preintegrated IMU odometry from the KITTI dataset with and without known rotation.</span>
+
+<span class="sd">    .. list-table::</span>
+
+<span class="sd">        * - .. figure:: /_static/img/module/imu/imu-known-rot.png</span>
+<span class="sd">                :width: 300</span>
+
+<span class="sd">            Fig. 1. Known Rotation.</span>
+
+<span class="sd">          - .. figure:: /_static/img/module/imu/imu-unknown-rot.png</span>
+<span class="sd">                :width: 300</span>
+
+<span class="sd">            Fig. 2. Estimated Rotation.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The examples generating the above figures can be found at `examples/module/imu</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/imu&gt;`_.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                       <span class="n">rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(),</span>
+                       <span class="n">vel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                       <span class="n">gravity</span> <span class="o">=</span> <span class="mf">9.81007</span><span class="p">,</span>
+                       <span class="n">gyro_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.2e-3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">acc_cov</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8e-2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">prop_cov</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="n">reset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_cov</span> <span class="o">=</span> <span class="n">reset</span><span class="p">,</span> <span class="n">prop_cov</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">acc_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">]])</span>
+        
+        <span class="c1"># Initial status of IMU: (pos)ition, (rot)ation, (vel)ocity, (cov)ariance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gravity&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gravity</span><span class="p">]),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;rot&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;vel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;gyro_cov&#39;</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># rotation corresponding to the &quot;zero-state&quot; covariance Sigma_ii.</span>
+
+    <span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propagate IMU states from duration (:math:`\delta t`), angular rate</span>
+<span class="sd">        (:math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame, as well as</span>
+<span class="sd">        their measurement covariance for gyroscope :math:`C_{g}` and acceleration</span>
+<span class="sd">        :math:`C_{\mathbf{a}}`. Known IMU rotation estimation :math:`R` can be provided for</span>
+<span class="sd">        better precision.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dt (``torch.Tensor``): time interval from last update.</span>
+<span class="sd">            gyro (``torch.Tensor``): angular rate (:math:`\omega`) in IMU body frame.</span>
+<span class="sd">            acc (``torch.Tensor``): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">                (raw sensor input with gravity).</span>
+<span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
+<span class="sd">            gyro_cov (``torch.Tensor``, optional): covariance matrix of angular rate.</span>
+<span class="sd">                If not given, the default state in constructor will be used.</span>
+<span class="sd">            acc_cov (``torch.Tensor``, optional): covariance matrix of linear acceleration.</span>
+<span class="sd">                If not given, the default state in constructor will be used.</span>
+<span class="sd">            init_state (``dict``, optional): the initial state of the integration. The dictionary</span>
+<span class="sd">                should be in form of :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
+<span class="sd">                torch.Tensor}`. If not given, the initial state in constructor will be used.</span>
+
+<span class="sd">        Shape:</span>
+<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape with</span>
+<span class="sd">              :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where :math:`B` is</span>
+<span class="sd">              the batch size (or the number of IMU), :math:`F` is the number of frames</span>
+<span class="sd">              (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
+
+<span class="sd">            - init_state (Optional): The initial state of the integration. It contains</span>
+<span class="sd">              :code:`pos`: initial position, :code:`rot`: initial rotation, :code:`vel`: initial</span>
+<span class="sd">              velocity, with the shape :math:`(B, H_{in})`.</span>
+
+<span class="sd">            - output: a :obj:`dict` of integrated state including ``pos``: position,</span>
+<span class="sd">              ``rot``: rotation, and ``vel``: velocity, each of which has a shape</span>
+<span class="sd">              :math:`(B, F, H_{out})`, where :math:`H_{out}` is the signal dimension.</span>
+<span class="sd">              If :obj:`prop_cov` is ``True``, it will also include ``cov``: covariance</span>
+<span class="sd">              matrix in shape of :math:`(B, 9, 9)`.</span>
+
+<span class="sd">        IMU Measurements Integration:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                {\Delta}R_{ik+1} &amp;= {\Delta}R_{ik} \mathrm{Exp} (w_k {\Delta}t) \\</span>
+<span class="sd">                {\Delta}v_{ik+1} &amp;= {\Delta}v_{ik} + {\Delta}R_{ik} a_k {\Delta}t \\</span>
+<span class="sd">                {\Delta}p_{ik+1} &amp;= {\Delta}p_{ik} + {\Delta}v_{ik} {\Delta}t</span>
+<span class="sd">                    + \frac{1}{2} {\Delta}R_{ik} a_k {\Delta}t^2</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">            - :math:`{\Delta}R_{ik}` is the preintegrated rotation between the :math:`i`-th</span>
+<span class="sd">              and :math:`k`-th time step.</span>
+
+<span class="sd">            - :math:`{\Delta}v_{ik}` is the preintegrated velocity between the :math:`i`-th</span>
+<span class="sd">              and :math:`k`-th time step.</span>
+
+<span class="sd">            - :math:`{\Delta}p_{ik}` is the preintegrated position between the :math:`i`-th</span>
+<span class="sd">              and :math:`k`-th time step.</span>
+
+<span class="sd">            - :math:`a_k` is linear acceleration at the :math:`k`-th time step.</span>
+
+<span class="sd">            - :math:`w_k` is angular rate at the :math:`k`-th time step.</span>
+
+<span class="sd">            - :math:`{\Delta}t` is the time interval from time step :math:`k`-th to time </span>
+<span class="sd">              step :math:`{k+1}`-th time step.</span>
+
+<span class="sd">        Uncertainty Propagation:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                C_{ik+1} &amp;= A C_{ik} A^T + B \mathrm{diag}(C_g, C_a) B^T \\</span>
+<span class="sd">                  &amp;= A C A^T + B_g C_g B_g^T + B_a C_a B_a^T</span>
+<span class="sd">            \end{align*},</span>
+
+<span class="sd">        where</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            A = \begin{bmatrix}</span>
+<span class="sd">                  {\Delta}R_{ik+1}^T &amp; 0_{3*3} \\</span>
+<span class="sd">                  -{\Delta}R_{ik} (a_k^{\wedge}) {\Delta}t &amp; I_{3*3} &amp; 0_{3*3} \\</span>
+<span class="sd">                  -1/2{\Delta}R_{ik} (a_k^{\wedge}) {\Delta}t^2 &amp; I_{3*3} {\Delta}t &amp; I_{3*3}</span>
+<span class="sd">                \end{bmatrix},</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            B = [B_g, B_a] \\</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            B_g = \begin{bmatrix}</span>
+<span class="sd">                    J_r^k \Delta t  \\</span>
+<span class="sd">                    0_{3*3}  \\</span>
+<span class="sd">                    0_{3*3} </span>
+<span class="sd">                \end{bmatrix},</span>
+
+<span class="sd">            B_a = \begin{bmatrix}</span>
+<span class="sd">                    0_{3*3} \\</span>
+<span class="sd">                    {\Delta}R_{ik} {\Delta}t  \\</span>
+<span class="sd">                    1/2 {\Delta}R_{ik} {\Delta}t^2</span>
+<span class="sd">                \end{bmatrix},</span>
+
+<span class="sd">        where :math:`\cdot^\wedge` is the skew matrix (:meth:`pypose.vec2skew`),</span>
+<span class="sd">        :math:`C \in\mathbf{R}^{9\times 9}` is the covariance matrix,</span>
+<span class="sd">        and :math:`J_r^k` is the right jacobian (:meth:`pypose.Jr`) of integrated rotation</span>
+<span class="sd">        :math:`\mathrm{Exp}(w_k{\Delta}t)` at :math:`k`-th time step,</span>
+<span class="sd">        :math:`C_{g}` and :math:`C_{\mathbf{a}}` are measurement covariance of angular rate</span>
+<span class="sd">        and acceleration, respectively.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Output covariance (Shape: :math:`(B, 9, 9)`) is in the order of rotation, velocity,</span>
+<span class="sd">            and position.</span>
+
+<span class="sd">        With IMU preintegration, the propagated IMU status:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                R_j &amp;= {\Delta}R_{ij} * R_i                                                     \\</span>
+<span class="sd">                v_j &amp;= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\</span>
+<span class="sd">                p_j &amp;= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">            - :math:`{\Delta}R_{ij}`, :math:`{\Delta}v_{ij}`, :math:`{\Delta}p_{ij}`</span>
+<span class="sd">              are the preintegrated measurements.</span>
+<span class="sd">            - :math:`R_i`, :math:`v_i`, and :math:`p_i` are the initial state. Default initial values</span>
+<span class="sd">              are used if :obj:`reset` is True.</span>
+<span class="sd">            - :math:`R_j`, :math:`v_j`, and :math:`p_j` are the propagated state variables.</span>
+<span class="sd">            - :math:`{\Delta}t_{ij}` is the time interval from frame i to j.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The implementation is based on Eq. (A7), (A8), (A9), and (A10) of this report:</span>
+
+<span class="sd">            * Christian Forster, et al., `IMU Preintegration on Manifold for Efficient Visual-Inertial</span>
+<span class="sd">              Maximum-a-posteriori Estimation</span>
+<span class="sd">              &lt;https://rpg.ifi.uzh.ch/docs/RSS15_Forster_Supplementary.pdf&gt;`_, Technical Report</span>
+<span class="sd">              GT-IRIM-CP&amp;R-2015-001, 2015.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">gyro</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">acc</span><span class="p">);</span> <span class="n">gyro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">gyro</span><span class="p">)</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">dt</span><span class="p">);</span> <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">init_state</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rot</span><span class="p">,</span> <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vel</span><span class="p">}</span>
+
+        <span class="n">inte_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">rot</span><span class="p">,</span> <span class="n">init_rot</span> <span class="o">=</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">])</span>
+        <span class="n">predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">inte_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_cov</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">gyro_cov</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gyro_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gyro_cov</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">B</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">acc_cov</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">acc_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">acc_cov</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">B</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s1">&#39;cov&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">init_state</span> <span class="ow">or</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">init_cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">init_cov</span> <span class="o">=</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;Rij&#39;</span> <span class="ow">in</span> <span class="n">init_state</span><span class="p">:</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="c1"># default is None</span>
+
+            <span class="k">if</span> <span class="n">Rij</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="n">Rij</span> <span class="o">*</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Rij</span> <span class="o">=</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">]</span>
+
+            <span class="n">cov_input_state</span> <span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;Rij&#39;</span><span class="p">:</span> <span class="n">Rij</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+                <span class="s1">&#39;Rk&#39;</span><span class="p">:</span> <span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+                <span class="s1">&#39;Ha&#39;</span><span class="p">:</span> <span class="n">pp</span><span class="o">.</span><span class="n">vec2skew</span><span class="p">(</span><span class="n">inte_state</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span>
+                <span class="s1">&#39;dt&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> 
+            <span class="p">}</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_cov</span><span class="p">(</span><span class="n">cov_input</span> <span class="o">=</span> <span class="n">cov_input_state</span><span class="p">,</span> <span class="n">init_cov</span> <span class="o">=</span> <span class="n">init_cov</span><span class="p">,</span>
+                                    <span class="n">gyro_cov</span> <span class="o">=</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span> <span class="o">=</span> <span class="n">acc_cov</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cov&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">predict</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rot</span> <span class="o">=</span> <span class="n">predict</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vel</span> <span class="o">=</span> <span class="n">predict</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">cov</span><span class="p">[</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="o">=</span> <span class="n">Rij</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">cov</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">pp</span><span class="o">.</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Integrate the IMU sensor signals gyroscope (angular rate</span>
+<span class="sd">        :math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame to</span>
+<span class="sd">        calculate the increments on the rotation (:math:`\Delta r`), velocity (:math:`\Delta v`)</span>
+<span class="sd">        and position (:math:`\Delta p`) of the IMU states.</span>
+<span class="sd">        The IMU rotation of the body frame (:code:`\rot`) is optional,</span>
+<span class="sd">        which can be utilized to compensate the gravity.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                {\Delta}r_{ij} &amp;= \int_{t \in [t_i, t_j]} w_k \ dt \\</span>
+<span class="sd">                {\Delta}v_{ij} &amp;= \int_{t \in [t_i, t_j]} R_{k} a_k \ dt \\</span>
+<span class="sd">                {\Delta}p_{ij} &amp;= \int\int_{t \in [t_i, t_j]} R_{k} a_k\ dt^2\  \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dt (``torch.Tensor``): time interval from last update.</span>
+<span class="sd">            gyro (torch.Tensor): angular rate (:math:`\omega`) in IMU body frame.</span>
+<span class="sd">            acc (``torch.Tensor``): linear acceleration (:math:`\mathbf{a}`) in IMU body frame</span>
+<span class="sd">                (raw sensor input with gravity).</span>
+<span class="sd">            rot (:obj:`pypose.SO3`, optional): known IMU rotation on the body frame.</span>
+<span class="sd">            init_rot (:obj:`pypose.SO3`, optional): the initial orientation of the IMU state.</span>
+<span class="sd">                If not given, the initial state in constructor will be used.</span>
+
+<span class="sd">        Shape:</span>
+<span class="sd">            - input (:obj:`dt`, :obj:`gyro`, :obj:`acc`): This layer supports the input shape</span>
+<span class="sd">              with :math:`(B, F, H_{in})`, :math:`(F, H_{in})` and :math:`(H_{in})`, where</span>
+<span class="sd">              :math:`B` is the batch size (or the number of IMU), :math:`F` is the number of</span>
+<span class="sd">              frames (measurements), and :math:`H_{in}` is the raw sensor signals.</span>
+
+<span class="sd">            - init_rot: The initial orientation of the integration, which helps to </span>
+<span class="sd">              compensate for the gravity. It contains the shape :math:`(B, H_{in})`. d</span>
+
+<span class="sd">            - rot: The ground truth orientation of the integration. If this parameter is</span>
+<span class="sd">              given, the integrator will use the ground truth orientation to compensate the</span>
+<span class="sd">              gravity.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            ``dict``: integrated states including ``a``: acceleration in the body frame</span>
+<span class="sd">            without gravity ``Dp``: position increments, ``Dr``: rotation increments,</span>
+<span class="sd">            ``Dv``: velocity increments, ``w``: rotation velocity and ``Dt``: time increments,</span>
+<span class="sd">            each of which has a shape :math:`(B, F, H_{out})`, where :math:`H_{out}` is the</span>
+<span class="sd">            signal dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">dr</span> <span class="o">=</span>  <span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">gyro</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">dr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">incre_r</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">rot</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">init_rot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">init_rot</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identity_SO3</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">inte_rot</span> <span class="o">=</span> <span class="n">init_rot</span> <span class="o">*</span> <span class="n">incre_r</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">inte_rot</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span>
+
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">dv</span><span class="p">,</span> <span class="n">incre_r</span><span class="p">[:,:</span><span class="n">F</span><span class="p">,:]</span> <span class="o">@</span> <span class="n">a</span> <span class="o">*</span> <span class="n">dt</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">incre_v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dv</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">dp</span><span class="p">,</span> <span class="n">incre_v</span><span class="p">[:,:</span><span class="n">F</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">incre_r</span><span class="p">[:,:</span><span class="n">F</span><span class="p">,:]</span> <span class="o">@</span> <span class="n">a</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dt</span><span class="o">**</span><span class="mi">2</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">incre_p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">incre_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">incre_t</span><span class="p">],</span> <span class="n">dim</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">,</span> <span class="s1">&#39;Dp&#39;</span><span class="p">:</span><span class="n">incre_p</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dv&#39;</span><span class="p">:</span><span class="n">incre_v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;Dr&#39;</span><span class="p">:</span><span class="n">incre_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:],</span>
+                <span class="s1">&#39;Dt&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span></div>
+
+<div class="viewcode-block" id="IMUPreintegrator.predict"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.predict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propogate the next IMU state from the initial IMU state (:obj:`init_state`) with </span>
+<span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and</span>
+<span class="sd">        :math:`\Delta{r}`).</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                R_j &amp;= {\Delta}R_{ij} * R_i                                                     \\</span>
+<span class="sd">                v_j &amp;= R_i * {\Delta}v_{ij}   + v_i + g \Delta t_{ij}                           \\</span>
+<span class="sd">                p_j &amp;= R_i * {\Delta}p_{ij}   + p_i + v_i \Delta t_{ij} + 1/2 g \Delta t_{ij}^2 \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            init_state (``dict``): the initial state of the integration. The dictionary</span>
+<span class="sd">                should be in form of :obj:`{&#39;pos&#39;: torch.Tensor, &#39;rot&#39;: pypose.SO3, &#39;vel&#39;:</span>
+<span class="sd">                torch.Tensor}`.</span>
+<span class="sd">            integrate (``dict``): the preintegrated IMU measurements. The dictionary</span>
+<span class="sd">                should be in form of :obj:`{&#39;Dp&#39;: torch.Tensor, &#39;Dr&#39;: pypose.SO3, &#39;Dv&#39;:</span>
+<span class="sd">                torch.Tensor, &#39;Dt&#39;: torch.Tensor}`.</span>
+
+<span class="sd">        Shape:</span>
+<span class="sd">            - init_state: The initial state of the integration. It contains :code:`pos`: initial</span>
+<span class="sd">              position, :code:`rot`: initial rotation, :code:`vel`: initial velocity, with the</span>
+<span class="sd">              shape :math:`(B, H_{in})`.</span>
+
+<span class="sd">            - integrate: The preintegrated IMU measurements. It contains :obj:`Dp`, :obj:`Dv`,</span>
+<span class="sd">              :obj:`Dr`, and :obj:`Dt`, with the shape :math:`(B, F, H_{out})`. It follows the</span>
+<span class="sd">              output of the function :obj:`integrate`.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            ``dict``: integrated states including ``pos``: position, ``rot``: rotation, and</span>
+<span class="sd">            ``vel``: velocity, each of which has a shape :math:`(B, F, H_{out})`, where</span>
+<span class="sd">            :math:`H_{out}` is the signal dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;rot&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dr&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;vel&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dv&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;rot&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">init_state</span><span class="p">[</span><span class="s1">&#39;vel&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">[</span><span class="s1">&#39;Dt&#39;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">propagate_cov</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">,</span> <span class="n">init_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">):</span>
+        <span class="c1">## The input acc_cov and gyro cov should be a vector of 3</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">device</span><span class="p">;</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+
+        <span class="n">Cg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">gyro_cov</span><span class="p">)</span>
+        <span class="n">Ca</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">acc_cov</span><span class="p">)</span>
+
+        <span class="c1"># constructing the propagate </span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">B</span><span class="p">,</span> <span class="n">F</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">Bg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">Ba</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        
+        <span class="n">A</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="o">.</span><span class="n">mT</span> <span class="c1"># R_{k,k+1}^T</span>
+        <span class="n">A</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> \
+            <span class="o">-</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Ha&#39;</span><span class="p">],</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+        <span class="n">A</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> \
+            <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Ha&#39;</span><span class="p">],</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">A</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> \
+            <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">B</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+
+        <span class="c1"># [J dt, 0, 0]^T</span>
+        <span class="n">Bg</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">Jr</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+
+        <span class="c1"># [0, R_{ik}dt, 1/2R_{ik}dt^2]^T</span>
+        <span class="n">Ba</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+        <span class="n">Ba</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span>
+                                                <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">matrix</span><span class="p">(),</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># the term of B</span>
+        <span class="n">B_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...xy,...t -&gt; ...xy&#39;</span><span class="p">,</span> <span class="n">Bg</span> <span class="o">@</span> <span class="n">Cg</span> <span class="o">@</span> <span class="n">Bg</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">Ba</span> <span class="o">@</span> <span class="n">Ca</span> <span class="o">@</span> <span class="n">Ba</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+        <span class="n">B_cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">init_cov</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">B_cov</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">A_left_cum</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flip</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># cum from An to I, then flip</span>
+        <span class="n">A_right_cum</span> <span class="o">=</span> <span class="n">A_left_cum</span><span class="o">.</span><span class="n">mT</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">A_left_cum</span> <span class="o">@</span> <span class="n">B_cov</span> <span class="o">@</span> <span class="n">A_right_cum</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;cov&#39;</span><span class="p">:</span> <span class="n">cov</span><span class="p">,</span> <span class="s1">&#39;Rij&#39;</span><span class="p">:</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;Rij&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]}</span></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
+              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">News from Twitter @pypose_rog<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
