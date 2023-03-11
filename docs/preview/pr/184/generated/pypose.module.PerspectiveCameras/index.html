@@ -261,15 +261,19 @@ perspective camera.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># create some random data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">SE3</span><span class="p">([</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3827</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.9239</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3827</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.9239</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">projection_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">img_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">img_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pts_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span> <span class="mf">2.8284</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">],</span> <span class="p">[</span> <span class="mf">2.1213</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span> <span class="p">[</span> <span class="mf">0.7071</span><span class="p">,</span>  <span class="mf">9.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span> <span class="p">[</span> <span class="mf">0.7071</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span> <span class="p">[</span> <span class="mf">5.6569</span><span class="p">,</span> <span class="mf">13.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4142</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pts_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span> <span class="mf">2.8284</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">2.1213</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">0.7071</span><span class="p">,</span>  <span class="mf">9.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">0.7071</span><span class="p">,</span>  <span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.7071</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">5.6569</span><span class="p">,</span> <span class="mf">13.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4142</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># instantiate the camera</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">camera</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="o">=</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="o">=</span><span class="n">projection_matrix</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">camera</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="o">=</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="o">=</span><span class="n">projection_matrix</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># transform the points to image coordinates</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_pts</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">world2pixel</span><span class="p">(</span><span class="n">pts_w</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">img_pts</span>
@@ -277,7 +281,7 @@ perspective camera.</p>
 <span class="go">        [4.4999, 3.5000],</span>
 <span class="go">        [3.4999, 5.5000],</span>
 <span class="go">        [3.4999, 3.5000],</span>
-<span class="go">        [6.8329, 6.8330]])</span>
+<span class="go">        [6.8329, 6.8330]], grad_fn=&lt;DivBackward0&gt;)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -342,17 +346,7 @@ perspective camera.</p>
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <ul>
-<li><a class="reference internal" href="#">pypose.module.PerspectiveCameras</a><ul>
-<li><a class="reference internal" href="#pypose.module.PerspectiveCameras"><code class="docutils literal notranslate"><span class="pre">PerspectiveCameras</span></code></a><ul>
-<li><a class="reference internal" href="#pypose.module.PerspectiveCameras.camera2pixel"><code class="docutils literal notranslate"><span class="pre">PerspectiveCameras.camera2pixel()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">News from Twitter @pypose_rog<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
           </div>
         </div>

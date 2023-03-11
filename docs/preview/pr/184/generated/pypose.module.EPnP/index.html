@@ -247,26 +247,16 @@
 <h1>pypose.module.EPnP<a class="headerlink" href="#pypose-module-epnp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.EPnP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EPnP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">naive_ctrl_pts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refinement_optimizer=&lt;class</span> <span class="pre">'pypose.optim.optimizer.GaussNewton'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP" title="Permalink to this definition">¶</a></dt>
-<dd><p>EPnP Solver - a non-iterative O(n) solution to the PnP problem.
-as described in:</p>
-<p>Francesc Moreno-Noguer, Vincent Lepetit, Pascal Fua.
-Accurate Non-Iterative O(n) Solution to the PnP Problem.
-In Proceedings of ICCV, 2007.
-source: <a class="reference external" href="https://github.com/cvlab-epfl/EPnP">https://github.com/cvlab-epfl/EPnP</a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EPnP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">naive_ctrl_pts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer=&lt;class</span> <span class="pre">'pypose.optim.optimizer.GaussNewton'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP" title="Permalink to this definition">¶</a></dt>
+<dd><p>EPnP Solver - a non-iterative O(n) solution to the PnP problem.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>refinement_optimizer</strong> (<em>Optional</em><em>[</em><em>torch.optim.Optimizer</em><em>]</em>) – Optimizer class to refine the solution. Set to None to disable refinement.</p></li>
-<li><p><strong>naive_ctrl_pts</strong> (<em>bool</em>) – Use naive control points selection method.</p></li>
+<li><p><strong>optimizer</strong> (<em>Optional</em><em>[</em><em>torch.optim.Optimizer</em><em>]</em>) – Optimizer to refine the solution. Set to None to disable refinement.</p></li>
+<li><p><strong>naive_ctrl_pts</strong> (<em>bool</em>) – Use naive control points selection method. Reco</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The Gauss-Newton optimization step isn’t exactly consistent with the implementation in the original paper’s
-implementation, but it relies on the same optimization objective function.</p>
-</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span>
@@ -296,6 +286,15 @@ implementation, but it relies on the same optimization objective function.</p>
 <span class="go">LieTensor([[ 5.4955e-05, -8.0000e+00, -2.7895e-05,  6.8488e-06, -3.8270e-01,</span>
 <span class="go">             3.2812e-06,  9.2387e-01]])</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The implementation is based on the paper:
+* Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, <a href="#id1"><span class="problematic" id="id2">`</span></a>Accurate Non-Iterative O(n) Solution to the PnP</p>
+<blockquote>
+<div><p>Problem. &lt;<a class="reference external" href="https://github.com/cvlab-epfl/EPnP">https://github.com/cvlab-epfl/EPnP</a>&gt;`_,
+In Proceedings of ICCV, 2007.</p>
+</div></blockquote>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.EPnP.BetasOptimizationObjective">
@@ -612,32 +611,7 @@ implementation that corresponds to the original paper.</p>
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <ul>
-<li><a class="reference internal" href="#">pypose.module.EPnP</a><ul>
-<li><a class="reference internal" href="#pypose.module.EPnP"><code class="docutils literal notranslate"><span class="pre">EPnP</span></code></a><ul>
-<li><a class="reference internal" href="#pypose.module.EPnP.BetasOptimizationObjective"><code class="docutils literal notranslate"><span class="pre">EPnP.BetasOptimizationObjective</span></code></a><ul>
-<li><a class="reference internal" href="#pypose.module.EPnP.BetasOptimizationObjective.forward"><code class="docutils literal notranslate"><span class="pre">EPnP.BetasOptimizationObjective.forward()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pypose.module.EPnP.build_l"><code class="docutils literal notranslate"><span class="pre">EPnP.build_l()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.build_m"><code class="docutils literal notranslate"><span class="pre">EPnP.build_m()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.build_rho"><code class="docutils literal notranslate"><span class="pre">EPnP.build_rho()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.calculate_betas"><code class="docutils literal notranslate"><span class="pre">EPnP.calculate_betas()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.calculate_kernel"><code class="docutils literal notranslate"><span class="pre">EPnP.calculate_kernel()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.compute_alphas"><code class="docutils literal notranslate"><span class="pre">EPnP.compute_alphas()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.compute_norm_sign_scaling_factor"><code class="docutils literal notranslate"><span class="pre">EPnP.compute_norm_sign_scaling_factor()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.forward"><code class="docutils literal notranslate"><span class="pre">EPnP.forward()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.get_se3"><code class="docutils literal notranslate"><span class="pre">EPnP.get_se3()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.naive_control_points"><code class="docutils literal notranslate"><span class="pre">EPnP.naive_control_points()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.optimization_step"><code class="docutils literal notranslate"><span class="pre">EPnP.optimization_step()</span></code></a></li>
-<li><a class="reference internal" href="#pypose.module.EPnP.select_control_points"><code class="docutils literal notranslate"><span class="pre">EPnP.select_control_points()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              <!-- <a class="twitter-timeline" data-width="15%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">News from Twitter @pypose_rog<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
           </div>
         </div>
