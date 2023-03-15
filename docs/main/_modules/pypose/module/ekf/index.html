@@ -249,7 +249,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (:obj:`System`): The system model to be estimated, a subclass of</span>
-<span class="sd">            :obj:`pypose.module.System`.</span>
+<span class="sd">            :obj:`pypose.module.NLS`.</span>
 <span class="sd">        Q (:obj:`Tensor`, optional): The covariance matrices of system transition noise.</span>
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
 <span class="sd">        R (:obj:`Tensor`, optional): The covariance matrices of system observation noise.</span>
@@ -309,10 +309,10 @@
 <span class="sd">    posteriori estimation, respectively.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        1. Define a Nonlinear Time Invariant (NTI) system model</span>
+<span class="sd">        1. Define a discrete-time non-linear system (NLS) model</span>
 
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; class NTI(pp.module.System):</span>
+<span class="sd">        &gt;&gt;&gt; class NLS(pp.module.NLS):</span>
 <span class="sd">        ...     def __init__(self):</span>
 <span class="sd">        ...         super().__init__()</span>
 <span class="sd">        ...</span>
@@ -324,7 +324,7 @@
 
 <span class="sd">        2. Create a model and filter</span>
 
-<span class="sd">        &gt;&gt;&gt; model = NTI()</span>
+<span class="sd">        &gt;&gt;&gt; model = NLS()</span>
 <span class="sd">        &gt;&gt;&gt; ekf = pp.module.EKF(model)</span>
 
 <span class="sd">        3. Prepare data</span>
@@ -353,7 +353,7 @@
 <span class="sd">    Warning:</span>
 <span class="sd">        Don&#39;t introduce noise in ``System`` methods ``state_transition`` and ``observation``</span>
 <span class="sd">        for filter testing, as those methods are used for automatically linearizing the system</span>
-<span class="sd">        by the parent class ``pypose.module.System``, unless your system model explicitly</span>
+<span class="sd">        by the parent class ``pypose.module.NLS``, unless your system model explicitly</span>
 <span class="sd">        introduces noise.</span>
 
 <span class="sd">    Note:</span>
