@@ -238,8 +238,11 @@
               
   <h1>Source code for pypose.module.pnp</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">pypose</span>
-<span class="kn">from</span> <span class="nn">pypose.optim</span> <span class="kn">import</span> <span class="n">GaussNewton</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">mat2SE3</span>
+<span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">bmv</span>
+<span class="kn">from</span> <span class="nn">..optim</span> <span class="kn">import</span> <span class="n">LM</span><span class="p">,</span> <span class="n">GN</span>
+<span class="kn">from</span> <span class="nn">.cameras</span> <span class="kn">import</span> <span class="n">PerspectiveCameras</span>
+<span class="kn">from</span> <span class="nn">..optim.scheduler</span> <span class="kn">import</span> <span class="n">StopOnPlateau</span>
 
 
 <div class="viewcode-block" id="EPnP"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP">[docs]</a><span class="k">class</span> <span class="nc">EPnP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -247,19 +250,25 @@
 <span class="sd">        EPnP Solver - a non-iterative O(n) solution to the PnP problem.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer (Optional[torch.optim.Optimizer]): Optimizer to refine the solution. Set to None to disable refinement.</span>
-<span class="sd">            naive_ctrl_pts (bool): Use naive control points selection method. Reco</span>
+<span class="sd">            optimizer (Optional[torch.optim.Optimizer]): Optimizer to refine the solution.</span>
+<span class="sd">                Set to ``None`` to disable refinement.</span>
+<span class="sd">            naive (bool): Use naive control points selection method, otherwise use SVD</span>
+<span class="sd">                decomposition method to select. Default: ``False``.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; import torch</span>
-<span class="sd">            &gt;&gt;&gt; import pypose</span>
+<span class="sd">            &gt;&gt;&gt; import torch, pypose as pp</span>
 <span class="sd">            &gt;&gt;&gt; # create some random test sample for a single camera</span>
-<span class="sd">            &gt;&gt;&gt; pose = pypose.SE3([ 0.0000, -8.0000,  0.0000,  0.0000, -0.3827,  0.0000,  0.9239])</span>
-<span class="sd">            &gt;&gt;&gt; f = 2</span>
-<span class="sd">            &gt;&gt;&gt; img_size = (7, 7)</span>
-<span class="sd">            &gt;&gt;&gt; projection_matrix = torch.tensor([[f, 0, img_size[0] / 2,], [0, f, img_size[1] / 2,], [0, 0, 1, ]])</span>
+<span class="sd">            &gt;&gt;&gt; pose = pp.SE3([ 0.0000, -8.0000,  0.0000,  0.0000, -0.3827,  0.0000,  0.9239])</span>
+<span class="sd">            &gt;&gt;&gt; f, img_size = 2, (7, 7)</span>
+<span class="sd">            &gt;&gt;&gt; projection_matrix = torch.tensor([[f, 0, img_size[0] / 2],</span>
+<span class="sd">                                                  [0, f, img_size[1] / 2],</span>
+<span class="sd">                                                  [0, 0, 1              ]])</span>
 <span class="sd">            &gt;&gt;&gt; # some random points in the view</span>
-<span class="sd">            &gt;&gt;&gt; pts_c = torch.tensor([[2., 0., 2.], [1., 0., 2.], [0., 1., 1.], [0., 0., 1.], [5., 5., 3.]])</span>
+<span class="sd">            &gt;&gt;&gt; pts_c = torch.tensor([[2., 0., 2.],</span>
+<span class="sd">                                      [1., 0., 2.],</span>
+<span class="sd">                                      [0., 1., 1.],</span>
+<span class="sd">                                      [0., 0., 1.],</span>
+<span class="sd">                                      [5., 5., 3.]])</span>
 <span class="sd">            &gt;&gt;&gt; pixels = (pts_c @ projection_matrix.T)[:, :2] / (pts_c @ projection_matrix.T)[:, 2:]</span>
 <span class="sd">            &gt;&gt;&gt; pixels</span>
 <span class="sd">            tensor([[5.5000, 3.5000],</span>
@@ -271,7 +280,7 @@
 <span class="sd">            &gt;&gt;&gt; # solve the PnP problem to find the camera pose</span>
 <span class="sd">            &gt;&gt;&gt; pts_w = pose.Inv().Act(pts_c)</span>
 <span class="sd">            &gt;&gt;&gt; # solve the PnP problem</span>
-<span class="sd">            &gt;&gt;&gt; epnp = pypose.module.EPnP()</span>
+<span class="sd">            &gt;&gt;&gt; epnp = pp.module.EPnP()</span>
 <span class="sd">            &gt;&gt;&gt; # when input is not batched, remember to add a batch dimension</span>
 <span class="sd">            &gt;&gt;&gt; pose = epnp(pts_w[None], pixels[None], projection_matrix[None])</span>
 <span class="sd">            &gt;&gt;&gt; pose</span>
@@ -281,10 +290,9 @@
 
 <span class="sd">        Note:</span>
 <span class="sd">            The implementation is based on the paper:</span>
-<span class="sd">            * Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, `Accurate Non-Iterative O(n) Solution to the PnP</span>
-<span class="sd">              Problem. &lt;https://github.com/cvlab-epfl/EPnP&gt;`_,</span>
-<span class="sd">              In Proceedings of ICCV, 2007.</span>
-
+<span class="sd">            * Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, `Accurate</span>
+<span class="sd">              Non-Iterative O(n) Solution to the PnP Problem.</span>
+<span class="sd">              &lt;https://github.com/cvlab-epfl/EPnP&gt;`_, In Proceedings of ICCV, 2007.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EPnP.BetasOptimizationObjective"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.BetasOptimizationObjective">[docs]</a>    <span class="k">class</span> <span class="nc">BetasOptimizationObjective</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -307,7 +315,7 @@
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">kernel_bases</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
             <span class="c1"># calculate the control points in camera coordinate</span>
-            <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">kernel_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
+            <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
             <span class="n">diff_c</span> <span class="o">=</span> <span class="n">ctrl_pts_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">ctrl_pts_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
             <span class="n">diff_c</span> <span class="o">=</span> <span class="n">diff_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
             <span class="n">diff_c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff_c</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -321,9 +329,9 @@
 
             <span class="k">return</span> <span class="n">error</span></div></div>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">naive_ctrl_pts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">GaussNewton</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">naive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">GN</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">naive_ctrl_pts</span> <span class="o">=</span> <span class="n">naive_ctrl_pts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="o">=</span> <span class="n">naive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;six_indices&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
@@ -346,16 +354,11 @@
 <span class="sd">            lietensor.SE3Type: estimated pose for the camera</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># shape checking</span>
-        <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_shape</span>
-        <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_shape</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
 
-        <span class="c1"># Select four control points and calculate alpha (in the world coordinate)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive_ctrl_pts</span><span class="p">:</span>
-            <span class="n">ctrl_pts_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive_control_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ctrl_pts_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_control_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">)</span>
+        <span class="c1"># Select four control points and calculate alpha in the world coordinate</span>
+        <span class="n">controls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive_control</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_control</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">controls</span><span class="p">)</span>
 
         <span class="c1"># Using camera projection equation for all the points pairs to get the matrix M</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
@@ -363,7 +366,7 @@
         <span class="n">kernel_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_kernel</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># to be consistent with the matlab code</span>
 
         <span class="n">l_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_l</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">)</span>
-        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rho</span><span class="p">(</span><span class="n">ctrl_pts_w</span><span class="p">)</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rho</span><span class="p">(</span><span class="n">controls</span><span class="p">)</span>
 
         <span class="n">solution_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl_pts_c&#39;</span><span class="p">,</span> <span class="s1">&#39;points_c&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">]</span>
         <span class="n">solutions</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">solution_keys</span><span class="p">}</span>
@@ -375,27 +378,27 @@
 
         <span class="c1"># stack the results</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">solutions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span>
-        <span class="n">best_error</span><span class="p">,</span> <span class="n">best_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span>
+            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+        <span class="n">best_error</span><span class="p">,</span> <span class="n">best_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">solutions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="c1"># retrieve the best solution using gather</span>
-            <span class="n">best_idx_</span> <span class="o">=</span> <span class="n">best_idx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">best_idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)))</span>
-            <span class="n">best_idx_</span> <span class="o">=</span> <span class="n">best_idx_</span><span class="o">.</span><span class="n">tile</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
-            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">),</span> <span class="n">best_idx_</span><span class="p">)</span>
-            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span>
+            <span class="n">best_idx_</span> <span class="o">=</span> <span class="n">best_idx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">best_idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)))</span>
+            <span class="n">best_idx_</span> <span class="o">=</span> <span class="n">best_idx_</span><span class="o">.</span><span class="n">tile</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="n">best_idx_</span><span class="p">)</span>
+            <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">solutions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_step</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+            <span class="n">solutions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_step</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">controls</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">generate_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">solution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
         <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
         <span class="n">pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_se3</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points_c</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request_error</span><span class="p">:</span>
-            <span class="n">perspective_camera</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+            <span class="n">perspective_camera</span> <span class="o">=</span> <span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">perspective_camera</span><span class="o">.</span><span class="n">reprojection_error</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">)</span>
             <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span>
 
@@ -423,56 +426,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">objective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BetasOptimizationObjective</span><span class="p">(</span><span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
         <span class="n">gn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">StopOnPlateau</span><span class="p">(</span><span class="n">gn</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">StopOnPlateau</span><span class="p">(</span><span class="n">gn</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">scheduler</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="p">(</span><span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">))</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="n">objective</span><span class="o">.</span><span class="n">betas</span><span class="o">.</span><span class="n">data</span>
 
         <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">solution</span></div>
 
-<div class="viewcode-block" id="EPnP.naive_control_points"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.naive_control_points">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">naive_control_points</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select four control points, used to express world coordinates of the object points. This is a naive</span>
-<span class="sd">        implementation that corresponds to the original paper.</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">naive_control</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+        <span class="c1"># Select 4 control points, 3 unit points and 1 origin point.</span>
+        <span class="n">controls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">4</span><span class="p">,:])</span>
+        <span class="n">controls</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">dim1</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">controls</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            points: 3D object points, shape (..., n, 3)</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            control points, shape (..., 4, 3)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">control_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="c1"># last control point is the origin</span>
-        <span class="n">control_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">control_pts</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">control_pts</span> <span class="o">=</span> <span class="n">control_pts</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">control_pts</span></div>
-
-<div class="viewcode-block" id="EPnP.select_control_points"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.select_control_points">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">select_control_points</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select four control points, used to express world coordinates of the object points</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            points: 3D object points, shape (..., n, 3)</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            control points, shape (..., 4, 3)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Select the center of mass to be the first control point</span>
-        <span class="n">center</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># Use distance to center to select the other three control points</span>
-        <span class="c1"># svd</span>
-        <span class="n">centered_points</span> <span class="o">=</span> <span class="n">points</span> <span class="o">-</span> <span class="n">center</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># center the object points, 1 is for broadcasting</span>
-        <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">centered_points</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">centered_points</span><span class="p">),</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># produce points TODO: change to batch implementation</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">center</span><span class="p">,</span> <span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-            <span class="n">another_pt</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">*</span> <span class="n">vh</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
-            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">another_pt</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span></div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">svd_control</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+        <span class="c1"># Select 4 control points with SVD</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">translated</span> <span class="o">=</span> <span class="n">points</span> <span class="o">-</span> <span class="n">center</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">translated</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">translated</span><span class="p">)</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">vh</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">center</span><span class="p">,</span> <span class="n">selected</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EPnP.compute_alphas"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.compute_alphas">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">):</span>
@@ -623,7 +598,7 @@
             <span class="k">return</span> <span class="n">betas</span>
         <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">l_mat</span> <span class="o">=</span> <span class="n">l_mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>  <span class="c1"># matched with matlab code</span>
-            <span class="n">betas_</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">l_mat</span><span class="p">),</span> <span class="n">rho</span><span class="p">)</span>  <span class="c1"># shape: (b, 3)</span>
+            <span class="n">betas_</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">l_mat</span><span class="p">),</span> <span class="n">rho</span><span class="p">)</span>  <span class="c1"># shape: (b, 3)</span>
             <span class="n">beta1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
             <span class="n">beta2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
@@ -637,7 +612,7 @@
 
             <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">beta1</span><span class="p">),</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">beta3</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="n">betas_</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">l_mat</span><span class="p">),</span> <span class="n">rho</span><span class="p">)</span>  <span class="c1"># shape: (b, 10)</span>
+            <span class="n">betas_</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">l_mat</span><span class="p">),</span> <span class="n">rho</span><span class="p">)</span>  <span class="c1"># shape: (b, 10)</span>
             <span class="n">beta4</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
             <span class="n">beta3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
             <span class="n">beta2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
@@ -720,9 +695,9 @@
         <span class="n">rot</span><span class="p">[</span><span class="n">negate_mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">rot</span><span class="p">[</span><span class="n">negate_mask</span><span class="p">]</span>
 
         <span class="c1"># Calculate the translation vector based on the rotation matrix and the equation</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">center_c</span> <span class="o">-</span> <span class="n">pypose</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">center_w</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">center_c</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">center_w</span><span class="p">)</span>
         <span class="n">rt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">rot</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">pose</span> <span class="o">=</span> <span class="n">pypose</span><span class="o">.</span><span class="n">mat2SE3</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
+        <span class="n">pose</span> <span class="o">=</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">pose</span></div></div>
 
@@ -759,9 +734,7 @@
 
         <div class="pytorch-content-right" id="pytorch-content-right">
           <div class="pytorch-right-menu" id="pytorch-right-menu">
-            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
-              <a class="twitter-timeline" data-width="280" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">News from Twitter @pypose_rog<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </div>
+              <a class="twitter-timeline" data-width="100%" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">News from Twitter @pypose_rog<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
           </div>
         </div>
       </section>
@@ -775,8 +748,10 @@
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
          <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../../../_static/doctools.js"></script>
-         <script src="../../../../_static/sphinx_highlight.js"></script>
          <script src="../../../../_static/katex.min.js"></script>
          <script src="../../../../_static/auto-render.min.js"></script>
          <script src="../../../../_static/katex_autorenderer.js"></script>
