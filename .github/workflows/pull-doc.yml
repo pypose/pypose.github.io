@@ -17,14 +17,16 @@ jobs:
       - name: Download built documentation
         id: download_doc
         run: |
-          set -x
           export CIRCLE_TOKEN=?circle-token=${{ secrets.BOT_CIRCLECI_PAT }}
           export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
+          echo "ARTIFACTS=${ARTIFACTS}"
           wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
           mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
           # move to docs/pr/<pr number> if is from pr
           PR_NUM="${{ github.event.client_payload.pr_num }}"
+          echo "PR_NUM=${PR_NUM}"
           [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="main"
+          echo "DEST_SUFFIX=${DEST_SUFFIX}"
           mkdir -p repo/docs/$DEST_SUFFIX
           rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
       - name: Commit files
