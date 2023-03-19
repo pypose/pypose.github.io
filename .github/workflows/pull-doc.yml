@@ -14,17 +14,22 @@ jobs:
           path: 'repo'
           fetch-depth: 0 # per instruction of https://github.com/marketplace/actions/github-push
           persist-credentials: false
-      - name: Download built documentation
-        run: |
-          export CIRCLE_TOKEN=?circle-token=${{ secrets.BOT_CIRCLECI_PAT }}
-          export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
-          wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
-          mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
-          # move to docs/pr/<pr number> if is from pr
-          PR_NUM="${{ github.event.client_payload.pr_num }}"
-          [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="main"
-          mkdir -p repo/docs/$DEST_SUFFIX
-          rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
+      - uses: mathiasvr/command-output@v2.0.0
+        name: Download built documentation
+        id: download_doc
+        with:
+          run: |
+            export CIRCLE_TOKEN=?circle-token=${{ secrets.BOT_CIRCLECI_PAT }}
+            export ARTIFACTS=$(curl -sS https://circleci.com/api/v1.1/project/github/pypose/pypose/${{ github.event.client_payload.job_num }}/artifacts$CIRCLE_TOKEN)
+            wget -q -O sphinx-docs.tar.gz $(echo $ARTIFACTS | grep -o 'https://[^"]*')$CIRCLE_TOKEN
+            mkdir sphinx-docs && tar -xf sphinx-docs.tar.gz -C sphinx-docs
+            # move to docs/pr/<pr number> if is from pr
+            PR_NUM="${{ github.event.client_payload.pr_num }}"
+            [[ ! -z "$PR_NUM" ]] && DEST_SUFFIX="preview/pr/$PR_NUM" || DEST_SUFFIX="main"
+            mkdir -p repo/docs/$DEST_SUFFIX
+            rsync -a sphinx-docs/build/dirhtml/ repo/docs/$DEST_SUFFIX --delete --exclude preview
+      - run: Print if download failed
+        if: ${{ steps.download_doc.outputs.stderr }}
       - name: Commit files
         run: |
           cd repo
