@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.cumops_ &mdash; PyPose main documentation</title>
+  <title>pypose.cart2homo &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="Convert" href="../../convert/" />
-    <link rel="prev" title="pypose.cumops" href="../pypose.cumops/" />
+    <link rel="next" title="pypose.homo2cart" href="../pypose.homo2cart/" />
+    <link rel="prev" title="pypose.matrix" href="../pypose.matrix/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.cumops_.html">
+  <a style="color:#F05732" href="generated/pypose.cart2homo.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -164,8 +164,8 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../basics/">Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
 </ul>
@@ -209,15 +209,15 @@
       </li>
 
         
-          <li><a href="../../basics/">Basics</a> &gt;</li>
+          <li><a href="../../convert/">Convert</a> &gt;</li>
         
-      <li>pypose.cumops_</li>
+      <li>pypose.cart2homo</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.cumops_.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.cart2homo.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,12 +243,39 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-cumops">
-<h1>pypose.cumops_<a class="headerlink" href="#pypose-cumops" title="Permalink to this heading">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="pypose.cumops_">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">cumops_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/basics/ops/#cumops_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.cumops_" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inplace version of <a class="reference internal" href="../pypose.cumops/#pypose.cumops" title="pypose.cumops"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.cumops()</span></code></a></p>
+  <section id="pypose-cart2homo">
+<h1>pypose.cart2homo<a class="headerlink" href="#pypose-cart2homo" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pypose.cart2homo">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">cart2homo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/basics/function/#cart2homo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.cart2homo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts batched Cartesian coordinates to Homogeneous coordinates
+by adding ones to last dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coordinates</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the Cartesian coordinates to be converted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the coordinates in Homogeneous space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The last dimension of the input coordinates can be any dimension.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart2homo</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="go">tensor([[ 2.0598,  1.5351,  1.0000],</span>
+<span class="go">        [-0.8484,  1.2390,  1.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cart2homo</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="go">tensor([[ 1.7946,  0.3548, -0.4446,  1.0000],</span>
+<span class="go">        [ 0.3010, -2.2748, -0.4708,  1.0000]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -261,10 +288,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../convert/" class="btn btn-neutral float-right" title="Convert" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.homo2cart/" class="btn btn-neutral float-right" title="pypose.homo2cart" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.cumops/" class="btn btn-neutral" title="pypose.cumops" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.matrix/" class="btn btn-neutral" title="pypose.matrix" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
