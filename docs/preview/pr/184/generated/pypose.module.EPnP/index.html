@@ -348,29 +348,6 @@ for more details. Inputs are batched.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.build_m">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.build_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.build_m" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the image points, alphas and intrinsics, compute the m matrix, which is the matrix of the coefficients
-of the image points. Check equation 7 in paper for more details.
-Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pixels</strong> (<em>torch.Tensor</em>) – image points, shape (…, num_pts, 2)</p></li>
-<li><p><strong>alpha</strong> (<em>torch.Tensor</em>) – alphas, shape (…, num_pts, 4)</p></li>
-<li><p><strong>intrinsics</strong> (<em>torch.Tensor</em>) – intrinsics, shape (…, 3, 3)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>m, shape (…, num_pts * 2, 12)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.EPnP.build_rho">
 <span class="sig-name descname"><span class="pre">build_rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cont_pts_w</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.build_rho"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.build_rho" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given the coordinates of control points, compute the rho vector. Check [source]
@@ -413,50 +390,6 @@ Inputs are batched.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.calculate_kernel">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.calculate_kernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.calculate_kernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the m matrix, compute the kernel of it. Check equation 8 in paper for more details.
-Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>m</strong> (<em>torch.Tensor</em>) – m, shape (…, num_pts * 2, 12)</p></li>
-<li><p><strong>top</strong> (<em>int</em><em>, </em><em>optional</em>) – number of top eigen vectors to take. Defaults to 4.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>kernel, shape (…, 12, top)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.compute_alphas">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_alphas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl_pts_w</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.compute_alphas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.compute_alphas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the object points and the control points in the world coordinate, compute the alphas,
-which are a set of coefficients corresponded of control points for each object point. Check equation 1 in paper
-for more details.
-Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<em>torch.Tensor</em>) – object points in the world coordinate, shape (…, num_pts, 3)</p></li>
-<li><p><strong>ctrl_pts_w</strong> (<em>torch.Tensor</em>) – control points in the world coordinate, shape (…, 4, 3)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>alphas, shape (…, num_pts, 4)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.EPnP.compute_norm_sign_scaling_factor">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_norm_sign_scaling_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.compute_norm_sign_scaling_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.compute_norm_sign_scaling_factor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the scaling factor and the sign of the scaling factor</p>
@@ -485,16 +418,18 @@ sc (torch.tensor): the scaling factor</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<em>Tensor</em>) – 3D object points in the world coordinates, shape (batch_size, n, 3)</p></li>
-<li><p><strong>pixels</strong> (<em>Tensor</em>) – 2D image points, which are the projection of object points, with shape (batch_size, n, 2)</p></li>
-<li><p><strong>intrinsics</strong> (<em>Tensor</em>) – camera intrinsics, shape (batch_size, 3, 3)</p></li>
+<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – 3D object points in the world coordinates.
+Shape (batch_size, n, 3)</p></li>
+<li><p><strong>pixels</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – 2D image points, which are the projection of
+object points. Shape (batch_size, n, 2)</p></li>
+<li><p><strong>intrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – camera intrinsics. Shape (batch_size, 3, 3)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>estimated pose for the camera</p>
+<dd class="field-even"><p>estimated pose (<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>) for the camera.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>lietensor.SE3Type</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">LieTensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>

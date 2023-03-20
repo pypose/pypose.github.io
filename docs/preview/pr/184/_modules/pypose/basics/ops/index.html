@@ -265,7 +265,7 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="cumops_"><a class="viewcode-back" href="../../../../generated/pypose.cumops_/#pypose.cumops_">[docs]</a><span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Inplace version of :meth:`pypose.cumops`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -274,24 +274,24 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">v</span><span class="o">.</span><span class="n">index_copy_</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">ops</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="n">v</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="o">-</span><span class="n">i</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">v</span></div>
+    <span class="k">return</span> <span class="n">v</span>
 
 
-<div class="viewcode-block" id="cummul_"><a class="viewcode-back" href="../../../../generated/pypose.cummul_/#pypose.cummul_">[docs]</a><span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cummul_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Inplace version of :meth:`pypose.cummul`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="cumprod_"><a class="viewcode-back" href="../../../../generated/pypose.cumprod_/#pypose.cumprod_">[docs]</a><span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cumprod_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Inplace version of :meth:`pypose.cumprod`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="cumops"><a class="viewcode-back" href="../../../../generated/pypose.cumops/#pypose.cumops">[docs]</a><span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative user-defined operation of LieTensor along a dimension.</span>
 
 <span class="sd">    .. math::</span>
@@ -327,10 +327,10 @@
 <span class="sd">        tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
 <span class="sd">                [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">cumops_</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">dim</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="cummul"><a class="viewcode-back" href="../../../../generated/pypose.cummul/#pypose.cummul">[docs]</a><span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cummul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative multiplication (*) of LieTensor along a dimension.</span>
 
 <span class="sd">    * Left multiplication:</span>
@@ -381,10 +381,10 @@
     <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> 
-        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="cumprod"><a class="viewcode-back" href="../../../../generated/pypose.cumprod/#pypose.cumprod">[docs]</a><span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cumprod</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the cumulative product (``@``) of LieTensor along a dimension.</span>
 
 <span class="sd">    * Left product:</span>
@@ -435,7 +435,7 @@
     <span class="k">if</span> <span class="n">left</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">@</span> <span class="n">a</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">@</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 
              </article>
