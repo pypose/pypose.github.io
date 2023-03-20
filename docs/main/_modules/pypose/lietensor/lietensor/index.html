@@ -237,13 +237,11 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.lietensor.lietensor</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">numbers</span>
-<span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">linalg</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span>
+<span class="kn">import</span> <span class="nn">collections</span><span class="o">,</span> <span class="nn">numbers</span><span class="o">,</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">broadcast_inputs</span>
-<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">cumops_</span><span class="p">,</span> <span class="n">cummul_</span><span class="p">,</span> <span class="n">cumprod_</span>
-<span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span><span class="p">,</span> <span class="n">cumops</span><span class="p">,</span> <span class="n">cummul</span><span class="p">,</span> <span class="n">cumprod</span><span class="p">,</span> <span class="n">pm</span>
 <span class="kn">from</span> <span class="nn">torch.utils._pytree</span> <span class="kn">import</span> <span class="n">tree_map</span><span class="p">,</span> <span class="n">tree_flatten</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_Log</span><span class="p">,</span> <span class="n">SE3_Log</span><span class="p">,</span> <span class="n">RxSO3_Log</span><span class="p">,</span> <span class="n">Sim3_Log</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">so3_Exp</span><span class="p">,</span> <span class="n">se3_Exp</span><span class="p">,</span> <span class="n">rxso3_Exp</span><span class="p">,</span> <span class="n">sim3_Exp</span>
@@ -254,6 +252,7 @@
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_AdjXa</span><span class="p">,</span> <span class="n">SE3_AdjXa</span><span class="p">,</span> <span class="n">RxSO3_AdjXa</span><span class="p">,</span> <span class="n">Sim3_AdjXa</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">SO3_AdjTXa</span><span class="p">,</span> <span class="n">SE3_AdjTXa</span><span class="p">,</span> <span class="n">RxSO3_AdjTXa</span><span class="p">,</span> <span class="n">Sim3_AdjTXa</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">so3_Jl_inv</span><span class="p">,</span> <span class="n">se3_Jl_inv</span><span class="p">,</span> <span class="n">rxso3_Jl_inv</span><span class="p">,</span> <span class="n">sim3_Jl_inv</span>
+<span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">pm</span><span class="p">,</span> <span class="n">cumops_</span><span class="p">,</span> <span class="n">cummul_</span><span class="p">,</span> <span class="n">cumprod_</span><span class="p">,</span> <span class="n">cumops</span><span class="p">,</span> <span class="n">cummul</span><span class="p">,</span> <span class="n">cumprod</span>
 <span class="kn">from</span> <span class="nn">torch.nn.modules.utils</span> <span class="kn">import</span> <span class="n">_single</span><span class="p">,</span> <span class="n">_pair</span><span class="p">,</span> <span class="n">_triple</span><span class="p">,</span> <span class="n">_quadruple</span><span class="p">,</span> <span class="n">_ntuple</span>
 
 
