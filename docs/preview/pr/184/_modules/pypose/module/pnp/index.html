@@ -263,13 +263,13 @@
         <span class="c1"># calculate the control points in camera coordinate</span>
         <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
         <span class="n">diff_c</span> <span class="o">=</span> <span class="n">ctrl_pts_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">ctrl_pts_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">diff_c</span> <span class="o">=</span> <span class="n">diff_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
-        <span class="c1"># diff_c = torch.sum(diff_c ** 2, dim=-1)</span>
+        <span class="n">diff_c</span> <span class="o">=</span> <span class="n">diff_c</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>  <span class="c1"># TODO: whether it is (16, 3) or (48, )?</span>
+        <span class="n">diff_c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff_c</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># calculate the distance between control points in world coordinate</span>
         <span class="n">diff_w</span> <span class="o">=</span> <span class="n">ctrl_pts_w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">ctrl_pts_w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="n">diff_w</span> <span class="o">=</span> <span class="n">diff_w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
-        <span class="c1"># diff_w = torch.sum(diff_w ** 2, dim=-1)</span>
+        <span class="n">diff_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff_w</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">diff_w</span> <span class="o">-</span> <span class="n">diff_c</span>
 
@@ -286,9 +286,10 @@
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; torch.set_default_dtype(torch.float64)</span>
 <span class="sd">        &gt;&gt;&gt; # create some random test sample for a single camera</span>
 <span class="sd">        &gt;&gt;&gt; pose = pp.SE3([ 0.0000, -8.0000,  0.0000,  0.0000, -0.3827,  0.0000,  0.9239])</span>
-<span class="sd">        &gt;&gt;&gt; f, img_size = 2, (7, 7)</span>
+<span class="sd">        &gt;&gt;&gt; f, img_size = 2, (9, 9)</span>
 <span class="sd">        &gt;&gt;&gt; projection = torch.tensor([[f, 0, img_size[0] / 2],</span>
 <span class="sd">        ...                            [0, f, img_size[1] / 2],</span>
 <span class="sd">        ...                            [0, 0, 1              ]])</span>
@@ -297,25 +298,24 @@
 <span class="sd">        ...                       [1., 0., 2.],</span>
 <span class="sd">        ...                       [0., 1., 1.],</span>
 <span class="sd">        ...                       [0., 0., 1.],</span>
+<span class="sd">        ...                       [1., 0., 1.],</span>
 <span class="sd">        ...                       [5., 5., 3.]])</span>
 <span class="sd">        &gt;&gt;&gt; pixels = (pts_c @ projection.T)[:, :2] / (pts_c @ projection.T)[:, 2:]</span>
 <span class="sd">        &gt;&gt;&gt; pixels</span>
-<span class="sd">        tensor([[5.5000, 3.5000],</span>
-<span class="sd">                [4.5000, 3.5000],</span>
-<span class="sd">                [3.5000, 5.5000],</span>
-<span class="sd">                [3.5000, 3.5000],</span>
-<span class="sd">                [6.8333, 6.8333]])</span>
+<span class="sd">        tensor([[6.5000, 4.5000],</span>
+<span class="sd">                [5.5000, 4.5000],</span>
+<span class="sd">                [4.5000, 6.5000],</span>
+<span class="sd">                [4.5000, 4.5000],</span>
+<span class="sd">                [6.5000, 4.5000],</span>
+<span class="sd">                [7.8333, 7.8333]])</span>
 <span class="sd">        &gt;&gt;&gt; # transform the points to world coordinate</span>
 <span class="sd">        &gt;&gt;&gt; # solve the PnP problem to find the camera pose</span>
 <span class="sd">        &gt;&gt;&gt; pts_w = pose.Inv().Act(pts_c)</span>
 <span class="sd">        &gt;&gt;&gt; # solve the PnP problem</span>
 <span class="sd">        &gt;&gt;&gt; epnp = pp.module.EPnP()</span>
 <span class="sd">        &gt;&gt;&gt; # when input is not batched, remember to add a batch dimension</span>
-<span class="sd">        &gt;&gt;&gt; pose = epnp(pts_w[None], pixels[None], projection[None])</span>
-<span class="sd">        &gt;&gt;&gt; pose</span>
-<span class="sd">        SE3Type LieTensor:</span>
-<span class="sd">        LieTensor([[ 5.4955e-05, -8.0000e+00, -2.7895e-05,  6.8488e-06, -3.8270e-01,</span>
-<span class="sd">                        3.2812e-06,  9.2387e-01]])</span>
+<span class="sd">        &gt;&gt;&gt; solved_pose = epnp(pts_w[None], pixels[None], projection[None])</span>
+<span class="sd">        &gt;&gt;&gt; assert torch.allclose(solved_pose, pose[None], atol=1e-3)</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation is based on the paper</span>
@@ -359,7 +359,7 @@
         <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
 
-        <span class="n">kernel_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_kernel</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1"># [..., [3, 2, 1, 0]]  # to be consistent with the matlab code</span>
+        <span class="n">kernel_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_kernel</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># to be consistent with the matlab code</span>
 
         <span class="n">l_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_l</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">)</span>
         <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rho</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
