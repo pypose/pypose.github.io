@@ -261,9 +261,10 @@ decomposition method to select. Default: <code class="docutils literal notransla
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># create some random test sample for a single camera</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3827</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.9239</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="n">img_size</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="n">img_size</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">projection</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">img_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
 <span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">img_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
 <span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>              <span class="p">]])</span>
@@ -272,25 +273,24 @@ decomposition method to select. Default: <code class="docutils literal notransla
 <span class="gp">... </span>                      <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
 <span class="gp">... </span>                      <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                      <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                      <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="p">(</span><span class="n">pts_c</span> <span class="o">@</span> <span class="n">projection</span><span class="o">.</span><span class="n">T</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">pts_c</span> <span class="o">@</span> <span class="n">projection</span><span class="o">.</span><span class="n">T</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">:]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span>
-<span class="go">tensor([[5.5000, 3.5000],</span>
-<span class="go">        [4.5000, 3.5000],</span>
-<span class="go">        [3.5000, 5.5000],</span>
-<span class="go">        [3.5000, 3.5000],</span>
-<span class="go">        [6.8333, 6.8333]])</span>
+<span class="go">tensor([[6.5000, 4.5000],</span>
+<span class="go">        [5.5000, 4.5000],</span>
+<span class="go">        [4.5000, 6.5000],</span>
+<span class="go">        [4.5000, 4.5000],</span>
+<span class="go">        [6.5000, 4.5000],</span>
+<span class="go">        [7.8333, 7.8333]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># transform the points to world coordinate</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># solve the PnP problem to find the camera pose</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pts_w</span> <span class="o">=</span> <span class="n">pose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">pts_c</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># solve the PnP problem</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">epnp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">EPnP</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># when input is not batched, remember to add a batch dimension</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">epnp</span><span class="p">(</span><span class="n">pts_w</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">projection</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span>
-<span class="go">SE3Type LieTensor:</span>
-<span class="go">LieTensor([[ 5.4955e-05, -8.0000e+00, -2.7895e-05,  6.8488e-06, -3.8270e-01,</span>
-<span class="go">                3.2812e-06,  9.2387e-01]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solved_pose</span> <span class="o">=</span> <span class="n">epnp</span><span class="p">(</span><span class="n">pts_w</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">projection</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">solved_pose</span><span class="p">,</span> <span class="n">pose</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
