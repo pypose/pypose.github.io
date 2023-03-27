@@ -286,10 +286,10 @@
 <span class="sd">            Set to ``None`` to disable refinement.</span>
 <span class="sd">        naive (bool): Use naive control points selection method, otherwise use SVD</span>
 <span class="sd">            decomposition method to select. Default: ``False``.</span>
+<span class="sd">        intrinsics (Optional[torch.Tensor]): The camera intrinsics. The shape is (3, 3).</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; torch.set_default_dtype(torch.float64)</span>
 <span class="sd">        &gt;&gt;&gt; # create some random test sample for a single camera</span>
 <span class="sd">        &gt;&gt;&gt; pose = pp.SE3([ 0.0000, -8.0000,  0.0000,  0.0000, -0.3827,  0.0000,  0.9239])</span>
 <span class="sd">        &gt;&gt;&gt; f, img_size = 2, (9, 9)</span>
@@ -303,7 +303,7 @@
 <span class="sd">        ...                       [0., 0., 1.],</span>
 <span class="sd">        ...                       [1., 0., 1.],</span>
 <span class="sd">        ...                       [5., 5., 3.]])</span>
-<span class="sd">        &gt;&gt;&gt; pixels = (pts_c @ projection.T)[:, :2] / (pts_c @ projection.T)[:, 2:]</span>
+<span class="sd">        &gt;&gt;&gt; pixels = pp.homo2cart(pts_c @ projection.T)</span>
 <span class="sd">        &gt;&gt;&gt; pixels</span>
 <span class="sd">        tensor([[6.5000, 4.5000],</span>
 <span class="sd">                [5.5000, 4.5000],</span>
@@ -315,10 +315,12 @@
 <span class="sd">        &gt;&gt;&gt; # solve the PnP problem to find the camera pose</span>
 <span class="sd">        &gt;&gt;&gt; pts_w = pose.Inv().Act(pts_c)</span>
 <span class="sd">        &gt;&gt;&gt; # solve the PnP problem</span>
-<span class="sd">        &gt;&gt;&gt; epnp = pp.module.EPnP()</span>
-<span class="sd">        &gt;&gt;&gt; # when input is not batched, remember to add a batch dimension</span>
-<span class="sd">        &gt;&gt;&gt; solved_pose = epnp(pts_w, pixels, projection)</span>
-<span class="sd">        &gt;&gt;&gt; assert torch.allclose(solved_pose, pose, atol=1e-3)</span>
+<span class="sd">        &gt;&gt;&gt; epnp = pp.module.EPnP(intrinsics=projection)</span>
+<span class="sd">        &gt;&gt;&gt; pose = epnp(pts_w, pixels)</span>
+<span class="sd">        &gt;&gt;&gt; pose</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        LieTensor([ 7.3552e-05, -8.0000e+00,  1.4997e-04, -8.1382e-06, -3.8271e-01,</span>
+<span class="sd">                    5.6476e-06,  9.2387e-01])</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation is based on the paper</span>
@@ -328,10 +330,12 @@
 <span class="sd">          &lt;https://github.com/cvlab-epfl/EPnP&gt;`_, In Proceedings of ICCV, 2007.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">naive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">GN</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">naive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">GN</span><span class="p">,</span> <span class="n">intrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="o">=</span> <span class="n">naive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="k">if</span> <span class="n">intrinsics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;intrinsics&#39;</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;six_indices&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
             <span class="p">[(</span><span class="mi">0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)]))</span>
@@ -343,18 +347,23 @@
         <span class="c1"># equal mask for above pairs [ True, False, True, False, False, True, False, False, False, True, ]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;multiply_mask&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]))</span>
 
-<div class="viewcode-block" id="EPnP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EPnP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            points (``torch.Tensor``): 3D object points in the world coordinates.</span>
 <span class="sd">                Shape (batch_size, n, 3)</span>
 <span class="sd">            pixels (``torch.Tensor``): 2D image points, which are the projection of</span>
 <span class="sd">                object points. Shape (batch_size, n, 2)</span>
-<span class="sd">            intrinsics (``torch.Tensor``): camera intrinsics. Shape (batch_size, 3, 3)</span>
+<span class="sd">            intrinsics (``Optional[torch.Tensor]``): camera intrinsics. Shape (batch_size, 3, 3).</span>
+<span class="sd">                Setting it to any non-``None`` value will override the default intrinsics kept</span>
+<span class="sd">                in the module.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ``LieTensor``: estimated pose (``SE3type``) for the camera.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">intrinsics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">intrinsics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span>
         <span class="c1"># shape checking</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
 
@@ -396,7 +405,7 @@
 
         <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
         <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
-        <span class="n">pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_se3</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points_c</span><span class="p">)</span>
+        <span class="n">pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_se3</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points_c</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request_error</span><span class="p">:</span>
             <span class="n">perspective_camera</span> <span class="o">=</span> <span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">perspective_camera</span><span class="o">.</span><span class="n">reprojection_error</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">)</span>
@@ -637,8 +646,8 @@
         <span class="n">sc</span> <span class="o">=</span> <span class="n">sc</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">negate_switch</span>
         <span class="k">return</span> <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span>
 
-<div class="viewcode-block" id="EPnP.get_se3"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.get_se3">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_se3</span><span class="p">(</span><span class="n">pts_w</span><span class="p">,</span> <span class="n">pts_c</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_se3</span><span class="p">(</span><span class="n">pts_w</span><span class="p">,</span> <span class="n">pts_c</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the rotation matrix and translation vector based on the object points in world coordinate and camera</span>
 <span class="sd">        coordinate.</span>
@@ -671,7 +680,7 @@
         <span class="n">rt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">rot</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">pose</span> <span class="o">=</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">pose</span></div></div>
+        <span class="k">return</span> <span class="n">pose</span></div>
 </pre></div>
 
              </article>
