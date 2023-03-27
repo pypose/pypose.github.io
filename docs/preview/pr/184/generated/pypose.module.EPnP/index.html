@@ -302,90 +302,6 @@ Non-Iterative O(n) Solution to the PnP Problem</a>, In Proceedings of ICCV, 2007
 </ul>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.build_l">
-<span class="sig-name descname"><span class="pre">build_l</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_bases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.build_l"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.build_l" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the kernel of m, compute the L matrix. Check [source]
-(<a class="reference external" href="https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L478">https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L478</a>)
-for more details. Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kernel_bases</strong> (<em>torch.Tensor</em>) – kernel of m, shape (…, 12, 4)</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>L, shape (…, 6, 10)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.build_rho">
-<span class="sig-name descname"><span class="pre">build_rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cont_pts_w</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.build_rho"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.build_rho" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the coordinates of control points, compute the rho vector. Check [source]
-(<a class="reference external" href="https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L520">https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L520</a>)
-for more details.
-Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cont_pts_w</strong> (<em>torch.Tensor</em>) – coordinates of control points, shape (…, 4, 3)</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>rho, shape (…, 6, 1)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.calculate_betas">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_betas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.calculate_betas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.calculate_betas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the L matrix and rho vector, compute the beta vector. Check equation 10 - 14 in paper for more details.
-Inputs are batched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dim</strong> (<em>int</em>) – dimension of the problem, 1, 2, or 3</p></li>
-<li><p><strong>l_mat</strong> (<em>torch.Tensor</em>) – L, shape (…, 6, 10)</p></li>
-<li><p><strong>rho</strong> (<em>torch.Tensor</em>) – rho, shape (…, 6)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>beta, shape (…, 4)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.compute_norm_sign_scaling_factor">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_norm_sign_scaling_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.compute_norm_sign_scaling_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.compute_norm_sign_scaling_factor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the scaling factor and the sign of the scaling factor</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>xc</strong> (<em>torch.tensor</em>) – the (unscaled) control points in the camera coordinates, or the result from null space.</p></li>
-<li><p><strong>alphas</strong> (<em>torch.tensor</em>) – the weights of the control points to recover the object points</p></li>
-<li><p><strong>points</strong> (<em>torch.tensor</em>) – the object points in the world coordinates</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the control points in the camera coordinates
-objPts_c (torch.tensor): the object points in the camera coordinates
-sc (torch.tensor): the scaling factor</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>contPts_c (torch.tensor)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.EPnP.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -420,32 +336,10 @@ coordinate.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The rotation matrix. The shape is (…, 3, 3).
-T: The translation vector. The shape is (…, 3).</p>
+<dd class="field-even"><p>estimated pose (<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>) for the camera.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>R</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.optimization_step">
-<span class="sig-name descname"><span class="pre">optimization_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl_pts_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.optimization_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.optimization_step" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>solutions</strong> (<em>dict</em>) – a dict of solutions</p></li>
-<li><p><strong>kernel_m</strong> (<em>Tensor</em>) – kernel matrix, shape (batch_size, n, 4)</p></li>
-<li><p><strong>ctrl_pts_w</strong> (<em>Tensor</em>) – control points in the world coordinate, shape (batch_size, 4, 3)</p></li>
-<li><p><strong>alpha</strong> (<em>Tensor</em>) – alpha, shape (batch_size, n, 4)</p></li>
-<li><p><strong>points</strong> (<em>Tensor</em>) – 3D object points, shape (batch_size, n, 3)</p></li>
-<li><p><strong>pixels</strong> (<em>Tensor</em>) – 2D image points, shape (batch_size, n, 2)</p></li>
-<li><p><strong>intrinsics</strong> (<em>Tensor</em>) – camera intrinsics, shape (batch_size, 3, 3)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None. This function will update the solutions in place.</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">LieTensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>

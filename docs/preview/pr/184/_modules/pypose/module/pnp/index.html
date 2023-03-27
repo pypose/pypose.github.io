@@ -247,18 +247,21 @@
 
 
 <span class="k">class</span> <span class="nc">BetasOptimizationObjective</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="c1"># Optimize the betas according to the objectives in the paper.</span>
+    <span class="c1"># Optimize the betas according to the objectives in the ePnP paper.</span>
     <span class="c1"># For the details, please refer to equation 15.</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">betas</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">betas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">betas</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">kernel_bases</span><span class="p">):</span>
-        <span class="c1"># Args:</span>
-        <span class="c1">#     ctrl_pts_w: The control points in world coordinate. The shape is (B, 4, 3).</span>
-        <span class="c1">#     kernel_bases: The kernel bases. The shape is (B, 16, 4).</span>
-        <span class="c1"># Returns:</span>
-        <span class="c1">#     torch.Tensor: The loss. The shape is (B, ).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            ctrl_pts_w: The control points in world coordinate. The shape is (B, 4, 3).</span>
+<span class="sd">            kernel_bases: The kernel bases. The shape is (B, 16, 4).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The loss. The shape is (B, ).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">kernel_bases</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="c1"># calculate the control points in camera coordinate</span>
         <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_bases</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">betas</span><span class="p">)</span>
@@ -324,6 +327,7 @@
 <span class="sd">          Non-Iterative O(n) Solution to the PnP Problem</span>
 <span class="sd">          &lt;https://github.com/cvlab-epfl/EPnP&gt;`_, In Proceedings of ICCV, 2007.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">naive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">GN</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="o">=</span> <span class="n">naive</span>
@@ -355,20 +359,20 @@
         <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
 
         <span class="c1"># Select naive and calculate alpha in the world coordinate</span>
-        <span class="n">bases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive_basis</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">svd_basis</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_naive_basis</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">naive</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_svd_basis</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
 
-        <span class="n">kernel_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_kernel</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># to be consistent with the matlab code</span>
+        <span class="n">kernel_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_kernel</span><span class="p">(</span><span class="n">m</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c1"># to be consistent with the matlab code</span>
 
-        <span class="n">l_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_l</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">)</span>
-        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rho</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
+        <span class="n">l_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_l</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">)</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_rho</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
 
         <span class="n">solution_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl_pts_c&#39;</span><span class="p">,</span> <span class="s1">&#39;points_c&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">]</span>
         <span class="n">solutions</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">solution_keys</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>  <span class="c1"># kernel space dimension of 4 is unstable</span>
-            <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_betas</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">l_mat</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
-            <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_betas</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">l_mat</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">solution_keys</span><span class="p">:</span>
                 <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solution</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
@@ -384,14 +388,14 @@
             <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">solutions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_step</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+            <span class="n">solutions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_step</span><span class="p">(</span><span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">solutions</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">generate_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">solution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
         <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">kernel_m</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
-        <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+        <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
         <span class="n">pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_se3</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points_c</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request_error</span><span class="p">:</span>
             <span class="n">perspective_camera</span> <span class="o">=</span> <span class="n">PerspectiveCameras</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
@@ -407,7 +411,7 @@
 
         <span class="k">return</span> <span class="n">solution</span>
 
-<div class="viewcode-block" id="EPnP.optimization_step"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.optimization_step">[docs]</a>    <span class="k">def</span> <span class="nf">optimization_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_optimization_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solutions</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            solutions (dict): a dict of solutions</span>
@@ -417,6 +421,7 @@
 <span class="sd">            points (Tensor): 3D object points, shape (batch_size, n, 3)</span>
 <span class="sd">            pixels (Tensor): 2D image points, shape (batch_size, n, 2)</span>
 <span class="sd">            intrinsics (Tensor): camera intrinsics, shape (batch_size, 3, 3)</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            None. This function will update the solutions in place.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -426,18 +431,18 @@
         <span class="n">scheduler</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="p">(</span><span class="n">ctrl_pts_w</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">))</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="n">objective</span><span class="o">.</span><span class="n">betas</span><span class="o">.</span><span class="n">data</span>
 
-        <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">solution</span></div>
+        <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">kernel_m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">request_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">solution</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">naive_basis</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_naive_basis</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
         <span class="c1"># Select 4 naive points, 3 unit bases and 1 origin point.</span>
-        <span class="n">controls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">4</span><span class="p">,:])</span>
+        <span class="n">controls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="p">:])</span>
         <span class="n">controls</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">dim1</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">controls</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">svd_basis</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_svd_basis</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
         <span class="c1"># Select 4 control points with SVD</span>
         <span class="n">center</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">translated</span> <span class="o">=</span> <span class="n">points</span> <span class="o">-</span> <span class="n">center</span>
@@ -445,23 +450,32 @@
         <span class="n">controls</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">vh</span><span class="o">.</span><span class="n">mT</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">center</span><span class="p">,</span> <span class="n">controls</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
 
-
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
-        <span class="c1"># Compute the coordinates of points with respect to the bases.</span>
-        <span class="c1"># Check equation 1 in paper for more details.</span>
+    <span class="k">def</span> <span class="nf">_compute_alphas</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the alphas, which are a set of weights corresponded of control points for each object point. </span>
+<span class="sd">        Check equation 1 in paper for more details.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            points (torch.Tensor): object points in the world coordinate, shape (..., num_pts, 3)</span>
+<span class="sd">            ctrl_pts_w (torch.Tensor): control points in the world coordinate, shape (..., 4, 3)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: alphas, shape (..., num_pts, 4)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">points</span><span class="p">,</span> <span class="n">bases</span> <span class="o">=</span> <span class="n">cart2homo</span><span class="p">(</span><span class="n">points</span><span class="p">),</span> <span class="n">cart2homo</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">bases</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
-        <span class="c1"># Construct M matrix. Check equation 7 in paper for more details.</span>
-        <span class="c1"># Args:</span>
-        <span class="c1">#     pixels (torch.Tensor): (..., point, 2)</span>
-        <span class="c1">#     alpha (torch.Tensor): (..., point, 4)</span>
-        <span class="c1">#     intrinsics (torch.Tensor): (..., 3, 3)</span>
-        <span class="c1"># Returns:</span>
-        <span class="c1">#     torch.Tensor: (..., point * 2, 12)</span>
+    <span class="k">def</span> <span class="nf">_build_m</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct M matrix. Check equation 7 in paper for more details.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            pixels (torch.Tensor): (..., point, 2)</span>
+<span class="sd">            alpha (torch.Tensor): (..., point, 4)</span>
+<span class="sd">            intrinsics (torch.Tensor): (..., 3, 3)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: (..., point * 2, 12)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">fu</span><span class="p">,</span> <span class="n">u0</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -479,23 +493,32 @@
         <span class="k">return</span> <span class="n">M</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">,</span> <span class="n">point</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">calculate_kernel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">least</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-        <span class="c1"># Given M matrix, find eigenvectors with the least eigenvalues.</span>
-        <span class="c1"># Check equation 8 in paper for more details.</span>
-        <span class="n">batch</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># M is (..., point * 2, 12)</span>
+    <span class="k">def</span> <span class="nf">_calculate_kernel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">least</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given M matrix, find eigenvectors with the least eigenvalues.</span>
+<span class="sd">        Check equation 8 in paper for more details.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            m (torch.Tensor): m, shape (..., num_pts * 2, 12)</span>
+<span class="sd">            top (int, optional): number of top eigen vectors to take. Defaults to 4.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: kernel, shape (..., 12, top)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># M is (..., point * 2, 12)</span>
         <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">M</span><span class="p">)</span>
         <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">eigenvalues</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">eigenvectors</span><span class="o">.</span><span class="n">real</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">eigenvalues</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">least</span><span class="p">]</span> <span class="c1"># (batch, 4)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tile</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># (batch, 12, 4)</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">eigenvectors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span> <span class="c1"># (batch, 12, 4)</span>
 
-<div class="viewcode-block" id="EPnP.build_l"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.build_l">[docs]</a>    <span class="k">def</span> <span class="nf">build_l</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_bases</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_build_l</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_bases</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the kernel of m, compute the L matrix. Check [source]</span>
 <span class="sd">        (https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L478)</span>
 <span class="sd">        for more details. Inputs are batched.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            kernel_bases (torch.Tensor): kernel of m, shape (..., 12, 4)</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: L, shape (..., 6, 10)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -511,9 +534,9 @@
         <span class="n">dot_products</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
             <span class="n">dv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ten_indices_pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">dv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ten_indices_pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">dot_products</span> <span class="o">=</span> <span class="n">dot_products</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply_mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">dot_products</span><span class="o">.</span><span class="n">mT</span>  <span class="c1"># shape (batch_shape, 6, 10)</span></div>
+        <span class="k">return</span> <span class="n">dot_products</span><span class="o">.</span><span class="n">mT</span>  <span class="c1"># shape (batch_shape, 6, 10)</span>
 
-<div class="viewcode-block" id="EPnP.build_rho"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.build_rho">[docs]</a>    <span class="k">def</span> <span class="nf">build_rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cont_pts_w</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_build_rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cont_pts_w</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the coordinates of control points, compute the rho vector. Check [source]</span>
 <span class="sd">        (https://github.com/cvlab-epfl/EPnP/blob/5abc3cfa76e8e92e5a8f4be0370bbe7da246065e/cpp/epnp.cpp#L520)</span>
 <span class="sd">        for more details.</span>
@@ -525,10 +548,10 @@
 <span class="sd">            torch.Tensor: rho, shape (..., 6, 1)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dist</span> <span class="o">=</span> <span class="n">cont_pts_w</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">six_indices_pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">cont_pts_w</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">six_indices_pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># l2 norm</span></div>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># l2 norm</span>
 
-<div class="viewcode-block" id="EPnP.calculate_betas"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.calculate_betas">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">calculate_betas</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">l_mat</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_calculate_betas</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">l_mat</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the L matrix and rho vector, compute the beta vector. Check equation 10 - 14 in paper for more details.</span>
 <span class="sd">        Inputs are batched.</span>
 
@@ -566,10 +589,10 @@
             <span class="n">beta2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
             <span class="n">beta1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">betas_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">beta3</span><span class="p">,</span> <span class="n">beta4</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">beta3</span><span class="p">,</span> <span class="n">beta4</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EPnP.compute_norm_sign_scaling_factor"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.compute_norm_sign_scaling_factor">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the scaling factor and the sign of the scaling factor</span>
 
 <span class="sd">        Args:</span>
@@ -607,12 +630,12 @@
         <span class="c1"># Update the control points and the object points in the camera coordinates based on the sign</span>
         <span class="n">neg_z_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">points_c</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (N, )</span>
 
-        <span class="c1"># for batched data</span>
+        <span class="c1"># for batched data and non-batched data</span>
         <span class="n">negate_switch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">negate_switch</span><span class="p">[</span><span class="n">neg_z_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">negate_switch</span><span class="p">[</span><span class="n">neg_z_mask</span><span class="p">]</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">points_c</span> <span class="o">=</span> <span class="n">points_c</span> <span class="o">*</span> <span class="n">negate_switch</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">sc</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">negate_switch</span>
-        <span class="k">return</span> <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span></div>
+        <span class="k">return</span> <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span>
 
 <div class="viewcode-block" id="EPnP.get_se3"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP.get_se3">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_se3</span><span class="p">(</span><span class="n">pts_w</span><span class="p">,</span> <span class="n">pts_c</span><span class="p">):</span>
@@ -624,8 +647,7 @@
 <span class="sd">            pts_w: The object points in world coordinate. The shape is (..., N, 3).</span>
 <span class="sd">            pts_c: The object points in camera coordinate. The shape is (..., N, 3).</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            R: The rotation matrix. The shape is (..., 3, 3).</span>
-<span class="sd">            T: The translation vector. The shape is (..., 3).</span>
+<span class="sd">            ``LieTensor``: estimated pose (``SE3type``) for the camera.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the centered points</span>
         <span class="n">center_w</span> <span class="o">=</span> <span class="n">pts_w</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
@@ -650,7 +672,6 @@
         <span class="n">pose</span> <span class="o">=</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">pose</span></div></div>
-
 </pre></div>
 
              </article>
