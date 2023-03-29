@@ -269,8 +269,8 @@ intrinsic matrix, <span class="math">\(R\)</span> is the rotation matrix and <sp
 \end{aligned}
 
 \]</div>
-<p>Where <span class="math">\(p^{img}_i\)</span> is the projected image pixels in form <span class="math">\((u_i, v_i, 1)\)</span>, :math:’s_i’ is the scale factor.
-Let the control point in camera coordinate represented by <span class="math">\(c^c_j = (x^c_j, y^c_j, z^c_j, 1)\)</span>.
+<p>Where <span class="math">\(p^{img}_i\)</span> is the projected image pixels in form <span class="math">\((u_i, v_i, 1)\)</span>, <span class="math">\(s_i\)</span> is the scale factor.
+Let the control point in camera coordinate represented by <span class="math">\(c^c_j = (x^c_j, y^c_j, z^c_j)\)</span>.
 Rearranging the image point equation yields the following two linear equations for each of the n points:</p>
 <div class="math">
 \[\begin{aligned}
@@ -283,17 +283,15 @@ Rearranging the image point equation yields the following two linear equations f
 <span class="math">\(x = \begin{bmatrix}c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp; c^{c^T}_4\end{bmatrix}^T\)</span>.
 The solution for the control points exists in the kernel space of <span class="math">\(M\)</span> and is expressed as</p>
 <div class="math">
-\[\]</div>
-<dl class="simple">
-<dt>begin{aligned}</dt><dd><p>x &amp;= sum^N_{i=1}{beta_iv_i}</p>
-</dd>
-</dl>
-<p>end{aligned}
-x = sum^N_{i=1}{beta_iv_i}
-where N (4) is the number of singular values in M and each <span class="math">\(v_i\)</span> is the corresponding right singular vector of M.
-The final step involves calculating the coefficients beta_i.
+\[\begin{aligned}
+    x &= \sum^N_{i=1}{\beta_iv_i}
+\end{aligned}
+
+\]</div>
+<p>where N (4) is the number of singular values in M and each <span class="math">\(v_i\)</span> is the corresponding right singular vector of
+<span class="math">\(M\)</span>. The final step involves calculating the coefficients <span class="math">\(\beta_i\)</span>.
 Optionally, the Gauss-Newton algorithm is used to refine them.
-The camera pose that minimize the error of transforming the world coordinat points, :math:’p^w_i’, to image
+The camera pose that minimize the error of transforming the world coordinat points, <span class="math">\(p^w_i\)</span>, to image
 coordinate points, <span class="math">\(p^c_i\)</span> which is known as long as <span class="math">\(c^{c^T}_4\)</span> is known, are then calculated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
