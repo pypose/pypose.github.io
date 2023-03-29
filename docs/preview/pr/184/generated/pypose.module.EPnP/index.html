@@ -248,7 +248,53 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.EPnP">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EPnP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">naive=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer=&lt;class</span> <span class="pre">'pypose.optim.optimizer.GaussNewton'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP" title="Permalink to this definition">¶</a></dt>
-<dd><p>EPnP Solver - a non-iterative O(n) solution to the PnP problem.</p>
+<dd><p>EPnP Solver - a non-iterative O(n) solution to the PnP problem for <span class="math">\(n \geq 4\)</span>.</p>
+<p>As an overview of the process, first define each of the n points in the world coordinate as <span class="math">\(p^w_i\)</span> and their
+corresponding position in camera coordinate as <span class="math">\(p^c_i\)</span>.
+They are represented by weighted sums of the four selected controls points, <span class="math">\(c^w_j\)</span> and <span class="math">\(c^c_j\)</span> in
+camera coordinate respectively. Let the projection matrix be <span class="math">\(P = K[R|T]\)</span>, where <span class="math">\(K\)</span> is the camera
+intrinsic matrix, <span class="math">\(R\)</span> is the rotation matrix and <span class="math">\(T\)</span> is the translation vector.</p>
+<div class="math">
+\[\begin{aligned}
+    p^w_i &= \sum^4_{j=1}{\alpha_{ij}c^w_j} \\
+    p^c_i &= \sum^4_{j=1}{\alpha_{ij}c^c_j} \\
+    \sum^4_{j=1}{\alpha_{ij}} &= 1
+\end{aligned}
+
+\]</div>
+<p>From this, the derivation of the points projection equations is as follows:</p>
+<div class="math">
+\[\begin{aligned}
+    s_i\,p^{img}_i &= K\sum^4_{j=1}{\alpha_{ij}c^c_j}
+\end{aligned}
+
+\]</div>
+<p>Where <span class="math">\(p^{img}_i\)</span> is the projected image pixels in form <span class="math">\((u_i, v_i, 1)\)</span>, :math:’s_i’ is the scale factor.
+Let the control point in camera coordinate represented by <span class="math">\(c^c_j = (x^c_j, y^c_j, z^c_j, 1)\)</span>.
+Rearranging the image point equation yields the following two linear equations for each of the n points:</p>
+<div class="math">
+\[\begin{aligned}
+    \sum^4_{j=1}{\alpha_{ij}f_xx^c_j + \alpha_{ij}(u_0 - u_i)z^c_j} &= 0 \\
+    \sum^4_{j=1}{\alpha_{ij}f_yy^c_j + \alpha_{ij}(v_0 - v_i)z^c_j} &= 0
+\end{aligned}
+
+\]</div>
+<p>Using these two equations for each of the n points, the system <span class="math">\(Mx = 0\)</span> can be formed where
+<span class="math">\(x = \begin{bmatrix}c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp; c^{c^T}_4\end{bmatrix}^T\)</span>.
+The solution for the control points exists in the kernel space of <span class="math">\(M\)</span> and is expressed as</p>
+<div class="math">
+\[\]</div>
+<dl class="simple">
+<dt>begin{aligned}</dt><dd><p>x &amp;= sum^N_{i=1}{beta_iv_i}</p>
+</dd>
+</dl>
+<p>end{aligned}
+x = sum^N_{i=1}{beta_iv_i}
+where N (4) is the number of singular values in M and each <span class="math">\(v_i\)</span> is the corresponding right singular vector of M.
+The final step involves calculating the coefficients beta_i.
+Optionally, the Gauss-Newton algorithm is used to refine them.
+The camera pose that minimize the error of transforming the world coordinat points, :math:’p^w_i’, to image
+coordinate points, <span class="math">\(p^c_i\)</span> which is known as long as <span class="math">\(c^{c^T}_4\)</span> is known, are then calculated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
