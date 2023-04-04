@@ -268,10 +268,11 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    EPnP Solver - a non-iterative O(n) solution to the PnP problem for :math:`n \geq 4`.</span>
 
-<span class="sd">    As an overview of the process, first define each of the n points in the world coordinate as :math:`p^w_i` and their</span>
-<span class="sd">    corresponding position in camera coordinate as :math:`p^c_i`.</span>
-<span class="sd">    They are represented by weighted sums of the four selected controls points, :math:`c^w_j` and :math:`c^c_j` in</span>
-<span class="sd">    camera coordinate respectively. Let the projection matrix be :math:`P = K[R|T]`, where :math:`K` is the camera</span>
+<span class="sd">    As an overview of the process, first define each of the n points in the world coordinate as</span>
+<span class="sd">    :math:`p^w_i` and their corresponding position in camera coordinate as :math:`p^c_i`.</span>
+<span class="sd">    They are represented by weighted sums of the four selected controls points, :math:`c^w_j`</span>
+<span class="sd">    and :math:`c^c_j` in camera coordinate respectively.</span>
+<span class="sd">    Let the projection matrix be :math:`P = K[R|T]`, where :math:`K` is the camera</span>
 <span class="sd">    intrinsic matrix, :math:`R` is the rotation matrix and :math:`T` is the translation vector.</span>
 
 <span class="sd">    .. math::</span>
@@ -288,9 +289,10 @@
 <span class="sd">            s_i\,p^{img}_i &amp;= K\sum^4_{j=1}{\alpha_{ij}c^c_j}</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    Where :math:`p^{img}_i` is the projected image pixels in form :math:`(u_i, v_i, 1)`, :math:`s_i` is the scale factor.</span>
-<span class="sd">    Let the control point in camera coordinate represented by :math:`c^c_j = (x^c_j, y^c_j, z^c_j)`.</span>
-<span class="sd">    Rearranging the image point equation yields the following two linear equations for each of the n points:</span>
+<span class="sd">    Where :math:`p^{img}_i` is the projected image pixels in form :math:`(u_i, v_i, 1)`,</span>
+<span class="sd">    :math:`s_i` is the scale factor. Let the control point in camera coordinate represented by</span>
+<span class="sd">    :math:`c^c_j = (x^c_j, y^c_j, z^c_j)`. Rearranging the image point equation yields the</span>
+<span class="sd">    following two linear equations for each of the n points:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
@@ -298,20 +300,23 @@
 <span class="sd">            \sum^4_{j=1}{\alpha_{ij}f_yy^c_j + \alpha_{ij}(v_0 - v_i)z^c_j} &amp;= 0</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    Using these two equations for each of the n points, the system :math:`Mx = 0` can be formed where</span>
+<span class="sd">    Using these two equations for each of the n points, the system :math:`Mx = 0` can be formed</span>
+<span class="sd">    where</span>
 <span class="sd">    :math:`x = \begin{bmatrix}c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp; c^{c^T}_4\end{bmatrix}^T`.</span>
-<span class="sd">    The solution for the control points exists in the kernel space of :math:`M` and is expressed as</span>
+<span class="sd">    The solution for the control points exists in the kernel space of :math:`M` and is</span>
+<span class="sd">    expressed as</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            x &amp;= \sum^N_{i=1}{\beta_iv_i}</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    where N (4) is the number of singular values in M and each :math:`v_i` is the corresponding right singular vector of</span>
-<span class="sd">    :math:`M`. The final step involves calculating the coefficients :math:`\beta_i`.</span>
-<span class="sd">    Optionally, the Gauss-Newton algorithm is used to refine them.</span>
-<span class="sd">    The camera pose that minimize the error of transforming the world coordinat points, :math:`p^w_i`, to image</span>
-<span class="sd">    coordinate points, :math:`p^c_i` which is known as long as :math:`c^{c^T}_4` is known, are then calculated.</span>
+<span class="sd">    where N (4) is the number of singular values in M and each :math:`v_i` is the corresponding</span>
+<span class="sd">    right singular vector of :math:`M`. The final step involves calculating the coefficients</span>
+<span class="sd">    :math:`\beta_i`. Optionally, the Gauss-Newton algorithm is used to refine them.</span>
+<span class="sd">    The camera pose that minimize the error of transforming the world coordinat points,</span>
+<span class="sd">    :math:`p^w_i`, to image coordinate points, :math:`p^c_i` which is known as long as</span>
+<span class="sd">    :math:`c^{c^T}_4` is known, are then calculated.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        optimizer (Optional[torch.optim.Optimizer]): Optimizer to refine the solution.</span>
