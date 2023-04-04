@@ -416,33 +416,27 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">refine</span><span class="p">:</span>
             <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refine</span><span class="p">(</span><span class="n">solution</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">nullv</span><span class="p">,</span>
                                 <span class="n">bases</span><span class="p">)</span>
-            <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">nullv</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_solution</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">nullv</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span>
+                                               <span class="n">intrinsics</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">_generate_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">nullv</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span>
                            <span class="n">request_error</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="n">solution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-
-        <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">nullv</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
-        <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
-                                                                          <span class="n">points</span><span class="p">)</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">nullv</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">bases</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm_sign_scaling_factor</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span>
+                                                                     <span class="n">alpha</span><span class="p">,</span>
+                                                                     <span class="n">points</span><span class="p">)</span>
         <span class="n">pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_se3</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points_c</span><span class="p">)</span>
+        <span class="n">solution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pose</span><span class="o">=</span><span class="n">pose</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="n">bases</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sc</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request_error</span><span class="p">:</span>
             <span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">reprojection_error</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">)</span>
             <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span>
-
-        <span class="c1"># save the solution</span>
-        <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pose</span>
-        <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;ctrl_pts_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_pts_c</span>
-        <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;points_c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_c</span>
-        <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span>
-        <span class="n">solution</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sc</span>
-
         <span class="k">return</span> <span class="n">solution</span>
 
-    <span class="k">def</span> <span class="nf">_refine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">nullv</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_refine</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">nullv</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
         <span class="c1"># Refine beta according to Eq 15 in the paper</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">BetaObjective</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">GaussNewton</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">LSTSQ</span><span class="p">())</span>
@@ -547,8 +541,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="n">xc</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Calculate the control points and object points in the camera coordinates</span>
-        <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">xc</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">batch</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="n">points_c</span> <span class="o">=</span> <span class="n">alphas</span> <span class="o">@</span> <span class="n">ctrl_pts_c</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="n">xc</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">batch</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">points_c</span> <span class="o">=</span> <span class="n">alphas</span> <span class="o">@</span> <span class="n">bases</span>
 
         <span class="c1"># Calculate the distance of the reference points in the world coordinates</span>
         <span class="n">points_w_centered</span> <span class="o">=</span> <span class="n">points</span> <span class="o">-</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -563,8 +557,8 @@
         <span class="n">sc</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vecdot</span><span class="p">(</span><span class="n">dist_c</span><span class="p">,</span> <span class="n">dist_c</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vecdot</span><span class="p">(</span><span class="n">dist_c</span><span class="p">,</span> <span class="n">dist_w</span><span class="p">)</span>
 
         <span class="c1"># Update the control points and the object points in the camera coordinates based on the scaling factors</span>
-        <span class="n">ctrl_pts_c</span> <span class="o">=</span> <span class="n">ctrl_pts_c</span> <span class="o">*</span> <span class="n">sc</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="n">points_c</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">ctrl_pts_c</span><span class="p">)</span>
+        <span class="n">bases</span> <span class="o">=</span> <span class="n">bases</span> <span class="o">*</span> <span class="n">sc</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">points_c</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
 
         <span class="c1"># Update the control points and the object points in the camera coordinates based on the sign</span>
         <span class="n">neg_z_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">points_c</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (N, )</span>
@@ -574,7 +568,7 @@
         <span class="n">negate_switch</span><span class="p">[</span><span class="n">neg_z_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">negate_switch</span><span class="p">[</span><span class="n">neg_z_mask</span><span class="p">]</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">points_c</span> <span class="o">=</span> <span class="n">points_c</span> <span class="o">*</span> <span class="n">negate_switch</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">sc</span> <span class="o">*</span> <span class="n">negate_switch</span>
-        <span class="k">return</span> <span class="n">ctrl_pts_c</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span>
+        <span class="k">return</span> <span class="n">bases</span><span class="p">,</span> <span class="n">points_c</span><span class="p">,</span> <span class="n">sc</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_se3</span><span class="p">(</span><span class="n">pts_w</span><span class="p">,</span> <span class="n">pts_c</span><span class="p">):</span>
