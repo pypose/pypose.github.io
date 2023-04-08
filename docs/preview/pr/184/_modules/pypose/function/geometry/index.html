@@ -239,8 +239,21 @@
   <h1>Source code for pypose.function.geometry</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">pm</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">is_lietensor</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">LieTensor</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">broadcast_shapes</span>
+
+
+<div class="viewcode-block" id="is_lietensor"><a class="viewcode-back" href="../../../../generated/pypose.is_lietensor/#pypose.is_lietensor">[docs]</a><span class="k">def</span> <span class="nf">is_lietensor</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check whether an instance or object is a LieTensor or not.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (``obj``): a Python object or instantance.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        ``bool``: ``True`` if obj is a LieTensor object otherwise ``False``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="cart2homo"><a class="viewcode-back" href="../../../../generated/pypose.cart2homo/#pypose.cart2homo">[docs]</a><span class="k">def</span> <span class="nf">cart2homo</span><span class="p">(</span><span class="n">coordinates</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
@@ -304,9 +317,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        points (``torch.Tensor``): The object points in camera coordinate.</span>
 <span class="sd">            The shape has to be (..., N, 3).</span>
-<span class="sd">        intrinsics (``torch.Tensor``): The intrinsic matrices of cameras.</span>
+<span class="sd">        intrinsics (``torch.Tensor``): The intrinsic parameters of cameras.</span>
 <span class="sd">            The shape has to be (..., 3, 3).</span>
-<span class="sd">        extrinsics (``pypose.LieTensor``, optional): The extrinsic transform of cameras.</span>
+<span class="sd">        extrinsics (``pypose.LieTensor``, optional): The extrinsic parameters of cameras.</span>
 <span class="sd">            The shape has to be (..., 7). If ``None``, the points are assumed to be in</span>
 <span class="sd">            the camera frame, otherwise in the world frame. Default: ``None``.</span>
 
@@ -323,10 +336,8 @@
 
 <div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span> <span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Performs batched re-projection and returns the per-pixel error (distance).</span>
-
-<span class="sd">    Calculate the reprojection error for points in the world coordinate and their</span>
-<span class="sd">    associated pixels, given camera pose and intrinsic matrices.</span>
+<span class="sd">    Calculates batched per-pixel reprojection error (distance) for points in the world</span>
+<span class="sd">    coordinate, given camera intrinsic and extrinsic parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points (``torch.Tensor``): The object points in world coordinate.</span>
