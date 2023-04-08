@@ -267,37 +267,41 @@
 
 
 <div class="viewcode-block" id="EPnP"><a class="viewcode-back" href="../../../../generated/pypose.module.EPnP/#pypose.module.EPnP">[docs]</a><span class="k">class</span> <span class="nc">EPnP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    EPnP Solver - a non-iterative O(n) solution to the PnP problem for :math:`n \geq 4`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Batched EPnP Solver - a non-iterative :math:`\mathcal{O}(n)` solution to the</span>
+<span class="sd">    Perspective-:math:`n`-Point (PnP) problem for :math:`n \geq 4`.</span>
 
-<span class="sd">    As an overview of the process, first define each of the n points in the world</span>
-<span class="sd">    coordinate as :math:`p^w_i` and their corresponding position in camera coordinate</span>
-<span class="sd">    as :math:`p^c_i`.</span>
-<span class="sd">    They are represented by weighted sums of the four selected controls points,</span>
-<span class="sd">    :math:`c^w_j` and :math:`c^c_j` in camera coordinate respectively.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        intrinsics (``torch.Tensor``, optional): The camera intrinsics.</span>
+<span class="sd">            The shape is (..., 3, 3). Default: None</span>
+<span class="sd">        refine (``bool``, optional): refine the solution with Gaussian-Newton optimizer.</span>
+<span class="sd">            Default: ``True``.</span>
+
+<span class="sd">    Assume each of the :math:`n` points in the world coordinate is :math:`p^w_i` and in</span>
+<span class="sd">    camera coordinate is :math:`p^c_i`.</span>
+<span class="sd">    They are represented by weighted sums of the four virtual control points,</span>
+<span class="sd">    :math:`c^w_j` and :math:`c^c_j` in the world and camera coordinate, respectively.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            &amp; p^w_i = \sum^4_{j=1}{\alpha_{ij}c^w_j} \\</span>
+<span class="sd">            &amp; p^c_i = \sum^4_{j=1}{\alpha_{ij}c^c_j} \\</span>
+<span class="sd">            &amp; \sum^4_{j=1}{\alpha_{ij}} = 1</span>
+<span class="sd">        \end{aligned}</span>
+
 <span class="sd">    Let the projection matrix be :math:`P = K[R|T]`, where :math:`K` is the camera</span>
-<span class="sd">    intrinsic matrix, :math:`R` is the rotation matrix and :math:`T` is the translation</span>
-<span class="sd">    vector.</span>
+<span class="sd">    intrinsics, :math:`R` is the rotation matrix and :math:`T` is the translation</span>
+<span class="sd">    vector. Then we have</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
-<span class="sd">            p^w_i &amp;= \sum^4_{j=1}{\alpha_{ij}c^w_j} \\</span>
-<span class="sd">            p^c_i &amp;= \sum^4_{j=1}{\alpha_{ij}c^c_j} \\</span>
-<span class="sd">            \sum^4_{j=1}{\alpha_{ij}} &amp;= 1</span>
+<span class="sd">            s_i p^{\text{img}}_i &amp;= K\sum^4_{j=1}{\alpha_{ij}c^c_j},</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    From this, the derivation of the points projection equations is as follows:</span>
-
-<span class="sd">    .. math::</span>
-<span class="sd">        \begin{aligned}</span>
-<span class="sd">            s_i\,p^{img}_i &amp;= K\sum^4_{j=1}{\alpha_{ij}c^c_j}</span>
-<span class="sd">        \end{aligned}</span>
-
-<span class="sd">    Where :math:`p^{img}_i` is the projected image pixels in form :math:`(u_i, v_i, 1)`,</span>
+<span class="sd">    where :math:`p^{\text{img}}_i` is pixels in homogeneous form :math:`(u_i, v_i, 1)`,</span>
 <span class="sd">    :math:`s_i` is the scale factor. Let the control point in camera coordinate</span>
-<span class="sd">    represented by :math:`c^c_j = (x^c_j, y^c_j, z^c_j)`.</span>
-<span class="sd">    Rearranging the image point equation yields the following two linear equations for</span>
-<span class="sd">    each of the n points:</span>
+<span class="sd">    represented by :math:`c^c_j = (x^c_j, y^c_j, z^c_j)`. Rearranging the projection</span>
+<span class="sd">    equation yields two linear equations for each of the :math:`n` points:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
@@ -305,71 +309,63 @@
 <span class="sd">            \sum^4_{j=1}{\alpha_{ij}f_yy^c_j + \alpha_{ij}(v_0 - v_i)z^c_j} &amp;= 0</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    Using these two equations for each of the n points, the system :math:`Mx = 0` can be</span>
-<span class="sd">    formed where</span>
-<span class="sd">    :math:`x = \begin{bmatrix}c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp; c^{c^T}_4\end{bmatrix}^T`.</span>
-<span class="sd">    The solution for the control points exists in the kernel space of :math:`M` and is</span>
-<span class="sd">    expressed as</span>
+<span class="sd">    Assume :math:`\mathbf{x} = \begin{bmatrix} c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp;</span>
+<span class="sd">    c^{c^T}_4 \end{bmatrix}^T`, then the two equations form a system :math:`Mx = 0`</span>
+<span class="sd">    considering all of the :math:`n` points. Its solution can be expressed as</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
-<span class="sd">            x &amp;= \sum^N_{i=1}{\beta_iv_i}</span>
+<span class="sd">            x &amp;= \sum^4_{i=1}{\beta_iv_i},</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    where N (4) is the number of singular values in M and each :math:`v_i` is the</span>
-<span class="sd">    corresponding right singular vector of :math:`M`. The final step involves calculating</span>
-<span class="sd">    the coefficients :math:`\beta_i`. Optionally, the Gauss-Newton algorithm is used to</span>
-<span class="sd">    refine them. The camera pose that minimize the error of transforming the world</span>
-<span class="sd">    coordinate points, :math:`p^w_i`, to image coordinate points, :math:`p^c_i` which is</span>
-<span class="sd">    known as long as :math:`c^{c^T}_4` is known, are then calculated.</span>
+<span class="sd">    where :math:`v_i` is the null vectors of matrix :math:`M^T M` corresponding to its</span>
+<span class="sd">    least 4 eigenvalues.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        refine (Optional[torch.optim.Optimizer]): Optimizer to refine the solution.</span>
-<span class="sd">            Set to ``None`` to disable refinement.</span>
-<span class="sd">        intrinsics (Optional[torch.Tensor]): The camera intrinsics. The shape is (3, 3).</span>
+<span class="sd">    The final step involves calculating the coefficients :math:`\beta_i`. Optionally, the</span>
+<span class="sd">    Gauss-Newton algorithm can be used to refine the solution of :math:`\beta_i`.</span>
 
-<span class="sd">    Examples:</span>
+<span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; # create some random test sample for a single camera</span>
-<span class="sd">        &gt;&gt;&gt; pose = pp.SE3([ 0.0000, -8.0000,  0.0000,  0.0000, -0.3827,  0.0000,  0.9239])</span>
-<span class="sd">        &gt;&gt;&gt; f, img_size = 2, (9, 9)</span>
-<span class="sd">        &gt;&gt;&gt; projection = torch.tensor([[f, 0, img_size[0] / 2],</span>
-<span class="sd">        ...                            [0, f, img_size[1] / 2],</span>
-<span class="sd">        ...                            [0, 0, 1              ]])</span>
-<span class="sd">        &gt;&gt;&gt; # some random points in the view</span>
-<span class="sd">        &gt;&gt;&gt; pts_c = torch.tensor([[2., 0., 2.],</span>
-<span class="sd">        ...                       [1., 0., 2.],</span>
-<span class="sd">        ...                       [0., 1., 1.],</span>
-<span class="sd">        ...                       [0., 0., 1.],</span>
-<span class="sd">        ...                       [1., 0., 1.],</span>
-<span class="sd">        ...                       [5., 5., 3.]])</span>
-<span class="sd">        &gt;&gt;&gt; pixels = pp.homo2cart(pts_c @ projection.T)</span>
-<span class="sd">        &gt;&gt;&gt; pixels</span>
-<span class="sd">        tensor([[6.5000, 4.5000],</span>
-<span class="sd">                [5.5000, 4.5000],</span>
-<span class="sd">                [4.5000, 6.5000],</span>
-<span class="sd">                [4.5000, 4.5000],</span>
-<span class="sd">                [6.5000, 4.5000],</span>
-<span class="sd">                [7.8333, 7.8333]])</span>
-<span class="sd">        &gt;&gt;&gt; # transform the points to world coordinate</span>
-<span class="sd">        &gt;&gt;&gt; # solve the PnP problem to find the camera pose</span>
-<span class="sd">        &gt;&gt;&gt; pts_w = pose.Inv().Act(pts_c)</span>
-<span class="sd">        &gt;&gt;&gt; # solve the PnP problem</span>
-<span class="sd">        &gt;&gt;&gt; epnp = pp.module.EPnP(intrinsics=projection)</span>
-<span class="sd">        &gt;&gt;&gt; pose = epnp(pts_w, pixels)</span>
-<span class="sd">        &gt;&gt;&gt; pose</span>
+<span class="sd">        &gt;&gt;&gt; f, (H, W) = 2, (9, 9) # focal length and image height, width</span>
+<span class="sd">        &gt;&gt;&gt; intrinsics = torch.tensor([[f, 0, H / 2],</span>
+<span class="sd">        ...                            [0, f, W / 2],</span>
+<span class="sd">        ...                            [0, 0,   1  ]])</span>
+<span class="sd">        &gt;&gt;&gt; object = torch.tensor([[2., 0., 2.],</span>
+<span class="sd">        ...                        [1., 0., 2.],</span>
+<span class="sd">        ...                        [0., 1., 1.],</span>
+<span class="sd">        ...                        [0., 0., 1.],</span>
+<span class="sd">        ...                        [1., 0., 1.],</span>
+<span class="sd">        ...                        [5., 5., 3.]])</span>
+<span class="sd">        &gt;&gt;&gt; pixels = pp.camera2pixel(object, intrinsics)</span>
+<span class="sd">        &gt;&gt;&gt; pose = pp.SE3([ 0., -8,  0.,  0., -0.3827,  0.,  0.9239])</span>
+<span class="sd">        &gt;&gt;&gt; points = pose.Inv() @ object</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; epnp = pp.module.EPnP(intrinsics)</span>
+<span class="sd">        &gt;&gt;&gt; pose = epnp(points, pixels)</span>
 <span class="sd">        SE3Type LieTensor:</span>
-<span class="sd">        LieTensor([ 7.3552e-05, -8.0000e+00,  1.4997e-04, -8.1382e-06, -3.8271e-01,</span>
-<span class="sd">                    5.6476e-06,  9.2387e-01])</span>
+<span class="sd">        LieTensor([ 3.9816e-05, -8.0000e+00,  5.8174e-05, -3.3186e-06, -3.8271e-01,</span>
+<span class="sd">                    3.6321e-06,  9.2387e-01])</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Currently this module only support batched rectified camera intrinsics, which can</span>
+<span class="sd">        be defined in the form:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            K = \begin{pmatrix}</span>
+<span class="sd">                    f_x &amp;   0 &amp; c_x \\</span>
+<span class="sd">                    0   &amp; f_u &amp; c_y \\</span>
+<span class="sd">                    0   &amp;   0 &amp;   1</span>
+<span class="sd">                \end{pmatrix}</span>
+
+<span class="sd">        The full form of camera intrinsics will be supported in a future release.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation is based on the paper</span>
 
-<span class="sd">        * Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, `Accurate</span>
-<span class="sd">          Non-Iterative O(n) Solution to the PnP Problem</span>
-<span class="sd">          &lt;https://github.com/cvlab-epfl/EPnP&gt;`_, In Proceedings of ICCV, 2007.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
+<span class="sd">        * Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, `EPnP: An Accurate O(n)</span>
+<span class="sd">          Solution to the PnP Problem &lt;https://doi.org/10.1007/s11263-008-0152-6&gt;`_,</span>
+<span class="sd">          International Journal of Computer Vision (IJCV), 2009.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refine</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refine</span> <span class="o">=</span> <span class="n">refine</span>
@@ -384,13 +380,15 @@
 <span class="sd">                Shape (..., n, 3)</span>
 <span class="sd">            pixels (``torch.Tensor``): 2D image points, which are the projection of</span>
 <span class="sd">                object points. Shape (..., n, 2)</span>
-<span class="sd">            intrinsics (``Optional[torch.Tensor]``): camera intrinsics. Shape (..., 3, 3).</span>
+<span class="sd">            intrinsics (torch.Tensor, optional): camera intrinsics. Shape (..., 3, 3).</span>
 <span class="sd">                Setting it to any non-``None`` value will override the default intrinsics</span>
 <span class="sd">                kept in the module.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ``LieTensor``: estimated pose (``SE3type``) for the camera.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">,</span> \
+            <span class="s2">&quot;Number of points/pixels cannot be smaller than 4.&quot;</span>
         <span class="n">intrinsics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intrinsics</span> <span class="k">if</span> <span class="n">intrinsics</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">intrinsics</span>
         <span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
 
