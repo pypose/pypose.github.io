@@ -325,6 +325,36 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``torch.Tensor``: The associated pixel with shape (..., N, 2).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; f, (H, W) = 2, (9, 9) # focal length and image height, width</span>
+<span class="sd">        &gt;&gt;&gt; intrinsics = torch.tensor([[f, 0, H / 2],</span>
+<span class="sd">        ...                            [0, f, W / 2],</span>
+<span class="sd">        ...                            [0, 0,   1  ]])</span>
+<span class="sd">        &gt;&gt;&gt; object = torch.tensor([[2., 0., 2.],</span>
+<span class="sd">        ...                        [1., 0., 2.],</span>
+<span class="sd">        ...                        [0., 1., 1.],</span>
+<span class="sd">        ...                        [0., 0., 1.],</span>
+<span class="sd">        ...                        [1., 0., 1.],</span>
+<span class="sd">        ...                        [5., 5., 3.]])</span>
+<span class="sd">        &gt;&gt;&gt; pixels = pp.point2pixel(object, intrinsics)</span>
+<span class="sd">        &gt;&gt;&gt; pixels</span>
+<span class="sd">        tensor([[6.5000, 4.5000],</span>
+<span class="sd">                [5.5000, 4.5000],</span>
+<span class="sd">                [4.5000, 6.5000],</span>
+<span class="sd">                [4.5000, 4.5000],</span>
+<span class="sd">                [6.5000, 4.5000],</span>
+<span class="sd">                [7.8333, 7.8333]])</span>
+<span class="sd">        &gt;&gt;&gt; pose = pp.SE3([ 0., -8,  0.,  0., -0.3827,  0.,  0.9239])</span>
+<span class="sd">        &gt;&gt;&gt; pixels = pp.point2pixel(object, intrinsics, pose)</span>
+<span class="sd">        &gt;&gt;&gt; pixels</span>
+<span class="sd">        tensor([[  4.4999,  -1.1568],</span>
+<span class="sd">                [  3.8332,  -3.0425],</span>
+<span class="sd">                [  2.4998, -15.2997],</span>
+<span class="sd">                [  2.4998, -18.1282],</span>
+<span class="sd">                [  4.4999,  -6.8135],</span>
+<span class="sd">                [  4.9999,   3.4394]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Points shape incorrect&quot;</span>
     <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Intrinsics shape incorrect.&quot;</span>
@@ -350,6 +380,19 @@
 <span class="sd">            The shape has to be (..., 7).</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Per-pixel reprojection error. The shape is (..., N).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; f, (H, W) = 2, (9, 9) # focal length and image height, width</span>
+<span class="sd">        &gt;&gt;&gt; intrinsics = torch.tensor([[f, 0, H / 2],</span>
+<span class="sd">        ...                            [0, f, W / 2],</span>
+<span class="sd">        ...                            [0, 0,   1  ]])</span>
+<span class="sd">        &gt;&gt;&gt; object = torch.randn(6, 3)</span>
+<span class="sd">        &gt;&gt;&gt; pose = pp.randn_SE3()</span>
+<span class="sd">        &gt;&gt;&gt; pixels = pp.point2pixel(object, intrinsics, pose)</span>
+<span class="sd">        &gt;&gt;&gt; err = pp.reprojerr(object, pixels, intrinsics, pose)</span>
+<span class="sd">        &gt;&gt;&gt; err</span>
+<span class="sd">        tensor([0., 0., 0., 0., 0., 0.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> \
                      <span class="n">extrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
