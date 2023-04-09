@@ -268,6 +268,37 @@ the camera frame, otherwise in the world frame. Default: <code class="docutils l
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code></p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="c1"># focal length and image height, width</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">intrinsics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">W</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">1</span>  <span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">point2pixel</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span>
+<span class="go">tensor([[6.5000, 4.5000],</span>
+<span class="go">        [5.5000, 4.5000],</span>
+<span class="go">        [4.5000, 6.5000],</span>
+<span class="go">        [4.5000, 4.5000],</span>
+<span class="go">        [6.5000, 4.5000],</span>
+<span class="go">        [7.8333, 7.8333]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3827</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.9239</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">point2pixel</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">pose</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span>
+<span class="go">tensor([[  4.4999,  -1.1568],</span>
+<span class="go">        [  3.8332,  -3.0425],</span>
+<span class="go">        [  2.4998, -15.2997],</span>
+<span class="go">        [  2.4998, -18.1282],</span>
+<span class="go">        [  4.4999,  -6.8135],</span>
+<span class="go">        [  4.9999,   3.4394]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
