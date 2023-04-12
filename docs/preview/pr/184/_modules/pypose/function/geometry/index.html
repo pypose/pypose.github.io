@@ -288,7 +288,7 @@
 <div class="viewcode-block" id="homo2cart"><a class="viewcode-back" href="../../../../generated/pypose.homo2cart/#pypose.homo2cart">[docs]</a><span class="k">def</span> <span class="nf">homo2cart</span><span class="p">(</span><span class="n">coordinates</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Converts batched Homogeneous coordinates to Cartesian coordinates</span>
-<span class="sd">    by divising the last row.</span>
+<span class="sd">    by dividing the last row. Size of the last dimension will be reduced by 1.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        coordinates (``torch.Tensor``): the Homogeneous coordinates to be converted.</span>
@@ -297,12 +297,10 @@
 <span class="sd">        ``torch.Tensor``: the coordinates in Cartesian space.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; points = torch.randn(2, 4)</span>
-<span class="sd">        tensor([[-0.5580, -1.1631, -0.5693,  0.5482],</span>
-<span class="sd">                [-1.4770,  0.4703, -1.1718,  0.1307]])</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[4., 3., 2., 1.], [8., 6., 4., 2.]])</span>
 <span class="sd">        &gt;&gt;&gt; homo2cart(points)</span>
-<span class="sd">        tensor([[ -1.0179,  -2.1215,  -1.0385],</span>
-<span class="sd">                [-11.2982,   3.5974,  -8.9636]])</span>
+<span class="sd">        tensor([[4., 3., 2.],</span>
+<span class="sd">                [4., 3., 2.]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">tiny</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span>
     <span class="n">denum</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="n">tiny</span><span class="p">)</span>

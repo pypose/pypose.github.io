@@ -376,9 +376,9 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            points (``torch.Tensor``): 3D object points in the world coordinates.</span>
-<span class="sd">                Shape (..., n, 3)</span>
+<span class="sd">                Shape (..., N, 3)</span>
 <span class="sd">            pixels (``torch.Tensor``): 2D image points, which are the projection of</span>
-<span class="sd">                object points. Shape (..., n, 2)</span>
+<span class="sd">                object points. Shape (..., N, 2)</span>
 <span class="sd">            intrinsics (torch.Tensor, optional): camera intrinsics. Shape (..., 3, 3).</span>
 <span class="sd">                Setting it to any non-``None`` value will override the default intrinsics</span>
 <span class="sd">                kept in the module.</span>
@@ -451,7 +451,7 @@
     <span class="k">def</span> <span class="nf">_compute_nullv</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">least</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
         <span class="c1"># Construct M matrix and find its null eigenvectors with the least eigenvalues</span>
         <span class="c1"># Check equation 7 in paper for more details.</span>
-        <span class="c1"># pixels (..., point, 2); alpha (..., point, 4); intrinsics (..., 3, 3)</span>
+        <span class="c1"># pixels (..., N, 2); alpha (..., N, 4); intrinsics (..., 3, 3)</span>
         <span class="n">batch</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">fu</span><span class="p">,</span> <span class="n">u0</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>

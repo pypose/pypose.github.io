@@ -249,7 +249,7 @@
 <dt class="sig sig-object py" id="pypose.homo2cart">
 <span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">homo2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#homo2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.homo2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts batched Homogeneous coordinates to Cartesian coordinates
-by divising the last row.</p>
+by dividing the last row. Size of the last dimension will be reduced by 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>coordinates</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the Homogeneous coordinates to be converted.</p>
@@ -262,12 +262,10 @@ by divising the last row.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="go">tensor([[-0.5580, -1.1631, -0.5693,  0.5482],</span>
-<span class="go">        [-1.4770,  0.4703, -1.1718,  0.1307]])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">homo2cart</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="go">tensor([[ -1.0179,  -2.1215,  -1.0385],</span>
-<span class="go">        [-11.2982,   3.5974,  -8.9636]])</span>
+<span class="go">tensor([[4., 3., 2.],</span>
+<span class="go">        [4., 3., 2.]])</span>
 </pre></div>
 </div>
 </dd></dl>
