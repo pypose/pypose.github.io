@@ -339,10 +339,89 @@ for the linear system of the optimization problem:</p>
 
 \]</div>
 </div></blockquote>
+<p>A discrete-time non-linear system can be described as:</p>
+<div class="math">
+\[\begin{aligned}
+    \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\
+    \mathbf{y}_{t} &= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\
+\end{aligned}
+
+\]</div>
+<p>For a current point <span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a
+trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*
++\delta\mathbf{u}, t^*)\)</span> near <span class="math">\(\chi^*\)</span>. We could do a linear approximation:</p>
+<div class="math">
+\[\begin{aligned}
+\mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &\approx \mathbf{f}(\mathbf{x}^*,
+    \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+    \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}
+    {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\
+&= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}
+    + \mathbf{B} \delta \mathbf{u} \\
+\delta \mathbf{x}_{t+1} &= \mathbf{A}_t \delta \mathbf{x}_t + \mathbf{B}_t
+    \delta \mathbf{u}_t \\
+&= \mathbf{F}_t \delta \mathbf{\tau}_t \\
+\end{aligned}
+
+\]</div>
+<p>where <span class="math">\(\delta \mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \delta \mathbf{x}_t \\
+\delta \mathbf{u}_t \end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix}
+\mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>.</p>
+<p>Now we can run LQR with <span class="math">\(\delta \mathbf{x}_t\)</span> and <span class="math">\(\delta \mathbf{x}_t\)</span>.</p>
+<ul>
+<li><p>The backward recursion.</p>
+<p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
+<blockquote>
+<div><div class="math">
+\[\begin{align*}
+    \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
+    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
+    \mathbf{K}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
+                        \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\
+    \mathbf{k}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
+                        \mathbf{q}_{\delta \mathbf{u}_t}         \\
+    \mathbf{V}_t &= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}
+        + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t
+        + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}
+            \mathbf{K}_t   \\
+    \mathbf{v}_t &= \mathbf{q}_{\delta \mathbf{x}_t}
+        + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t
+        + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t,
+            \delta \mathbf{u}_t}\mathbf{k}_t   \\
+\end{align*}
+
+\]</div>
+</div></blockquote>
+</li>
+<li><p>The forward recursion.</p>
+<p>For <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
+<blockquote>
+<div><div class="math">
+\[\begin{align*}
+    \delta \mathbf{u}_t &= \mathbf{K}_t \delta \mathbf{x}_t + \mathbf{k}_t \\
+    \mathbf{u}_t &= \delta \mathbf{u}_t + \mathbf{u}_t^* \\
+    \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t) \\
+\end{align*}
+
+\]</div>
+</div></blockquote>
+</li>
+</ul>
+<p>Then quadratic costs of the system over the time horizon:</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
+\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t
+
+\]</div>
+</div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The discrete-time system to be solved by LQR could be both either linear time-invariant
-(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system.</p>
+<p>The discrete-time system to be solved by LQR could be both linear time-invariant
+(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system or non-linear
+(<a class="reference internal" href="../pypose.module.NLS/#pypose.module.NLS" title="pypose.module.NLS"><code class="xref py py-meth docutils literal notranslate"><span class="pre">NLS()</span></code></a>) system.</p>
 </div>
 <p>From the learning perspective, this can be interpreted as a module with unknown parameters
 <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
@@ -399,7 +478,14 @@ which can be integrated into a larger end-to-end learning system.</p>
 <dd><p>Performs LQR for the linear system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
+<li><p><strong>current_x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current states of the system along a
+trajectory.</p></li>
+<li><p><strong>current_u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
+trajectory.</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The reference time step of the dynamical system.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of tensors including the solved state sequence
