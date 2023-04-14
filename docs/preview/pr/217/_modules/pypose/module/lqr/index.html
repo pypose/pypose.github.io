@@ -327,9 +327,82 @@
 <span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
 <span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
 
+<span class="sd">    A discrete-time non-linear system can be described as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
+<span class="sd">            \mathbf{y}_{t} &amp;= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    For a current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
+<span class="sd">    trajectory, consider a point :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
+<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*`. We could do a linear approximation:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">            \begin{aligned}</span>
+<span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*,</span>
+<span class="sd">                \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
+<span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}</span>
+<span class="sd">                {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\</span>
+<span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}</span>
+<span class="sd">                + \mathbf{B} \delta \mathbf{u} \\</span>
+<span class="sd">            \delta \mathbf{x}_{t+1} &amp;= \mathbf{A}_t \delta \mathbf{x}_t + \mathbf{B}_t</span>
+<span class="sd">                \delta \mathbf{u}_t \\</span>
+<span class="sd">            &amp;= \mathbf{F}_t \delta \mathbf{\tau}_t \\</span>
+<span class="sd">            \end{aligned}</span>
+
+<span class="sd">    where :math:`\delta \mathbf{\tau}_t` = :math:`\begin{bmatrix} \delta \mathbf{x}_t \\</span>
+<span class="sd">    \delta \mathbf{u}_t \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix}</span>
+<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
+
+<span class="sd">    Now we can run LQR with :math:`\delta \mathbf{x}_t` and :math:`\delta \mathbf{x}_t`.</span>
+
+<span class="sd">    - The backward recursion.</span>
+
+<span class="sd">      For :math:`t` = :math:`T` to 1:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                    \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                    \mathbf{q}_{\delta \mathbf{u}_t}         \\</span>
+<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}</span>
+<span class="sd">                        \mathbf{K}_t   \\</span>
+<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t,</span>
+<span class="sd">                        \delta \mathbf{u}_t}\mathbf{k}_t   \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">    - The forward recursion.</span>
+
+<span class="sd">      For :math:`t` = 1 to :math:`T`:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \delta \mathbf{u}_t &amp;= \mathbf{K}_t \delta \mathbf{x}_t + \mathbf{k}_t \\</span>
+<span class="sd">                \mathbf{u}_t &amp;= \delta \mathbf{u}_t + \mathbf{u}_t^* \\</span>
+<span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t) \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">    Then quadratic costs of the system over the time horizon:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
+<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
+
 <span class="sd">    Note:</span>
-<span class="sd">        The discrete-time system to be solved by LQR could be both either linear time-invariant</span>
-<span class="sd">        (:meth:`LTI`) system or linear time-varying (:meth:`LTV`) system.</span>
+<span class="sd">        The discrete-time system to be solved by LQR could be both linear time-invariant</span>
+<span class="sd">        (:meth:`LTI`) system, linear time-varying (:meth:`LTV`) system or non-linear</span>
+<span class="sd">        (:meth:`NLS`) system.</span>
 
 <span class="sd">    From the learning perspective, this can be interpreted as a module with unknown parameters</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`,</span>
@@ -403,6 +476,11 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            x_init (:obj:`Tensor`): The initial state of the system.</span>
+<span class="sd">            current_x (:obj:`Tensor`, optinal): The current states of the system along a</span>
+<span class="sd">                trajectory.</span>
+<span class="sd">            current_u (:obj:`Tensor`, optinal): The current inputs of the system along a</span>
+<span class="sd">                trajectory.</span>
+<span class="sd">            time (:obj:`Tensor`, optinal): The reference time step of the dynamical system.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
