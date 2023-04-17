@@ -248,17 +248,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pypose.point2pixel">
 <span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">point2pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#point2pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.point2pixel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Project a set of points (either in camera or world frame) to pixels.</p>
+<dd><p>Project batched sets of points (either in camera or world frame) to pixels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The object points in camera coordinate.
+<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The 3D coordinate of points. Assumed to be in the
+camera frame if <code class="docutils literal notranslate"><span class="pre">extrinsics</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, otherwiwse in the world frame.
 The shape has to be (…, N, 3).</p></li>
 <li><p><strong>intrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The intrinsic parameters of cameras.
 The shape has to be (…, 3, 3).</p></li>
 <li><p><strong>extrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">pypose.LieTensor</span></code>, optional) – The extrinsic parameters of cameras.
-The shape has to be (…, 7). If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the points are assumed to be in
-the camera frame, otherwise in the world frame. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+The shape has to be (…, 7). Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

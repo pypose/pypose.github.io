@@ -310,16 +310,16 @@
 
 <div class="viewcode-block" id="point2pixel"><a class="viewcode-back" href="../../../../generated/pypose.point2pixel/#pypose.point2pixel">[docs]</a><span class="k">def</span> <span class="nf">point2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Project a set of points (either in camera or world frame) to pixels.</span>
+<span class="sd">    Project batched sets of points (either in camera or world frame) to pixels.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        points (``torch.Tensor``): The object points in camera coordinate.</span>
+<span class="sd">        points (``torch.Tensor``): The 3D coordinate of points. Assumed to be in the</span>
+<span class="sd">            camera frame if ``extrinsics`` is ``None``, otherwiwse in the world frame.</span>
 <span class="sd">            The shape has to be (..., N, 3).</span>
 <span class="sd">        intrinsics (``torch.Tensor``): The intrinsic parameters of cameras.</span>
 <span class="sd">            The shape has to be (..., 3, 3).</span>
 <span class="sd">        extrinsics (``pypose.LieTensor``, optional): The extrinsic parameters of cameras.</span>
-<span class="sd">            The shape has to be (..., 7). If ``None``, the points are assumed to be in</span>
-<span class="sd">            the camera frame, otherwise in the world frame. Default: ``None``.</span>
+<span class="sd">            The shape has to be (..., 7). Default: ``None``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``torch.Tensor``: The associated pixel with shape (..., N, 2).</span>
