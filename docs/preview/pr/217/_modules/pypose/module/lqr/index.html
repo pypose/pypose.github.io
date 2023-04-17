@@ -350,13 +350,23 @@
 <span class="sd">            \delta \mathbf{x}_{t+1} &amp;= \mathbf{A}_t \delta \mathbf{x}_t + \mathbf{B}_t</span>
 <span class="sd">                \delta \mathbf{u}_t \\</span>
 <span class="sd">            &amp;= \mathbf{F}_t \delta \mathbf{\tau}_t \\</span>
+<span class="sd">            \mathbf{c} \left( \mathbf{\tau}, t^* \right) &amp;\approx</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta</span>
+<span class="sd">                \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,</span>
+<span class="sd">                t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\</span>
+<span class="sd">            \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &amp;= \frac{1}{2} \delta</span>
+<span class="sd">                \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +</span>
+<span class="sd">                \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\</span>
 <span class="sd">            \end{aligned}</span>
 
 <span class="sd">    where :math:`\delta \mathbf{\tau}_t` = :math:`\begin{bmatrix} \delta \mathbf{x}_t \\</span>
 <span class="sd">    \delta \mathbf{u}_t \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix}</span>
-<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
+<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`, :math:`\bar{\mathbf{Q}}_t` = :math:`\mathbf{Q}_t`,</span>
+<span class="sd">    :math:`\bar{\mathbf{p}}_t` = :math:`\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t`.</span>
 
-<span class="sd">    Now we can run LQR with :math:`\delta \mathbf{x}_t` and :math:`\delta \mathbf{x}_t`.</span>
+<span class="sd">    Now we can run LQR with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
+<span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t`.</span>
 
 <span class="sd">    - The backward recursion.</span>
 
@@ -364,8 +374,9 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
+<span class="sd">                                    \mathbf{F}_t \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \bar{\mathbf{q}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
 <span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
 <span class="sd">                                    \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
 <span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
@@ -413,6 +424,7 @@
 <span class="sd">        &lt;http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf&gt;`_.</span>
 
 <span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">        &gt;&gt;&gt; n_batch, T = 2, 5</span>
 <span class="sd">        &gt;&gt;&gt; n_state, n_ctrl = 4, 3</span>
 <span class="sd">        &gt;&gt;&gt; n_sc = n_state + n_ctrl</span>
@@ -427,31 +439,37 @@
 <span class="sd">        &gt;&gt;&gt; c1 = torch.tile(torch.randn(n_state), (n_batch, 1))</span>
 <span class="sd">        &gt;&gt;&gt; c2 = torch.tile(torch.zeros(n_state), (n_batch, 1))</span>
 <span class="sd">        &gt;&gt;&gt; x_init = torch.randn(n_batch, n_state)</span>
-<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; current_x = torch.zeros(n_batch, T, n_state, device=device)</span>
+<span class="sd">        &gt;&gt;&gt; current_u = torch.zeros(n_batch, T, n_ctrl, device=device)</span>
+<span class="sd">        &gt;&gt;&gt; current_x[...,0,:] = x_init</span>
 <span class="sd">        &gt;&gt;&gt; lti = pp.module.LTI(A, B, C, D, c1, c2)</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(T-1):</span>
+<span class="sd">        &gt;&gt;&gt;     current_x[...,i+1,:], _ = lti(current_x[...,i,:], current_u[...,i,:])</span>
+<span class="sd">        &gt;&gt;&gt; time = torch.arange(0, T, device=device)</span>
 <span class="sd">        &gt;&gt;&gt; LQR = pp.module.LQR(lti, Q, p, T)</span>
 <span class="sd">        &gt;&gt;&gt; x, u, cost = LQR(x_init)</span>
+<span class="sd">        &gt;&gt;&gt; print(&quot;x = &quot;, x)</span>
 <span class="sd">        &gt;&gt;&gt; print(&quot;u = &quot;, u)</span>
-<span class="sd">        x =  tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
-<span class="sd">                      [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
-<span class="sd">                      [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
-<span class="sd">                      [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
-<span class="sd">                      [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
-<span class="sd">                     [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
-<span class="sd">                      [-0.6356,  0.0539,  0.7264, -0.5048],</span>
-<span class="sd">                      [-0.2275, -0.1649,  0.3872, -0.4614],</span>
-<span class="sd">                      [ 0.2697, -0.3576,  0.0999, -0.4594],</span>
-<span class="sd">                      [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
-<span class="sd">        u =  tensor([[[ 1.0405,  0.1586, -0.1282],</span>
-<span class="sd">                      [-1.4845, -0.5745,  0.2523],</span>
-<span class="sd">                      [-0.6322, -0.3281, -0.3620],</span>
-<span class="sd">                      [-1.6768,  2.4054, -0.1047],</span>
-<span class="sd">                      [-1.7948,  3.5269,  9.0703]],</span>
-<span class="sd">                     [[-0.1795,  0.9153,  1.7066],</span>
-<span class="sd">                      [ 0.0814,  0.4004,  0.7114],</span>
-<span class="sd">                      [ 0.0435,  0.5782,  1.0127],</span>
-<span class="sd">                      [-0.3017, -0.2897,  0.7251],</span>
-<span class="sd">                      [-0.0728,  0.7290, -0.3117]]])</span>
+<span class="sd">        x = tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
+<span class="sd">                     [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
+<span class="sd">                     [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
+<span class="sd">                     [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
+<span class="sd">                     [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
+<span class="sd">                    [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
+<span class="sd">                     [-0.6356,  0.0539,  0.7264, -0.5048],</span>
+<span class="sd">                     [-0.2275, -0.1649,  0.3872, -0.4614],</span>
+<span class="sd">                     [ 0.2697, -0.3577,  0.0999, -0.4594],</span>
+<span class="sd">                     [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
+<span class="sd">        u = tensor([[[ 1.0405,  0.1586, -0.1282],</span>
+<span class="sd">                     [-1.4845, -0.5745,  0.2523],</span>
+<span class="sd">                     [-0.6322, -0.3281, -0.3620],</span>
+<span class="sd">                     [-1.6768,  2.4054, -0.1047],</span>
+<span class="sd">                     [-1.7948,  3.5269,  9.0703]],</span>
+<span class="sd">                    [[-0.1795,  0.9153,  1.7066],</span>
+<span class="sd">                     [ 0.0814,  0.4004,  0.7114],</span>
+<span class="sd">                     [ 0.0436,  0.5782,  1.0127],</span>
+<span class="sd">                     [-0.3017, -0.2897,  0.7251],</span>
+<span class="sd">                     [-0.0728,  0.7290, -0.3117]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -470,18 +488,18 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;device not compatible.&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">&quot;tensor data type not compatible.&quot;</span>
 
-<div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">current_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current_u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">current_x</span><span class="p">,</span> <span class="n">current_u</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs LQR for the linear system.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x_init (:obj:`Tensor`): The initial state of the system.</span>
 <span class="sd">            current_x (:obj:`Tensor`, optinal): The current states of the system along a</span>
-<span class="sd">                trajectory. Default: ``None``.</span>
+<span class="sd">                trajectory.</span>
 <span class="sd">            current_u (:obj:`Tensor`, optinal): The current inputs of the system along a</span>
-<span class="sd">                trajectory. Default: ``None``.</span>
+<span class="sd">                trajectory.</span>
 <span class="sd">            time (:obj:`Tensor`, optinal): The reference time step of the dynamical</span>
-<span class="sd">                system. Default: ``None``.</span>
+<span class="sd">                system.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
@@ -496,18 +514,20 @@
 
         <span class="c1"># Q: (n_batch*, T, N, N), p: (n_batch*, T, N), where n_batch* can be any batch dimensions, e.g., (2, 3)</span>
         <span class="n">n_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">current_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="n">current_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">current_u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="n">current_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">current_u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">K</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">ns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">p_new</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">ns</span><span class="o">+</span><span class="n">nc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">current_xut</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:]),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">p_new</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span> <span class="p">(</span><span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:,:],</span> <span class="n">current_xut</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">Qt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:,:]</span>
-                <span class="n">qt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span>
+                <span class="n">qt</span> <span class="o">=</span> <span class="n">p_new</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">current_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:],</span> <span class="nb">input</span><span class="o">=</span><span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:],</span> <span class="n">t</span><span class="o">=</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
@@ -520,7 +540,7 @@
                     <span class="n">F</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
                     <span class="n">c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">c1</span>
                 <span class="n">Qt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:,:]</span> <span class="o">+</span> <span class="n">F</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">V</span> <span class="o">@</span> <span class="n">F</span>
-                <span class="n">qt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="n">qt</span> <span class="o">=</span> <span class="n">p_new</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">c1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">qt</span> <span class="o">=</span> <span class="n">qt</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">V</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
 
@@ -544,10 +564,7 @@
 
         <span class="c1"># Q: (n_batch*, T, N, N), p: (n_batch*, T, N), where n_batch* can be any batch dimensions, e.g., (2, 3)</span>
         <span class="n">n_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">current_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="n">current_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">current_u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="n">current_x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">current_u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">delta_u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -560,12 +577,11 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
             <span class="n">Kt</span><span class="p">,</span> <span class="n">kt</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:,:],</span> <span class="n">k</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span>
             <span class="n">delta_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">delta_ut</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">Kt</span><span class="p">,</span> <span class="n">delta_xt</span><span class="p">)</span> <span class="o">+</span> <span class="n">kt</span>
-            <span class="k">if</span> <span class="n">current_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ut</span> <span class="o">=</span> <span class="n">delta_ut</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">Kt</span><span class="p">,</span> <span class="n">xt</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ut</span> <span class="o">=</span> <span class="n">delta_ut</span> <span class="o">+</span> <span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span>
+            <span class="n">u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ut</span> <span class="o">=</span> <span class="n">delta_ut</span> <span class="o">+</span> <span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:]</span>
             <span class="n">xut</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">xt</span><span class="p">,</span> <span class="n">ut</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">xt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">xt</span><span class="p">,</span> <span class="n">ut</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">delta_xt</span> <span class="o">=</span> <span class="p">(</span><span class="n">xt</span> <span class="o">-</span> <span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
             <span class="n">cost</span> <span class="o">=</span> <span class="n">cost</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">bvmv</span><span class="p">(</span><span class="n">xut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:,:],</span> <span class="n">xut</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">xut</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">t</span><span class="p">,:])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div>
