@@ -361,21 +361,32 @@ trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\math
 \delta \mathbf{x}_{t+1} &= \mathbf{A}_t \delta \mathbf{x}_t + \mathbf{B}_t
     \delta \mathbf{u}_t \\
 &= \mathbf{F}_t \delta \mathbf{\tau}_t \\
+\mathbf{c} \left( \mathbf{\tau}, t^* \right) &\approx
+    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta
+    \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,
+    t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}
+    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\
+\bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &= \frac{1}{2} \delta
+    \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +
+    \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\
 \end{aligned}
 
 \]</div>
 <p>where <span class="math">\(\delta \mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \delta \mathbf{x}_t \\
 \delta \mathbf{u}_t \end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix}
-\mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>.</p>
-<p>Now we can run LQR with <span class="math">\(\delta \mathbf{x}_t\)</span> and <span class="math">\(\delta \mathbf{x}_t\)</span>.</p>
+\mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>, <span class="math">\(\bar{\mathbf{Q}}_t\)</span> = <span class="math">\(\mathbf{Q}_t\)</span>,
+<span class="math">\(\bar{\mathbf{p}}_t\)</span> = <span class="math">\(\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t\)</span>.</p>
+<p>Now we can run LQR with <span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
+<span class="math">\(\bar{\mathbf{Q}}_t\)</span> and <span class="math">\(\bar{\mathbf{p}}_t\)</span>.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
 <blockquote>
 <div><div class="math">
 \[\begin{align*}
-    \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
-    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
+    \mathbf{Q}_t &= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
+                        \mathbf{F}_t \\
+    \mathbf{q}_t &= \bar{\mathbf{q}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
     \mathbf{K}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
                         \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\
     \mathbf{k}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
@@ -431,7 +442,8 @@ which can be integrated into a larger end-to-end learning system.</p>
 <p>The implementation is based on page 24-32 of <a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">Optimal Control and Planning</a>.</p>
 </div>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_state</span><span class="p">,</span> <span class="n">n_ctrl</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_sc</span> <span class="o">=</span> <span class="n">n_state</span> <span class="o">+</span> <span class="n">n_ctrl</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">)</span>
@@ -445,47 +457,53 @@ which can be integrated into a larger end-to-end learning system.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">n_state</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_state</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_ctrl</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x_init</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LTI</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lti</span><span class="p">(</span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">LQR</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="n">lti</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;u = &quot;</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
-<span class="go">x =  tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
-<span class="go">              [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
-<span class="go">              [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
-<span class="go">              [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
-<span class="go">              [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
-<span class="go">             [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
-<span class="go">              [-0.6356,  0.0539,  0.7264, -0.5048],</span>
-<span class="go">              [-0.2275, -0.1649,  0.3872, -0.4614],</span>
-<span class="go">              [ 0.2697, -0.3576,  0.0999, -0.4594],</span>
-<span class="go">              [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
-<span class="go">u =  tensor([[[ 1.0405,  0.1586, -0.1282],</span>
-<span class="go">              [-1.4845, -0.5745,  0.2523],</span>
-<span class="go">              [-0.6322, -0.3281, -0.3620],</span>
-<span class="go">              [-1.6768,  2.4054, -0.1047],</span>
-<span class="go">              [-1.7948,  3.5269,  9.0703]],</span>
-<span class="go">             [[-0.1795,  0.9153,  1.7066],</span>
-<span class="go">              [ 0.0814,  0.4004,  0.7114],</span>
-<span class="go">              [ 0.0435,  0.5782,  1.0127],</span>
-<span class="go">              [-0.3017, -0.2897,  0.7251],</span>
-<span class="go">              [-0.0728,  0.7290, -0.3117]]])</span>
+<span class="go">x = tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
+<span class="go">             [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
+<span class="go">             [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
+<span class="go">             [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
+<span class="go">             [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
+<span class="go">            [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
+<span class="go">             [-0.6356,  0.0539,  0.7264, -0.5048],</span>
+<span class="go">             [-0.2275, -0.1649,  0.3872, -0.4614],</span>
+<span class="go">             [ 0.2697, -0.3577,  0.0999, -0.4594],</span>
+<span class="go">             [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
+<span class="go">u = tensor([[[ 1.0405,  0.1586, -0.1282],</span>
+<span class="go">             [-1.4845, -0.5745,  0.2523],</span>
+<span class="go">             [-0.6322, -0.3281, -0.3620],</span>
+<span class="go">             [-1.6768,  2.4054, -0.1047],</span>
+<span class="go">             [-1.7948,  3.5269,  9.0703]],</span>
+<span class="go">            [[-0.1795,  0.9153,  1.7066],</span>
+<span class="go">             [ 0.0814,  0.4004,  0.7114],</span>
+<span class="go">             [ 0.0436,  0.5782,  1.0127],</span>
+<span class="go">             [-0.3017, -0.2897,  0.7251],</span>
+<span class="go">             [-0.0728,  0.7290, -0.3117]]])</span>
 </pre></div>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.LQR.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/lqr/#LQR.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.LQR.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs LQR for the linear system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
 <li><p><strong>current_x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current states of the system along a
-trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+trajectory.</p></li>
 <li><p><strong>current_u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
-trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+trajectory.</p></li>
 <li><p><strong>time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The reference time step of the dynamical
-system. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+system.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
