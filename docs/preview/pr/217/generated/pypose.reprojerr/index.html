@@ -247,20 +247,21 @@
 <h1>pypose.reprojerr<a class="headerlink" href="#pypose-reprojerr" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.reprojerr">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">reprojerr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#reprojerr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.reprojerr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates batched per-pixel reprojection error (pixel distance) for points in the world
-coordinate, given camera intrinsic and extrinsic parameters.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">reprojerr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#reprojerr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.reprojerr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates batched per-pixel reprojection error (pixel distance) for points either in
+the camera or world frame given camera intrinsics or extrinsics, respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The object points in world coordinate.
+<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The 3D coordinate of points. Assumed to be in the
+camera frame if <code class="docutils literal notranslate"><span class="pre">extrinsics</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, otherwiwse in the world frame.
 The shape has to be (…, N, 3).</p></li>
 <li><p><strong>pixels</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The image points. The associated pixel.
 The shape has to be (…, N, 2).</p></li>
 <li><p><strong>intrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – intrinsic matrices.
 The shape has to be (…, 3, 3).</p></li>
-<li><p><strong>extrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>) – The camera extrinsics.
-The shape has to be (…, 7).</p></li>
+<li><p><strong>extrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – The camera extrinsics.
+The shape has to be (…, 7). Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -277,7 +278,6 @@ The shape has to be (…, 7).</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">point2pixel</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">pose</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">err</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">reprojerr</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">pose</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">err</span>
 <span class="go">tensor([0., 0., 0., 0., 0., 0.])</span>
 </pre></div>
 </div>
