@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.reprojerr &mdash; PyPose main documentation</title>
+  <title>pypose.knn &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.knn" href="../pypose.knn/" />
-    <link rel="prev" title="pypose.cumops_" href="../pypose.cumops_/" />
+    <link rel="next" title="Convert" href="../../convert/" />
+    <link rel="prev" title="pypose.reprojerr" href="../pypose.reprojerr/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.reprojerr.html">
+  <a style="color:#F05732" href="generated/pypose.knn.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,13 +211,13 @@
         
           <li><a href="../../functions/">Functions</a> &gt;</li>
         
-      <li>pypose.reprojerr</li>
+      <li>pypose.knn</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.reprojerr.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.knn.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,42 +243,75 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-reprojerr">
-<h1>pypose.reprojerr<a class="headerlink" href="#pypose-reprojerr" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-knn">
+<h1>pypose.knn<a class="headerlink" href="#pypose-knn" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.reprojerr">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">reprojerr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrinsics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#reprojerr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.reprojerr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates batched per-pixel reprojection error (pixel distance) for points either in
-the camera or world frame given camera intrinsics or extrinsics, respectively.</p>
+<dt class="sig sig-object py" id="pypose.knn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">knn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#knn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.knn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the k nearest neighbor points of pointcloud 1 from pointcloud 2 in each batch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The 3D coordinate of points. Assumed to be in the
-camera frame if <code class="docutils literal notranslate"><span class="pre">extrinsics</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, otherwiwse in the world frame.
-The shape has to be (…, N, 3).</p></li>
-<li><p><strong>pixels</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The image points. The associated pixel.
-The shape has to be (…, N, 2).</p></li>
-<li><p><strong>intrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – intrinsic matrices.
-The shape has to be (…, 3, 3).</p></li>
-<li><p><strong>extrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – The camera extrinsics.
-The shape has to be (…, 7). Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>pc1</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the pointcloud 1.
+The shape has to be (…, N1, dim).</p></li>
+<li><p><strong>pc2</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the pointcloud 2.
+The shape has to be (…, N2, dim).</p></li>
+<li><p><strong>k</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The number of the nearest neighbors to be selected.
+k has to be k seq N2. Default: <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>norm</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The norm to use for distance calculation.
+Default: <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Per-pixel reprojection error. The shape is (…, N).</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The N-norm distance between each point in pc1 and</dt><dd><p>its sorted k nearest neighbors in pc2.
+The shape is (…, N1, k).</p>
+</dd>
+<dt>indices (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>): The index of the k nearest neighbor points in pc2</dt><dd><p>The shape is (…, N1, k).</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>distance (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>)</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="c1"># focal length and image height, width</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">intrinsics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
-<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">W</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
-<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">1</span>  <span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">point2pixel</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">pose</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">err</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">reprojerr</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">pose</span><span class="p">)</span>
-<span class="go">tensor([0., 0., 0., 0., 0., 0.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">)</span>
+<span class="go">tensor([[2.0000],</span>
+<span class="go">        [1.0000],</span>
+<span class="go">        [1.4142],</span>
+<span class="go">        [1.4142],</span>
+<span class="go">        [0.0000],</span>
+<span class="go">        [4.2426]]), tensor([[3],</span>
+<span class="go">        [0],</span>
+<span class="go">        [0],</span>
+<span class="go">        [2],</span>
+<span class="go">        [0],</span>
+<span class="go">        [1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">tensor([[2.0000, 4.5826],</span>
+<span class="go">        [1.0000, 4.5826],</span>
+<span class="go">        [1.4142, 5.0990],</span>
+<span class="go">        [1.4142, 4.0000],</span>
+<span class="go">        [0.0000, 4.2426],</span>
+<span class="go">        [4.2426, 5.0000]]), tensor([[3, 2],</span>
+<span class="go">        [0, 2],</span>
+<span class="go">        [0, 2],</span>
+<span class="go">        [2, 0],</span>
+<span class="go">        [0, 2],</span>
+<span class="go">        [1, 2]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -293,10 +326,10 @@ The shape has to be (…, 7). Default: <code class="docutils literal notranslate
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.knn/" class="btn btn-neutral float-right" title="pypose.knn" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../convert/" class="btn btn-neutral float-right" title="Convert" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.cumops_/" class="btn btn-neutral" title="pypose.cumops_" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.reprojerr/" class="btn btn-neutral" title="pypose.reprojerr" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
