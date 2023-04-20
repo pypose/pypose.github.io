@@ -398,6 +398,42 @@
            <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
     <span class="n">img_repj</span> <span class="o">=</span> <span class="n">point2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Select the k nearest neighbor points of pointcloud 1 from pointcloud 2 in each batch.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pc1 (``torch.Tensor``): The coordinates of the pointcloud 1.</span>
+<span class="sd">            The shape has to be (..., N1, dim).</span>
+<span class="sd">        pc2 (``torch.Tensor``): The coordinates of the pointcloud 2.</span>
+<span class="sd">            The shape has to be (..., N2, dim).</span>
+<span class="sd">        k (``int``, optional): The number of the nearest neighbors to be selected.</span>
+<span class="sd">            k has to be k \seq N2. Default: ``1``.</span>
+<span class="sd">        norm (``int``, optional): The norm to use for distance calculation.</span>
+<span class="sd">            Default: ``2``.</span>
+<span class="sd">        sort (``bool``, optional): Whether to sort the k nearest neighbors by distance.</span>
+<span class="sd">            Default: ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        distance (``torch.Tensor``): The N-norm distance between each point in pc1 and</span>
+<span class="sd">            its k nearest neighbors in pc2.</span>
+<span class="sd">            The shape is (..., N1, k).</span>
+<span class="sd">        indices (``torch.Tensor``): The index of the k nearest neighbor points in pc2</span>
+<span class="sd">            The shape is (..., N1, k).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">pc1</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">pc2</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+    <span class="n">knn</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sort</span><span class="p">:</span>
+        <span class="n">distance</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">knn</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">indices</span>
+    <span class="k">return</span> <span class="n">distance</span><span class="p">,</span> <span class="n">indices</span>
 </pre></div>
 
              </article>

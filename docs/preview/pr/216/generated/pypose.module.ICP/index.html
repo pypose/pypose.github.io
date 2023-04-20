@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.module.EPnP &mdash; PyPose main documentation</title>
+  <title>pypose.module.ICP &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.module.ICP" href="../pypose.module.ICP/" />
-    <link rel="prev" title="pypose.module.IMUPreintegrator" href="../pypose.module.IMUPreintegrator/" />
+    <link rel="next" title="Optimization" href="../../optim/" />
+    <link rel="prev" title="pypose.module.EPnP" href="../pypose.module.EPnP/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.module.EPnP.html">
+  <a style="color:#F05732" href="generated/pypose.module.ICP.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,13 +211,13 @@
         
           <li><a href="../../modules/">Modules</a> &gt;</li>
         
-      <li>pypose.module.EPnP</li>
+      <li>pypose.module.ICP</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.module.EPnP.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.module.ICP.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,136 +243,27 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-module-epnp">
-<h1>pypose.module.EPnP<a class="headerlink" href="#pypose-module-epnp" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-module-icp">
+<h1>pypose.module.ICP<a class="headerlink" href="#pypose-module-icp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.module.EPnP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">EPnP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batched EPnP Solver - a non-iterative <span class="math">\(\mathcal{O}(n)\)</span> solution to the
-Perspective-<span class="math">\(n\)</span>-Point (PnP) problem for <span class="math">\(n \geq 4\)</span>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>intrinsics</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, optional) – The camera intrinsics.
-The shape is (…, 3, 3). Default: None</p></li>
-<li><p><strong>refine</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – refine the solution with Gaussian-Newton optimizer.
-Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Assume each of the <span class="math">\(n\)</span> points in the world coordinate is <span class="math">\(p^w_i\)</span> and in
-camera coordinate is <span class="math">\(p^c_i\)</span>.
-They are represented by weighted sums of the four virtual control points,
-<span class="math">\(c^w_j\)</span> and <span class="math">\(c^c_j\)</span> in the world and camera coordinate, respectively.</p>
-<div class="math">
-\[\begin{aligned}
-    & p^w_i = \sum^4_{j=1}{\alpha_{ij}c^w_j} \\
-    & p^c_i = \sum^4_{j=1}{\alpha_{ij}c^c_j} \\
-    & \sum^4_{j=1}{\alpha_{ij}} = 1
-\end{aligned}
-
-\]</div>
-<p>Let the projection matrix be <span class="math">\(P = K[R|T]\)</span>, where <span class="math">\(K\)</span> is the camera
-intrinsics, <span class="math">\(R\)</span> is the rotation matrix and <span class="math">\(T\)</span> is the translation
-vector. Then we have</p>
-<div class="math">
-\[\begin{aligned}
-    s_i p^{\text{img}}_i &= K\sum^4_{j=1}{\alpha_{ij}c^c_j},
-\end{aligned}
-
-\]</div>
-<p>where <span class="math">\(p^{\text{img}}_i\)</span> is pixels in homogeneous form <span class="math">\((u_i, v_i, 1)\)</span>,
-<span class="math">\(s_i\)</span> is the scale factor. Let the control point in camera coordinate
-represented by <span class="math">\(c^c_j = (x^c_j, y^c_j, z^c_j)\)</span>. Rearranging the projection
-equation yields two linear equations for each of the <span class="math">\(n\)</span> points:</p>
-<div class="math">
-\[\begin{aligned}
-    \sum^4_{j=1}{\alpha_{ij}f_xx^c_j + \alpha_{ij}(u_0 - u_i)z^c_j} &= 0 \\
-    \sum^4_{j=1}{\alpha_{ij}f_yy^c_j + \alpha_{ij}(v_0 - v_i)z^c_j} &= 0
-\end{aligned}
-
-\]</div>
-<p>Assume <span class="math">\(\mathbf{x} = \begin{bmatrix} c^{c^T}_1 &amp; c^{c^T}_2 &amp; c^{c^T}_3 &amp;
-c^{c^T}_4 \end{bmatrix}^T\)</span>, then the two equations form a system <span class="math">\(Mx = 0\)</span>
-considering all of the <span class="math">\(n\)</span> points. Its solution can be expressed as</p>
-<div class="math">
-\[\begin{aligned}
-    x &= \sum^4_{i=1}{\beta_iv_i},
-\end{aligned}
-
-\]</div>
-<p>where <span class="math">\(v_i\)</span> is the null vectors of matrix <span class="math">\(M^T M\)</span> corresponding to its
-least 4 eigenvalues.</p>
-<p>The final step involves calculating the coefficients <span class="math">\(\beta_i\)</span>. Optionally, the
-Gauss-Newton algorithm can be used to refine the solution of <span class="math">\(\beta_i\)</span>.</p>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="c1"># focal length and image height, width</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">intrinsics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
-<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">W</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
-<span class="gp">... </span>                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">1</span>  <span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">point2pixel</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3827</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.9239</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">pose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="nb">object</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">epnp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">EPnP</span><span class="p">(</span><span class="n">intrinsics</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">epnp</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">)</span>
-<span class="go">SE3Type LieTensor:</span>
-<span class="go">LieTensor([ 3.9816e-05, -8.0000e+00,  5.8174e-05, -3.3186e-06, -3.8271e-01,</span>
-<span class="go">            3.6321e-06,  9.2387e-01])</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently this module only supports batched rectified camera intrinsics, which can
-be defined in the form:</p>
-<div class="math">
-\[K = \begin{pmatrix}
-        f_x &   0 & c_x \\
-        0   & f_y & c_y \\
-        0   &   0 &   1
-    \end{pmatrix}
-
-\]</div>
-<p>The full form of camera intrinsics will be supported in a future release.</p>
-</div>
+<dt class="sig sig-object py" id="pypose.module.ICP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steplim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterative Closest Point (ICP) using Singular Value Decomposition (SVD).
+:param steplim: the max step number
+:param tol: the tolerance of error for early stopping
+:param tf: initial transformation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.ICP.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The implementation is based on the paper</p>
-<ul class="simple">
-<li><p>Francesc Moreno-Noguer, Vincent Lepetit, and Pascal Fua, <a class="reference external" href="https://doi.org/10.1007/s11263-008-0152-6">EPnP: An Accurate O(n)
-Solution to the PnP Problem</a>,
-International Journal of Computer Vision (IJCV), 2009.</p></li>
-</ul>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
 </div>
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.EPnP.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intrinsics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pnp/#EPnP.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EPnP.forward" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – 3D object points in the world coordinates.
-Shape (…, N, 3)</p></li>
-<li><p><strong>pixels</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – 2D image points, which are the projection of
-object points. Shape (…, N, 2)</p></li>
-<li><p><strong>intrinsics</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – camera intrinsics. Shape (…, 3, 3).
-Setting it to any non-<code class="docutils literal notranslate"><span class="pre">None</span></code> value will override the default intrinsics
-kept in the module.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>estimated pose (<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>) for the camera.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">LieTensor</span></code></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -387,10 +278,10 @@ kept in the module.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.module.ICP/" class="btn btn-neutral float-right" title="pypose.module.ICP" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../optim/" class="btn btn-neutral float-right" title="Optimization" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.module.IMUPreintegrator/" class="btn btn-neutral" title="pypose.module.IMUPreintegrator" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.module.EPnP/" class="btn btn-neutral" title="pypose.module.EPnP" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
