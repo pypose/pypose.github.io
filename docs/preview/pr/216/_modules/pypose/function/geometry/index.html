@@ -238,6 +238,8 @@
               
   <h1>Source code for pypose.function.geometry</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bvv</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">mat2SE3</span>
 <span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">pm</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">LieTensor</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">broadcast_shapes</span>
@@ -476,6 +478,47 @@
     <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">neighbors</span></div>
+
+
+<span class="k">def</span> <span class="nf">points_transform</span><span class="p">(</span><span class="n">pts_w</span><span class="p">,</span> <span class="n">pts_c</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute the rigid transformation (rotation and translation) between two sets of 3D</span>
+<span class="sd">    points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pts_w (``torch.Tensor``): The coordinates of the first set of 3D points.</span>
+<span class="sd">            The shape has to be (..., N1, dim).</span>
+<span class="sd">        pts_c (``torch.Tensor``): The coordinates of the second set of 3D points.</span>
+<span class="sd">            The shape has to be (..., N2, dim).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``SE3Type LieTensor``: The rigid transformation matrix in SE(3) format that</span>
+<span class="sd">        minimizes the mean squared error between the input point sets.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; pts_w = torch.tensor([[0., 0., 0.],</span>
+<span class="sd">        ...                       [1., 0., 0.],</span>
+<span class="sd">        ...                       [0., 1., 0.]])</span>
+<span class="sd">        &gt;&gt;&gt; pts_c = torch.tensor([[1., 1., 1.],</span>
+<span class="sd">        ...                       [2., 1., 1.],</span>
+<span class="sd">        ...                       [1., 2., 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.points_transform(pts_w, pts_c)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">Cw</span> <span class="o">=</span> <span class="n">pts_w</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Pw</span> <span class="o">=</span> <span class="n">pts_w</span> <span class="o">-</span> <span class="n">Cw</span>
+    <span class="n">Cc</span> <span class="o">=</span> <span class="n">pts_c</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Pc</span> <span class="o">=</span> <span class="n">pts_c</span> <span class="o">-</span> <span class="n">Cc</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">bvv</span><span class="p">(</span><span class="n">Pc</span><span class="p">,</span> <span class="n">Pw</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">Vh</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">det</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+    <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Cc</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">Cw</span><span class="o">.</span><span class="n">mT</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
              </article>
