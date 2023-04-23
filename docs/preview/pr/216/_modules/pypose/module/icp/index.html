@@ -243,10 +243,36 @@
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Iterative Closest Point (ICP) using Singular Value Decomposition (SVD).</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        steplim: the max step number</span>
 <span class="sd">        tol: the tolerance of error for early stopping</span>
 <span class="sd">        tf: initial transformation</span>
+
+<span class="sd">    ICP algorithm aims to calculate the optimal transformation :math:`T`</span>
+<span class="sd">    between two point clouds, source point cloud and target point cloud.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">            argmin \sum \|p_i^t - Tp_i^s\|,</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    where :math:`p^t` is the point in target point cloud, and :math:`p^s` is</span>
+<span class="sd">    the point in the source point cloud.</span>
+
+<span class="sd">    1. For each point in pc1, nearest neighbor algorithm is used to select its</span>
+<span class="sd">    closest point in pc2 to the matched point pairs.</span>
+
+<span class="sd">    2. Singular value decomposition (SVD) algorithm is used to get the rotation</span>
+<span class="sd">    and translation matrices from the matched point pairs.</span>
+
+<span class="sd">    3. The source point cloud is updated using the obtained rotation and</span>
+<span class="sd">    translation matrices. The distance between the updated source point cloud and</span>
+<span class="sd">    the target point cloud is calculated.</span>
+
+<span class="sd">    4. Iterate these steps until the change of obtained distance is lower than the</span>
+<span class="sd">    given tolerance.</span>
+<span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steplim</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -256,6 +282,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tf</span> <span class="o">=</span> <span class="n">tf</span>
 
 <div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            p1(``torch.Tensor``): the source point cloud with [..., points_num, 3] shape.</span>
+<span class="sd">            p2(``torch.Tensor``): the target point cloud with [..., points_num, 3] shape.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``LieTensor``: the estimated transformation from p1 to p2.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">temppc</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
