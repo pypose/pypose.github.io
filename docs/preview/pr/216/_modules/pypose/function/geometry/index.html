@@ -414,7 +414,7 @@
 <span class="sd">        k (``int``, optional): The number of the nearest neighbors to be selected.</span>
 <span class="sd">            k has to be k \seq N2. Default: ``1``.</span>
 <span class="sd">        norm (``int``, optional): The norm to use for distance calculation.</span>
-<span class="sd">            Default: ``2``.</span>
+<span class="sd">            Default: ``2`` (Euclidean distance).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``torch.return_types.topk (values: torch.Tensor, indices: torch.Tensor)``: The</span>
@@ -480,16 +480,16 @@
     <span class="k">return</span> <span class="n">neighbors</span></div>
 
 
-<div class="viewcode-block" id="points_transform"><a class="viewcode-back" href="../../../../generated/pypose.points_transform/#pypose.points_transform">[docs]</a><span class="k">def</span> <span class="nf">points_transform</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">):</span>
+<div class="viewcode-block" id="svdtf"><a class="viewcode-back" href="../../../../generated/pypose.svdtf/#pypose.svdtf">[docs]</a><span class="k">def</span> <span class="nf">svdtf</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the rigid similarity transformation (rotation and translation) between two</span>
-<span class="sd">    sets of points.</span>
+<span class="sd">    sets of points using Singular Value Decomposition (SVD).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        pc1 (``torch.Tensor``): The coordinates of the first set of points.</span>
-<span class="sd">            The shape has to be (..., N1, dim).</span>
+<span class="sd">            The shape has to be (..., N1, 3).</span>
 <span class="sd">        pc2 (``torch.Tensor``): The coordinates of the second set of points.</span>
-<span class="sd">            The shape has to be (..., N2, dim).</span>
+<span class="sd">            The shape has to be (..., N2, 3).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``LieTensor``: The rigid transformation matrix in ``SE3Type``  that</span>
@@ -498,20 +498,20 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
 <span class="sd">        &gt;&gt;&gt; pc1 = torch.tensor([[0., 0., 0.],</span>
-<span class="sd">                               [1., 0., 0.],</span>
-<span class="sd">                               [0., 1., 0.]])</span>
+<span class="sd">        ...                     [1., 0., 0.],</span>
+<span class="sd">        ...                     [0., 1., 0.]])</span>
 <span class="sd">        &gt;&gt;&gt; pc2 = torch.tensor([[1., 1., 1.],</span>
-<span class="sd">                               [2., 1., 1.],</span>
-<span class="sd">                               [1., 2., 1.]])</span>
-<span class="sd">        &gt;&gt;&gt; pp.points_transform(pc1, pc2)</span>
+<span class="sd">        ...                     [2., 1., 1.],</span>
+<span class="sd">        ...                     [1., 2., 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.svdtf(pc1, pc2)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">pc1ctn</span> <span class="o">=</span> <span class="n">pc1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">pc2ctn</span> <span class="o">=</span> <span class="n">pc2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">pc1t</span> <span class="o">=</span> <span class="n">pc1</span> <span class="o">-</span> <span class="n">pc1ctn</span>
-    <span class="n">Pc2t</span> <span class="o">=</span> <span class="n">pc2</span> <span class="o">-</span> <span class="n">pc2ctn</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">bvv</span><span class="p">(</span><span class="n">Pc2t</span><span class="p">,</span> <span class="n">pc1t</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">pc2t</span> <span class="o">=</span> <span class="n">pc2</span> <span class="o">-</span> <span class="n">pc2ctn</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">bvv</span><span class="p">(</span><span class="n">pc2t</span><span class="p">,</span> <span class="n">pc1t</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">Vh</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">det</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
