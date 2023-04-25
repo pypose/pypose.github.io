@@ -239,20 +239,20 @@
   <h1>Source code for pypose.module.icp</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">lietensor</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">points_transform</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span>
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This class implements the batched Iterative Closest Point (ICP) algorithm to find a</span>
-<span class="sd">    similarity transformation (:math:`T`) between two differently-sized sets of</span>
-<span class="sd">    3-dimensional points using Singular Value Decomposition (SVD). It&#39;s important to note</span>
-<span class="sd">    that the solution found is only a local optimum.</span>
+<span class="sd">    similarity transformation ( :math:`T` ) between two sets of 3-dimensional points</span>
+<span class="sd">    using Singular Value Decomposition (SVD). It&#39;s important to note that the solution</span>
+<span class="sd">    found is only a local optimum.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        steplim (``int``, optional): The maximum number of ICP iteration steps.</span>
 <span class="sd">            Default: 200.</span>
 <span class="sd">        tol (``double``, optional): The tolerance of the relative error used to terminate</span>
-<span class="sd">            the algorithm. Default: 1e-4.</span>
+<span class="sd">            the algorithm. Default: 1e-6.</span>
 <span class="sd">        tf (``LieTensor``, optional): The initial transformation :math:`T_{init}` in</span>
 <span class="sd">            ``SE3type``. Default: None.</span>
 
@@ -263,24 +263,25 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">            \operatorname{arg\,min}_T \sum_i \|ptgt_i - T \cdot psrc_j\|,</span>
+<span class="sd">            \underset{T}{\operatorname{arg\,min}} \sum_i \|ptgt_j - T \cdot psrc_i\|,</span>
 <span class="sd">        \end{align*}</span>
 
-<span class="sd">    where :math:`ptgt_i` is the ith point in the target point cloud, and :math:`psrc_j` is</span>
-<span class="sd">    the jth point in the source point cloud. The algorithm consists of the following steps:</span>
+<span class="sd">    where `psrc_i` is the ith point in the source point cloud, and `ptgt_j`</span>
+<span class="sd">    is the cloest point to `psrc_i` in the target point cloud with index j. The algorithm</span>
+<span class="sd">    consists of the following steps:</span>
 
-<span class="sd">    1. For each point in psrc, the nearest neighbor algorithm is used to select its</span>
+<span class="sd">    1. For each point in psrc, the nearest neighbor algorithm (knn) is used to select its</span>
 <span class="sd">    closest point in ptgt to form the matched point pairs.</span>
 
 <span class="sd">    2. Singular value decomposition (SVD) algorithm is used to compute the rotation</span>
 <span class="sd">    and translation matrices from the matched point pairs.</span>
 
-<span class="sd">    3. The source point cloud is updated using the obtained rotation and</span>
-<span class="sd">    translation matrices. The distance between the updated source point cloud and</span>
-<span class="sd">    the target point cloud is calculated.</span>
+<span class="sd">    3. The source point cloud (psrc) is updated using the obtained rotation and</span>
+<span class="sd">    translation matrices. The distance between the updated psrc and ptgt is calculated.</span>
 
-<span class="sd">    4. The algorithm iterates through these steps until the change in the obtained</span>
-<span class="sd">    distance is lower than the given tolerance.</span>
+<span class="sd">    4. The algorithm continues to iterate through these steps until the change in the</span>
+<span class="sd">    calculated distance falls below the specified tolerance level or the maximum number</span>
+<span class="sd">    of iteration steps is reached.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
@@ -296,7 +297,6 @@
 <span class="sd">        LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steplim</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steplim</span> <span class="o">=</span> <span class="n">steplim</span>
@@ -319,7 +319,6 @@
 <span class="sd">            ``LieTensor``: The estimated transformation (``SE3type``) from psrc to ptgt.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
-
         <span class="n">temppc</span> <span class="o">=</span> <span class="n">psrc</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
@@ -334,9 +333,9 @@
                 <span class="k">break</span>
             <span class="n">err</span> <span class="o">=</span> <span class="n">errnew</span>
             <span class="n">ptgtknn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">ptgt</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">knnidx</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
-            <span class="n">T</span> <span class="o">=</span> <span class="n">points_transform</span><span class="p">(</span><span class="n">temppc</span><span class="p">,</span> <span class="n">ptgtknn</span><span class="p">)</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">temppc</span><span class="p">,</span> <span class="n">ptgtknn</span><span class="p">)</span>
             <span class="n">temppc</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">temppc</span><span class="p">)</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">points_transform</span><span class="p">(</span><span class="n">psrc</span><span class="p">,</span> <span class="n">temppc</span><span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">psrc</span><span class="p">,</span> <span class="n">temppc</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">T</span></div></div>
 </pre></div>
 
