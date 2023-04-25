@@ -243,14 +243,11 @@
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This class implements the batched Iterative Closest Point (ICP) algorithm to find a</span>
-<span class="sd">    similarity transformation ( :math:`T` ) between two sets of 3-dimensional points</span>
-<span class="sd">    using Singular Value Decomposition (SVD). It&#39;s important to note that the solution</span>
-<span class="sd">    found is only a local optimum.</span>
+<span class="sd">    Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation</span>
+<span class="sd">    between two sets of points using Singular Value Decomposition (SVD).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        steplim (``int``, optional): The maximum number of ICP iteration steps.</span>
-<span class="sd">            Default: 200.</span>
+<span class="sd">        steps (``int``, optional): The maximum number of ICP iteration steps. Default: 200.</span>
 <span class="sd">        tol (``double``, optional): The tolerance of the relative error used to terminate</span>
 <span class="sd">            the algorithm. Default: 1e-6.</span>
 <span class="sd">        tf (``LieTensor``, optional): The initial transformation :math:`T_{init}` in</span>
@@ -258,17 +255,18 @@
 
 <span class="sd">    The algorithm takes two input point clouds: source point cloud (psrc) and target</span>
 <span class="sd">    point cloud (ptgt). The objective is to find the optimal similarity transformation</span>
-<span class="sd">    (:math:`T`) to minimize the error between the transformed source point cloud and the</span>
+<span class="sd">    ( :math:`T` ) to minimize the error between the transformed source point cloud and the</span>
 <span class="sd">    target point cloud as shown in the equation:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">            \underset{T}{\operatorname{arg\,min}} \sum_i \|ptgt_j - T \cdot psrc_i\|,</span>
+<span class="sd">            \underset{T}{\operatorname{arg\,min}} \sum_i \| p_{\mathrm{target, j}} -</span>
+<span class="sd">            T \cdot p_{\mathrm{source, i}}\|,</span>
 <span class="sd">        \end{align*}</span>
 
-<span class="sd">    where `psrc_i` is the ith point in the source point cloud, and `ptgt_j`</span>
-<span class="sd">    is the cloest point to `psrc_i` in the target point cloud with index j. The algorithm</span>
-<span class="sd">    consists of the following steps:</span>
+<span class="sd">    where :math:`p_{\mathrm{source, i}}` is the ith point in the source point cloud, and</span>
+<span class="sd">    :math:`p_{\mathrm{target, j}}` is the cloest point to :math:`p_{\mathrm{source, i}}`</span>
+<span class="sd">    in the target point cloud with index j. The algorithm consists of the following steps:</span>
 
 <span class="sd">    1. For each point in psrc, the nearest neighbor algorithm (knn) is used to select its</span>
 <span class="sd">    closest point in ptgt to form the matched point pairs.</span>
@@ -296,19 +294,21 @@
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 
+<span class="sd">    Warning:</span>
+<span class="sd">        It&#39;s important to note that the solution found is only a local optimum.</span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steplim</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">tf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">steplim</span> <span class="o">=</span> <span class="n">steplim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tf</span> <span class="o">=</span> <span class="n">tf</span>
-        <span class="k">if</span> <span class="n">tf</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ltype</span><span class="p">,</span> <span class="n">lietensor</span><span class="o">.</span><span class="n">lietensor</span><span class="o">.</span><span class="n">SE3Type</span><span class="p">),</span> <span class="s2">&quot;The input initial </span><span class="se">\</span>
-<span class="s2">                transformation is not of type SE3Type.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
+        <span class="k">if</span> <span class="n">init</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">ltype</span><span class="p">,</span> <span class="n">lietensor</span><span class="o">.</span><span class="n">lietensor</span><span class="o">.</span><span class="n">SE3Type</span><span class="p">),</span> <span class="s2">&quot;The input </span><span class="se">\</span>
+<span class="s2">                initial transformation is not of type SE3Type.&quot;</span>
 
 <div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psrc</span><span class="p">,</span> <span class="n">ptgt</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            psrc(``torch.Tensor``): The source point cloud tensor with</span>
 <span class="sd">                [..., points_num, 3] shape.</span>
@@ -319,12 +319,10 @@
 <span class="sd">            ``LieTensor``: The estimated transformation (``SE3type``) from psrc to ptgt.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">temppc</span> <span class="o">=</span> <span class="n">psrc</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-        <span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">temppc</span> <span class="o">=</span> <span class="n">psrc</span>
         <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">dim</span> <span class="o">=</span> <span class="n">psrc</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">while</span> <span class="nb">iter</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steplim</span><span class="p">:</span>
-            <span class="nb">iter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">):</span>
             <span class="n">neighbors</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">temppc</span><span class="p">,</span> <span class="n">ptgt</span><span class="p">)</span>
             <span class="n">knndist</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">knnidx</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">indices</span>
