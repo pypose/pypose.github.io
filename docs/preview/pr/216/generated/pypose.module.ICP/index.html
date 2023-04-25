@@ -247,16 +247,13 @@
 <h1>pypose.module.ICP<a class="headerlink" href="#pypose-module-icp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.ICP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steplim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class implements the batched Iterative Closest Point (ICP) algorithm to find a
-similarity transformation ( <span class="math">\(T\)</span> ) between two sets of 3-dimensional points
-using Singular Value Decomposition (SVD). It’s important to note that the solution
-found is only a local optimum.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation
+between two sets of points using Singular Value Decomposition (SVD).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>steplim</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The maximum number of ICP iteration steps.
-Default: 200.</p></li>
+<li><p><strong>steps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The maximum number of ICP iteration steps. Default: 200.</p></li>
 <li><p><strong>tol</strong> (<code class="docutils literal notranslate"><span class="pre">double</span></code>, optional) – The tolerance of the relative error used to terminate
 the algorithm. Default: 1e-6.</p></li>
 <li><p><strong>tf</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – The initial transformation <span class="math">\(T_{init}\)</span> in
@@ -266,17 +263,18 @@ the algorithm. Default: 1e-6.</p></li>
 </dl>
 <p>The algorithm takes two input point clouds: source point cloud (psrc) and target
 point cloud (ptgt). The objective is to find the optimal similarity transformation
-(<span class="math">\(T\)</span>) to minimize the error between the transformed source point cloud and the
+( <span class="math">\(T\)</span> ) to minimize the error between the transformed source point cloud and the
 target point cloud as shown in the equation:</p>
 <div class="math">
 \[\begin{align*}
-    \underset{T}{\operatorname{arg\,min}} \sum_i \|ptgt_j - T \cdot psrc_i\|,
+    \underset{T}{\operatorname{arg\,min}} \sum_i \| p_{\mathrm{target, j}} -
+    T \cdot p_{\mathrm{source, i}}\|,
 \end{align*}
 
 \]</div>
-<p>where <cite>psrc_i</cite> is the ith point in the source point cloud, and <cite>ptgt_j</cite>
-is the cloest point to <cite>psrc_i</cite> in the target point cloud with index j. The algorithm
-consists of the following steps:</p>
+<p>where <span class="math">\(p_{\mathrm{source, i}}\)</span> is the ith point in the source point cloud, and
+<span class="math">\(p_{\mathrm{target, j}}\)</span> is the cloest point to <span class="math">\(p_{\mathrm{source, i}}\)</span>
+in the target point cloud with index j. The algorithm consists of the following steps:</p>
 <p>1. For each point in psrc, the nearest neighbor algorithm (knn) is used to select its
 closest point in ptgt to form the matched point pairs.</p>
 <p>2. Singular value decomposition (SVD) algorithm is used to compute the rotation
@@ -299,6 +297,10 @@ of iteration steps is reached.</p>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It’s important to note that the solution found is only a local optimum.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.ICP.forward">
