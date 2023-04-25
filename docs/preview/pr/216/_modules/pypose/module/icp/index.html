@@ -238,6 +238,7 @@
               
   <h1>Source code for pypose.module.icp</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">lietensor</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">points_transform</span>
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -301,6 +302,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">steplim</span> <span class="o">=</span> <span class="n">steplim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tf</span> <span class="o">=</span> <span class="n">tf</span>
+        <span class="k">if</span> <span class="n">tf</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ltype</span><span class="p">,</span> <span class="n">lietensor</span><span class="o">.</span><span class="n">lietensor</span><span class="o">.</span><span class="n">SE3Type</span><span class="p">),</span> <span class="s2">&quot;The input initial </span><span class="se">\</span>
+<span class="s2">                transformation is not of type SE3Type.&quot;</span>
 
 <div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psrc</span><span class="p">,</span> <span class="n">ptgt</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -316,18 +320,9 @@
 
 <span class="sd">        &#39;&#39;&#39;</span>
 
-
         <span class="n">temppc</span> <span class="o">=</span> <span class="n">psrc</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">err</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">psrc</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
-                <span class="n">temppc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">temppc</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid initial transformation matrix, please use &quot;</span> <span class="o">+</span>
-                                 <span class="s2">&quot;SE3 LieTensor with the same batch sizes as the &quot;</span> <span class="o">+</span>
-                                 <span class="s2">&quot;input pointcloud.&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="nb">iter</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steplim</span><span class="p">:</span>
             <span class="nb">iter</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">neighbors</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">temppc</span><span class="p">,</span> <span class="n">ptgt</span><span class="p">)</span>
