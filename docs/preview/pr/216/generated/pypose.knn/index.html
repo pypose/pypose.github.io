@@ -247,34 +247,47 @@
 <h1>pypose.knn<a class="headerlink" href="#pypose-knn" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.knn">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">knn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#knn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.knn" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">knn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">largest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#knn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.knn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the k nearest neighbor points of pointcloud 1 from pointcloud 2 in each batch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pc1</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the pointcloud 1.
-The shape has to be (…, N1, dim).</p></li>
+The shape has to be (…, N1, :).</p></li>
 <li><p><strong>pc2</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the pointcloud 2.
-The shape has to be (…, N2, dim).</p></li>
-<li><p><strong>k</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The number of the nearest neighbors to be selected.
-k has to be k seq N2. Default: <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
-<li><p><strong>norm</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The norm to use for distance calculation.
+The shape has to be (…, N2, :).</p></li>
+<li><p><strong>ord</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The order of norm to use for distance calculation.
 Default: <code class="docutils literal notranslate"><span class="pre">2</span></code> (Euclidean distance).</p></li>
+<li><p><strong>k</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The number of the nearest neighbors to be selected.
+k has to be k <span class="math">\(\leq\)</span> N2. Default: <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>dim</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The dimension to sort along. Default: <code class="docutils literal notranslate"><span class="pre">-1</span></code> (The last
+dimension).</p></li>
+<li><p><strong>largest</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Return the k nearest or furthest neighbors. If
+<code class="docutils literal notranslate"><span class="pre">largest</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the k furthest neighbors are returned.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>sorted</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Return the sorted or unsorted k nearest neighbors. If
+<code class="docutils literal notranslate"><span class="pre">sorted</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, it will make sure that the returned k nearest
+neighbors are themselves sorted. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>The
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">sorted</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the output will be unordered and not
+necessarily aligned with the index of the input point cloud.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>The
 named tuple of (values, indices).</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">values</span></code>: The N-norm distance between each point in pc1 and its sorted k
+<p><code class="docutils literal notranslate"><span class="pre">values</span></code>: The ord-norm distance between each point in pc1 and its sorted k
 nearest neighbors in pc2. The shape is (…, N1, k).</p>
 <p><code class="docutils literal notranslate"><span class="pre">indices</span></code>: The index of the k nearest neighbor points in pc2.
 The shape is (…, N1, k).</p>
-</div></blockquote>
 </p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">torch.return_types.topk</span> <span class="pre">(values:</span> <span class="pre">torch.Tensor,</span> <span class="pre">indices:</span> <span class="pre">torch.Tensor)</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">torch.return_types.topk</span> <span class="pre">(values:</span> <span class="pre">torch.Tensor,</span> <span class="pre">indices:</span> <span class="pre">torch.Tensor)</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -303,7 +316,7 @@ The shape is (…, N1, k).</p>
 <span class="go">        [2],</span>
 <span class="go">        [0],</span>
 <span class="go">        [1]]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">torch.return_types.topk(</span>
 <span class="go">values=tensor([[2.0000, 4.5826],</span>
 <span class="go">        [1.0000, 4.5826],</span>
@@ -317,7 +330,7 @@ The shape is (…, N1, k).</p>
 <span class="go">        [2, 0],</span>
 <span class="go">        [0, 2],</span>
 <span class="go">        [1, 2]]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
 <span class="go">tensor([[2.0000, 4.5826],</span>
 <span class="go">        [1.0000, 4.5826],</span>
 <span class="go">        [1.4142, 5.0990],</span>
