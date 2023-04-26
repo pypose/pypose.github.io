@@ -570,15 +570,18 @@
 <span class="sd">        representation (equation: :math:`\theta = 2 \cos^{-1}(q_0)` ) is presented at</span>
 <span class="sd">        the end of Chapter 2 in [1].</span>
 
-<span class="sd">        [1] Murray, R. M., Li, Z., Sastry, S. S., &amp; Sastry, S. S. (1994). A mathematical introduction to robotic manipulation. CRC press.</span>
+<span class="sd">        [1] Murray, R. M., Li, Z., &amp; Sastry, S. S. (1994). A mathematical introduction to</span>
+<span class="sd">        robotic manipulation. CRC press.</span>
 
 
 <span class="sd">    Returns:</span>
-<span class="sd">        ``torch.Tensor``: The translational difference (:math:`\Delta t`) and rotational differences between two sets of transformations.</span>
+<span class="sd">        ``torch.Tensor``: The translational difference (:math:`\Delta t`) and rotational</span>
+<span class="sd">        differences between two sets of transformations.</span>
 
 <span class="sd">        If ``aggregate = True``: The output batch will be 1.</span>
 
-<span class="sd">        If ``mode = 0``: The values in each batch is :math:`[ \Delta t, \Delta q_x, \Delta q_y, \Delta q_z, \Delta q_w ]`</span>
+<span class="sd">        If ``mode = 0``: The values in each batch is :math:`[ \Delta t, \Delta q_x,</span>
+<span class="sd">        \Delta q_y, \Delta q_z, \Delta q_w ]`</span>
 
 <span class="sd">        If ``mode = 1``: The values in each batch is :math:`[ \Delta t, \Delta \theta ]`</span>
 
@@ -611,7 +614,7 @@
         <span class="n">diff_r</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">tensor</span><span class="p">()[</span><span class="o">...</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">diff_t</span><span class="p">,</span> <span class="n">diff_r</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">aggregate</span> <span class="ow">and</span> <span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">diff</span></div>
 </pre></div>
 
