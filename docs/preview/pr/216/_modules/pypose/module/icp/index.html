@@ -239,7 +239,7 @@
   <h1>Source code for pypose.module.icp</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">lietensor</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span><span class="p">,</span> <span class="n">is_SE3</span>
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -304,8 +304,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
         <span class="k">if</span> <span class="n">init</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">ltype</span><span class="p">,</span> <span class="n">lietensor</span><span class="o">.</span><span class="n">lietensor</span><span class="o">.</span><span class="n">SE3Type</span><span class="p">),</span> <span class="s2">&quot;The input </span><span class="se">\</span>
-<span class="s2">                initial transformation is not of type SE3Type.&quot;</span>
+            <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The input initial transformation is not SE3Type.&quot;</span>
 
 <div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psrc</span><span class="p">,</span> <span class="n">ptgt</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
