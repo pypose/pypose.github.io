@@ -531,6 +531,37 @@
     <span class="n">t</span> <span class="o">=</span> <span class="n">pc2ctn</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">pc1ctn</span><span class="o">.</span><span class="n">mT</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="posediff"><a class="viewcode-back" href="../../../../generated/pypose.posediff/#pypose.posediff">[docs]</a><span class="k">def</span> <span class="nf">posediff</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">est</span><span class="p">,</span> <span class="n">aggregate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the translatinal and rotational error between two batched transformations</span>
+<span class="sd">    ( :math:`SE(3)` ).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ref (``LieTensor``): The reference transformation :math:`T_{ref}` in</span>
+<span class="sd">            ``SE3type``. The shape is [..., 7].</span>
+<span class="sd">        est (``LieTensor``): The estimated transformation :math:`T_{est}` in</span>
+<span class="sd">            ``SE3type``. The shape is [..., 7].</span>
+<span class="sd">        aggregate (``bool``, optional): Average the batched differences to a singleton</span>
+<span class="sd">            dimension. Default: ``False``.</span>
+<span class="sd">        mode (``int``, optional): Calculate the rotational difference in different mode.</span>
+<span class="sd">            ``mode = 0``: Quaternions representation.</span>
+<span class="sd">            ``mode = 1``: Axis-angle representation (Use one angle to represent the</span>
+<span class="sd">            rotational difference in 3D space). Default: ``1``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``torch.Tensor``: The translational difference (:math:`\Delta t`) and rotational differences between two sets of transformations.</span>
+
+<span class="sd">        If ``aggregate = True``: The output batch will be 1.</span>
+
+<span class="sd">        If ``mode = 0``: The values in each batch is :math:`[ \Delta t, \Delta q_w, \Delta q_x, \Delta q_y, \Delta q_z ]`</span>
+
+<span class="sd">        If ``mode = 1``: The values in each batch is :math:`[ \Delta t, \Delta \theta ]`</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        TBA.</span>
+<span class="sd">    &#39;&#39;&#39;</span></div>
 </pre></div>
 
              </article>
