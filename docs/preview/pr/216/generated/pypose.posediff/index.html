@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.svdtf &mdash; PyPose main documentation</title>
+  <title>pypose.posediff &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.posediff" href="../pypose.posediff/" />
-    <link rel="prev" title="pypose.knn" href="../pypose.knn/" />
+    <link rel="next" title="Convert" href="../../convert/" />
+    <link rel="prev" title="pypose.svdtf" href="../pypose.svdtf/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.svdtf.html">
+  <a style="color:#F05732" href="generated/pypose.posediff.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,13 +211,13 @@
         
           <li><a href="../../functions/">Functions</a> &gt;</li>
         
-      <li>pypose.svdtf</li>
+      <li>pypose.posediff</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.svdtf.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.posediff.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -243,43 +243,41 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-svdtf">
-<h1>pypose.svdtf<a class="headerlink" href="#pypose-svdtf" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-posediff">
+<h1>pypose.posediff<a class="headerlink" href="#pypose-posediff" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.svdtf">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">svdtf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#svdtf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.svdtf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the rigid transformation ( <span class="math">\(SE(3)\)</span> ) between two sets of associated
-points using Singular Value Decomposition (SVD).</p>
+<dt class="sig sig-object py" id="pypose.posediff">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">posediff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">est</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#posediff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.posediff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the translatinal and rotational error between two batched transformations
+( <span class="math">\(SE(3)\)</span> ).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pc1</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the first set of points.
-The shape has to be (…, N1, 3).</p></li>
-<li><p><strong>pc2</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The coordinates of the second set of points.
-The shape has to be (…, N2, 3).</p></li>
+<li><p><strong>ref</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>) – The reference transformation <span class="math">\(T_{ref}\)</span> in
+<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>. The shape is […, 7].</p></li>
+<li><p><strong>est</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>) – The estimated transformation <span class="math">\(T_{est}\)</span> in
+<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>. The shape is […, 7].</p></li>
+<li><p><strong>aggregate</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Average the batched differences to a singleton
+dimension. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>mode</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – Calculate the rotational difference in different mode.
+<code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">=</span> <span class="pre">0</span></code>: Quaternions representation.
+<code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">=</span> <span class="pre">1</span></code>: Axis-angle representation (Use one angle to represent the
+rotational difference in 3D space). Default: <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The rigid transformation matrix in <code class="docutils literal notranslate"><span class="pre">SE3Type</span></code>  that
-minimizes the mean squared error between the input point sets.</p>
+<dd class="field-even"><p><p>The translational difference (<span class="math">\(\Delta t\)</span>) and rotational differences between two sets of transformations.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">aggregate</span> <span class="pre">=</span> <span class="pre">True</span></code>: The output batch will be 1.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">=</span> <span class="pre">0</span></code>: The values in each batch is <span class="math">\([ \Delta t, \Delta q_w, \Delta q_x, \Delta q_y, \Delta q_z ]\)</span></p>
+<p>If <code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">=</span> <span class="pre">1</span></code>: The values in each batch is <span class="math">\([ \Delta t, \Delta \theta ]\)</span></p>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">LieTensor</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pc1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
-<span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
-<span class="gp">... </span>                    <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
-<span class="gp">... </span>                    <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
-<span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">svdtf</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">)</span>
-<span class="go">SE3Type LieTensor:</span>
-<span class="go">LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
-</pre></div>
-</div>
+<p>TBA.</p>
 </dd></dl>
 
 </section>
@@ -292,10 +290,10 @@ minimizes the mean squared error between the input point sets.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.posediff/" class="btn btn-neutral float-right" title="pypose.posediff" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../convert/" class="btn btn-neutral float-right" title="Convert" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.knn/" class="btn btn-neutral" title="pypose.knn" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.svdtf/" class="btn btn-neutral" title="pypose.svdtf" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
