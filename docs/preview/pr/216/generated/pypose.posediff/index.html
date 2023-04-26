@@ -277,7 +277,23 @@ rotational difference in 3D space). Default: <code class="docutils literal notra
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<p>TBA.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ref</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">est</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">posediff</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">est</span><span class="p">)</span>
+<span class="go">tensor([[3.1877, 0.3945],</span>
+<span class="go">[3.3388, 2.0563],</span>
+<span class="go">[2.4523, 0.4169],</span>
+<span class="go">[1.8392, 1.1539]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">posediff</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">est</span><span class="p">,</span><span class="n">aggregate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">tensor([[2.7045, 1.0054]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">posediff</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">est</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">tensor([[ 3.1877,  0.1554,  0.1179, -0.0190,  0.9806],</span>
+<span class="go">[ 3.3388, -0.0194, -0.8539,  0.0609,  0.5164],</span>
+<span class="go">[ 2.4523,  0.0495, -0.1739,  0.1006,  0.9784],</span>
+<span class="go">[ 1.8392, -0.5451, -0.0075,  0.0192,  0.8381]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
