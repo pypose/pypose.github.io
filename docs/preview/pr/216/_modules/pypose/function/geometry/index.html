@@ -416,7 +416,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="knn"><a class="viewcode-back" href="../../../../generated/pypose.knn/#pypose.knn">[docs]</a><span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="knn"><a class="viewcode-back" href="../../../../generated/pypose.knn/#pypose.knn">[docs]</a><span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Select the k nearest neighbor points of pointcloud 1 from pointcloud 2 in each batch.</span>
 
@@ -425,12 +425,13 @@
 <span class="sd">            The shape has to be (..., N1, :).</span>
 <span class="sd">        pc2 (``torch.Tensor``): The coordinates of the pointcloud 2.</span>
 <span class="sd">            The shape has to be (..., N2, :).</span>
+<span class="sd">        dim (``int``, optional): The dimension encompassing the point cloud coordinates,</span>
+<span class="sd">            utilized for calculating distance and sorting.</span>
+<span class="sd">            Default: ``-1`` (The last dimension).</span>
 <span class="sd">        ord (``int``, optional): The order of norm to use for distance calculation.</span>
 <span class="sd">            Default: ``2`` (Euclidean distance).</span>
 <span class="sd">        k (``int``, optional): The number of the nearest neighbors to be selected.</span>
 <span class="sd">            k has to be k :math:`\leq` N2. Default: ``1``.</span>
-<span class="sd">        dim (``int``, optional): The dimension to sort along. Default: ``-1`` (The last</span>
-<span class="sd">            dimension).</span>
 <span class="sd">        largest (``bool``, optional): Return the k nearest or furthest neighbors. If</span>
 <span class="sd">            ``largest`` is set to ``True``, then the k furthest neighbors are returned.</span>
 <span class="sd">            Default: ``False``.</span>
@@ -501,7 +502,7 @@
 <span class="sd">                [4.2426, 5.0000]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">pc1</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">pc2</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="n">largest</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="nb">sorted</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">neighbors</span></div>
 
