@@ -534,7 +534,8 @@
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">pc1</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">pc2</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;The number of the points N has to be the same.&quot;</span>
+    <span class="k">assert</span> <span class="n">pc1</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">pc2</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">{</span>
+        <span class="s2">&quot;The number of points N has to be the same for both point clouds.&quot;</span><span class="p">}</span>
     <span class="n">pc1ctn</span> <span class="o">=</span> <span class="n">pc1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">pc2ctn</span> <span class="o">=</span> <span class="n">pc2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">pc1t</span> <span class="o">=</span> <span class="n">pc1</span> <span class="o">-</span> <span class="n">pc1ctn</span>
@@ -547,77 +548,6 @@
     <span class="n">t</span> <span class="o">=</span> <span class="n">pc2ctn</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">pc1ctn</span><span class="o">.</span><span class="n">mT</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="posediff"><a class="viewcode-back" href="../../../../generated/pypose.posediff/#pypose.posediff">[docs]</a><span class="k">def</span> <span class="nf">posediff</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">est</span><span class="p">,</span> <span class="n">aggregate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Computes the translatinal and rotational error between two batched transformations</span>
-<span class="sd">    ( :math:`SE(3)` ).</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        ref (``LieTensor``): The reference transformation :math:`T_{ref}` in</span>
-<span class="sd">            ``SE3type``. The shape is [..., 7].</span>
-<span class="sd">        est (``LieTensor``): The estimated transformation :math:`T_{est}` in</span>
-<span class="sd">            ``SE3type``. The shape is [..., 7].</span>
-<span class="sd">        aggregate (``bool``, optional): Average the batched differences to a singleton</span>
-<span class="sd">            dimension. Default: ``False``.</span>
-<span class="sd">        mode (``int``, optional): Calculate the rotational difference in different mode.</span>
-<span class="sd">            ``mode = 0``: Quaternions representation.</span>
-<span class="sd">            ``mode = 1``: Axis-angle representation (Use one angle to represent the</span>
-<span class="sd">            rotational difference in 3D space). Default: ``1``.</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        The rotation matrix to axis-angle representation refers to the theorem 2.5 and</span>
-<span class="sd">        2.6 in Chapter 2 [1]. The implementation of the Quaternions to axis-angle</span>
-<span class="sd">        representation (equation: :math:`\theta = 2 \cos^{-1}(q_0)` ) is presented at</span>
-<span class="sd">        the end of Chapter 2 in [1].</span>
-
-<span class="sd">        [1] Murray, R. M., Li, Z., &amp; Sastry, S. S. (1994). A mathematical introduction to</span>
-<span class="sd">        robotic manipulation. CRC press.</span>
-
-
-<span class="sd">    Returns:</span>
-<span class="sd">        ``torch.Tensor``: The translational difference (:math:`\Delta t`) and rotational</span>
-<span class="sd">        differences between two sets of transformations.</span>
-
-<span class="sd">        If ``aggregate = True``: The output batch will be 1.</span>
-
-<span class="sd">        If ``mode = 0``: The values in each batch is :math:`[ \Delta t, \Delta q_x,</span>
-<span class="sd">        \Delta q_y, \Delta q_z, \Delta q_w ]`</span>
-
-<span class="sd">        If ``mode = 1``: The values in each batch is :math:`[ \Delta t, \Delta \theta ]`</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; ref = pp.randn_SE3(4)</span>
-<span class="sd">        &gt;&gt;&gt; est = pp.randn_SE3(4)</span>
-<span class="sd">        &gt;&gt;&gt; pp.posediff(ref,est)</span>
-<span class="sd">        tensor([[3.1877, 0.3945],</span>
-<span class="sd">        [3.3388, 2.0563],</span>
-<span class="sd">        [2.4523, 0.4169],</span>
-<span class="sd">        [1.8392, 1.1539]])</span>
-<span class="sd">        &gt;&gt;&gt; pp.posediff(ref,est,aggregate=True)</span>
-<span class="sd">        tensor([1.9840, 1.9306])</span>
-<span class="sd">        &gt;&gt;&gt; pp.posediff(ref,est,mode=0)</span>
-<span class="sd">        tensor([[ 3.1877,  0.1554,  0.1179, -0.0190,  0.9806],</span>
-<span class="sd">        [ 3.3388, -0.0194, -0.8539,  0.0609,  0.5164],</span>
-<span class="sd">        [ 2.4523,  0.0495, -0.1739,  0.1006,  0.9784],</span>
-<span class="sd">        [ 1.8392, -0.5451, -0.0075,  0.0192,  0.8381]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="s2">&quot;The input reference transformation is not SE3Type.&quot;</span>
-    <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">est</span><span class="p">),</span> <span class="s2">&quot;The input estimated transformation is not SE3Type.&quot;</span>
-    <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Mode number is invalid.&quot;</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">*</span> <span class="n">est</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span>
-    <span class="n">diff_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">diff_r</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">diff_t</span><span class="p">,</span> <span class="n">diff_r</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">diff_r</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">tensor</span><span class="p">()[</span><span class="o">...</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">diff_t</span><span class="p">,</span> <span class="n">diff_r</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">aggregate</span> <span class="ow">and</span> <span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">diff</span></div>
 </pre></div>
 
              </article>
