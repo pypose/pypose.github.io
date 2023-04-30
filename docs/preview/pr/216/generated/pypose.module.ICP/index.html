@@ -253,18 +253,18 @@ between two sets of points using Singular Value Decomposition (SVD).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>steps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The maximum number of ICP iteration steps. Default: 200.</p></li>
-<li><p><strong>tol</strong> (<code class="docutils literal notranslate"><span class="pre">double</span></code>, optional) – The tolerance of the relative error used to terminate
+<li><p><strong>steps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – the maximum number of ICP iteration steps. Default: 200.</p></li>
+<li><p><strong>tol</strong> (<code class="docutils literal notranslate"><span class="pre">double</span></code>, optional) – the tolerance of the relative error used to terminate
 the algorithm. Default: 1e-6.</p></li>
-<li><p><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – The initial transformation <span class="math">\(T_{init}\)</span> in
+<li><p><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – the initial transformation <span class="math">\(T_{init}\)</span> in
 <code class="docutils literal notranslate"><span class="pre">SE3type</span></code>. Default: None.</p></li>
 </ul>
 </dd>
 </dl>
-<p>The algorithm takes two input point clouds: source point cloud (psrc) and target
-point cloud (ptgt). The objective is to find the optimal similarity transformation
-( <span class="math">\(T\)</span> ) to minimize the error between the transformed source point cloud and the
-target point cloud as shown in the equation:</p>
+<p>The algorithm takes two input point clouds: source point cloud and target point cloud.
+The objective is to find the optimal similarity transformation ( <span class="math">\(T\)</span> ) to
+minimize the error between the transformed source point cloud and the target
+point cloud as shown in the equation:</p>
 <div class="math">
 \[\begin{align*}
     \underset{T}{\operatorname{arg\,min}} \sum_i \| p_{\mathrm{target, j}} -
@@ -275,12 +275,12 @@ target point cloud as shown in the equation:</p>
 <p>where <span class="math">\(p_{\mathrm{source, i}}\)</span> is the ith point in the source point cloud, and
 <span class="math">\(p_{\mathrm{target, j}}\)</span> is the cloest point to <span class="math">\(p_{\mathrm{source, i}}\)</span>
 in the target point cloud with index j. The algorithm consists of the following steps:</p>
-<p>1. For each point in psrc, the nearest neighbor algorithm (knn) is used to select its
-closest point in ptgt to form the matched point pairs.</p>
+<p>1. For each point in source, the nearest neighbor algorithm (knn) is used to select
+its closest point in target to form the matched point pairs.</p>
 <p>2. Singular value decomposition (SVD) algorithm is used to compute the rotation
 and translation matrices from the matched point pairs.</p>
-<p>3. The source point cloud (psrc) is updated using the obtained rotation and
-translation matrices. The distance between the updated psrc and ptgt is calculated.</p>
+<p>3. The source point cloud is updated using the obtained rotation and translation
+matrices. The distance between the updated source and target is calculated.</p>
 <p>4. The algorithm continues to iterate through these steps until the change in the
 calculated distance falls below the specified tolerance level or the maximum number
 of iteration steps is reached.</p>
@@ -308,10 +308,15 @@ of iteration steps is reached.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The source point clouds with shape
+<li><p><strong>source</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the source point clouds with shape
 (…, points_num, 3).</p></li>
-<li><p><strong>target</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – The target point clouds with shape
+<li><p><strong>target</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the target point clouds with shape
 (…, points_num, 3).</p></li>
+<li><p><strong>ord</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – the order of norm to use for distance calculation.
+Default: <code class="docutils literal notranslate"><span class="pre">2</span></code> (Euclidean distance).</p></li>
+<li><p><strong>dim</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – the dimension encompassing the point cloud
+coordinates, utilized for calculating distance.
+Default: <code class="docutils literal notranslate"><span class="pre">-1</span></code> (The last dimension).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
