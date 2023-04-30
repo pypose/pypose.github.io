@@ -504,15 +504,15 @@
     <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="n">largest</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="nb">sorted</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="svdtf"><a class="viewcode-back" href="../../../../generated/pypose.svdtf/#pypose.svdtf">[docs]</a><span class="k">def</span> <span class="nf">svdtf</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">):</span>
+<div class="viewcode-block" id="svdtf"><a class="viewcode-back" href="../../../../generated/pypose.svdtf/#pypose.svdtf">[docs]</a><span class="k">def</span> <span class="nf">svdtf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Computes the rigid transformation ( :math:`SE(3)` ) between two sets of associated</span>
-<span class="sd">    points using Singular Value Decomposition (SVD).</span>
+<span class="sd">    point clouds (source and target) using Singular Value Decomposition (SVD).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pc1 (``torch.Tensor``): The coordinates of the first set of points.</span>
+<span class="sd">        source (``torch.Tensor``): The coordinates of the source point cloud.</span>
 <span class="sd">            The shape has to be (..., N, 3).</span>
-<span class="sd">        pc2 (``torch.Tensor``): The coordinates of the second set of points.</span>
+<span class="sd">        target (``torch.Tensor``): The coordinates of the target point cloud.</span>
 <span class="sd">            The shape has to be (..., N, 3).</span>
 
 <span class="sd">    Returns:</span>
@@ -534,18 +534,18 @@
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">pc1</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">pc2</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">{</span>
         <span class="s2">&quot;The number of points N has to be the same for both point clouds.&quot;</span><span class="p">}</span>
-    <span class="n">pc1ctn</span> <span class="o">=</span> <span class="n">pc1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">pc2ctn</span> <span class="o">=</span> <span class="n">pc2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">pc1t</span> <span class="o">=</span> <span class="n">pc1</span> <span class="o">-</span> <span class="n">pc1ctn</span>
-    <span class="n">pc2t</span> <span class="o">=</span> <span class="n">pc2</span> <span class="o">-</span> <span class="n">pc2ctn</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">bvv</span><span class="p">(</span><span class="n">pc2t</span><span class="p">,</span> <span class="n">pc1t</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ctnsource</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ctntarget</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">source</span> <span class="o">-</span> <span class="n">ctnsource</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">ctntarget</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">bvv</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">Vh</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">det</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
     <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">pc2ctn</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">pc1ctn</span><span class="o">.</span><span class="n">mT</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">ctntarget</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">ctnsource</span><span class="o">.</span><span class="n">mT</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 </pre></div>
