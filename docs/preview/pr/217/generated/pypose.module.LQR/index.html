@@ -339,7 +339,8 @@ for the linear system of the optimization problem:</p>
 
 \]</div>
 </div></blockquote>
-<p>A discrete-time non-linear system can be described as:</p>
+<p>For the <strong>non-linear system</strong>, sometimes people want to solve MPC problem with <strong>iterative
+LQR</strong>. A discrete-time non-linear system can be described as:</p>
 <div class="math">
 \[\begin{aligned}
     \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\
@@ -430,16 +431,26 @@ trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\math
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The discrete-time system to be solved by LQR could be both linear time-invariant
-(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system or non-linear
-(<a class="reference internal" href="../pypose.module.NLS/#pypose.module.NLS" title="pypose.module.NLS"><code class="xref py py-meth docutils literal notranslate"><span class="pre">NLS()</span></code></a>) system.</p>
+<p>The discrete-time system to be solved by LQR could be either linear time-invariant
+(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system. For the non-linear
+system, we can approximate it as a linear system via Taylor expansion, using iterative
+LQR algorithm for MPC. Here we provide the convenience and general format.</p>
 </div>
 <p>From the learning perspective, this can be interpreted as a module with unknown parameters
 <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
 which can be integrated into a larger end-to-end learning system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The implementation is based on page 24-32 of <a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">Optimal Control and Planning</a>.</p>
+<p>The implementation of LQR is based on page 24-32 of the slides:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">Optimal Control and Planning</a>.</p></li>
+</ul>
+<p>The implementation of iterative LQR is based on Eq. (1)~(19) of this paper:</p>
+<ul class="simple">
+<li><p>Li Weiwei, and Emanuel Todorov, <a class="reference external" href="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=dfc73c664f85562956e4b98b3102ebd7e41906ae">Iterative linear quadratic regulator design for
+nonlinear biological movement systems</a>,
+ICINCO (1), 2004.</p></li>
+</ul>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
