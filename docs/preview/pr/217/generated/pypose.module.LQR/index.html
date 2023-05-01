@@ -298,7 +298,7 @@ for the linear system of the optimization problem:</p>
 <div><div class="math">
 \[\begin{align*}
     \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
-    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
+    \mathbf{q}_t &= \mathbf{p}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
                             \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
     \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}
                                          \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
@@ -387,7 +387,7 @@ trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\math
 \[\begin{align*}
     \mathbf{Q}_t &= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
                         \mathbf{F}_t \\
-    \mathbf{q}_t &= \bar{\mathbf{q}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
+    \mathbf{q}_t &= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
     \mathbf{K}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
                         \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\
     \mathbf{k}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
@@ -407,6 +407,15 @@ trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\math
 \]</div>
 </div></blockquote>
 </li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because we made a linear approximation, here <span class="math">\(\bar{\mathbf{p}}_t\)</span> leads to a
+difference with <span class="math">\({\mathbf{q}}_t\)</span> and <span class="math">\({\mathbf{k}}_t\)</span> relative to the
+linear backward recursion, and this change will be compensated back by
+<span class="math">\(\mathbf{u}_t^*\)</span> in the forward recursion.</p>
+</div>
+<ul>
 <li><p>The forward recursion.</p>
 <p>For <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
 <blockquote>
