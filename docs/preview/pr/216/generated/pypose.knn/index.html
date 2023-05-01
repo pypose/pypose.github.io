@@ -288,17 +288,17 @@ necessarily sorted along the index of the input point cloud.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pc1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ref</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nbr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
 <span class="gp">... </span>                    <span class="p">[</span><span class="mf">9.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">)</span>
 <span class="go">torch.return_types.topk(</span>
 <span class="go">values=tensor([[2.0000],</span>
 <span class="go">        [1.0000],</span>
@@ -312,7 +312,7 @@ necessarily sorted along the index of the input point cloud.</p>
 <span class="go">        [2],</span>
 <span class="go">        [0],</span>
 <span class="go">        [1]]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">torch.return_types.topk(</span>
 <span class="go">values=tensor([[2.0000, 4.5826],</span>
 <span class="go">        [1.0000, 4.5826],</span>
@@ -326,7 +326,7 @@ necessarily sorted along the index of the input point cloud.</p>
 <span class="go">        [2, 0],</span>
 <span class="go">        [0, 2],</span>
 <span class="go">        [1, 2]]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
 <span class="go">tensor([[2.0000, 4.5826],</span>
 <span class="go">        [1.0000, 4.5826],</span>
 <span class="go">        [1.4142, 5.0990],</span>

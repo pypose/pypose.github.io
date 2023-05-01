@@ -451,17 +451,17 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; pc1 = torch.tensor([[9., 2., 2.],</span>
+<span class="sd">        &gt;&gt;&gt; ref = torch.tensor([[9., 2., 2.],</span>
 <span class="sd">        ...                     [1., 0., 2.],</span>
 <span class="sd">        ...                     [0., 1., 1.],</span>
 <span class="sd">        ...                     [5., 0., 1.],</span>
 <span class="sd">        ...                     [1., 0., 1.],</span>
 <span class="sd">        ...                     [5., 5., 3.]])</span>
-<span class="sd">        &gt;&gt;&gt; pc2 = torch.tensor([[1., 0., 1.],</span>
+<span class="sd">        &gt;&gt;&gt; nbr = torch.tensor([[1., 0., 1.],</span>
 <span class="sd">        ...                     [1., 6., 2.],</span>
 <span class="sd">        ...                     [5., 1., 0.],</span>
 <span class="sd">        ...                     [9., 0., 2.]])</span>
-<span class="sd">        &gt;&gt;&gt; pp.knn(pc1, pc2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.knn(ref, nbr)</span>
 <span class="sd">        torch.return_types.topk(</span>
 <span class="sd">        values=tensor([[2.0000],</span>
 <span class="sd">                [1.0000],</span>
@@ -475,7 +475,7 @@
 <span class="sd">                [2],</span>
 <span class="sd">                [0],</span>
 <span class="sd">                [1]]))</span>
-<span class="sd">        &gt;&gt;&gt; pp.knn(pc1, pc2, k=2, ord=2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.knn(ref, nbr, k=2, ord=2)</span>
 <span class="sd">        torch.return_types.topk(</span>
 <span class="sd">        values=tensor([[2.0000, 4.5826],</span>
 <span class="sd">                [1.0000, 4.5826],</span>
@@ -489,7 +489,7 @@
 <span class="sd">                [2, 0],</span>
 <span class="sd">                [0, 2],</span>
 <span class="sd">                [1, 2]]))</span>
-<span class="sd">        &gt;&gt;&gt; pp.knn(pc1, pc2, k=2, ord=2).values</span>
+<span class="sd">        &gt;&gt;&gt; pp.knn(ref, nbr, k=2, ord=2).values</span>
 <span class="sd">        tensor([[2.0000, 4.5826],</span>
 <span class="sd">                [1.0000, 4.5826],</span>
 <span class="sd">                [1.4142, 5.0990],</span>
@@ -522,13 +522,13 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; pc1 = torch.tensor([[0., 0., 0.],</span>
+<span class="sd">        &gt;&gt;&gt; source = torch.tensor([[0., 0., 0.],</span>
 <span class="sd">        ...                     [1., 0., 0.],</span>
 <span class="sd">        ...                     [0., 1., 0.]])</span>
-<span class="sd">        &gt;&gt;&gt; pc2 = torch.tensor([[1., 1., 1.],</span>
+<span class="sd">        &gt;&gt;&gt; target = torch.tensor([[1., 1., 1.],</span>
 <span class="sd">        ...                     [2., 1., 1.],</span>
 <span class="sd">        ...                     [1., 2., 1.]])</span>
-<span class="sd">        &gt;&gt;&gt; pp.svdtf(pc1, pc2)</span>
+<span class="sd">        &gt;&gt;&gt; pp.svdtf(source, target)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
