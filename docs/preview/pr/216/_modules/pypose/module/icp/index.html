@@ -250,7 +250,7 @@
 <span class="sd">        tol (``double``, optional): the tolerance of the relative error used to terminate</span>
 <span class="sd">            the algorithm. Default: 1e-6.</span>
 <span class="sd">        init (``LieTensor``, optional): the initial transformation :math:`T_{init}` in</span>
-<span class="sd">            ``SE3type``. Default: None.</span>
+<span class="sd">            ``SE3type``. Default: ``None``.</span>
 
 <span class="sd">    The algorithm takes two input point clouds: source point cloud and target point cloud.</span>
 <span class="sd">    The objective is to find the optimal similarity transformation ( :math:`T` ) to</span>
@@ -267,7 +267,7 @@
 <span class="sd">    :math:`p_{\mathrm{target, j}}` is the cloest point to :math:`p_{\mathrm{source, i}}`</span>
 <span class="sd">    in the target point cloud with index j. The algorithm consists of the following steps:</span>
 
-<span class="sd">    1. For each point in source, the nearest neighbor algorithm (knn) is used to select</span>
+<span class="sd">    1. For each point in source, the nearest neighbor algorithm (KNN) is used to select</span>
 <span class="sd">    its closest point in target to form the matched point pairs.</span>
 
 <span class="sd">    2. Singular value decomposition (SVD) algorithm is used to compute the rotation</span>
@@ -282,27 +282,26 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; pc1 = torch.tensor([[[0., 0., 0.],</span>
-<span class="sd">        ...                      [1., 0., 0.],</span>
-<span class="sd">        ...                      [2., 0, 0.]]])</span>
-<span class="sd">        &gt;&gt;&gt; pc2 = torch.tensor([[[0.2, 0.1, 0.],</span>
-<span class="sd">        ...                      [1.1397, 0.442, 0.],</span>
-<span class="sd">        ...                      [2.0794, 0.7840, 0.]]])</span>
+<span class="sd">        &gt;&gt;&gt; source = torch.tensor([[[0., 0., 0.],</span>
+<span class="sd">        ...                         [1., 0., 0.],</span>
+<span class="sd">        ...                         [2.,  0, 0.]]])</span>
+<span class="sd">        &gt;&gt;&gt; target = torch.tensor([[[0.2,      0.1,  0.],</span>
+<span class="sd">        ...                         [1.1397, 0.442,  0.],</span>
+<span class="sd">        ...                         [2.0794, 0.7840, 0.]]])</span>
 <span class="sd">        &gt;&gt;&gt; icp = pp.module.ICP()</span>
-<span class="sd">        &gt;&gt;&gt; icp(pc1, pc2)</span>
+<span class="sd">        &gt;&gt;&gt; icp(source, target)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        It&#39;s important to note that the solution found is only a local optimum.</span>
-
+<span class="sd">        It&#39;s important to note that the solution is sensitive to the initialization.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">steps</span><span class="p">,</span> <span class="n">tol</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
+        <span class="k">assert</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">steps</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">init</span>
 
-<div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            source (``torch.Tensor``): the source point clouds with shape</span>
@@ -314,16 +313,19 @@
 <span class="sd">            dim (``int``, optional): the dimension encompassing the point cloud</span>
 <span class="sd">                coordinates, utilized for calculating distance.</span>
 <span class="sd">                Default: ``-1`` (The last dimension).</span>
+<span class="sd">            init (``LieTensor``, optional): the initial transformation :math:`T_{init}` in</span>
+<span class="sd">                ``SE3type``. If not ``None``, it will suppress the ``init`` given by the</span>
+<span class="sd">                class constructor. Default: ``None``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ``LieTensor``: The estimated transformation (``SE3type``) from source to</span>
 <span class="sd">            target point cloud.</span>
-
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">temporal</span><span class="p">,</span> <span class="n">errlast</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The input initial transformation is not SE3Type.&quot;</span>
-            <span class="n">temporal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">temporal</span><span class="p">)</span>
+        <span class="n">init</span> <span class="o">=</span> <span class="n">init</span> <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span>
+        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type.&quot;</span>
+            <span class="n">temporal</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">temporal</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">):</span>
             <span class="n">knndist</span><span class="p">,</span> <span class="n">knnidx</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">temporal</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
             <span class="n">errnew</span> <span class="o">=</span> <span class="n">knndist</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -332,7 +334,7 @@
             <span class="n">errlast</span> <span class="o">=</span> <span class="n">errnew</span>
             <span class="n">knntarget</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">knnidx</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
             <span class="n">T</span> <span class="o">=</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">temporal</span><span class="p">,</span> <span class="n">knntarget</span><span class="p">)</span>
-            <span class="n">temporal</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">Act</span><span class="p">(</span><span class="n">temporal</span><span class="p">)</span>
+            <span class="n">temporal</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">temporal</span>
         <span class="k">return</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">temporal</span><span class="p">)</span></div></div>
 </pre></div>
 
