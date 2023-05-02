@@ -240,7 +240,7 @@
   <h1>Source code for pypose.module.icp</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span><span class="p">,</span> <span class="n">is_SE3</span>
-<span class="kn">from</span> <span class="nn">..utils.planner</span> <span class="kn">import</span> <span class="n">ReduceToBason</span>
+<span class="kn">from</span> <span class="nn">..utils.stepper</span> <span class="kn">import</span> <span class="n">ReduceToBason</span>
 
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -251,7 +251,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        init (``LieTensor``, optional): the initial transformation :math:`T_{\text{init}}`</span>
 <span class="sd">            in ``SE3type LieTensor``. Default: ``None``.</span>
-<span class="sd">        planner (``Planner``, optional): the planner to stop a loop. If ``None``,</span>
+<span class="sd">        stepper (``Planner``, optional): the stepper to stop a loop. If ``None``,</span>
 <span class="sd">            the ``pypose.utils.ReduceToBason`` with a maximum of 200 steps are used.</span>
 <span class="sd">            Default: ``None``.</span>
 
@@ -278,7 +278,7 @@
 <span class="sd">    3. The source point cloud is updated using the obtained transformation.</span>
 <span class="sd">       The distance between the updated source and target is calculated.</span>
 
-<span class="sd">    4. The algorithm continues to iterate through these steps until the ``planner``</span>
+<span class="sd">    4. The algorithm continues to iterate through these steps until the ``stepper``</span>
 <span class="sd">       condition is satisfied.</span>
 
 <span class="sd">    Example:</span>
@@ -289,8 +289,8 @@
 <span class="sd">        &gt;&gt;&gt; target = torch.tensor([[[0.2,      0.1,  0.],</span>
 <span class="sd">        ...                         [1.1397, 0.442,  0.],</span>
 <span class="sd">        ...                         [2.0794, 0.7840, 0.]]])</span>
-<span class="sd">        &gt;&gt;&gt; planner = pp.utils.ReduceToBason(steps=10, verbose=True)</span>
-<span class="sd">        &gt;&gt;&gt; icp = pp.module.ICP(planner=planner)</span>
+<span class="sd">        &gt;&gt;&gt; stepper = pp.utils.ReduceToBason(steps=10, verbose=True)</span>
+<span class="sd">        &gt;&gt;&gt; icp = pp.module.ICP(stepper=stepper)</span>
 <span class="sd">        &gt;&gt;&gt; icp(source, target)</span>
 <span class="sd">        ReduceToBason step 0 loss tensor([0.4917])</span>
 <span class="sd">        ReduceToBason step 1 loss tensor([7.4711e-08])</span>
@@ -303,9 +303,9 @@
 <span class="sd">    Warning:</span>
 <span class="sd">        It&#39;s important to note that the solution is sensitive to the initialization.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">planner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">planner</span> <span class="o">=</span> <span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="k">if</span> <span class="n">planner</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">planner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span> <span class="o">=</span> <span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="k">if</span> <span class="n">stepper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stepper</span>
         <span class="k">assert</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
 
@@ -335,8 +335,8 @@
             <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type LieTensor.&quot;</span>
             <span class="n">temporal</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">temporal</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">planner</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">planner</span><span class="o">.</span><span class="n">continual</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">continual</span><span class="p">():</span>
             <span class="n">knndist</span><span class="p">,</span> <span class="n">knnidx</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">temporal</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">knndist</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span> <span class="o">+</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
@@ -344,7 +344,7 @@
             <span class="n">knntarget</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">knnidx</span><span class="p">)</span>
             <span class="n">T</span> <span class="o">=</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">temporal</span><span class="p">,</span> <span class="n">knntarget</span><span class="p">)</span>
             <span class="n">temporal</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">temporal</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">planner</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">svdtf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">temporal</span><span class="p">)</span></div></div>
 </pre></div>

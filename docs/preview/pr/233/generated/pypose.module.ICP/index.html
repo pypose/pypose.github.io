@@ -248,7 +248,7 @@
 <h1>pypose.module.ICP<a class="headerlink" href="#pypose-module-icp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.ICP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation
 between two sets of points using Singular Value Decomposition (SVD).</p>
 <dl class="field-list simple">
@@ -256,7 +256,7 @@ between two sets of points using Singular Value Decomposition (SVD).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – the initial transformation <span class="math">\(T_{\text{init}}\)</span>
 in <code class="docutils literal notranslate"><span class="pre">SE3type</span> <span class="pre">LieTensor</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>planner</strong> (<code class="docutils literal notranslate"><span class="pre">Planner</span></code>, optional) – the planner to stop a loop. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+<li><p><strong>stepper</strong> (<code class="docutils literal notranslate"><span class="pre">Planner</span></code>, optional) – the stepper to stop a loop. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 the <code class="docutils literal notranslate"><span class="pre">pypose.utils.ReduceToBason</span></code> with a maximum of 200 steps are used.
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
@@ -282,7 +282,7 @@ its closest point in target to form the matched point pairs.</p></li>
 from the matched point pairs.</p></li>
 <li><p>The source point cloud is updated using the obtained transformation.
 The distance between the updated source and target is calculated.</p></li>
-<li><p>The algorithm continues to iterate through these steps until the <code class="docutils literal notranslate"><span class="pre">planner</span></code>
+<li><p>The algorithm continues to iterate through these steps until the <code class="docutils literal notranslate"><span class="pre">stepper</span></code>
 condition is satisfied.</p></li>
 </ol>
 <p class="rubric">Example</p>
@@ -293,8 +293,8 @@ condition is satisfied.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[</span><span class="mf">0.2</span><span class="p">,</span>      <span class="mf">0.1</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
 <span class="gp">... </span>                        <span class="p">[</span><span class="mf">1.1397</span><span class="p">,</span> <span class="mf">0.442</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
 <span class="gp">... </span>                        <span class="p">[</span><span class="mf">2.0794</span><span class="p">,</span> <span class="mf">0.7840</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">planner</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">ICP</span><span class="p">(</span><span class="n">planner</span><span class="o">=</span><span class="n">planner</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stepper</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">ICP</span><span class="p">(</span><span class="n">stepper</span><span class="o">=</span><span class="n">stepper</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 <span class="go">ReduceToBason step 0 loss tensor([0.4917])</span>
 <span class="go">ReduceToBason step 1 loss tensor([7.4711e-08])</span>

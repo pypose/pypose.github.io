@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.utils.planner &mdash; PyPose main documentation</title>
+  <title>pypose.utils.stepper &mdash; PyPose main documentation</title>
   
 
   
@@ -146,7 +146,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="_modules/pypose/utils/planner.html">
+  <a style="color:#F05732" href="_modules/pypose/utils/stepper.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -209,7 +209,7 @@
         
           <li><a href="../../../">Module code</a> &gt;</li>
         
-      <li>pypose.utils.planner</li>
+      <li>pypose.utils.stepper</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
@@ -237,11 +237,11 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <h1>Source code for pypose.utils.planner</h1><div class="highlight"><pre>
+  <h1>Source code for pypose.utils.stepper</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 
 
-<span class="k">class</span> <span class="nc">_Planner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_Stepper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">verbose</span>
@@ -255,9 +255,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="ReduceToBason"><a class="viewcode-back" href="../../../../generated/pypose.utils.ReduceToBason/#pypose.utils.ReduceToBason">[docs]</a><span class="k">class</span> <span class="nc">ReduceToBason</span><span class="p">(</span><span class="n">_Planner</span><span class="p">):</span>
+<div class="viewcode-block" id="ReduceToBason"><a class="viewcode-back" href="../../../../generated/pypose.utils.ReduceToBason/#pypose.utils.ReduceToBason">[docs]</a><span class="k">class</span> <span class="nc">ReduceToBason</span><span class="p">(</span><span class="n">_Stepper</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    A planner to stop a loop when no relative loss &#39;decreasing&#39; is seen for a &#39;patience&#39;</span>
+<span class="sd">    A stepper to stop a loop when no relative loss &#39;decreasing&#39; is seen for a &#39;patience&#39;</span>
 <span class="sd">    number of steps.</span>
 
 <span class="sd">    Args:</span>
@@ -271,15 +271,15 @@
 <span class="sd">            Default: ``False``.</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        Remember to call `planner.reset()` if you want to re-use a planner.</span>
+<span class="sd">        Remember to call `stepper.reset()` if you want to re-use a stepper.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; from pypose.module import ReduceToBason</span>
-<span class="sd">        &gt;&gt;&gt; x = torch.tensor(0.9)</span>
-<span class="sd">        &gt;&gt;&gt; planner = ReduceToBason(steps=5, patience=2, decreasing=0.1, verbose=True)</span>
-<span class="sd">        &gt;&gt;&gt; while planner.continual():</span>
+<span class="sd">        &gt;&gt;&gt; from pypose.utils import ReduceToBason</span>
+<span class="sd">        &gt;&gt;&gt; x = 0.9</span>
+<span class="sd">        &gt;&gt;&gt; stepper = ReduceToBason(steps=5, patience=2, decreasing=0.1, verbose=True)</span>
+<span class="sd">        &gt;&gt;&gt; while stepper.continual():</span>
 <span class="sd">        ...     x = x ** 2</span>
-<span class="sd">        ...     planner.step(x)</span>
+<span class="sd">        ...     stepper.step(x)</span>
 <span class="sd">        ReduceToBason step 0 loss 8.099999e-01.</span>
 <span class="sd">        ReduceToBason step 1 loss 6.560999e-01.</span>
 <span class="sd">        ReduceToBason step 2 loss 4.304671e-01.</span>
@@ -294,7 +294,7 @@
 
 <div class="viewcode-block" id="ReduceToBason.step"><a class="viewcode-back" href="../../../../generated/pypose.utils.ReduceToBason/#pypose.utils.ReduceToBason.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Performs a planner step.</span>
+<span class="sd">        Performs a stepper step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            loss (``float`` or ``torch.Tensor``): the model loss after one loop.</span>
