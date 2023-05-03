@@ -261,14 +261,17 @@
 <span class="sd">    number of steps.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        steps (int): Maximum number of iterations a loop will step.</span>
-<span class="sd">        patience (int): Number of steps with no loss &#39;decreasing&#39; is seen. For example, if</span>
-<span class="sd">            ``patience = 2``, then it ignores the first 2 steps with no improvement, and</span>
-<span class="sd">            stop the loop after the 3rd step if the loss has no decerasing. Default: 5.</span>
-<span class="sd">        decreasing (float): relative loss decreasing used to count the number of patience</span>
-<span class="sd">            steps. Default: 1e-3.</span>
-<span class="sd">        verbose (bool): if ``True``, prints a message to stdout for each step.</span>
-<span class="sd">            Default: ``False``.</span>
+<span class="sd">        steps (``int``): Maximum number of iterations a loop will step.</span>
+<span class="sd">        patience (``int``, optional): Number of steps with no loss &#39;decreasing&#39; is seen.</span>
+<span class="sd">            For example, if ``patience = 2``, then it ignores the first 2 steps with no</span>
+<span class="sd">            improvement, and stop the loop after the 3rd step if the loss has no</span>
+<span class="sd">            decerasing. Default: 5.</span>
+<span class="sd">        decreasing (``float``, optional): relative loss decreasing used to count the</span>
+<span class="sd">            number of patience steps. Default: 1e-3.</span>
+<span class="sd">        tol (``float``, optional): the minimum loss tolerance to stop a loop.</span>
+<span class="sd">            Default: 1e-5.</span>
+<span class="sd">        verbose (``bool``, optional): if ``True``, prints a message to stdout for each</span>
+<span class="sd">            step. Default: ``False``.</span>
 
 <span class="sd">    Warning:</span>
 <span class="sd">        Remember to call `stepper.reset()` if you want to re-use a stepper.</span>
@@ -287,9 +290,9 @@
 <span class="sd">        ReduceToBason step 4 loss 3.433681e-02.</span>
 <span class="sd">        ReduceToBason: Maximum steps reached, Quiting..</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decreasing</span> <span class="o">=</span> <span class="n">decreasing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decreasing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">decreasing</span><span class="p">,</span> <span class="n">tol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience_count</span> <span class="o">=</span> <span class="n">patience</span><span class="p">,</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="ReduceToBason.step"><a class="viewcode-back" href="../../../../generated/pypose.utils.ReduceToBason/#pypose.utils.ReduceToBason.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
@@ -308,6 +311,11 @@
             <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">loss</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ReduceToBason: Loss tol reached, Quiting..&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_continual</span> <span class="o">=</span> <span class="kc">False</span>
