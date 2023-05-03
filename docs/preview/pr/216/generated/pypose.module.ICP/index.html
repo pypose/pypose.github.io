@@ -168,6 +168,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 </ul>
 
             
@@ -247,24 +248,23 @@
 <h1>pypose.module.ICP<a class="headerlink" href="#pypose-module-icp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.ICP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ICP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/icp/#ICP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ICP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation
 between two sets of points using Singular Value Decomposition (SVD).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>steps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – the maximum number of ICP iteration steps. Default: 200.</p></li>
-<li><p><strong>tol</strong> (<code class="docutils literal notranslate"><span class="pre">double</span></code>, optional) – the tolerance of the relative error used to terminate
-the algorithm. Default: 1e-6.</p></li>
-<li><p><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – the initial transformation <span class="math">\(T_{init}\)</span> in
-<code class="docutils literal notranslate"><span class="pre">SE3type</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, optional) – the initial transformation <span class="math">\(T_{\text{init}}\)</span>
+in <code class="docutils literal notranslate"><span class="pre">SE3type</span> <span class="pre">LieTensor</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>stepper</strong> (<code class="docutils literal notranslate"><span class="pre">Planner</span></code>, optional) – the stepper to stop a loop. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+the <code class="docutils literal notranslate"><span class="pre">pypose.utils.ReduceToBason</span></code> with a maximum of 200 steps are used.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
-<p>The algorithm takes two input point clouds: source point cloud and target point cloud.
-The objective is to find the optimal similarity transformation ( <span class="math">\(T\)</span> ) to
-minimize the error between the transformed source point cloud and the target
-point cloud as shown in the equation:</p>
+<p>The algorithm takes two input point clouds (source and target) and finds the optimal
+transformation ( <span class="math">\(T\)</span> ) to minimize the error between the transformed source
+point cloud and the target point cloud:</p>
 <div class="math">
 \[\begin{align*}
     \underset{T}{\operatorname{arg\,min}} \sum_i \| p_{\mathrm{target, j}} -
@@ -272,18 +272,19 @@ point cloud as shown in the equation:</p>
 \end{align*}
 
 \]</div>
-<p>where <span class="math">\(p_{\mathrm{source, i}}\)</span> is the ith point in the source point cloud, and
-<span class="math">\(p_{\mathrm{target, j}}\)</span> is the cloest point to <span class="math">\(p_{\mathrm{source, i}}\)</span>
-in the target point cloud with index j. The algorithm consists of the following steps:</p>
-<p>1. For each point in source, the nearest neighbor algorithm (KNN) is used to select
-its closest point in target to form the matched point pairs.</p>
-<p>2. Singular value decomposition (SVD) algorithm is used to compute the rotation
-and translation matrices from the matched point pairs.</p>
-<p>3. The source point cloud is updated using the obtained rotation and translation
-matrices. The distance between the updated source and target is calculated.</p>
-<p>4. The algorithm continues to iterate through these steps until the change in the
-calculated distance falls below the specified tolerance level or the maximum number
-of iteration steps is reached.</p>
+<p>where <span class="math">\(p_{\mathrm{source, i}}\)</span> is the i-th point in the source point cloud, and
+<span class="math">\(p_{\mathrm{target, j}}\)</span> is the cloest point of <span class="math">\(p_{\mathrm{source, i}}\)</span>
+in the target point clouds with index j. The algorithm consists of the following steps:</p>
+<ol class="arabic simple">
+<li><p>For each point in source, the nearest neighbor algorithm (KNN) is used to select
+its closest point in target to form the matched point pairs.</p></li>
+<li><p>Singular value decomposition (SVD) algorithm is used to compute the transformation
+from the matched point pairs.</p></li>
+<li><p>The source point cloud is updated using the obtained transformation.
+The distance between the updated source and target is calculated.</p></li>
+<li><p>The algorithm continues to iterate through these steps until the <code class="docutils literal notranslate"><span class="pre">stepper</span></code>
+condition is satisfied.</p></li>
+</ol>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
@@ -292,8 +293,14 @@ of iteration steps is reached.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[</span><span class="mf">0.2</span><span class="p">,</span>      <span class="mf">0.1</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
 <span class="gp">... </span>                        <span class="p">[</span><span class="mf">1.1397</span><span class="p">,</span> <span class="mf">0.442</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
 <span class="gp">... </span>                        <span class="p">[</span><span class="mf">2.0794</span><span class="p">,</span> <span class="mf">0.7840</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">ICP</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stepper</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">ICP</span><span class="p">(</span><span class="n">stepper</span><span class="o">=</span><span class="n">stepper</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">icp</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="go">ReduceToBason step 0 loss tensor([0.4917])</span>
+<span class="go">ReduceToBason step 1 loss tensor([7.4711e-08])</span>
+<span class="go">ReduceToBason step 2 loss tensor([1.0450e-07])</span>
+<span class="go">ReduceToBason step 3 loss tensor([2.8322e-07])</span>
+<span class="go">ReduceToBason: Maximum patience steps reached, Quiting..</span>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 </pre></div>
