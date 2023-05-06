@@ -239,6 +239,7 @@
               
   <h1>Source code for pypose.optim.functional</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">hasnan</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
 <span class="kn">from</span> <span class="nn">torch.func</span> <span class="kn">import</span> <span class="n">jacrev</span><span class="p">,</span> <span class="n">jacfwd</span><span class="p">,</span> <span class="n">functional_call</span>
@@ -249,8 +250,8 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
 
-<span class="sd">    For a parametric model :math:`\bm{f}(\bm{\theta}, \bm{x})`, where :math:`\bm{\theta}` is</span>
-<span class="sd">    the learnable parameter and :math:`\bm{x}` is the input, it computes the</span>
+<span class="sd">    For a parametric model :math:`\bm{f}(\bm{\theta}, \bm{x})`, where :math:`\bm{\theta}`</span>
+<span class="sd">    is the learnable parameter and :math:`\bm{x}` is the input, it computes the</span>
 <span class="sd">    Jacobian of the :math:`i`-th output and :math:`j`-th parameter as</span>
 
 <span class="sd">    .. math::</span>
@@ -378,19 +379,15 @@
     <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func_param</span><span class="p">,</span> <span class="n">params_values</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="n">create_graph</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span> \
                     <span class="n">vectorize</span><span class="o">=</span><span class="n">vectorize</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">)</span>
 
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">hasnan</span><span class="p">(</span><span class="n">J</span><span class="p">),</span> <span class="s1">&#39;Jacobian contains Nan! Check your model and input!&#39;</span>
+
     <span class="k">if</span> <span class="n">flatten</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">):</span>
             <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> \
                     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">j</span><span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">])),</span> \
-            <span class="s1">&#39;Jacobian contains Nan! Check your model and input!&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">J</span><span class="p">)),</span> \
-            <span class="s1">&#39;Jacobian contains Nan! Check your model and input!&#39;</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> \
+                           <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">J</span></div>
 
