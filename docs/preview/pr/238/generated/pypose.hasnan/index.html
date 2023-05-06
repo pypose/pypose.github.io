@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.is_SE3 &mdash; PyPose main documentation</title>
+  <title>pypose.hasnan &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.hasnan" href="../pypose.hasnan/" />
-    <link rel="prev" title="pypose.is_lietensor" href="../pypose.is_lietensor/" />
+    <link rel="next" title="pypose.add" href="../pypose.add/" />
+    <link rel="prev" title="pypose.is_SE3" href="../pypose.is_SE3/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.is_SE3.html">
+  <a style="color:#F05732" href="generated/pypose.hasnan.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -212,13 +212,13 @@
         
           <li><a href="../../functions/">Functions</a> &gt;</li>
         
-      <li>pypose.is_SE3</li>
+      <li>pypose.hasnan</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.is_SE3.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.hasnan.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -244,23 +244,35 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-is-se3">
-<h1>pypose.is_SE3<a class="headerlink" href="#pypose-is-se3" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-hasnan">
+<h1>pypose.hasnan<a class="headerlink" href="#pypose-hasnan" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.is_SE3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">is_SE3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/checking/#is_SE3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.is_SE3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether an instance or object is an SE3 Type LieTensor or not.</p>
+<dt class="sig sig-object py" id="pypose.hasnan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">hasnan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/checking/#hasnan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.hasnan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a deep nested list of tensors contains Nan or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<code class="docutils literal notranslate"><span class="pre">obj</span></code>) – a Python object or instantance.</p>
+<dd class="field-odd"><p><strong>obj</strong> (<code class="docutils literal notranslate"><span class="pre">obj</span></code>) – a Python object that can be a list of nested list.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if obj is a SE3 Type LieTensor object otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the list contains a tensor with <code class="docutils literal notranslate"><span class="pre">Nan</span></code> otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">L1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="mi">7</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0999</span><span class="p">])]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasnan</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L2</span> <span class="o">=</span> <span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0999</span><span class="p">]),</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="mi">7</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasnan</span><span class="p">(</span><span class="n">L2</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L3</span> <span class="o">=</span> <span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0999</span><span class="p">]),</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">),</span> <span class="mi">6</span><span class="p">]],</span> <span class="mi">7</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasnan</span><span class="p">(</span><span class="n">L3</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -273,10 +285,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.hasnan/" class="btn btn-neutral float-right" title="pypose.hasnan" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.add/" class="btn btn-neutral float-right" title="pypose.add" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.is_lietensor/" class="btn btn-neutral" title="pypose.is_lietensor" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.is_SE3/" class="btn btn-neutral" title="pypose.is_SE3" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
