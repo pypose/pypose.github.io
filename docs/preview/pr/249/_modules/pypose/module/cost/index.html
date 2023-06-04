@@ -1,0 +1,794 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.module.cost &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.3.5 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/module/cost.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.module.cost</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.module.cost</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
+
+<div class="viewcode-block" id="Cost"><a class="viewcode-back" href="../../../../generated/pypose.module.Cost/#pypose.module.Cost">[docs]</a><span class="k">class</span> <span class="nc">Cost</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The base class of a cost function.</span>
+<span class="sd">    </span>
+<span class="sd">    The cost function :math:`\mathrm{cost}` is given by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \mathrm{cost} = \mathrm{cost}(\mathbf{x}_k, \mathbf{u}_k)</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    where :math:`\mathbf{x}_{k}`, :math:`\mathbf{u}_{k}` are the state and input at time instant :math:`k`, respectively.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        To use the class, users need to inherit this class and define methods</span>
+<span class="sd">        :obj:`cost`, which is automatically called by</span>
+<span class="sd">        internal :obj:`forward` method.</span>
+
+<span class="sd">    Note:</span>
+
+<span class="sd">        This class provides automatic **linearlization and quadraticization** at a reference point</span>
+<span class="sd">        :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*)`.</span>
+<span class="sd">        One can directly call those linearized and quadraticized cost as properties including</span>
+<span class="sd">        :obj:`cx`, :obj:`cu`, :obj:`cxx`, :obj:`cxu`, :obj:`cux`, :obj:`cuu`, and :obj:`c`, after calling</span>
+<span class="sd">        a method :obj:`set_refpoint`.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        A simple non-quadratic cost example. For advanced usage, see the `examples` folder.</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch as torch</span>
+<span class="sd">        &gt;&gt;&gt; class NonQuadCost(Cost):</span>
+<span class="sd">        ... def __init__(self):</span>
+<span class="sd">        ...    super(NonQuadCost, self).__init__()</span>
+<span class="sd">        ... def cost(self, state, input):</span>
+<span class="sd">        ...    return torch.sum(state**3) + torch.sum(input**4) \</span>
+<span class="sd">        ...            + torch.sum(state * input) # did not consider batch here</span>
+<span class="sd">        &gt;&gt;&gt; state = torch.randn(1, 3)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(1, 3)</span>
+<span class="sd">        &gt;&gt;&gt; nonQuadCost = NonQuadCost()</span>
+<span class="sd">        &gt;&gt;&gt; cost_value = nonQuadCost(state, input)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cost_value&#39;, cost_value)</span>
+<span class="sd">        &gt;&gt;&gt; # 1st, 2nd order partial derivatives at current state and input</span>
+<span class="sd">        &gt;&gt;&gt; jacob_state, jacob_input = state, input</span>
+<span class="sd">        &gt;&gt;&gt; nonQuadCost.set_refpoint(state=jacob_state, input=jacob_input)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cx&#39;, nonQuadCost.cx.size(), nonQuadCost.cx, &#39;?==?&#39;, 3*state**2 + input)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cu&#39;, nonQuadCost.cu.size(), nonQuadCost.cu, &#39;?==?&#39;, 4*input**3 + state)</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cxx&#39;, nonQuadCost.cxx.size(), nonQuadCost.cxx, &#39;?==?&#39;, 6*torch.diag(state.squeeze(0)))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cxu&#39;, nonQuadCost.cxu.size(), nonQuadCost.cxu, &#39;?==?&#39;, torch.eye(state.size(-1)) )</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cux&#39;, nonQuadCost.cux.size(), nonQuadCost.cux, &#39;?==?&#39;, torch.eye(state.size(-1)))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;cuu&#39;, nonQuadCost.cuu.size(), nonQuadCost.cuu, &#39;?==?&#39;, 12*torch.diag((input**2).squeeze(0)))</span>
+<span class="sd">        &gt;&gt;&gt; print(&#39;c&#39;, nonQuadCost.c.size())</span>
+<span class="sd">        &gt;&gt;&gt; cx, cu, cxx, cxu, cux, cuu, c = nonQuadCost.cx, nonQuadCost.cu, nonQuadCost.cxx, nonQuadCost.cxu, nonQuadCost.cux, nonQuadCost.cuu, nonQuadCost.c</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        More practical examples can be found at `examples/module/cost</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/cost&gt;`_.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;strategy&#39;</span><span class="p">:</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">}</span>
+        <span class="c1"># self.jacargs = {&#39;vectorize&#39;:False, &#39;strategy&#39;:&#39;reverse-mode&#39;}</span>
+
+<div class="viewcode-block" id="Cost.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.Cost/#pypose.module.Cost.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Defines the computation performed at every call.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cost.cost"><a class="viewcode-back" href="../../../../generated/pypose.module.Cost/#pypose.module.Cost.cost">[docs]</a>    <span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            state (:obj:`Tensor`): The state of the dynamical system</span>
+<span class="sd">            input (:obj:`Tensor`): The input to the dynamical system</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tensor: The stage cost of the system</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The users need to define their own cost method&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cost.set_refpoint"><a class="viewcode-back" href="../../../../generated/pypose.module.Cost/#pypose.module.Cost.set_refpoint">[docs]</a>    <span class="k">def</span> <span class="nf">set_refpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to set the reference point for linearization.</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            state (:obj:`Tensor`): The reference state of the dynamical system. If ``None``,</span>
+<span class="sd">                the the most recent state is taken. Default: ``None``.</span>
+<span class="sd">            input (:obj:`Tensor`): The reference input to the dynamical system. If ``None``,</span>
+<span class="sd">                the the most recent input is taken. Default: ``None``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Warning:</span>
+<span class="sd">            For nonlinear cost, the users have to call this function before getting the</span>
+<span class="sd">            linearized and quadraticized cost.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ref_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost linear term on state</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_{\mathbf{x}} = \left. \frac{\partial c}{\partial \mathbf{x}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost linear term on input</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_{\mathbf{u}} = \left. \frac{\partial c}{\partial \mathbf{u}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">))</span>    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost quadratic term on state</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_\mathbf{xx} = \left. \frac{\partial^{2} c}{\partial \mathbf{x}^{2}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># https://discuss.pytorch.org/t/second-order-derivatives-of-loss-function/71797/4 need _ref to be requires_grad = True?</span>
+        <span class="c1"># first_derivative = grad(self.cost(self._ref_state, self._ref_input), self._ref_state, create_graph=True)[0]</span>
+        <span class="c1"># print(&#39;first derivative&#39;, first_derivative.size())</span>
+        <span class="c1"># second_derivative = grad(first_derivative, self._ref_state)[0]</span>
+        <span class="c1"># print(&#39;second derivative&#39;, second_derivative)</span>
+
+        <span class="c1"># https://pytorch.org/docs/stable/_modules/torch/autograd/functional.html#hessian</span>
+
+        <span class="c1"># def jac_func(x): # create a functional here</span>
+        <span class="c1">#     func = lambda x: self.cost(x, self._ref_input)</span>
+        <span class="c1">#     jac = jacobian(func, x, create_graph=True)</span>
+        <span class="c1">#     # print(&#39;jac&#39;, jac.size())</span>
+        <span class="c1">#     return jac</span>
+
+        <span class="c1"># equivalent simpler form</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span>
+        <span class="n">jac_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span><span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cxu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost quadratic term on state and input</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_\mathbf{xu} = \left. \frac{\partial^{2} c}{\partial \mathbf{x} \partial \mathbf{u}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">def</span> <span class="nf">jac_func</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+            <span class="n">jac</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># substitute x here</span>
+            <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
+        <span class="c1"># func = lambda x,u: self.cost(x, u)</span>
+        <span class="c1"># jac_func = lambda u: excludeBatch(jacobian(func, x, create_graph=True))        </span>
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span>  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cux</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost quadratic term on input and state</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_\mathbf{ux} = \left. \frac{\partial^{2} c}{\partial \mathbf{u} \partial \mathbf{x}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxu</span><span class="o">.</span><span class="n">mT</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cuu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Quadratic/quadraticized cost quadratic term on input</span>
+<span class="sd">        </span>
+<span class="sd">        .. math::</span>
+<span class="sd">            c_\mathbf{uu} = \left. \frac{\partial^{2} c}{\partial \mathbf{u}^{2}} \right|_{\chi^*}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">jac_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span>  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Constant term generated by cost.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            c = \mathrm{cost}(\mathbf{x}^*, \mathbf{u}^*)</span>
+<span class="sd">                           - c_{\mathbf{x}}\mathbf{x}^* - c_{\mathbf{u}}\mathbf{u}^*</span>
+<span class="sd">                           - \frac{1}{2} \mathbf{x}^{*\top}c_{\mathbf{xx}}\mathbf{x}^*</span>
+<span class="sd">                           - \frac{1}{2} \mathbf{x}^{*\top}c_{\mathbf{xu}}\mathbf{u}^*</span>
+<span class="sd">                           - \frac{1}{2} \mathbf{u}^{*\top}c_{\mathbf{ux}}\mathbf{x}^*</span>
+<span class="sd">                           - \frac{1}{2} \mathbf{u}^{*\top}c_{\mathbf{uu}}\mathbf{u}^*</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Potential performance loss here - involves jacobian eval</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_c</span> <span class="o">-</span> <span class="n">pp</span><span class="o">.</span><span class="n">bdot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cx</span><span class="p">)</span> <span class="o">-</span> <span class="n">pp</span><span class="o">.</span><span class="n">bdot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cu</span><span class="p">)</span> \
+                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> \
+                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span> \
+                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cux</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> \
+                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cuu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span>  </div>
+
+<span class="k">def</span> <span class="nf">excludeBatch</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># non-batch case</span>
+        <span class="c1"># for cost cx  (1,1,  1,ns)</span>
+        <span class="c1"># for cost cxx (1,ns, 1,ns)  </span>
+        <span class="c1"># for constraint gx (ncon,1,  1,ns)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># zero dim per sample</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c1">#todo: compatible with non-batch case</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># vector per sample</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span>
+    <span class="k">return</span> <span class="n">out</span>        
+
+<div class="viewcode-block" id="QuadCost"><a class="viewcode-back" href="../../../../generated/pypose.module.QuadCost/#pypose.module.QuadCost">[docs]</a><span class="k">class</span> <span class="nc">QuadCost</span><span class="p">(</span><span class="n">Cost</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Quadratic cost.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Q (:obj:`Tensor`): The quadratic state coefficient matrix of Quadratic cost.</span>
+<span class="sd">        R (:obj:`Tensor`): The quadratic input coefficient matrix of Quadratic cost.</span>
+<span class="sd">        S (:obj:`Tensor`): The quadratic cross coefficient matrix of Quadratic cost.</span>
+<span class="sd">        c (:obj:`Tensor`): The constant term of Quadratic cost.</span>
+
+<span class="sd">    A quadratic cost can be described by equation of the form:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x} </span>
+<span class="sd">            +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u} </span>
+<span class="sd">            +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x} </span>
+<span class="sd">            +  \mathbf{u}^{\top}\mathbf{R}\mathbf{u}) + c \\</span>
+
+<span class="sd">    where :math:`\mathbf{x}` and :math:`\mathbf{u}` are state and input of the current</span>
+<span class="sd">    timestamp of system.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        More practical examples can be found at `examples/module/cost</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/cost&gt;`_.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QuadCost</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">Q</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">S</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cxx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cuu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxu</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span>
+
+<div class="viewcode-block" id="QuadCost.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.QuadCost/#pypose.module.QuadCost.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perform forward step for the quadratic cost.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">QuadCost</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QuadCost.cost"><a class="viewcode-back" href="../../../../generated/pypose.module.QuadCost/#pypose.module.QuadCost.cost">[docs]</a>    <span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perform QuadCost computation.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x} </span>
+<span class="sd">                +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u} </span>
+<span class="sd">                +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x} </span>
+<span class="sd">                +  \mathbf{u}^{\top}\mathbf{R}\mathbf{u}) + c \\</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">(</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> \
+                <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span> \
+                <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">mT</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> \
+                <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span></div>
+
+    <span class="c1"># cx, cu cannot be defined via setter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        quadratic term on state :obj:`cxx`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxx</span>
+
+    <span class="nd">@cxx</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cxx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cxx</span> <span class="o">=</span> <span class="n">cxx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cxu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        quadratic cross-term :obj:`cxu`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cxu</span>
+
+    <span class="nd">@cxu</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cxu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cxu</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cxu</span> <span class="o">=</span> <span class="n">cxu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cux</span> <span class="o">=</span> <span class="n">cxu</span><span class="o">.</span><span class="n">mT</span> <span class="c1"># set cux simultaneously</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cux</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        quadratic cross-term :obj:`cux`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cux</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cuu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        quadratic term on state :obj:`cuu`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cuu</span>
+
+    <span class="nd">@cuu</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cuu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cuu</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cuu</span> <span class="o">=</span> <span class="n">cuu</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Constant term :obj:`c`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span>
+
+    <span class="nd">@c</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span> <span class="o">=</span> <span class="n">c</span></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/sphinx_highlight.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
