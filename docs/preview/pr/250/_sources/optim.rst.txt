@@ -28,3 +28,4 @@ Optimization
    optim.corrector.Triggs
    optim.scheduler.StopOnPlateau
    optim.functional.modjac
+   optim.ControllerParametersTuner
