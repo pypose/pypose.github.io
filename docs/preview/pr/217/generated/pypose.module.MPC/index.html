@@ -128,7 +128,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.4.3 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.4.4 &#x25BC</a>
     </div>
     
 
@@ -255,12 +255,18 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>system</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code>) – The system to be soved by MPC.</p></li>
 <li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Time steps of system.</p></li>
-<li><p><strong>steps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Total number of iterations for iterative LQR.</p></li>
-<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Epsilon as the tolerance.</p></li>
+<li><p><strong>steps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Total number of iterations for iterative LQR.
+Default: 10.</p></li>
+<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Epsilon as the tolerance. Default: 1e-4.</p></li>
 </ul>
 </dd>
 </dl>
-<p>MPC requires that at each time step we solve the optimization problem:</p>
+<p>Model Predictive Control, also known as Receding Horizon Control (RHC), uses the
+mathematical model of the system in order to solve a finite, moving horizon, and
+closed loop optimal control problem. Thus, the MPC scheme is able to utilize the
+information about the current state of the system in order to predict future states
+and control inputs for the system. MPC requires that at each time step we solve the
+optimization problem:</p>
 <div class="math">
 \[\begin{align*}
   \mathop{\arg\min}\limits_{\mathbf{x}_{1:T}, \mathbf{u}_{1:T}} \sum\limits_t
@@ -273,22 +279,117 @@
 <p>where <span class="math">\(\mathbf{c}\)</span> is the cost function; <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span>
 are the state and input of the linear system; <span class="math">\(\mathbf{f}\)</span> is the dynamics model;
 <span class="math">\(\mathbf{x}_{\text{init}}\)</span> is the initial state of the system.</p>
-<p>We use the iLQR solver to solve the optimization problem, and consider the dynamics as
-constraints. The analytical derivative can be computed using one additional pass of iLQR.</p>
+<p>For the linear system with quadratic cost, MPC is equivalent to solving an LQR problem
+on each horizon as well as considering the dynamics as constraints. For nonlinear
+system, one way to solve the MPC problem is to use iterative LQR, which uses linear
+approximations of the dynamics and quadratic approximations of the cost function to
+iteratively compute a local optimal solution based on the current states and control
+sequences. The analytical derivative can be computed using one additional pass of iLQR.</p>
+<p>The quadratic costs of the system over the time horizon:</p>
+<blockquote>
+<div><div class="math">
+\[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
+\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t
+
+\]</div>
+</div></blockquote>
+<p>where <span class="math">\(\mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t
+\end{bmatrix}\)</span>, <span class="math">\(\mathbf{Q}\)</span> is he weight matrix of the quadratic term,
+<span class="math">\(\mathbf{p}\)</span> is the weight vector of the first-order term.</p>
+<p>Then LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
+<span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
+for the linear system of the optimization problem:</p>
+<div class="math">
+\[\begin{align*}
+  \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}
+  \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
+  \mathrm{s.t.} \quad \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\
+  \mathbf{x}_1 &= \mathbf{x}_{\text{init}} \\
+\end{align*}
+
+\]</div>
+<p>The LQR process can be summarised as a backward and a forward recursion.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For the lqr solver, please refer to <a class="reference internal" href="../pypose.module.LQR/#pypose.module.LQR" title="pypose.module.LQR"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LQR()</span></code></a>. For linear systems, we only
-require a single iLQR solve.</p>
+<p>For the details of lqr solver and the iterative LQR, please refer to <a class="reference internal" href="../pypose.module.LQR/#pypose.module.LQR" title="pypose.module.LQR"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LQR()</span></code></a>.
+Please note that the linear system with quadratic cost only requires one single
+iteration.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>The definition of MPC is cited from this book:</p>
+<ul class="simple">
+<li><p>George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, <a class="reference external" href="https://doi.org/10.1016/C2017-0-02260-7">Aerial Robotic Workers: Design, Modeling, Control, Vision and Their Applications</a>,
+Butterworth-Heinemann, 2023.</p></li>
+</ul>
 <p>The implementation of MPC is based on Eq. (10)~(13) of this paper:</p>
 <ul class="simple">
 <li><p>Amos, Brandon, et al, <a class="reference external" href="https://proceedings.neurips.cc/paper/2018/hash/ba6d843eb4251a4526ce65d1807a9309-Abstract.html">Differentiable mpc for end-to-end planning and control</a>,
 Advances in neural information processing systems 31, 2018.</p></li>
 </ul>
 </div>
-<p>Example:</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">CartPole</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">NLS</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">cartmass</span><span class="p">,</span> <span class="n">polemass</span><span class="p">,</span> <span class="n">gravity</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">dt</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">cartmass</span> <span class="o">=</span> <span class="n">cartmass</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">=</span> <span class="n">polemass</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">=</span> <span class="n">gravity</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartmass</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">x</span><span class="p">,</span> <span class="n">xDot</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">thetaDot</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">force</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">costheta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="n">sintheta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>        <span class="n">temp</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>            <span class="n">force</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">*</span> <span class="n">thetaDot</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sintheta</span>
+<span class="gp">... </span>        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
+<span class="gp">... </span>        <span class="n">thetaAcc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">*</span> <span class="n">sintheta</span> <span class="o">-</span> <span class="n">costheta</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+<span class="gp">... </span>            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="n">costheta</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">... </span>        <span class="n">xAcc</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">*</span> <span class="n">thetaAcc</span> <span class="o">*</span> <span class="n">costheta</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
+<span class="gp">...</span>
+<span class="gp">... </span>        <span class="n">_dstate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">xDot</span><span class="p">,</span> <span class="n">xAcc</span><span class="p">,</span> <span class="n">thetaDot</span><span class="p">,</span> <span class="n">thetaAcc</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">_dstate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="p">,</span> <span class="nb">len</span><span class="p">,</span> <span class="n">m_cart</span><span class="p">,</span> <span class="n">m_pole</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">9.81</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_state</span><span class="p">,</span> <span class="n">n_ctrl</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_sc</span> <span class="o">=</span> <span class="n">n_state</span> <span class="o">+</span> <span class="n">n_ctrl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_state</span> <span class="o">+</span> <span class="n">n_ctrl</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_sc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">current_u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">time</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cartPoleSolver</span> <span class="o">=</span> <span class="n">CartPole</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="nb">len</span><span class="p">,</span> <span class="n">m_cart</span><span class="p">,</span> <span class="n">m_pole</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MPC</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">MPC</span><span class="p">(</span><span class="n">cartPoleSolver</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">MPC</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_u</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;u = &quot;</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="go">x =  tensor([[[ 0.0000e+00,  0.0000e+00,  3.1416e+00,  0.0000e+00],</span>
+<span class="go">              [ 0.0000e+00, -3.7711e-04,  3.1416e+00, -1.8856e-04],</span>
+<span class="go">              [-3.7711e-06, -3.0693e-04,  3.1416e+00, -1.5347e-04],</span>
+<span class="go">              [-6.8404e-06, -2.4288e-04,  3.1416e+00, -1.2136e-04],</span>
+<span class="go">              [-9.2692e-06, -2.6634e-04,  3.1416e+00, -1.3293e-04],</span>
+<span class="go">              [-1.1933e-05, -2.2073e-04,  3.1416e+00, -1.0991e-04]]])</span>
+<span class="go">u =  tensor([[[-0.8485],</span>
+<span class="go">              [ 0.1579],</span>
+<span class="go">              [ 0.1440],</span>
+<span class="go">              [-0.0530],</span>
+<span class="go">              [ 0.1023]]])</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.MPC.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mpc/#MPC.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPC.forward" title="Permalink to this definition">¶</a></dt>
@@ -299,8 +400,7 @@ Advances in neural information processing systems 31, 2018.</p></li>
 <li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight matrix of the quadratic term.</p></li>
 <li><p><strong>p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight vector of the first-order term.</p></li>
 <li><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
-<li><p><strong>time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The reference time step of the dynamical
-system.</p></li>
+<li><p><strong>dt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The timestamp for ths system to estimate.</p></li>
 <li><p><strong>current_u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
 trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
