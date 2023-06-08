@@ -253,17 +253,17 @@
 <span class="sd">            Default: 10.</span>
 <span class="sd">        eps (:obj:`int`, optional): Epsilon as the tolerance. Default: 1e-4.</span>
 
-<span class="sd">    Model Predictive Control, also known as Receding Horizon Control (RHC), uses the</span>
-<span class="sd">    mathematical model of the system in order to solve a finite, moving horizon, and</span>
+<span class="sd">    **Model Predictive Control**, also known as Receding Horizon Control (RHC), uses the</span>
+<span class="sd">    mathematical model of the system to solve a finite, moving horizon, and</span>
 <span class="sd">    closed loop optimal control problem. Thus, the MPC scheme is able to utilize the</span>
-<span class="sd">    information about the current state of the system in order to predict future states</span>
-<span class="sd">    and control inputs for the system. MPC requires that at each time step we solve the</span>
-<span class="sd">    optimization problem:</span>
+<span class="sd">    information about the current state of the system to predict future states</span>
+<span class="sd">    and control inputs for the system. At each time stamp, MPC solves the</span>
+<span class="sd">    optimization problem on a time horizon :math:`T`:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
 <span class="sd">          \mathop{\arg\min}\limits_{\mathbf{x}_{1:T}, \mathbf{u}_{1:T}} \sum\limits_t</span>
-<span class="sd">          \mathbf{c}_t (\mathbf{x}_t, \mathbf{u}_t) \\</span>
+<span class="sd">          &amp;\mathbf{c}_t (\mathbf{x}_t, \mathbf{u}_t) \\</span>
 <span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\</span>
 <span class="sd">          \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}} \\</span>
 <span class="sd">        \end{align*}</span>
@@ -277,31 +277,83 @@
 <span class="sd">    system, one way to solve the MPC problem is to use iterative LQR, which uses linear</span>
 <span class="sd">    approximations of the dynamics and quadratic approximations of the cost function to</span>
 <span class="sd">    iteratively compute a local optimal solution based on the current states and control</span>
-<span class="sd">    sequences. The analytical derivative can be computed using one additional pass of iLQR.</span>
+<span class="sd">    sequences. Then, analytical derivative for the backward can be computed using one additional</span>
+<span class="sd">    forward pass of iLQR for the learning problem, such as learning the parameters of the dynamic system.</span>
 
-<span class="sd">    The quadratic costs of the system over the time horizon:</span>
-
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
-<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
-
-<span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
-<span class="sd">    \end{bmatrix}`, :math:`\mathbf{Q}` is he weight matrix of the quadratic term,</span>
-<span class="sd">    :math:`\mathbf{p}` is the weight vector of the first-order term.</span>
-
-<span class="sd">    Then LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` =</span>
-<span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}`</span>
-<span class="sd">    for the linear system of the optimization problem:</span>
+<span class="sd">    Specifically, the discrete-time non-linear system can be described as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \begin{align*}</span>
-<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
-<span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
-<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\</span>
-<span class="sd">          \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}} \\</span>
-<span class="sd">        \end{align*}</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
+<span class="sd">            \mathbf{y}_{t} &amp;= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
+<span class="sd">        \end{aligned}</span>
 
-<span class="sd">    The LQR process can be summarised as a backward and a forward recursion.</span>
+<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
+<span class="sd">    trajectory with small perturbation :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
+<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*` for both dynamics and cost:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">            \begin{aligned}</span>
+<span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*,</span>
+<span class="sd">                \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
+<span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}</span>
+<span class="sd">                {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\</span>
+<span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}</span>
+<span class="sd">                + \mathbf{B} \delta \mathbf{u} \\</span>
+<span class="sd">            \delta \mathbf{x}_{t+1} &amp;= \mathbf{A}_t \delta \mathbf{x}_t + \mathbf{B}_t</span>
+<span class="sd">                \delta \mathbf{u}_t \\</span>
+<span class="sd">            &amp;= \mathbf{F}_t \delta \mathbf{\tau}_t \\</span>
+<span class="sd">            \mathbf{c} \left( \mathbf{\tau}, t^* \right) &amp;\approx</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta</span>
+<span class="sd">                \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,</span>
+<span class="sd">                t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\</span>
+<span class="sd">            \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &amp;= \frac{1}{2} \delta</span>
+<span class="sd">                \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +</span>
+<span class="sd">                \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\</span>
+<span class="sd">            \end{aligned}</span>
+
+<span class="sd">    where :math:`\mathbf{F}_t` = :math:`\begin{bmatrix}</span>
+<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
+
+<span class="sd">    Then, LQR can be performed on a linear quadractic problem with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
+<span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t`.</span>
+
+<span class="sd">    - The backward recursion.</span>
+
+<span class="sd">      For :math:`t` = :math:`T` to 1:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
+<span class="sd">                                    \mathbf{F}_t \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                    \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                    \mathbf{q}_{\delta \mathbf{u}_t}         \\</span>
+<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}</span>
+<span class="sd">                        \mathbf{K}_t   \\</span>
+<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t,</span>
+<span class="sd">                        \delta \mathbf{u}_t}\mathbf{k}_t   \\</span>
+<span class="sd">            \end{align*}</span>
+
+<span class="sd">    - The forward recursion.</span>
+
+<span class="sd">      For :math:`t` = 1 to :math:`T`:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \delta \mathbf{u}_t &amp;= \mathbf{K}_t \delta \mathbf{x}_t + \mathbf{k}_t \\</span>
+<span class="sd">                \mathbf{u}_t &amp;= \delta \mathbf{u}_t + \mathbf{u}_t^* \\</span>
+<span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t) \\</span>
+<span class="sd">            \end{align*}</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        For the details of lqr solver and the iterative LQR, please refer to :meth:`LQR`.</span>

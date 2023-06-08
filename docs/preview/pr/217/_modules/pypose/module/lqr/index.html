@@ -276,17 +276,18 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
+<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} &amp;\sum\limits_t\frac{1}{2}</span>
 <span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
-<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{\text{init}}, \\</span>
-<span class="sd">          \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
+<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}}, \\</span>
+<span class="sd">          \mathbf{x}_{t+1} &amp;= \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
 <span class="sd">    \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t</span>
 <span class="sd">    \end{bmatrix}`.</span>
 
-<span class="sd">    The LQR process can be summarised as a backward and a forward recursion.</span>
+<span class="sd">    One way to solve the LQR problem is to use the dynamic programming, where the process</span>
+<span class="sd">    can be summarised as a backward and a forward recursion.</span>
 
 <span class="sd">    - The backward recursion.</span>
 
@@ -337,9 +338,9 @@
 <span class="sd">            \mathbf{y}_{t} &amp;= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    For a current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
-<span class="sd">    trajectory, consider a point :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
-<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*`. We could do a linear approximation:</span>
+<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
+<span class="sd">    trajectory with small perturbation :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
+<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*` for both dynamics and cost:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">            \begin{aligned}</span>
@@ -367,8 +368,8 @@
 <span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`, :math:`\bar{\mathbf{Q}}_t` = :math:`\mathbf{Q}_t`,</span>
 <span class="sd">    :math:`\bar{\mathbf{p}}_t` = :math:`\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t`.</span>
 
-<span class="sd">    Now we can run LQR with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
-<span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t` as a linear problem.</span>
+<span class="sd">    Then, LQR can be performed on a linear quadractic problem with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
+<span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t`.</span>
 
 <span class="sd">    - The backward recursion.</span>
 
@@ -419,14 +420,14 @@
 <span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The discrete-time system to be solved by LQR could be either linear time-invariant</span>
+<span class="sd">        The discrete-time system to be solved by LQR can be either linear time-invariant</span>
 <span class="sd">        (:meth:`LTI`) system, or linear time-varying (:meth:`LTV`) system. For the non-linear</span>
-<span class="sd">        system, we can approximate it as a linear system via Taylor expansion, using iterative</span>
-<span class="sd">        LQR algorithm for MPC. Here we provide the convenience and general format.</span>
+<span class="sd">        system, one can approximate it as a linear system via Taylor expansion, using iterative</span>
+<span class="sd">        LQR algorithm for MPC. Here we provide a unified general format for the implementation.</span>
 
 <span class="sd">    From the learning perspective, this can be interpreted as a module with unknown parameters</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`,</span>
-<span class="sd">    which can be integrated into a larger end-to-end learning system.</span>
+<span class="sd">    which can be integrated into an end-to-end learning system.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation of LQR is based on page 24-32 of the slides:</span>

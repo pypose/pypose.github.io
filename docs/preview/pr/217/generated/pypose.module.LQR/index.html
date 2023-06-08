@@ -281,17 +281,18 @@ constant output of the linear system. The subscript <span class="math">\(\cdot_{
 for the linear system of the optimization problem:</p>
 <div class="math">
 \[\begin{align*}
-  \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}
+  \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} &\sum\limits_t\frac{1}{2}
   \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
-  \mathrm{s.t.} \quad \mathbf{x}_1 = \mathbf{x}_{\text{init}}, \\
-  \mathbf{x}_{t+1} = \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\
+  \mathrm{s.t.} \quad \mathbf{x}_1 &= \mathbf{x}_{\text{init}}, \\
+  \mathbf{x}_{t+1} &= \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
 <p>where <span class="math">\(\mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t
 \end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t
 \end{bmatrix}\)</span>.</p>
-<p>The LQR process can be summarised as a backward and a forward recursion.</p>
+<p>One way to solve the LQR problem is to use the dynamic programming, where the process
+can be summarised as a backward and a forward recursion.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
@@ -349,9 +350,9 @@ LQR</strong>. A discrete-time non-linear system can be described as:</p>
 \end{aligned}
 
 \]</div>
-<p>For a current point <span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a
-trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*
-+\delta\mathbf{u}, t^*)\)</span> near <span class="math">\(\chi^*\)</span>. We could do a linear approximation:</p>
+<p>We can do a linear approximation at current point <span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a
+trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*
++\delta\mathbf{u}, t^*)\)</span> near <span class="math">\(\chi^*\)</span> for both dynamics and cost:</p>
 <div class="math">
 \[\begin{aligned}
 \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &\approx \mathbf{f}(\mathbf{x}^*,
@@ -378,8 +379,8 @@ trajectory, consider a point <span class="math">\(\chi=(\mathbf{x}^*+\delta\math
 \delta \mathbf{u}_t \end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix}
 \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>, <span class="math">\(\bar{\mathbf{Q}}_t\)</span> = <span class="math">\(\mathbf{Q}_t\)</span>,
 <span class="math">\(\bar{\mathbf{p}}_t\)</span> = <span class="math">\(\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t\)</span>.</p>
-<p>Now we can run LQR with <span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
-<span class="math">\(\bar{\mathbf{Q}}_t\)</span> and <span class="math">\(\bar{\mathbf{p}}_t\)</span> as a linear problem.</p>
+<p>Then, LQR can be performed on a linear quadractic problem with <span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
+<span class="math">\(\bar{\mathbf{Q}}_t\)</span> and <span class="math">\(\bar{\mathbf{p}}_t\)</span>.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
@@ -441,14 +442,14 @@ linear backward recursion, and this change will be compensated back by
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The discrete-time system to be solved by LQR could be either linear time-invariant
+<p>The discrete-time system to be solved by LQR can be either linear time-invariant
 (<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system. For the non-linear
-system, we can approximate it as a linear system via Taylor expansion, using iterative
-LQR algorithm for MPC. Here we provide the convenience and general format.</p>
+system, one can approximate it as a linear system via Taylor expansion, using iterative
+LQR algorithm for MPC. Here we provide a unified general format for the implementation.</p>
 </div>
 <p>From the learning perspective, this can be interpreted as a module with unknown parameters
 <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
-which can be integrated into a larger end-to-end learning system.</p>
+which can be integrated into an end-to-end learning system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The implementation of LQR is based on page 24-32 of the slides:</p>
