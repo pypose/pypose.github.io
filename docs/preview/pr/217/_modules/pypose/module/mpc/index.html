@@ -249,10 +249,16 @@
 <span class="sd">    Args:</span>
 <span class="sd">        system (:obj:`instance`): The system to be soved by MPC.</span>
 <span class="sd">        T (:obj:`int`): Time steps of system.</span>
-<span class="sd">        steps (:obj:`int`): Total number of iterations for iterative LQR.</span>
-<span class="sd">        eps (:obj:`int`): Epsilon as the tolerance.</span>
+<span class="sd">        steps (:obj:`int`, optional): Total number of iterations for iterative LQR.</span>
+<span class="sd">            Default: 10.</span>
+<span class="sd">        eps (:obj:`int`, optional): Epsilon as the tolerance. Default: 1e-4.</span>
 
-<span class="sd">    MPC requires that at each time step we solve the optimization problem:</span>
+<span class="sd">    Model Predictive Control, also known as Receding Horizon Control (RHC), uses the</span>
+<span class="sd">    mathematical model of the system in order to solve a finite, moving horizon, and</span>
+<span class="sd">    closed loop optimal control problem. Thus, the MPC scheme is able to utilize the</span>
+<span class="sd">    information about the current state of the system in order to predict future states</span>
+<span class="sd">    and control inputs for the system. MPC requires that at each time step we solve the</span>
+<span class="sd">    optimization problem:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
@@ -266,16 +272,49 @@
 <span class="sd">    are the state and input of the linear system; :math:`\mathbf{f}` is the dynamics model;</span>
 <span class="sd">    :math:`\mathbf{x}_{\text{init}}` is the initial state of the system.</span>
 
-<span class="sd">    We use the iLQR solver to solve the optimization problem, and consider the dynamics as</span>
-<span class="sd">    constraints. The analytical derivative can be computed using one additional pass of iLQR.</span>
+<span class="sd">    For the linear system with quadratic cost, MPC is equivalent to solving an LQR problem</span>
+<span class="sd">    on each horizon as well as considering the dynamics as constraints. For nonlinear</span>
+<span class="sd">    system, one way to solve the MPC problem is to use iterative LQR, which uses linear</span>
+<span class="sd">    approximations of the dynamics and quadratic approximations of the cost function to</span>
+<span class="sd">    iteratively compute a local optimal solution based on the current states and control</span>
+<span class="sd">    sequences. The analytical derivative can be computed using one additional pass of iLQR.</span>
 
+<span class="sd">    The quadratic costs of the system over the time horizon:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
+<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
+
+<span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
+<span class="sd">    \end{bmatrix}`, :math:`\mathbf{Q}` is he weight matrix of the quadratic term,</span>
+<span class="sd">    :math:`\mathbf{p}` is the weight vector of the first-order term.</span>
+
+<span class="sd">    Then LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` =</span>
+<span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}`</span>
+<span class="sd">    for the linear system of the optimization problem:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} \sum\limits_t\frac{1}{2}</span>
+<span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
+<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\</span>
+<span class="sd">          \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}} \\</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    The LQR process can be summarised as a backward and a forward recursion.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        For the lqr solver, please refer to :meth:`LQR`. For linear systems, we only</span>
-<span class="sd">        require a single iLQR solve.</span>
-
+<span class="sd">        For the details of lqr solver and the iterative LQR, please refer to :meth:`LQR`.</span>
+<span class="sd">        Please note that the linear system with quadratic cost only requires one single</span>
+<span class="sd">        iteration.</span>
 
 <span class="sd">    Note:</span>
+<span class="sd">        The definition of MPC is cited from this book:</span>
+
+<span class="sd">        * George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, `Aerial Robotic Workers: Design, Modeling, Control, Vision and Their Applications</span>
+<span class="sd">          &lt;https://doi.org/10.1016/C2017-0-02260-7&gt;`_,</span>
+<span class="sd">          Butterworth-Heinemann, 2023.</span>
+
 <span class="sd">        The implementation of MPC is based on Eq. (10)~(13) of this paper:</span>
 
 <span class="sd">        * Amos, Brandon, et al, `Differentiable mpc for end-to-end planning and control</span>
@@ -283,7 +322,65 @@
 <span class="sd">          Advances in neural information processing systems 31, 2018.</span>
 
 <span class="sd">    Example:</span>
-
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; class CartPole(pp.module.NLS):</span>
+<span class="sd">        ...     def __init__(self, dt, length, cartmass, polemass, gravity):</span>
+<span class="sd">        ...         super().__init__()</span>
+<span class="sd">        ...         self.tau = dt</span>
+<span class="sd">        ...         self.length = length</span>
+<span class="sd">        ...         self.cartmass = cartmass</span>
+<span class="sd">        ...         self.polemass = polemass</span>
+<span class="sd">        ...         self.gravity = gravity</span>
+<span class="sd">        ...         self.polemassLength = self.polemass * self.length</span>
+<span class="sd">        ...         self.totalMass = self.cartmass + self.polemass</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     def state_transition(self, state, input, t=None):</span>
+<span class="sd">        ...         x, xDot, theta, thetaDot = state.squeeze()</span>
+<span class="sd">        ...         force = input.squeeze()</span>
+<span class="sd">        ...         costheta = torch.cos(theta)</span>
+<span class="sd">        ...         sintheta = torch.sin(theta)</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...         temp = (</span>
+<span class="sd">        ...             force + self.polemassLength * thetaDot**2 * sintheta</span>
+<span class="sd">        ...         ) / self.totalMass</span>
+<span class="sd">        ...         thetaAcc = (self.gravity * sintheta - costheta * temp) / (</span>
+<span class="sd">        ...             self.length * (4.0 / 3.0 - self.polemass * costheta**2 / self.totalMass)</span>
+<span class="sd">        ...         )</span>
+<span class="sd">        ...         xAcc = temp - self.polemassLength * thetaAcc * costheta / self.totalMass</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...         _dstate = torch.stack((xDot, xAcc, thetaDot, thetaAcc))</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...         return (state.squeeze() + torch.mul(_dstate, self.tau)).unsqueeze(0)</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     def observation(self, state, input, t=None):</span>
+<span class="sd">        ...         return state</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; torch.manual_seed(0)</span>
+<span class="sd">        &gt;&gt;&gt; dt, len, m_cart, m_pole, g = 0.01, 1.5, 20, 10, 9.81</span>
+<span class="sd">        &gt;&gt;&gt; n_batch, T = 1, 5</span>
+<span class="sd">        &gt;&gt;&gt; n_state, n_ctrl = 4, 1</span>
+<span class="sd">        &gt;&gt;&gt; n_sc = n_state + n_ctrl</span>
+<span class="sd">        &gt;&gt;&gt; Q = torch.tile(torch.eye(n_state + n_ctrl, device=device), (n_batch, T, 1, 1))</span>
+<span class="sd">        &gt;&gt;&gt; p = torch.randn(n_batch, T, n_sc)</span>
+<span class="sd">        &gt;&gt;&gt; time  = torch.arange(0, T, device=device) * dt</span>
+<span class="sd">        &gt;&gt;&gt; current_u = torch.sin(time).unsqueeze(1).unsqueeze(0)</span>
+<span class="sd">        &gt;&gt;&gt; x_init = torch.tensor([[0, 0, torch.pi, 0]])</span>
+<span class="sd">        &gt;&gt;&gt; cartPoleSolver = CartPole(dt, len, m_cart, m_pole, g).to(device)</span>
+<span class="sd">        &gt;&gt;&gt; MPC = pp.module.MPC(cartPoleSolver, T, step=15).to(device)</span>
+<span class="sd">        &gt;&gt;&gt; x, u, cost = MPC(Q, p, x_init, dt, current_u)</span>
+<span class="sd">        &gt;&gt;&gt; print(&quot;x = &quot;, x)</span>
+<span class="sd">        &gt;&gt;&gt; print(&quot;u = &quot;, u)</span>
+<span class="sd">        x =  tensor([[[ 0.0000e+00,  0.0000e+00,  3.1416e+00,  0.0000e+00],</span>
+<span class="sd">                      [ 0.0000e+00, -3.7711e-04,  3.1416e+00, -1.8856e-04],</span>
+<span class="sd">                      [-3.7711e-06, -3.0693e-04,  3.1416e+00, -1.5347e-04],</span>
+<span class="sd">                      [-6.8404e-06, -2.4288e-04,  3.1416e+00, -1.2136e-04],</span>
+<span class="sd">                      [-9.2692e-06, -2.6634e-04,  3.1416e+00, -1.3293e-04],</span>
+<span class="sd">                      [-1.1933e-05, -2.2073e-04,  3.1416e+00, -1.0991e-04]]])</span>
+<span class="sd">        u =  tensor([[[-0.8485],</span>
+<span class="sd">                      [ 0.1579],</span>
+<span class="sd">                      [ 0.1440],</span>
+<span class="sd">                      [-0.0530],</span>
+<span class="sd">                      [ 0.1023]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -300,8 +397,7 @@
 <span class="sd">            Q (:obj:`Tensor`): The weight matrix of the quadratic term.</span>
 <span class="sd">            p (:obj:`Tensor`): The weight vector of the first-order term.</span>
 <span class="sd">            x_init (:obj:`Tensor`): The initial state of the system.</span>
-<span class="sd">            time (:obj:`Tensor`, optinal): The reference time step of the dynamical</span>
-<span class="sd">                system.</span>
+<span class="sd">            dt (:obj:`int`): The timestamp for ths system to estimate.</span>
 <span class="sd">            current_u (:obj:`Tensor`, optinal): The current inputs of the system along a</span>
 <span class="sd">                trajectory. Default: ``None``.</span>
 
@@ -317,9 +413,6 @@
 
             <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-
-            <span class="c1">#x_init = x_init.detach()</span>
-            <span class="c1">#Q, p = Q.detach(), p.detach()</span>
 
             <span class="n">lqr</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">lqr</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>

@@ -478,27 +478,25 @@ ICINCO (1), 2004.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_state</span><span class="p">),</span> <span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">n_state</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">current_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_state</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">current_u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">n_ctrl</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x_init</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lti</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LTI</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lti</span><span class="p">(</span><span class="n">current_x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">current_u</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">LQR</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LQR</span><span class="p">(</span><span class="n">lti</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x = &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;u = &quot;</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
 <span class="go">x = tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
 <span class="go">             [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
 <span class="go">             [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
 <span class="go">             [ 1.4840, -1.1249, -1.0302,  0.9805],</span>
-<span class="go">             [-0.3477, -1.7063,  4.6494,  2.6780]],</span>
+<span class="go">             [-0.3477, -1.7063,  4.6494,  2.6780],</span>
+<span class="go">             [ 7.2346,  4.9958, 17.9926, -7.7881]],</span>
 <span class="go">            [[-0.9744,  0.4976,  0.0603, -0.5258],</span>
 <span class="go">             [-0.6356,  0.0539,  0.7264, -0.5048],</span>
 <span class="go">             [-0.2275, -0.1649,  0.3872, -0.4614],</span>
 <span class="go">             [ 0.2697, -0.3577,  0.0999, -0.4594],</span>
-<span class="go">             [ 0.3916, -2.0832,  0.0701, -0.5407]]])</span>
+<span class="go">             [ 0.3916, -2.0832,  0.0701, -0.5407],</span>
+<span class="go">             [ 1.0404, -1.3799, -2.0913, -0.1459]]])</span>
 <span class="go">u = tensor([[[ 1.0405,  0.1586, -0.1282],</span>
 <span class="go">             [-1.4845, -0.5745,  0.2523],</span>
 <span class="go">             [-0.6322, -0.3281, -0.3620],</span>
@@ -519,12 +517,9 @@ ICINCO (1), 2004.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
-<li><p><strong>current_x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current states of the system along a
-trajectory.</p></li>
+<li><p><strong>dt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The timestamp for ths system to estimate.</p></li>
 <li><p><strong>current_u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
-trajectory.</p></li>
-<li><p><strong>time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The reference time step of the dynamical
-system.</p></li>
+trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
