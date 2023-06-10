@@ -248,16 +248,18 @@
 <h1>pypose.module.MPC<a class="headerlink" href="#pypose-module-mpc" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.MPC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">MPC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mpc/#MPC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPC" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">MPC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mpc/#MPC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model Predictive Control (MPC) based on iterative LQR.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>system</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code>) – The system to be soved by MPC.</p></li>
+<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight matrix of the quadratic term.</p></li>
+<li><p><strong>p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight vector of the first-order term.</p></li>
 <li><p><strong>T</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Time steps of system.</p></li>
-<li><p><strong>steps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Total number of iterations for iterative LQR.
-Default: 10.</p></li>
-<li><p><strong>eps</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Epsilon as the tolerance. Default: 1e-4.</p></li>
+<li><p><strong>stepper</strong> (<code class="docutils literal notranslate"><span class="pre">Planner</span></code>, optional) – the stepper to stop iterations. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+the <code class="docutils literal notranslate"><span class="pre">pypose.utils.ReduceToBason</span></code> with a maximum of 10 steps are used.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -448,18 +450,14 @@ Advances in neural information processing systems 31, 2018.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.MPC.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mpc/#MPC.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPC.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mpc/#MPC.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPC.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs MPC for the discrete system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight matrix of the quadratic term.</p></li>
-<li><p><strong>p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The weight vector of the first-order term.</p></li>
+<li><p><strong>dt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The interval (<span class="math">\(\delta t\)</span>) between two time steps.</p></li>
 <li><p><strong>x_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
-<li><p><strong>dt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The timestamp for ths system to estimate.</p></li>
-<li><p><strong>current_x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current states of the system along a
-trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>current_u</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
+<li><p><strong>u_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
 trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
