@@ -441,7 +441,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
 
-<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_x</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">current_u</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">current_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">current_u</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs MPC for the discrete system.</span>
 
@@ -473,16 +473,8 @@
             <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">lqr</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
 
-            <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">best</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
-                    <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span>
-                    <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="n">cost</span><span class="p">,}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">cost</span> <span class="o">&lt;=</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">:</span>
-                    <span class="n">best</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">x</span>
-                    <span class="n">best</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">u</span>
-                    <span class="n">best</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
+            <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cost</span> <span class="o">&lt;=</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">:</span>
+                <span class="n">best</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="n">cost</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">current_x</span> <span class="o">=</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
