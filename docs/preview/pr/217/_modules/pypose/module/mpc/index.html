@@ -420,9 +420,10 @@
 <span class="sd">        &gt;&gt;&gt; time  = torch.arange(0, T, device=device) * dt</span>
 <span class="sd">        &gt;&gt;&gt; current_u = torch.sin(time).unsqueeze(1).unsqueeze(0)</span>
 <span class="sd">        &gt;&gt;&gt; x_init = torch.tensor([[0, 0, torch.pi, 0]])</span>
+<span class="sd">        &gt;&gt;&gt; stepper = pp.utils.ReduceToBason(steps=15, verbose=True)</span>
 <span class="sd">        &gt;&gt;&gt; cartPoleSolver = CartPole(dt, len, m_cart, m_pole, g).to(device)</span>
-<span class="sd">        &gt;&gt;&gt; MPC = pp.module.MPC(cartPoleSolver, T, step=15).to(device)</span>
-<span class="sd">        &gt;&gt;&gt; x, u, cost = MPC(Q, p, x_init, dt, current_u)</span>
+<span class="sd">        &gt;&gt;&gt; MPC = pp.module.MPC(cartPoleSolver, Q, p, T, stepper=stepper).to(device)</span>
+<span class="sd">        &gt;&gt;&gt; x, u, cost = MPC(dt, x_init, u_init=current_u)</span>
 <span class="sd">        &gt;&gt;&gt; print(&quot;x = &quot;, x)</span>
 <span class="sd">        &gt;&gt;&gt; print(&quot;u = &quot;, u)</span>
 <span class="sd">        x =  tensor([[[ 0.0000e+00,  0.0000e+00,  3.1416e+00,  0.0000e+00],</span>
