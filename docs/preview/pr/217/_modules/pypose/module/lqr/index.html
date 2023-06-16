@@ -263,12 +263,13 @@
 <span class="sd">                                                     + \mathbf{c}_{2t}              \\</span>
 <span class="sd">        \end{align*}</span>
 
-<span class="sd">    where :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the linear system;</span>
-<span class="sd">    :math:`\mathbf{y}` is the observation of the linear system; :math:`\mathbf{A}`,</span>
-<span class="sd">    :math:`\mathbf{B}` are the state matrix and input matrix of the linear system;</span>
-<span class="sd">    :math:`\mathbf{C}`, :math:`\mathbf{D}` are the output matrix and observation matrix of the</span>
-<span class="sd">    linear system; :math:`\mathbf{c}_{1}`, :math:`\mathbf{c}_{2}` are the constant input and</span>
-<span class="sd">    constant output of the linear system. The subscript :math:`\cdot_{t}` denotes the time step.</span>
+<span class="sd">    where :math:`\mathbf{x}`, :math:`\mathbf{u}` are the state and input of the linear</span>
+<span class="sd">    system; :math:`\mathbf{y}` is the observation of the linear system; :math:`\mathbf{A}`</span>
+<span class="sd">    and :math:`\mathbf{B}` are the state matrix and input matrix of the linear system;</span>
+<span class="sd">    :math:`\mathbf{C}`, :math:`\mathbf{D}` are the output matrix and observation matrix</span>
+<span class="sd">    of the linear system; :math:`\mathbf{c}_{1}`, :math:`\mathbf{c}_{2}` are the constant</span>
+<span class="sd">    input and constant output of the linear system. The subscript :math:`\cdot_{t}`</span>
+<span class="sd">    denotes the time step.</span>
 
 <span class="sd">    LQR finds the optimal nominal trajectory :math:`\mathbf{\tau}_{1:T}^*` =</span>
 <span class="sd">    :math:`\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}`</span>
@@ -276,15 +277,17 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
-<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} &amp;\sum\limits_t\frac{1}{2}</span>
-<span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
+<span class="sd">          \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}}</span>
+<span class="sd">            &amp;\sum\limits_t\frac{1}{2}</span>
+<span class="sd">          \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t</span>
+<span class="sd">            + \mathbf{p}_t^\top\mathbf{\tau}_t \\</span>
 <span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}}, \\</span>
 <span class="sd">          \mathbf{x}_{t+1} &amp;= \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
-<span class="sd">    \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t</span>
-<span class="sd">    \end{bmatrix}`.</span>
+<span class="sd">    \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix} \mathbf{A}_t &amp;</span>
+<span class="sd">    \mathbf{B}_t \end{bmatrix}`.</span>
 
 <span class="sd">    One way to solve the LQR problem is to use the dynamic programming, where the process</span>
 <span class="sd">    can be summarised as a backward and a forward recursion.</span>
@@ -293,24 +296,27 @@
 
 <span class="sd">      For :math:`t` = :math:`T` to 1:</span>
 
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{p}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
-<span class="sd">                                        \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
-<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
-<span class="sd">                                                     \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
-<span class="sd">                                                           \mathbf{q}_{\mathbf{u}_t}         \\</span>
-<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t   \\</span>
-<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t}</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t   \\</span>
-<span class="sd">            \end{align*}</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">            \mathbf{Q}_t &amp;= \mathbf{Q}_t +</span>
+<span class="sd">                \mathbf{F}_t^\top\mathbf{V}_{t+1} \mathbf{F}_t \\</span>
+<span class="sd">            \mathbf{q}_t &amp;= \mathbf{p}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
+<span class="sd">                            \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">            \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                        \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
+<span class="sd">            \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                                        \mathbf{q}_{\mathbf{u}_t}  \\</span>
+<span class="sd">            \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}</span>
+<span class="sd">                    \mathbf{K}_t \\</span>
+<span class="sd">            \mathbf{v}_t &amp;= \mathbf{q}_{\mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t}</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t,</span>
+<span class="sd">                    \mathbf{u}_t}\mathbf{k}_t  \\</span>
+<span class="sd">        \end{align*}</span>
 
 <span class="sd">    - The forward recursion.</span>
 
@@ -320,17 +326,18 @@
 <span class="sd">            \begin{align*}</span>
 <span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\</span>
 <span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t</span>
-<span class="sd">                                                             + \mathbf{c}_{1t} \\</span>
+<span class="sd">                                                                + \mathbf{c}_{1t} \\</span>
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">    Then quadratic costs of the system over the time horizon:</span>
 
-<span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
-<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
+<span class="sd">        \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t</span>
+<span class="sd">            + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
 
-<span class="sd">    For the **non-linear system**, sometimes people want to solve MPC problem with **iterative</span>
-<span class="sd">    LQR**. A discrete-time non-linear system can be described as:</span>
+<span class="sd">    For the **non-linear system**, sometimes people want to solve MPC problem with</span>
+<span class="sd">    **iterative LQR**. A discrete-time non-linear system can be described as:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
@@ -338,14 +345,15 @@
 <span class="sd">            \mathbf{y}_{t} &amp;= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
-<span class="sd">    trajectory with small perturbation :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
-<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*` for both dynamics and cost:</span>
+<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*,</span>
+<span class="sd">    \mathbf{u}^*, t^*)` along a trajectory with small perturbation</span>
+<span class="sd">    :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^* +\delta\mathbf{u}, t^*)`</span>
+<span class="sd">    near :math:`\chi^*` for both dynamics and cost:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">            \begin{aligned}</span>
 <span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*,</span>
-<span class="sd">                \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
+<span class="sd">                \mathbf{u}^*, t^*) +  \left.\frac{\partial \mathbf{f}}{\partial\mathbf{x}}</span>
 <span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}</span>
 <span class="sd">                {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\</span>
 <span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}</span>
@@ -355,9 +363,9 @@
 <span class="sd">            &amp;= \mathbf{F}_t \delta \mathbf{\tau}_t \\</span>
 <span class="sd">            \mathbf{c} \left( \mathbf{\tau}, t^* \right) &amp;\approx</span>
 <span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta</span>
-<span class="sd">                \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,</span>
+<span class="sd">                \mathbf{\tau}^\top\nabla^2_{\mathbf{\tau}}\mathbf{c}\left(\mathbf{\tau}^*,</span>
 <span class="sd">                t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}</span>
-<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau}\\</span>
 <span class="sd">            \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &amp;= \frac{1}{2} \delta</span>
 <span class="sd">                \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +</span>
 <span class="sd">                \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\</span>
@@ -365,36 +373,37 @@
 
 <span class="sd">    where :math:`\delta \mathbf{\tau}_t` = :math:`\begin{bmatrix} \delta \mathbf{x}_t \\</span>
 <span class="sd">    \delta \mathbf{u}_t \end{bmatrix}`, :math:`\mathbf{F}_t` = :math:`\begin{bmatrix}</span>
-<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`, :math:`\bar{\mathbf{Q}}_t` = :math:`\mathbf{Q}_t`,</span>
+<span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`, :math:`\bar{\mathbf{Q}}_t = \mathbf{Q}_t`,</span>
 <span class="sd">    :math:`\bar{\mathbf{p}}_t` = :math:`\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t`.</span>
 
-<span class="sd">    Then, LQR can be performed on a linear quadractic problem with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
+<span class="sd">    Then, LQR can be performed on a linear quadractic problem with</span>
+<span class="sd">    :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
 <span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t`.</span>
 
 <span class="sd">    - The backward recursion.</span>
 
 <span class="sd">      For :math:`t` = :math:`T` to 1:</span>
 
-<span class="sd">        .. math::</span>
-<span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_t &amp;= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
-<span class="sd">                                    \mathbf{F}_t \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
-<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
-<span class="sd">                                    \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
-<span class="sd">                                    \mathbf{q}_{\delta \mathbf{u}_t}         \\</span>
-<span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}</span>
-<span class="sd">                        \mathbf{K}_t   \\</span>
-<span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\delta \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t,</span>
-<span class="sd">                        \delta \mathbf{u}_t}\mathbf{k}_t   \\</span>
-<span class="sd">            \end{align*}</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">            \mathbf{Q}_t &amp;= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
+<span class="sd">                                \mathbf{F}_t \\</span>
+<span class="sd">            \mathbf{q}_t &amp;= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
+<span class="sd">            \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
+<span class="sd">            \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                \mathbf{q}_{\delta \mathbf{u}_t}         \\</span>
+<span class="sd">            \mathbf{V}_t &amp;= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}</span>
+<span class="sd">                    \mathbf{K}_t \\</span>
+<span class="sd">            \mathbf{v}_t &amp;= \mathbf{q}_{\delta \mathbf{x}_t}</span>
+<span class="sd">                + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}</span>
+<span class="sd">                + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t,</span>
+<span class="sd">                    \delta \mathbf{u}_t}\mathbf{k}_t   \\</span>
+<span class="sd">        \end{align*}</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Because we made a linear approximation, here :math:`\bar{\mathbf{p}}_t` leads to a</span>
@@ -417,30 +426,30 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}</span>
-<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
+<span class="sd">            \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t</span>
+<span class="sd">                + \mathbf{p}_t^\top\mathbf{\tau}_t</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The discrete-time system to be solved by LQR can be either linear time-invariant</span>
-<span class="sd">        (:meth:`LTI`) system, or linear time-varying (:meth:`LTV`) system. For the non-linear</span>
-<span class="sd">        system, one can approximate it as a linear system via Taylor expansion, using iterative</span>
-<span class="sd">        LQR algorithm for MPC. Here we provide a unified general format for the implementation.</span>
+<span class="sd">        (:meth:`LTI`) system, or linear time-varying (:meth:`LTV`) system. For non-linear</span>
+<span class="sd">        system, one can approximate it as a linear system via Taylor expansion, using</span>
+<span class="sd">        iterative LQR algorithm for MPC. Here we provide a unified general format for the</span>
+<span class="sd">        implementation.</span>
 
-<span class="sd">    From the learning perspective, this can be interpreted as a module with unknown parameters</span>
-<span class="sd">    :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}`,</span>
-<span class="sd">    which can be integrated into an end-to-end learning system.</span>
+<span class="sd">    From the learning perspective, this can be interpreted as a module with unknown</span>
+<span class="sd">    parameters :math:`\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f}</span>
+<span class="sd">    \end{Bmatrix}`, which can be integrated into an end-to-end learning system.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        The implementation of LQR is based on page 24-32 of the slides:</span>
 
-<span class="sd">        * `Optimal Control and Planning</span>
-<span class="sd">          &lt;http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf&gt;`_.</span>
+<span class="sd">        * `Optimal Control and Planning &lt;https://tinyurl.com/y5ck36vw&gt;`_.</span>
 
 <span class="sd">        The implementation of iterative LQR is based on Eq. (1)~(19) of this paper:</span>
 
 <span class="sd">        * Li Weiwei, and Emanuel Todorov, `Iterative linear quadratic regulator design for</span>
-<span class="sd">          nonlinear biological movement systems</span>
-<span class="sd">          &lt;https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=dfc73c664f85562956e4b98b3102ebd7e41906ae&gt;`_,</span>
-<span class="sd">          ICINCO (1), 2004.</span>
+<span class="sd">          nonlinear biological movement systems &lt;https://tinyurl.com/bdma36s6&gt;`_, ICINCO</span>
+<span class="sd">          (1), 2004.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; torch.manual_seed(0)</span>
@@ -529,8 +538,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
-<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the associated</span>
-<span class="sd">            quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
+<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the</span>
+<span class="sd">            associated quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_backward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u_traj</span><span class="p">,</span> <span class="n">u_lower</span><span class="p">,</span> <span class="n">u_upper</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_forward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">u_lower</span><span class="p">,</span> <span class="n">u_upper</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
@@ -549,7 +558,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span> <span class="o">=</span> <span class="n">x_init</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">u_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
 
         <span class="n">K</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">ns</span><span class="p">),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dargs</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_batch</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nc</span><span class="p">),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dargs</span><span class="p">)</span>

@@ -270,55 +270,61 @@
 \end{align*}
 
 \]</div>
-<p>where <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span> are the state and input of the linear system;
-<span class="math">\(\mathbf{y}\)</span> is the observation of the linear system; <span class="math">\(\mathbf{A}\)</span>,
-<span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
-<span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span> are the output matrix and observation matrix of the
-linear system; <span class="math">\(\mathbf{c}_{1}\)</span>, <span class="math">\(\mathbf{c}_{2}\)</span> are the constant input and
-constant output of the linear system. The subscript <span class="math">\(\cdot_{t}\)</span> denotes the time step.</p>
+<p>where <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span> are the state and input of the linear
+system; <span class="math">\(\mathbf{y}\)</span> is the observation of the linear system; <span class="math">\(\mathbf{A}\)</span>
+and <span class="math">\(\mathbf{B}\)</span> are the state matrix and input matrix of the linear system;
+<span class="math">\(\mathbf{C}\)</span>, <span class="math">\(\mathbf{D}\)</span> are the output matrix and observation matrix
+of the linear system; <span class="math">\(\mathbf{c}_{1}\)</span>, <span class="math">\(\mathbf{c}_{2}\)</span> are the constant
+input and constant output of the linear system. The subscript <span class="math">\(\cdot_{t}\)</span>
+denotes the time step.</p>
 <p>LQR finds the optimal nominal trajectory <span class="math">\(\mathbf{\tau}_{1:T}^*\)</span> =
 <span class="math">\(\begin{Bmatrix} \mathbf{x}_t, \mathbf{u}_t \end{Bmatrix}_{1:T}\)</span>
 for the linear system of the optimization problem:</p>
 <div class="math">
 \[\begin{align*}
-  \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}} &\sum\limits_t\frac{1}{2}
-  \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t \\
+  \mathbf{\tau}_{1:T}^* = \mathop{\arg\min}\limits_{\tau_{1:T}}
+    &\sum\limits_t\frac{1}{2}
+  \mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t
+    + \mathbf{p}_t^\top\mathbf{\tau}_t \\
   \mathrm{s.t.} \quad \mathbf{x}_1 &= \mathbf{x}_{\text{init}}, \\
   \mathbf{x}_{t+1} &= \mathbf{F}_t\mathbf{\tau}_t + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
 <p>where <span class="math">\(\mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t
-\end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A}_t &amp; \mathbf{B}_t
-\end{bmatrix}\)</span>.</p>
+\end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix} \mathbf{A}_t &amp;
+\mathbf{B}_t \end{bmatrix}\)</span>.</p>
 <p>One way to solve the LQR problem is to use the dynamic programming, where the process
 can be summarised as a backward and a forward recursion.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
-<blockquote>
-<div><div class="math">
+</li>
+</ul>
+<div class="math">
 \[\begin{align*}
-    \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t \\
+    \mathbf{Q}_t &= \mathbf{Q}_t +
+        \mathbf{F}_t^\top\mathbf{V}_{t+1} \mathbf{F}_t \\
     \mathbf{q}_t &= \mathbf{p}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
-                            \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
+                    \mathbf{c}_{1t} + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
     \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}
-                                         \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
+                                \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
     \mathbf{k}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}
-                                               \mathbf{q}_{\mathbf{u}_t}         \\
+                                                \mathbf{q}_{\mathbf{u}_t}  \\
     \mathbf{V}_t &= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}
         + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t
         + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}
-        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{K}_t   \\
+        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}
+            \mathbf{K}_t \\
     \mathbf{v}_t &= \mathbf{q}_{\mathbf{x}_t}
         + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{k}_t
         + \mathbf{K}_t^\top\mathbf{q}_{\mathbf{u}_t}
-        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}\mathbf{k}_t   \\
+        + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t,
+            \mathbf{u}_t}\mathbf{k}_t  \\
 \end{align*}
 
 \]</div>
-</div></blockquote>
-</li>
+<ul>
 <li><p>The forward recursion.</p>
 <p>For <span class="math">\(t\)</span> = 1 to <span class="math">\(T\)</span>:</p>
 <blockquote>
@@ -326,7 +332,7 @@ can be summarised as a backward and a forward recursion.</p>
 \[\begin{align*}
     \mathbf{u}_t &= \mathbf{K}_t\mathbf{x}_t + \mathbf{k}_t \\
     \mathbf{x}_{t+1} &= \mathbf{A}_t\mathbf{x}_t + \mathbf{B}_t\mathbf{u}_t
-                                                 + \mathbf{c}_{1t} \\
+                                                    + \mathbf{c}_{1t} \\
 \end{align*}
 
 \]</div>
@@ -334,15 +340,14 @@ can be summarised as a backward and a forward recursion.</p>
 </li>
 </ul>
 <p>Then quadratic costs of the system over the time horizon:</p>
-<blockquote>
-<div><div class="math">
+<div class="math">
 \[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
-\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t
+\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t
+    + \mathbf{p}_t^\top\mathbf{\tau}_t
 
 \]</div>
-</div></blockquote>
-<p>For the <strong>non-linear system</strong>, sometimes people want to solve MPC problem with <strong>iterative
-LQR</strong>. A discrete-time non-linear system can be described as:</p>
+<p>For the <strong>non-linear system</strong>, sometimes people want to solve MPC problem with
+<strong>iterative LQR</strong>. A discrete-time non-linear system can be described as:</p>
 <div class="math">
 \[\begin{aligned}
     \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\
@@ -350,13 +355,14 @@ LQR</strong>. A discrete-time non-linear system can be described as:</p>
 \end{aligned}
 
 \]</div>
-<p>We can do a linear approximation at current point <span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a
-trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*
-+\delta\mathbf{u}, t^*)\)</span> near <span class="math">\(\chi^*\)</span> for both dynamics and cost:</p>
+<p>We can do a linear approximation at current point <span class="math">\(\chi^*=(\mathbf{x}^*,
+\mathbf{u}^*, t^*)\)</span> along a trajectory with small perturbation
+<span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^* +\delta\mathbf{u}, t^*)\)</span>
+near <span class="math">\(\chi^*\)</span> for both dynamics and cost:</p>
 <div class="math">
 \[\begin{aligned}
 \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &\approx \mathbf{f}(\mathbf{x}^*,
-    \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+    \mathbf{u}^*, t^*) +  \left.\frac{\partial \mathbf{f}}{\partial\mathbf{x}}
     \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}
     {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\
 &= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}
@@ -366,9 +372,9 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
 &= \mathbf{F}_t \delta \mathbf{\tau}_t \\
 \mathbf{c} \left( \mathbf{\tau}, t^* \right) &\approx
     \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta
-    \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,
+    \mathbf{\tau}^\top\nabla^2_{\mathbf{\tau}}\mathbf{c}\left(\mathbf{\tau}^*,
     t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}
-    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\
+    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau}\\
 \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &= \frac{1}{2} \delta
     \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +
     \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\
@@ -377,15 +383,17 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
 \]</div>
 <p>where <span class="math">\(\delta \mathbf{\tau}_t\)</span> = <span class="math">\(\begin{bmatrix} \delta \mathbf{x}_t \\
 \delta \mathbf{u}_t \end{bmatrix}\)</span>, <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix}
-\mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>, <span class="math">\(\bar{\mathbf{Q}}_t\)</span> = <span class="math">\(\mathbf{Q}_t\)</span>,
+\mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>, <span class="math">\(\bar{\mathbf{Q}}_t = \mathbf{Q}_t\)</span>,
 <span class="math">\(\bar{\mathbf{p}}_t\)</span> = <span class="math">\(\mathbf{Q}_t \mathbf{\tau}^*_t + \mathbf{p}_t\)</span>.</p>
-<p>Then, LQR can be performed on a linear quadractic problem with <span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
+<p>Then, LQR can be performed on a linear quadractic problem with
+<span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
 <span class="math">\(\bar{\mathbf{Q}}_t\)</span> and <span class="math">\(\bar{\mathbf{p}}_t\)</span>.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
-<blockquote>
-<div><div class="math">
+</li>
+</ul>
+<div class="math">
 \[\begin{align*}
     \mathbf{Q}_t &= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
                         \mathbf{F}_t \\
@@ -398,7 +406,7 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
         + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t
         + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}
         + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}
-            \mathbf{K}_t   \\
+            \mathbf{K}_t \\
     \mathbf{v}_t &= \mathbf{q}_{\delta \mathbf{x}_t}
         + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t
         + \mathbf{K}_t^\top\mathbf{q}_{\delta \mathbf{u}_t}
@@ -407,9 +415,6 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
 \end{align*}
 
 \]</div>
-</div></blockquote>
-</li>
-</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Because we made a linear approximation, here <span class="math">\(\bar{\mathbf{p}}_t\)</span> leads to a
@@ -436,31 +441,33 @@ linear backward recursion, and this change will be compensated back by
 <blockquote>
 <div><div class="math">
 \[\mathbf{c} \left( \mathbf{\tau}_t \right) = \frac{1}{2}
-\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t + \mathbf{p}_t^\top\mathbf{\tau}_t
+\mathbf{\tau}_t^\top\mathbf{Q}_t\mathbf{\tau}_t
+    + \mathbf{p}_t^\top\mathbf{\tau}_t
 
 \]</div>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The discrete-time system to be solved by LQR can be either linear time-invariant
-(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system. For the non-linear
-system, one can approximate it as a linear system via Taylor expansion, using iterative
-LQR algorithm for MPC. Here we provide a unified general format for the implementation.</p>
+(<a class="reference internal" href="../pypose.module.LTI/#pypose.module.LTI" title="pypose.module.LTI"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTI()</span></code></a>) system, or linear time-varying (<a class="reference internal" href="../pypose.module.LTV/#pypose.module.LTV" title="pypose.module.LTV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LTV()</span></code></a>) system. For non-linear
+system, one can approximate it as a linear system via Taylor expansion, using
+iterative LQR algorithm for MPC. Here we provide a unified general format for the
+implementation.</p>
 </div>
-<p>From the learning perspective, this can be interpreted as a module with unknown parameters
-<span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f} \end{Bmatrix}\)</span>,
-which can be integrated into an end-to-end learning system.</p>
+<p>From the learning perspective, this can be interpreted as a module with unknown
+parameters <span class="math">\(\begin{Bmatrix} \mathbf{Q}, \mathbf{p}, \mathbf{F}, \mathbf{f}
+\end{Bmatrix}\)</span>, which can be integrated into an end-to-end learning system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The implementation of LQR is based on page 24-32 of the slides:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="http://rll.berkeley.edu/deeprlcourse/f17docs/lecture_8_model_based_planning.pdf">Optimal Control and Planning</a>.</p></li>
+<li><p><a class="reference external" href="https://tinyurl.com/y5ck36vw">Optimal Control and Planning</a>.</p></li>
 </ul>
 <p>The implementation of iterative LQR is based on Eq. (1)~(19) of this paper:</p>
 <ul class="simple">
-<li><p>Li Weiwei, and Emanuel Todorov, <a class="reference external" href="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=dfc73c664f85562956e4b98b3102ebd7e41906ae">Iterative linear quadratic regulator design for
-nonlinear biological movement systems</a>,
-ICINCO (1), 2004.</p></li>
+<li><p>Li Weiwei, and Emanuel Todorov, <a class="reference external" href="https://tinyurl.com/bdma36s6">Iterative linear quadratic regulator design for
+nonlinear biological movement systems</a>, ICINCO
+(1), 2004.</p></li>
 </ul>
 </div>
 <p class="rubric">Example</p>
@@ -532,8 +539,8 @@ is allowed to change in each LQR iteration. Default: <code class="docutils liter
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of tensors including the solved state sequence
-<span class="math">\(\mathbf{x}\)</span>, the solved input sequence <span class="math">\(\mathbf{u}\)</span>, and the associated
-quadratic costs <span class="math">\(\mathbf{c}\)</span> over the time horizon.</p>
+<span class="math">\(\mathbf{x}\)</span>, the solved input sequence <span class="math">\(\mathbf{u}\)</span>, and the
+associated quadratic costs <span class="math">\(\mathbf{c}\)</span> over the time horizon.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
