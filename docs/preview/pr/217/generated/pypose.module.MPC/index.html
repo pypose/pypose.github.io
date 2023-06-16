@@ -273,21 +273,22 @@ optimization problem on a time horizon <span class="math">\(T\)</span>:</p>
 \[\begin{align*}
   \mathop{\arg\min}\limits_{\mathbf{x}_{1:T}, \mathbf{u}_{1:T}} \sum\limits_t
   &\mathbf{c}_t (\mathbf{x}_t, \mathbf{u}_t) \\
-  \mathrm{s.t.} \quad \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\
+  \mathrm{s.t.}\quad \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t),\\
   \mathbf{x}_1 &= \mathbf{x}_{\text{init}} \\
 \end{align*}
 
 \]</div>
 <p>where <span class="math">\(\mathbf{c}\)</span> is the cost function; <span class="math">\(\mathbf{x}\)</span>, <span class="math">\(\mathbf{u}\)</span>
-are the state and input of the linear system; <span class="math">\(\mathbf{f}\)</span> is the dynamics model;
-<span class="math">\(\mathbf{x}_{\text{init}}\)</span> is the initial state of the system.</p>
+are the state and input of the linear system; <span class="math">\(\mathbf{f}\)</span> is the dynamics
+model; <span class="math">\(\mathbf{x}_{\text{init}}\)</span> is the initial state of the system.</p>
 <p>For the linear system with quadratic cost, MPC is equivalent to solving an LQR problem
 on each horizon as well as considering the dynamics as constraints. For nonlinear
 system, one way to solve the MPC problem is to use iterative LQR, which uses linear
 approximations of the dynamics and quadratic approximations of the cost function to
 iteratively compute a local optimal solution based on the current states and control
-sequences. Then, analytical derivative for the backward can be computed using one additional
-forward pass of iLQR for the learning problem, such as learning the parameters of the dynamic system.</p>
+sequences. Then, analytical derivative for the backward can be computed using one
+additional forward pass of iLQR for the learning problem, such as learning the
+parameters of the dynamic system.</p>
 <p>Specifically, the discrete-time non-linear system can be described as:</p>
 <div class="math">
 \[\begin{aligned}
@@ -296,13 +297,14 @@ forward pass of iLQR for the learning problem, such as learning the parameters o
 \end{aligned}
 
 \]</div>
-<p>We can do a linear approximation at current point <span class="math">\(\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)\)</span> along a
-trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*
-+\delta\mathbf{u}, t^*)\)</span> near <span class="math">\(\chi^*\)</span> for both dynamics and cost:</p>
+<p>We can do a linear approximation at current point <span class="math">\(\chi^*=(\mathbf{x}^*,
+\mathbf{u}^*, t^*)\)</span> along a trajectory with small perturbation
+<span class="math">\(\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^* +\delta\mathbf{u}, t^*)\)</span>
+near <span class="math">\(\chi^*\)</span> for both dynamics and cost:</p>
 <div class="math">
 \[\begin{aligned}
 \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &\approx \mathbf{f}(\mathbf{x}^*,
-    \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}
+    \mathbf{u}^*, t^*) + \left.\frac{\partial \mathbf{f}}{\partial \mathbf{x}}
     \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}
     {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\
 &= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}
@@ -311,10 +313,10 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
     \delta \mathbf{u}_t \\
 &= \mathbf{F}_t \delta \mathbf{\tau}_t \\
 \mathbf{c} \left( \mathbf{\tau}, t^* \right) &\approx
-    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta
-    \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,
+    \mathbf{c} \left(\mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta
+    \mathbf{\tau}^\top\nabla^2_{\mathbf{\tau}}\mathbf{c}\left(\mathbf{\tau}^*,
     t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}
-    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\
+    \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau}\\
 \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &= \frac{1}{2} \delta
     \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +
     \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\
@@ -323,8 +325,9 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
 \]</div>
 <p>where <span class="math">\(\mathbf{F}_t\)</span> = <span class="math">\(\begin{bmatrix}
 \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}\)</span>.</p>
-<p>Then, LQR can be performed on a linear quadractic problem with <span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>,
-<span class="math">\(\bar{\mathbf{Q}}_t\)</span> and <span class="math">\(\bar{\mathbf{p}}_t\)</span>.</p>
+<p>Then, LQR can be performed on a linear quadractic problem with
+<span class="math">\(\delta \mathbf{\tau}_t\)</span>, <span class="math">\(\mathbf{F}_t\)</span>, <span class="math">\(\bar{\mathbf{Q}}_t\)</span> and
+<span class="math">\(\bar{\mathbf{p}}_t\)</span>.</p>
 <ul>
 <li><p>The backward recursion.</p>
 <p>For <span class="math">\(t\)</span> = <span class="math">\(T\)</span> to 1:</p>
@@ -334,14 +337,14 @@ trajectory with small perturbation <span class="math">\(\chi=(\mathbf{x}^*+\delt
     \mathbf{Q}_t &= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}
                         \mathbf{F}_t \\
     \mathbf{q}_t &= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\
-    \mathbf{K}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
-                        \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\
-    \mathbf{k}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}
+    \mathbf{K}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{u}_t}^{-1}
+                     \mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{x}_t} \\
+    \mathbf{k}_t &= -\mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{u}_t}^{-1}
                         \mathbf{q}_{\delta \mathbf{u}_t}         \\
     \mathbf{V}_t &= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}
         + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t
-        + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}
-        + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\delta\mathbf{u}_t,\delta \mathbf{x}_t}
+        + \mathbf{K}_t^\top\mathbf{Q}_{\delta\mathbf{u}_t,\delta \mathbf{u}_t}
             \mathbf{K}_t   \\
     \mathbf{v}_t &= \mathbf{q}_{\delta \mathbf{x}_t}
         + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t
@@ -377,13 +380,13 @@ iteration.</p>
 <p class="admonition-title">Note</p>
 <p>The definition of MPC is cited from this book:</p>
 <ul class="simple">
-<li><p>George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, <a class="reference external" href="https://doi.org/10.1016/C2017-0-02260-7">Aerial Robotic Workers: Design, Modeling, Control, Vision and Their Applications</a>,
-Butterworth-Heinemann, 2023.</p></li>
+<li><p>George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, <a class="reference external" href="https://doi.org/10.1016/C2017-0-02260-7">Aerial
+Robotic Workers: Design, Modeling, Control, Vision and Their Applications</a>, Butterworth-Heinemann, 2023.</p></li>
 </ul>
 <p>The implementation of MPC is based on Eq. (10)~(13) of this paper:</p>
 <ul class="simple">
-<li><p>Amos, Brandon, et al, <a class="reference external" href="https://proceedings.neurips.cc/paper/2018/hash/ba6d843eb4251a4526ce65d1807a9309-Abstract.html">Differentiable mpc for end-to-end planning and control</a>,
-Advances in neural information processing systems 31, 2018.</p></li>
+<li><p>Amos, Brandon, et al, <a class="reference external" href="https://tinyurl.com/3h9tsuyb">Differentiable mpc for end-to-end planning and control</a>, Advances in neural information processing
+systems, 31, 2018.</p></li>
 </ul>
 </div>
 <p class="rubric">Example</p>
@@ -396,7 +399,7 @@ Advances in neural information processing systems 31, 2018.</p></li>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">cartmass</span> <span class="o">=</span> <span class="n">cartmass</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">=</span> <span class="n">polemass</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">=</span> <span class="n">gravity</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">poleml</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartmass</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -404,22 +407,17 @@ Advances in neural information processing systems 31, 2018.</p></li>
 <span class="gp">... </span>        <span class="n">force</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">costheta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="n">sintheta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">... </span>        <span class="n">temp</span> <span class="o">=</span> <span class="p">(</span>
-<span class="gp">... </span>            <span class="n">force</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">*</span> <span class="n">thetaDot</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sintheta</span>
-<span class="gp">... </span>        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
-<span class="gp">... </span>        <span class="n">thetaAcc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">*</span> <span class="n">sintheta</span> <span class="o">-</span> <span class="n">costheta</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
-<span class="gp">... </span>            <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="n">costheta</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span><span class="p">)</span>
-<span class="gp">... </span>        <span class="p">)</span>
-<span class="gp">... </span>        <span class="n">xAcc</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemassLength</span> <span class="o">*</span> <span class="n">thetaAcc</span> <span class="o">*</span> <span class="n">costheta</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
-<span class="gp">...</span>
+<span class="gp">... </span>        <span class="n">temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">force</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">poleml</span> <span class="o">*</span> <span class="n">thetaDot</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sintheta</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
+<span class="gp">... </span>        <span class="n">thetaAcc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">*</span> <span class="n">sintheta</span> <span class="o">-</span> <span class="n">costheta</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span> <span class="o">/</span>
+<span class="gp">... </span>                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span>
+<span class="gp">... </span>                           <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">polemass</span> <span class="o">*</span> <span class="n">costheta</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">xAcc</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">poleml</span> <span class="o">*</span> <span class="n">thetaAcc</span> <span class="o">*</span> <span class="n">costheta</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalMass</span>
 <span class="gp">... </span>        <span class="n">_dstate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">xDot</span><span class="p">,</span> <span class="n">xAcc</span><span class="p">,</span> <span class="n">thetaDot</span><span class="p">,</span> <span class="n">thetaAcc</span><span class="p">))</span>
-<span class="gp">...</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">_dstate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span>
-<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span><span class="p">,</span> <span class="nb">len</span><span class="p">,</span> <span class="n">m_cart</span><span class="p">,</span> <span class="n">m_pole</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">9.81</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_batch</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span>
@@ -470,8 +468,8 @@ is allowed to change in each LQR iteration. Default: <code class="docutils liter
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of tensors including the solved state sequence
-<span class="math">\(\mathbf{x}\)</span>, the solved input sequence <span class="math">\(\mathbf{u}\)</span>, and the associated
-quadratic costs <span class="math">\(\mathbf{c}\)</span> over the time horizon.</p>
+<span class="math">\(\mathbf{x}\)</span>, the solved input sequence <span class="math">\(\mathbf{u}\)</span>, and the
+associated quadratic costs <span class="math">\(\mathbf{c}\)</span> over the time horizon.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
