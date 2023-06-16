@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.3.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.4.4 &#x25BC</a>
     </div>
     
 
@@ -161,10 +161,11 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 </ul>
 
             
@@ -240,12 +241,13 @@
 <span></span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">excludeBatch</span>
 <span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
 
 <div class="viewcode-block" id="Cost"><a class="viewcode-back" href="../../../../generated/pypose.module.Cost/#pypose.module.Cost">[docs]</a><span class="k">class</span> <span class="nc">Cost</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    The base class of a cost function.</span>
-<span class="sd">    </span>
+
 <span class="sd">    The cost function :math:`\mathrm{cost}` is given by:</span>
 
 <span class="sd">    .. math::</span>
@@ -328,7 +330,7 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to set the reference point for linearization.</span>
 
-<span class="sd">        Args: </span>
+<span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The reference state of the dynamical system. If ``None``,</span>
 <span class="sd">                the the most recent state is taken. Default: ``None``.</span>
 <span class="sd">            input (:obj:`Tensor`): The reference input to the dynamical system. If ``None``,</span>
@@ -349,7 +351,7 @@
     <span class="k">def</span> <span class="nf">cx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost linear term on state</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_{\mathbf{x}} = \left. \frac{\partial c}{\partial \mathbf{x}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -361,18 +363,18 @@
     <span class="k">def</span> <span class="nf">cu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost linear term on input</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_{\mathbf{u}} = \left. \frac{\partial c}{\partial \mathbf{u}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">))</span>    
+        <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost quadratic term on state</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_\mathbf{xx} = \left. \frac{\partial^{2} c}{\partial \mathbf{x}^{2}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -394,12 +396,12 @@
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span>
         <span class="n">jac_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span><span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cxu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost quadratic term on state and input</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_\mathbf{xu} = \left. \frac{\partial^{2} c}{\partial \mathbf{x} \partial \mathbf{u}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -408,31 +410,31 @@
             <span class="n">jac</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># substitute x here</span>
             <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
         <span class="c1"># func = lambda x,u: self.cost(x, u)</span>
-        <span class="c1"># jac_func = lambda u: excludeBatch(jacobian(func, x, create_graph=True))        </span>
+        <span class="c1"># jac_func = lambda u: excludeBatch(jacobian(func, x, create_graph=True))</span>
         <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span>  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cux</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost quadratic term on input and state</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_\mathbf{ux} = \left. \frac{\partial^{2} c}{\partial \mathbf{u} \partial \mathbf{x}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxu</span><span class="o">.</span><span class="n">mT</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cuu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Quadratic/quadraticized cost quadratic term on input</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. math::</span>
 <span class="sd">            c_\mathbf{uu} = \left. \frac{\partial^{2} c}{\partial \mathbf{u}^{2}} \right|_{\chi^*}</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
         <span class="n">jac_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">excludeBatch</span><span class="p">(</span><span class="n">jacobian</span><span class="p">(</span><span class="n">jac_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span>  <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -451,32 +453,7 @@
                            <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> \
                            <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cxu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span> \
                            <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cux</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> \
-                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cuu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span>  </div>
-
-<span class="k">def</span> <span class="nf">excludeBatch</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># non-batch case</span>
-        <span class="c1"># for cost cx  (1,1,  1,ns)</span>
-        <span class="c1"># for cost cxx (1,ns, 1,ns)  </span>
-        <span class="c1"># for constraint gx (ncon,1,  1,ns)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">B</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># zero dim per sample</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c1">#todo: compatible with non-batch case</span>
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># vector per sample</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span>
-    <span class="k">return</span> <span class="n">out</span>        
+                           <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pp</span><span class="o">.</span><span class="n">bvmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cuu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QuadCost"><a class="viewcode-back" href="../../../../generated/pypose.module.QuadCost/#pypose.module.QuadCost">[docs]</a><span class="k">class</span> <span class="nc">QuadCost</span><span class="p">(</span><span class="n">Cost</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -491,19 +468,19 @@
 <span class="sd">    A quadratic cost can be described by equation of the form:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x} </span>
-<span class="sd">            +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u} </span>
-<span class="sd">            +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x} </span>
+<span class="sd">        \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x}</span>
+<span class="sd">            +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u}</span>
+<span class="sd">            +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x}</span>
 <span class="sd">            +  \mathbf{u}^{\top}\mathbf{R}\mathbf{u}) + c \\</span>
 
 <span class="sd">    where :math:`\mathbf{x}` and :math:`\mathbf{u}` are state and input of the current</span>
 <span class="sd">    timestamp of system.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        More practical examples can be found at `examples/module/cost</span>
 <span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/cost&gt;`_.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QuadCost</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">Q</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">S</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="s2">&quot;Invalid System Matrices dimensions&quot;</span>
@@ -522,9 +499,9 @@
 <span class="sd">        Perform QuadCost computation.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x} </span>
-<span class="sd">                +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u} </span>
-<span class="sd">                +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x} </span>
+<span class="sd">            \mathrm{cost} = \frac{1}{2}(\mathbf{x}^{\top}\mathbf{Q}\mathbf{x}</span>
+<span class="sd">                +  \mathbf{x}^{\top}\mathbf{S}\mathbf{u}</span>
+<span class="sd">                +  \mathbf{u}^{\top}\mathbf{S}^{\top}\mathbf{x}</span>
 <span class="sd">                +  \mathbf{u}^{\top}\mathbf{R}\mathbf{u}) + c \\</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -634,8 +611,10 @@
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
          <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../../../_static/doctools.js"></script>
-         <script src="../../../../_static/sphinx_highlight.js"></script>
          <script src="../../../../_static/katex.min.js"></script>
          <script src="../../../../_static/auto-render.min.js"></script>
          <script src="../../../../_static/katex_autorenderer.js"></script>
