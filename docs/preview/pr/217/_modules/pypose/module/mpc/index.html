@@ -444,7 +444,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">-=</span> <span class="mi">1</span> <span class="c1"># n-1 loops, 1 loop with gradient</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lqr</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">u_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">u_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs MPC for the discrete system.</span>
 
@@ -453,6 +453,12 @@
 <span class="sd">            x_init (:obj:`Tensor`): The initial state of the system.</span>
 <span class="sd">            u_init (:obj:`Tensor`, optinal): The current inputs of the system along a</span>
 <span class="sd">                trajectory. Default: ``None``.</span>
+<span class="sd">            u_lower (:obj:`Tensor`, optinal): The lower bounds on the controls.</span>
+<span class="sd">                Default: ``None``.</span>
+<span class="sd">            u_upper (:obj:`Tensor`, optinal): The upper bounds on the controls.</span>
+<span class="sd">                Default: ``None``.</span>
+<span class="sd">            du (:obj:`int`, optinal): The amount each component of the controls</span>
+<span class="sd">                is allowed to change in each LQR iteration. Default: ``None``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
@@ -471,7 +477,7 @@
                 <span class="k">if</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cost</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]:</span>
                     <span class="n">best</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="n">cost</span><span class="p">}</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">best</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">])</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="n">best</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">])</span></div></div>
 </pre></div>
 
              </article>
