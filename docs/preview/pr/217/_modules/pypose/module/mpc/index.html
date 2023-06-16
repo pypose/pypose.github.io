@@ -267,21 +267,22 @@
 <span class="sd">        \begin{align*}</span>
 <span class="sd">          \mathop{\arg\min}\limits_{\mathbf{x}_{1:T}, \mathbf{u}_{1:T}} \sum\limits_t</span>
 <span class="sd">          &amp;\mathbf{c}_t (\mathbf{x}_t, \mathbf{u}_t) \\</span>
-<span class="sd">          \mathrm{s.t.} \quad \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t), \\</span>
+<span class="sd">          \mathrm{s.t.}\quad \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t, \mathbf{u}_t),\\</span>
 <span class="sd">          \mathbf{x}_1 &amp;= \mathbf{x}_{\text{init}} \\</span>
 <span class="sd">        \end{align*}</span>
 
 <span class="sd">    where :math:`\mathbf{c}` is the cost function; :math:`\mathbf{x}`, :math:`\mathbf{u}`</span>
-<span class="sd">    are the state and input of the linear system; :math:`\mathbf{f}` is the dynamics model;</span>
-<span class="sd">    :math:`\mathbf{x}_{\text{init}}` is the initial state of the system.</span>
+<span class="sd">    are the state and input of the linear system; :math:`\mathbf{f}` is the dynamics</span>
+<span class="sd">    model; :math:`\mathbf{x}_{\text{init}}` is the initial state of the system.</span>
 
 <span class="sd">    For the linear system with quadratic cost, MPC is equivalent to solving an LQR problem</span>
 <span class="sd">    on each horizon as well as considering the dynamics as constraints. For nonlinear</span>
 <span class="sd">    system, one way to solve the MPC problem is to use iterative LQR, which uses linear</span>
 <span class="sd">    approximations of the dynamics and quadratic approximations of the cost function to</span>
 <span class="sd">    iteratively compute a local optimal solution based on the current states and control</span>
-<span class="sd">    sequences. Then, analytical derivative for the backward can be computed using one additional</span>
-<span class="sd">    forward pass of iLQR for the learning problem, such as learning the parameters of the dynamic system.</span>
+<span class="sd">    sequences. Then, analytical derivative for the backward can be computed using one</span>
+<span class="sd">    additional forward pass of iLQR for the learning problem, such as learning the</span>
+<span class="sd">    parameters of the dynamic system.</span>
 
 <span class="sd">    Specifically, the discrete-time non-linear system can be described as:</span>
 
@@ -291,14 +292,15 @@
 <span class="sd">            \mathbf{y}_{t} &amp;= \mathbf{g}(\mathbf{x}_t, \mathbf{u}_t, t_t) \\</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*, \mathbf{u}^*, t^*)` along a</span>
-<span class="sd">    trajectory with small perturbation :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^*</span>
-<span class="sd">    +\delta\mathbf{u}, t^*)` near :math:`\chi^*` for both dynamics and cost:</span>
+<span class="sd">    We can do a linear approximation at current point :math:`\chi^*=(\mathbf{x}^*,</span>
+<span class="sd">    \mathbf{u}^*, t^*)` along a trajectory with small perturbation</span>
+<span class="sd">    :math:`\chi=(\mathbf{x}^*+\delta\mathbf{x}, \mathbf{u}^* +\delta\mathbf{u}, t^*)`</span>
+<span class="sd">    near :math:`\chi^*` for both dynamics and cost:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">            \begin{aligned}</span>
 <span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*,</span>
-<span class="sd">                \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
+<span class="sd">                \mathbf{u}^*, t^*) + \left.\frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
 <span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}</span>
 <span class="sd">                {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\</span>
 <span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A} \delta \mathbf{x}</span>
@@ -307,10 +309,10 @@
 <span class="sd">                \delta \mathbf{u}_t \\</span>
 <span class="sd">            &amp;= \mathbf{F}_t \delta \mathbf{\tau}_t \\</span>
 <span class="sd">            \mathbf{c} \left( \mathbf{\tau}, t^* \right) &amp;\approx</span>
-<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta</span>
-<span class="sd">                \mathbf{\tau}^\top \nabla^2_{\mathbf{\tau}} \mathbf{c} \left( \mathbf{\tau}^*,</span>
+<span class="sd">                \mathbf{c} \left(\mathbf{\tau}^*, t^* \right) + \frac{1}{2} \delta</span>
+<span class="sd">                \mathbf{\tau}^\top\nabla^2_{\mathbf{\tau}}\mathbf{c}\left(\mathbf{\tau}^*,</span>
 <span class="sd">                t^* \right) \delta \mathbf{\tau} + \nabla_{\mathbf{\tau}}</span>
-<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau} \\</span>
+<span class="sd">                \mathbf{c} \left( \mathbf{\tau}^*, t^* \right)^\top \delta \mathbf{\tau}\\</span>
 <span class="sd">            \bar{\mathbf{c}} \left( \delta \mathbf{\tau} \right) &amp;= \frac{1}{2} \delta</span>
 <span class="sd">                \mathbf{\tau}_t^\top \bar{\mathbf{Q}}_t \delta \mathbf{\tau}_t +</span>
 <span class="sd">                \bar{\mathbf{p}}_t^\top \delta \mathbf{\tau}_t \\</span>
@@ -319,8 +321,9 @@
 <span class="sd">    where :math:`\mathbf{F}_t` = :math:`\begin{bmatrix}</span>
 <span class="sd">    \mathbf{A}_t &amp; \mathbf{B}_t \end{bmatrix}`.</span>
 
-<span class="sd">    Then, LQR can be performed on a linear quadractic problem with :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`,</span>
-<span class="sd">    :math:`\bar{\mathbf{Q}}_t` and :math:`\bar{\mathbf{p}}_t`.</span>
+<span class="sd">    Then, LQR can be performed on a linear quadractic problem with</span>
+<span class="sd">    :math:`\delta \mathbf{\tau}_t`, :math:`\mathbf{F}_t`, :math:`\bar{\mathbf{Q}}_t` and</span>
+<span class="sd">    :math:`\bar{\mathbf{p}}_t`.</span>
 
 <span class="sd">    - The backward recursion.</span>
 
@@ -331,14 +334,14 @@
 <span class="sd">                \mathbf{Q}_t &amp;= \bar{\mathbf{Q}}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}</span>
 <span class="sd">                                    \mathbf{F}_t \\</span>
 <span class="sd">                \mathbf{q}_t &amp;= \bar{\mathbf{p}}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}  \\</span>
-<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
-<span class="sd">                                    \mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t} \\</span>
-<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{u}_t}^{-1}</span>
+<span class="sd">                                 \mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{x}_t} \\</span>
+<span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\delta \mathbf{u}_t,\delta \mathbf{u}_t}^{-1}</span>
 <span class="sd">                                    \mathbf{q}_{\delta \mathbf{u}_t}         \\</span>
 <span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{x}_t}</span>
 <span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{K}_t</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{x}_t}</span>
-<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta \mathbf{u}_t, \delta \mathbf{u}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta\mathbf{u}_t,\delta \mathbf{x}_t}</span>
+<span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\delta\mathbf{u}_t,\delta \mathbf{u}_t}</span>
 <span class="sd">                        \mathbf{K}_t   \\</span>
 <span class="sd">                \mathbf{v}_t &amp;= \mathbf{q}_{\delta \mathbf{x}_t}</span>
 <span class="sd">                    + \mathbf{Q}_{\delta \mathbf{x}_t, \delta \mathbf{u}_t}\mathbf{k}_t</span>
@@ -366,15 +369,15 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The definition of MPC is cited from this book:</span>
 
-<span class="sd">        * George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, `Aerial Robotic Workers: Design, Modeling, Control, Vision and Their Applications</span>
-<span class="sd">          &lt;https://doi.org/10.1016/C2017-0-02260-7&gt;`_,</span>
-<span class="sd">          Butterworth-Heinemann, 2023.</span>
+<span class="sd">        * George Nikolakopoulos, Sina Sharif Mansouri, Christoforos Kanellakis, `Aerial</span>
+<span class="sd">          Robotic Workers: Design, Modeling, Control, Vision and Their Applications</span>
+<span class="sd">          &lt;https://doi.org/10.1016/C2017-0-02260-7&gt;`_, Butterworth-Heinemann, 2023.</span>
 
 <span class="sd">        The implementation of MPC is based on Eq. (10)~(13) of this paper:</span>
 
 <span class="sd">        * Amos, Brandon, et al, `Differentiable mpc for end-to-end planning and control</span>
-<span class="sd">          &lt;https://proceedings.neurips.cc/paper/2018/hash/ba6d843eb4251a4526ce65d1807a9309-Abstract.html&gt;`_,</span>
-<span class="sd">          Advances in neural information processing systems 31, 2018.</span>
+<span class="sd">          &lt;https://tinyurl.com/3h9tsuyb&gt;`_, Advances in neural information processing</span>
+<span class="sd">          systems, 31, 2018.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
@@ -386,7 +389,7 @@
 <span class="sd">        ...         self.cartmass = cartmass</span>
 <span class="sd">        ...         self.polemass = polemass</span>
 <span class="sd">        ...         self.gravity = gravity</span>
-<span class="sd">        ...         self.polemassLength = self.polemass * self.length</span>
+<span class="sd">        ...         self.poleml = self.polemass * self.length</span>
 <span class="sd">        ...         self.totalMass = self.cartmass + self.polemass</span>
 <span class="sd">        ...</span>
 <span class="sd">        ...     def state_transition(self, state, input, t=None):</span>
@@ -394,22 +397,17 @@
 <span class="sd">        ...         force = input.squeeze()</span>
 <span class="sd">        ...         costheta = torch.cos(theta)</span>
 <span class="sd">        ...         sintheta = torch.sin(theta)</span>
-<span class="sd">        ...</span>
-<span class="sd">        ...         temp = (</span>
-<span class="sd">        ...             force + self.polemassLength * thetaDot**2 * sintheta</span>
-<span class="sd">        ...         ) / self.totalMass</span>
-<span class="sd">        ...         thetaAcc = (self.gravity * sintheta - costheta * temp) / (</span>
-<span class="sd">        ...             self.length * (4.0 / 3.0 - self.polemass * costheta**2 / self.totalMass)</span>
-<span class="sd">        ...         )</span>
-<span class="sd">        ...         xAcc = temp - self.polemassLength * thetaAcc * costheta / self.totalMass</span>
-<span class="sd">        ...</span>
+<span class="sd">        ...         temp = (force + self.poleml * thetaDot**2 * sintheta) / self.totalMass</span>
+<span class="sd">        ...         thetaAcc = (self.gravity * sintheta - costheta * temp) /</span>
+<span class="sd">        ...                     (self.length * (4.0 / 3.0</span>
+<span class="sd">        ...                            - self.polemass * costheta**2 / self.totalMass))</span>
+<span class="sd">        ...         xAcc = temp - self.poleml * thetaAcc * costheta / self.totalMass</span>
 <span class="sd">        ...         _dstate = torch.stack((xDot, xAcc, thetaDot, thetaAcc))</span>
-<span class="sd">        ...</span>
 <span class="sd">        ...         return (state.squeeze() + torch.mul(_dstate, self.tau)).unsqueeze(0)</span>
 <span class="sd">        ...</span>
 <span class="sd">        ...     def observation(self, state, input, t=None):</span>
 <span class="sd">        ...         return state</span>
-<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">        &gt;&gt;&gt; dt, len, m_cart, m_pole, g = 0.01, 1.5, 20, 10, 9.81</span>
 <span class="sd">        &gt;&gt;&gt; n_batch, T = 1, 5</span>
@@ -462,8 +460,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
-<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the associated</span>
-<span class="sd">            quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
+<span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the</span>
+<span class="sd">            associated quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">u_init</span>
         <span class="n">best</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span> <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
