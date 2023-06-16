@@ -30,7 +30,7 @@
   <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
@@ -128,7 +128,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.3.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.4.4 &#x25BC</a>
     </div>
     
 
@@ -164,10 +164,11 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 </ul>
 
             
@@ -253,7 +254,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code></a>) – The system model to be estimated, a subclass of
-<a class="reference internal" href="../pypose.module.System/#pypose.module.System" title="pypose.module.System"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.module.System</span></code></a>.</p></li>
+<a class="reference internal" href="../pypose.module.NLS/#pypose.module.NLS" title="pypose.module.NLS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.module.NLS</span></code></a>.</p></li>
 <li><p><strong>Q</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system transition noise.
 Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 <li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system observation noise.
@@ -331,10 +332,10 @@ is omited for simplicity.</p>
 posteriori estimation, respectively.</p>
 <p class="rubric">Example</p>
 <ol class="arabic simple">
-<li><p>Define a Nonlinear Time Invariant (NTI) system model</p></li>
+<li><p>Define a discrete-time non-linear system (NLS) model</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NTI</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">System</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">NLS</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">NLS</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">...</span>
@@ -348,7 +349,7 @@ posteriori estimation, respectively.</p>
 <ol class="arabic simple" start="2">
 <li><p>Create a model and filter</p></li>
 </ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">NTI</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">NLS</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ekf</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">EKF</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -383,14 +384,14 @@ posteriori estimation, respectively.</p>
 <p class="admonition-title">Warning</p>
 <p>Don’t introduce noise in <code class="docutils literal notranslate"><span class="pre">System</span></code> methods <code class="docutils literal notranslate"><span class="pre">state_transition</span></code> and <code class="docutils literal notranslate"><span class="pre">observation</span></code>
 for filter testing, as those methods are used for automatically linearizing the system
-by the parent class <code class="docutils literal notranslate"><span class="pre">pypose.module.System</span></code>, unless your system model explicitly
+by the parent class <code class="docutils literal notranslate"><span class="pre">pypose.module.NLS</span></code>, unless your system model explicitly
 introduces noise.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Implementation is based on Section 5.1 of this book</p>
 <ul class="simple">
-<li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/0470045345.fmatter">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>,
+<li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>,
 Cleveland State University, 2006</p></li>
 </ul>
 </div>
@@ -505,8 +506,10 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
          <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+         <script src="../../_static/jquery.js"></script>
+         <script src="../../_static/underscore.js"></script>
+         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../_static/doctools.js"></script>
-         <script src="../../_static/sphinx_highlight.js"></script>
          <script src="../../_static/katex.min.js"></script>
          <script src="../../_static/auto-render.min.js"></script>
          <script src="../../_static/katex_autorenderer.js"></script>

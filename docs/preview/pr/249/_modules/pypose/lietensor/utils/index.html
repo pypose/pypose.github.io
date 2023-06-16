@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.3.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.4.4 &#x25BC</a>
     </div>
     
 
@@ -161,10 +161,11 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../basics/">Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 </ul>
 
             
@@ -288,7 +289,7 @@
 <span class="sd">        \mathrm{data}[*, :] = [q_x, q_y, q_z, q_w],</span>
 
 <span class="sd">    where :math:`q_x^2 + q_y^2 + q_z^2 + q_w^2 = 1`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        Normalization is not required at initialization as it is done internally</span>
 <span class="sd">        by the library right before further computation. However, the normalized</span>
@@ -520,7 +521,7 @@
 
 <span class="sd">        memory_format (torch.memory_format, optional): the desired memory format of returned</span>
 <span class="sd">            Tensor. Default: ``torch.preserve_format``.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter sigma (:math:`\sigma`) can either be:</span>
 
@@ -605,7 +606,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \delta_x&#39; = \frac{x_0}{d}, \delta_y&#39; = \frac{y_0}{d}, \delta_z&#39; = \frac{z_0}{d},</span>
-<span class="sd">        </span>
+
 <span class="sd">        where</span>
 
 <span class="sd">        .. math::</span>
@@ -614,7 +615,7 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            d = \sqrt{(x^2_0+y^2_0+z^2_0)}.</span>
 
-<span class="sd">        Note that the point :math:`[x_0, y_0, z_0]` follows 3-D Gaussian distribution, </span>
+<span class="sd">        Note that the point :math:`[x_0, y_0, z_0]` follows 3-D Gaussian distribution,</span>
 <span class="sd">        which is centrosymmetry with respect to :math:`(0, 0, 0)`. Therefore, we have</span>
 <span class="sd">        :math:`\delta_x&#39;^2+\delta_y&#39;^2+\delta_z&#39;^2=1` and the normalized points follow</span>
 <span class="sd">        uniform distribution on a standard sphere, i.e.,</span>
@@ -652,7 +653,7 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SO3_type` LieTensor filled with the Exponential map of the random</span>
 <span class="sd">    :obj:`so3_type` LieTensor.</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">        \mathrm{data}[*, :] &amp;= \mathrm{Exp}([\delta_x, \delta_y, \delta_z]) \\</span>
@@ -670,7 +671,7 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation. </span>
+<span class="sd">        sigma (float, optional): standard deviation for the angle of the generated rotation.</span>
 <span class="sd">            Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -679,7 +680,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. </span>
+<span class="sd">            Default: ``None``.</span>
 <span class="sd">            If ``None``, uses a global default (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -719,12 +720,12 @@
 
 <div class="viewcode-block" id="randn_se3"><a class="viewcode-back" href="../../../../generated/pypose.randn_se3/#pypose.randn_se3">[docs]</a><span class="k">def</span> <span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers. </span>
+<span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z],</span>
-<span class="sd">    </span>
-<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+
+<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution</span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, rotation :math:`[\delta_x, \delta_y, \delta_z]` is</span>
 <span class="sd">    generated using :meth:`pypose.randn_so3()` with standard deviation :math:`\sigma_r`.</span>
 <span class="sd">    Note that standard deviations :math:`\sigma_t` and :math:`\sigma_r` are</span>
@@ -734,8 +735,8 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation </span>
-<span class="sd">            (:math:`\sigma_t` and :math:`\sigma_r`) </span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation</span>
+<span class="sd">            (:math:`\sigma_t` and :math:`\sigma_r`)</span>
 <span class="sd">            for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -744,7 +745,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -761,15 +762,15 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`se3_type` </span>
-<span class="sd">          share the same sigma, i.e., </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`se3_type`</span>
+<span class="sd">          share the same sigma, i.e.,</span>
 <span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas are </span>
-<span class="sd">          assigned independently, i.e., </span>
+<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas are</span>
+<span class="sd">          assigned independently, i.e.,</span>
 <span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`).</span>
-<span class="sd">        - a ``tuple`` of four floats -- in which case, the specific sigmas for </span>
-<span class="sd">          each translation data are assigned independently, i.e., </span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">        - a ``tuple`` of four floats -- in which case, the specific sigmas for</span>
+<span class="sd">          each translation data are assigned independently, i.e.,</span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -799,7 +800,7 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z]),</span>
 
-<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    where :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution</span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, :math:`[\delta_x, \delta_y, \delta_z]` is</span>
 <span class="sd">    generated using :meth:`pypose.randn_so3()` with with standard deviation</span>
 <span class="sd">    :math:`\sigma_r`, and :math:`\mathrm{Exp}()` is the Exponential map. Note that standard</span>
@@ -812,7 +813,7 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation </span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation</span>
 <span class="sd">            (:math:`\sigma_t` and :math:`\sigma_r`) for the two normal distribution.</span>
 <span class="sd">            Default: ``1.0``.</span>
 
@@ -822,7 +823,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If None, uses a global default </span>
+<span class="sd">            Default: ``None``. If None, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -839,15 +840,15 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`SE3_type` </span>
-<span class="sd">          share the same sigma, i.e., </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`SE3_type`</span>
+<span class="sd">          share the same sigma, i.e.,</span>
 <span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas are </span>
+<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas are</span>
 <span class="sd">          assigned independently, i.e.,</span>
 <span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`).</span>
 <span class="sd">        - a ``tuple`` of four floats -- in which case, the specific sigmas for</span>
-<span class="sd">          each translation data are assigned independently, i.e., </span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">          each translation data are assigned independently, i.e.,</span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -871,12 +872,12 @@
 
 <div class="viewcode-block" id="randn_sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_sim3/#pypose.randn_sim3">[docs]</a><span class="k">def</span> <span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers. </span>
+<span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\tau_x, \tau_y, \tau_z, \delta_x, \delta_y, \delta_z, \log s],</span>
 
-<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution</span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, rotation :math:`[\delta_x, \delta_y, \delta_z]` is</span>
 <span class="sd">    generated using :meth:`pypose.randn_so3()` with standard deviation :math:`\sigma_r`,</span>
 <span class="sd">    scale :math:`\log s` is generated from a normal distribution :math:`\mathcal{N}(0, \sigma_s)`.</span>
@@ -887,7 +888,7 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_t`, </span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_t`,</span>
 <span class="sd">            :math:`\sigma_r`, and :math:`\sigma_s`) for the three normal distribution.</span>
 <span class="sd">            Default: ``1.0``.</span>
 
@@ -897,7 +898,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling.</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -914,17 +915,17 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`sim3_type` </span>
-<span class="sd">          share the same sigma, i.e., </span>
-<span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`sim3_type`</span>
+<span class="sd">          share the same sigma, i.e.,</span>
+<span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}`</span>
 <span class="sd">          = :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of three floats -- in which case, the specific sigmas for </span>
-<span class="sd">          the three parts are assigned independently, i.e., </span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">        - a ``tuple`` of three floats -- in which case, the specific sigmas for</span>
+<span class="sd">          the three parts are assigned independently, i.e.,</span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{s}}`).</span>
-<span class="sd">        - a ``tuple`` of five floats -- in which case, the specific sigmas for </span>
+<span class="sd">        - a ``tuple`` of five floats -- in which case, the specific sigmas for</span>
 <span class="sd">          each translation data are also assigned independently, i.e.,</span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -954,7 +955,7 @@
 <span class="sd">        \mathrm{data}[*, :] = \mathrm{Exp}([\tau_x, \tau_y, \tau_z, \delta_x,</span>
 <span class="sd">        \delta_y, \delta_z, \log s]),</span>
 
-<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution </span>
+<span class="sd">    where translation :math:`[\tau_x, \tau_y, \tau_z]` is generated from a normal distribution</span>
 <span class="sd">    :math:`\mathcal{N}(0, \sigma_t)`, rotation :math:`[\delta_x, \delta_y, \delta_z]` is</span>
 <span class="sd">    generated using :meth:`pypose.randn_so3()` with with standard deviation</span>
 <span class="sd">    :math:`\sigma_r`, scale :math:`\log s` is generated from a normal distribution</span>
@@ -970,7 +971,7 @@
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
 <span class="sd">        sigma (float or (float...), optional): standard deviation</span>
-<span class="sd">            (:math:`\sigma_t`, :math:`\sigma_r`, and :math:`\sigma_s`) </span>
+<span class="sd">            (:math:`\sigma_t`, :math:`\sigma_r`, and :math:`\sigma_s`)</span>
 <span class="sd">            for the three normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -979,7 +980,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -996,17 +997,17 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`Sim3_type` </span>
-<span class="sd">          share the same sigma, i.e., </span>
-<span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}` </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`Sim3_type`</span>
+<span class="sd">          share the same sigma, i.e.,</span>
+<span class="sd">          :math:`\sigma_{\rm{t}}` = :math:`\sigma_{\rm{r}}`</span>
 <span class="sd">          = :math:`\sigma_{\rm{s}}` = :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of three floats -- in which case, the specific sigmas </span>
-<span class="sd">          for the three parts are assigned independently, i.e., </span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">        - a ``tuple`` of three floats -- in which case, the specific sigmas</span>
+<span class="sd">          for the three parts are assigned independently, i.e.,</span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{t}}`, :math:`\sigma_{\rm{r}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{s}}`).</span>
-<span class="sd">        - a ``tuple`` of five floats -- in which case, the specific sigmas </span>
+<span class="sd">        - a ``tuple`` of five floats -- in which case, the specific sigmas</span>
 <span class="sd">          for each translation data are also assigned independently, i.e.,</span>
-<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`, </span>
+<span class="sd">          :math:`\sigma` = (:math:`\sigma_{\rm{tx}}`, :math:`\sigma_{\rm{ty}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{tz}}`, :math:`\sigma_{\rm{r}}`, :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -1029,7 +1030,7 @@
 
 <div class="viewcode-block" id="randn_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.randn_rxso3/#pypose.randn_rxso3">[docs]</a><span class="k">def</span> <span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Returns :obj:`rxso3_type` LieTensor filled with random numbers. </span>
+<span class="sd">    Returns :obj:`rxso3_type` LieTensor filled with random numbers.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathrm{data}[*, :] = [\delta_x, \delta_y, \delta_z, \log s],</span>
@@ -1044,7 +1045,7 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_r`, </span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_r`,</span>
 <span class="sd">            and :math:`\sigma_s`) for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -1053,7 +1054,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -1070,11 +1071,11 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`rxso3_type` share </span>
-<span class="sd">          the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`rxso3_type` share</span>
+<span class="sd">          the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}`</span>
 <span class="sd">          = :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts </span>
-<span class="sd">          are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts</span>
+<span class="sd">          are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -1092,7 +1093,7 @@
 <div class="viewcode-block" id="randn_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_RxSO3/#pypose.randn_RxSO3">[docs]</a><span class="k">def</span> <span class="nf">randn_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`RxSO3_type` LieTensor filled with the Exponential map of the random</span>
-<span class="sd">    :obj:`rxso3_type` LieTensor. The :obj:`rxso3_type` LieTensor is generated using </span>
+<span class="sd">    :obj:`rxso3_type` LieTensor. The :obj:`rxso3_type` LieTensor is generated using</span>
 <span class="sd">    :meth:`randn_rxso3()`.</span>
 
 <span class="sd">    .. math::</span>
@@ -1109,7 +1110,7 @@
 <span class="sd">        lsize (int...): a sequence of integers defining the lshape of the output tensor.</span>
 <span class="sd">            Can be a variable number of arguments or a collection like a list or tuple.</span>
 
-<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_r`, </span>
+<span class="sd">        sigma (float or (float...), optional): standard deviation (:math:`\sigma_r`,</span>
 <span class="sd">            and :math:`\sigma_s`) for the two normal distribution. Default: ``1.0``.</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -1118,7 +1119,7 @@
 <span class="sd">        generator (torch.Generator, optional): a pseudorandom number generator for sampling</span>
 
 <span class="sd">        dtype (torch.dtype, optional): the desired data type of returned tensor.</span>
-<span class="sd">            Default: ``None``. If ``None``, uses a global default </span>
+<span class="sd">            Default: ``None``. If ``None``, uses a global default</span>
 <span class="sd">            (see :meth:`torch.set_default_tensor_type()`).</span>
 
 <span class="sd">        layout (torch.layout, optional): the desired layout of returned Tensor.</span>
@@ -1135,11 +1136,11 @@
 <span class="sd">    Note:</span>
 <span class="sd">        The parameter :math:`\sigma` can either be:</span>
 
-<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`RxSO3_type` share </span>
-<span class="sd">          the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` = </span>
+<span class="sd">        - a single ``float`` -- in which all the elements in the :obj:`RxSO3_type` share</span>
+<span class="sd">          the same sigma, i.e., :math:`\sigma_{\rm{r}}` = :math:`\sigma_{\rm{s}}` =</span>
 <span class="sd">          :math:`\sigma`.</span>
-<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts </span>
-<span class="sd">          are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`, </span>
+<span class="sd">        - a ``tuple`` of two floats -- in which case, the specific sigmas for the two parts</span>
+<span class="sd">          are assigned independently, i.e., :math:`\sigma` = (:math:`\sigma_{\rm{r}}`,</span>
 <span class="sd">          :math:`\sigma_{\rm{s}}`).</span>
 
 <span class="sd">    Example:</span>
@@ -1159,7 +1160,7 @@
 <span class="sd">     Returns identity LieTensor with the same :obj:`lsize` and :obj:`ltype` as the given LieTensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        liegroup (LieTensor): the size of liegroup will determine the size of the output tensor. </span>
+<span class="sd">        liegroup (LieTensor): the size of liegroup will determine the size of the output tensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -1177,7 +1178,7 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3(3, device=&quot;cuda:0&quot;, dtype=torch.double, requires_grad=True)</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_like(x, device=&quot;cpu&quot;)</span>
@@ -1216,10 +1217,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`SO3_type` LieTensor</span>
-<span class="sd">    </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_SO3()</span>
 <span class="sd">        SO3Type LieTensor:</span>
@@ -1241,7 +1242,7 @@
 <div class="viewcode-block" id="identity_so3"><a class="viewcode-back" href="../../../../generated/pypose.identity_so3/#pypose.identity_so3">[docs]</a><span class="k">def</span> <span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`so3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`so3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
@@ -1265,10 +1266,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`so3_type` LieTensor</span>
-<span class="sd">    </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_so3()</span>
 <span class="sd">        so3Type LieTensor:</span>
@@ -1290,14 +1291,14 @@
 <div class="viewcode-block" id="identity_SE3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SE3/#pypose.identity_SE3">[docs]</a><span class="k">def</span> <span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`SE3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`SE3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
 <span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
 <span class="sd">            list or tuple. If not given, a single :obj:`SE3_type` item will be returned.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 
 <span class="sd">        requires_grad (bool, optional): If autograd should record operations on</span>
@@ -1315,10 +1316,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`SE3_type` LieTensor</span>
-<span class="sd">    </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_SE3()</span>
 <span class="sd">        SE3Type LieTensor:</span>
@@ -1340,9 +1341,9 @@
 <div class="viewcode-block" id="identity_se3"><a class="viewcode-back" href="../../../../generated/pypose.identity_se3/#pypose.identity_se3">[docs]</a><span class="k">def</span> <span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`se3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`se3()` for implementation details.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        lsize (int..., optional): a sequence of integers defining the :obj:`LieTensor.lshape` of</span>
 <span class="sd">            the output LieTensor. Can be a variable number of arguments or a collection like a</span>
@@ -1364,10 +1365,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`se3_type` LieTensor</span>
-<span class="sd">    </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_se3()</span>
 <span class="sd">        se3Type LieTensor:</span>
@@ -1389,7 +1390,7 @@
 <div class="viewcode-block" id="identity_sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_sim3/#pypose.identity_sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`sim3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`sim3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
@@ -1413,10 +1414,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`sim3_type` LieTensor</span>
-<span class="sd">        </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_sim3()</span>
 <span class="sd">        sim3Type LieTensor:</span>
@@ -1438,7 +1439,7 @@
 <div class="viewcode-block" id="identity_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_Sim3/#pypose.identity_Sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`Sim3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`Sim3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
@@ -1462,10 +1463,10 @@
 <span class="sd">            Default: if None, uses the current device for the default tensor</span>
 <span class="sd">            type (see :meth:`torch.set_default_tensor_type()`). device will be the CPU</span>
 <span class="sd">            for CPU tensor types and the current CUDA device for CUDA tensor types.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        LieTensor: a :obj:`Sim3_type` LieTensor</span>
-<span class="sd">        </span>
+
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; pp.identity_Sim3()</span>
 <span class="sd">        Sim3Type LieTensor:</span>
@@ -1481,13 +1482,13 @@
 <span class="sd">        tensor([[[0., 0., 0., 0., 0., 0., 1., 1.]],</span>
 <span class="sd">                [[0., 0., 0., 0., 0., 0., 1., 1.]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>    </div>
+    <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="identity_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.identity_rxso3/#pypose.identity_rxso3">[docs]</a><span class="k">def</span> <span class="nf">identity_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`rxso3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`rxSO3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
@@ -1535,7 +1536,7 @@
 
 <div class="viewcode-block" id="identity_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.identity_RxSO3/#pypose.identity_RxSO3">[docs]</a><span class="k">def</span> <span class="nf">identity_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;Returns identity :obj:`RxSO3_type` LieTensor with the given :obj:`lsize`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    See :obj:`RxSO3()` for implementation details.</span>
 
 <span class="sd">    Args:</span>
@@ -1669,7 +1670,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \left[\mathbf{J}_i\bm{\tau}_i, \mathrm{Exp}(\bm{\phi}_i)\right],</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`\mathrm{Exp}` is the Exponential map for :obj:`so3_type` input and</span>
 <span class="sd">        :math:`\mathbf{J}_i` is the left Jacobian for :obj:`so3_type` input.</span>
 
@@ -1695,7 +1696,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{y}_i = \left[^{s}\mathbf{W}_i\bm{\tau}_i, \mathrm{Exp}(^{s}\bm{\phi}_i)\right],</span>
-<span class="sd">        </span>
+
 <span class="sd">        where</span>
 
 <span class="sd">        .. math::</span>
@@ -1705,7 +1706,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            A = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{s_i\sin\theta_i\sigma_i + (1-s_i\cos\theta_i)\theta_i}</span>
 <span class="sd">                        {\theta_i(\sigma_i^2 + \theta_i^2)}, \quad \|\theta_i\| \geq \text{eps}, \\</span>
 <span class="sd">                        \frac{(\sigma_i-1)s_i+1}{\sigma_i^2}, \quad \|\theta_i\| &lt; \text{eps},</span>
@@ -1713,9 +1714,9 @@
 <span class="sd">                \right.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            B = </span>
+<span class="sd">            B =</span>
 <span class="sd">            \left\{</span>
-<span class="sd">                \begin{array}{ll} </span>
+<span class="sd">                \begin{array}{ll}</span>
 <span class="sd">                    \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}</span>
 <span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2}, \quad \|\theta_i\|</span>
 <span class="sd">                        \geq \text{eps}, \\</span>
@@ -1731,7 +1732,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            A = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{1-\cos\theta_i}{\theta_i^2}, \quad \|\theta_i\| \geq \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{2}, \quad \|\theta_i\| &lt; \text{eps},</span>
 <span class="sd">                    \end{array}</span>
@@ -1739,7 +1740,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            B = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3}, \quad \|\theta_i\|</span>
 <span class="sd">                            \geq \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}, \quad \|\theta_i\| &lt; \text{eps},</span>
@@ -1748,7 +1749,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            C = 1</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        The detailed explanation of the above :math:`\mathrm{Exp}`: calculation can be found</span>
 <span class="sd">        in the paper:</span>
@@ -1771,7 +1772,7 @@
 <span class="sd">                \theta = \|\mathbf{x}\|.</span>
 
 <span class="sd">        Then, the corresponding quaternion is:</span>
-<span class="sd">        </span>
+
 <span class="sd">            .. math::</span>
 <span class="sd">                \mathbf{q} = \left[\frac{\sin(\|\mathbf{x}\|/2)}{\|\mathbf{x}\|} \mathbf{x},</span>
 <span class="sd">                    \cos(\|\mathbf{x}\|/2) \right].</span>
@@ -1868,7 +1869,7 @@
 <span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
 <span class="sd">          - :obj:`rxso3_type`</span>
-<span class="sd">    </span>
+
 <span class="sd">    Warning:</span>
 <span class="sd">        This function :func:`Log()` is different from :func:`log()`, which returns</span>
 <span class="sd">        a new torch tensor with the logarithm of the elements of the input tensor.</span>
@@ -1882,11 +1883,11 @@
 <span class="sd">        If :math:`\|\boldsymbol{\nu}_i\| &gt; \text{eps}`:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = </span>
+<span class="sd">            \mathbf{y}_i =</span>
 <span class="sd">                \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        2\frac{\mathrm{arctan}(\|\boldsymbol{\nu}_i\|/w_i)}{\|</span>
-<span class="sd">                        \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i, </span>
+<span class="sd">                        \boldsymbol{\nu}_i\|}\boldsymbol{\nu}_i,</span>
 <span class="sd">                            \quad \|w_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \mathrm{pm}(w_i) \frac{\pi}{\|\boldsymbol{\nu}_i\|}</span>
 <span class="sd">                            \boldsymbol{\nu}_i, \quad \|w_i\| \leq \text{eps},</span>
@@ -1896,9 +1897,9 @@
 <span class="sd">        otherwise:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = 2\left( \frac{1}{w_i} - </span>
+<span class="sd">            \mathbf{y}_i = 2\left( \frac{1}{w_i} -</span>
 <span class="sd">                \frac{\|\boldsymbol{\nu}_i\|^2}{3w_i^3}\right)\boldsymbol{\nu}_i.</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`\mathrm{pm}` is the plus or minus (:math:`\pm`) operator</span>
 <span class="sd">        (refer to :meth:`pm`).</span>
 
@@ -1947,7 +1948,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            A = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{s_i\sin\theta_i\sigma_i + (1-s_i\cos\theta_i)\theta_i}</span>
 <span class="sd">                        {\theta_i(\sigma_i^2 + \theta_i^2)}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{(\sigma_i-1)s_i+1}{\sigma_i^2}, \quad \|\theta_i\| \leq \text{eps},</span>
@@ -1955,9 +1956,9 @@
 <span class="sd">                \right.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            B = </span>
+<span class="sd">            B =</span>
 <span class="sd">            \left\{</span>
-<span class="sd">                \begin{array}{ll} </span>
+<span class="sd">                \begin{array}{ll}</span>
 <span class="sd">                    \left( C - \frac{(s_i\cos\theta_i-1)\sigma+ s_i\sin\theta_i\sigma_i}</span>
 <span class="sd">                    {\theta_i^2+\sigma_i^2}\right)\frac{1}{\theta_i^2},</span>
 <span class="sd">                        \quad \|\theta_i\| &gt; \text{eps}, \\</span>
@@ -1973,7 +1974,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            A = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{1-\cos\theta_i}{\theta_i^2}, \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{2}, \quad \|\theta_i\| \leq \text{eps},</span>
 <span class="sd">                    \end{array}</span>
@@ -1981,7 +1982,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            B = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3},</span>
 <span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}, \quad \|\theta_i\| \leq \text{eps},</span>
@@ -2007,15 +2008,15 @@
 
 <span class="sd">        Therefore, given a quaternion :math:`\mathbf{q}=[\boldsymbol{\nu}, w]`, where</span>
 <span class="sd">        :math:`\boldsymbol{\nu}` is the vector part, :math:`w` is the scalar part, to find</span>
-<span class="sd">        the corresponding rotation vector, the rotation angle :math:`\theta` can be obtained as </span>
+<span class="sd">        the corresponding rotation vector, the rotation angle :math:`\theta` can be obtained as</span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \theta = 2\mathrm{arctan}(\|\boldsymbol{\nu}\|/w),~\|\boldsymbol{\nu}\|</span>
-<span class="sd">                = \sin(\theta/2), </span>
+<span class="sd">                = \sin(\theta/2),</span>
 
 <span class="sd">        The unit rotation axis :math:`\mathbf{n}` can be obtained as :math:`\mathbf{n} =</span>
 <span class="sd">        \frac{\boldsymbol{\nu}}{{\|\boldsymbol{\nu}\|}}`.</span>
-<span class="sd">        Hence, the corresponding rotation vector is </span>
+<span class="sd">        Hence, the corresponding rotation vector is</span>
 
 <span class="sd">            .. math::</span>
 <span class="sd">                \theta \mathbf{n} = 2\frac{\mathrm{arctan}</span>
@@ -2024,7 +2025,7 @@
 <span class="sd">        More details about :math:`^s\mathbf{W}_i` in :obj:`Sim3_type` can be found in Eq. (5.7):</span>
 
 <span class="sd">        * H. Strasdat, `Local accuracy and global consistency for efficient visual SLAM</span>
-<span class="sd">          &lt;http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf&gt;`_, </span>
+<span class="sd">          &lt;http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.640.199&amp;rep=rep1&amp;type=pdf&gt;`_,</span>
 <span class="sd">          Dissertation. Department of Computing, Imperial College London, 2012.</span>
 
 <span class="sd">    Example:</span>
@@ -2163,7 +2164,7 @@
 <span class="sd">        of :math:`\mathbf{x}_i`, respectively;  :math:`\mathbf{y}` be the output.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{y}_i = \left[-\mathrm{Inv}(^s\mathbf{q}_i)*\mathbf{t}_i, </span>
+<span class="sd">            \mathbf{y}_i = \left[-\mathrm{Inv}(^s\mathbf{q}_i)*\mathbf{t}_i,</span>
 <span class="sd">            \mathrm{Inv}(^s\mathbf{q}_i) \right]</span>
 
 <span class="sd">    * If input :math:`\mathbf{x}`&#39;s :obj:`ltype` is :obj:`so3_type` or :obj:`se3_type` or</span>
@@ -2288,7 +2289,7 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        Y_i = \mathrm{Exp}(a_i) * X_i,</span>
 
-<span class="sd">    where :math:`\mathrm{Exp}` means the exponetial map. See :obj:`pypose.Exp` for more details. </span>
+<span class="sd">    where :math:`\mathrm{Exp}` means the exponetial map. See :obj:`pypose.Exp` for more details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        X (LieTensor): the input LieTensor to retract (Lie Group)</span>
@@ -2393,7 +2394,7 @@
 <div class="viewcode-block" id="Adj"><a class="viewcode-back" href="../../../../generated/pypose.Adj/#pypose.Adj">[docs]</a><span class="nd">@assert_ltype</span>
 <span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The dot product between the Adjoint matrix at the point given by an input (Lie Group) and </span>
+<span class="sd">    The dot product between the Adjoint matrix at the point given by an input (Lie Group) and</span>
 <span class="sd">    the second point (Lie Algebra).</span>
 
 <span class="sd">    .. math::</span>
@@ -2434,7 +2435,7 @@
 <span class="sd">          - :math:`(\mathcal{G}\in\mathbb{R}^{*\times5}, \mathcal{g}\in\mathbb{R}^{*\times4})`</span>
 <span class="sd">          - :math:`\mapsto`</span>
 <span class="sd">          - :math:`\mathcal{g}\in\mathbb{R}^{*\times4}`</span>
-<span class="sd">          - :obj:`rxso3_type` </span>
+<span class="sd">          - :obj:`rxso3_type`</span>
 
 <span class="sd">    Let the input be (:math:`\mathbf{x}`, :math:`\mathbf{p}`), :math:`\mathbf{y}` be the output.</span>
 
@@ -2450,7 +2451,7 @@
 <span class="sd">      The adjoint transformation is given by:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \mathbf{x}_i </span>
+<span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \mathbf{x}_i</span>
 
 <span class="sd">        In the case of :math:`\textrm{SO3}`, the adjoint transformation for an element is the same</span>
 <span class="sd">        rotation matrix used to represent the element. Rotating a tangent vector by an element</span>
@@ -2467,7 +2468,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    \mathbf{R}_i &amp; \mathbf{t}_{i\times}\mathbf{R}_i \\</span>
 <span class="sd">                                    0 &amp; \mathbf{R}_i</span>
 <span class="sd">                                \end{array}</span>
@@ -2477,11 +2478,11 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{x}_i = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    \mathbf{R}_i&amp; \mathbf{t}_i \\</span>
 <span class="sd">                                    0 &amp; 1</span>
 <span class="sd">                                \end{array}</span>
-<span class="sd">                             \right] \in \mathrm{SE(3)}  </span>
+<span class="sd">                             \right] \in \mathrm{SE(3)}</span>
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type` and</span>
 <span class="sd">      :obj:`sim3_type` (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`, :math:`\mathbf{p}`</span>
@@ -2493,7 +2494,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
-<span class="sd">                        \begin{array}{cc} </span>
+<span class="sd">                        \begin{array}{cc}</span>
 <span class="sd">                            s_i\mathbf{R}_i&amp; \mathbf{t}_{i\times}\mathbf{R}_i&amp; -\mathbf{t}_i \\</span>
 <span class="sd">                            0 &amp; \mathbf{R}_i&amp; 0 \\</span>
 <span class="sd">                            0 &amp; 0 &amp; 1</span>
@@ -2504,11 +2505,11 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{x}_i = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    s_i\mathbf{R}_i &amp; \mathbf{t}_i \\</span>
 <span class="sd">                                    0 &amp; 1</span>
 <span class="sd">                                \end{array}</span>
-<span class="sd">                             \right] \in \textrm{Sim(3)}    </span>
+<span class="sd">                             \right] \in \textrm{Sim(3)}</span>
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type`</span>
 <span class="sd">      and :obj:`rxso3_type` (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`,</span>
@@ -2518,7 +2519,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{Adj}(\mathbf{x}_i) = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    \mathbf{R}_i &amp; 0 \\</span>
 <span class="sd">                                    0 &amp; 1</span>
 <span class="sd">                                \end{array}</span>
@@ -2528,7 +2529,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{x}_i = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    s_i\mathbf{R}_i &amp; 0 \\</span>
 <span class="sd">                                    0 &amp; 1</span>
 <span class="sd">                                \end{array}</span>
@@ -2543,15 +2544,15 @@
 <span class="sd">        :math:`\mathbf{x} \in \mathcal{G}` to the left tangent space.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x} </span>
+<span class="sd">            \mathrm{Exp}(\mathrm{Adj}(\mathbf{x}) \mathbf{p}) * \mathbf{x}</span>
 <span class="sd">            = \mathbf{x} * \mathrm{Exp}(\mathbf{p})</span>
-<span class="sd">        </span>
+
 <span class="sd">        It can be easily verified:</span>
 
 <span class="sd">            &gt;&gt;&gt; x, p = pp.randn_SO3(), pp.randn_so3()</span>
 <span class="sd">            &gt;&gt;&gt; torch.allclose(x*p.Exp(), x.Adj(p).Exp()*x)</span>
 <span class="sd">            True</span>
-<span class="sd">        </span>
+
 <span class="sd">        One can refer to Eq. (8) of the following paper:</span>
 
 <span class="sd">        * Zachary Teed et al., `Tangent Space Backpropagation for 3D Transformation Groups</span>
@@ -2567,10 +2568,10 @@
 <span class="sd">          robotics &lt;https://arxiv.org/abs/1812.01537&gt;`_, arXiv preprint arXiv:1812.01537 (2018).</span>
 
 <span class="sd">        The following thesis and the tutorial serve as a good reading material to learn more</span>
-<span class="sd">        about deriving the adjoint matrices for different transformation groups. </span>
+<span class="sd">        about deriving the adjoint matrices for different transformation groups.</span>
 
 <span class="sd">        * Strasdat, H., 2012. `Local accuracy and global consistency for efficient visual SLAM</span>
-<span class="sd">          &lt;https://www.doc.ic.ac.uk/~ajd/Publications/Strasdat-H-2012-PhD-Thesis.pdf&gt;`_, </span>
+<span class="sd">          &lt;https://www.doc.ic.ac.uk/~ajd/Publications/Strasdat-H-2012-PhD-Thesis.pdf&gt;`_,</span>
 <span class="sd">          (Doctoral dissertation, Department of Computing, Imperial College London).</span>
 
 <span class="sd">        * `Lie Groups for 2D and 3D Transformations.</span>
@@ -2674,7 +2675,7 @@
 <span class="sd">            \mathbf{y}_i = \mathbf{J}^{-1}_i(\mathbf{x}_i)\mathbf{p}_i,</span>
 
 <span class="sd">        where :math:`\mathbf{J}^{-1}_i(\mathbf{x}_i)` is the inverse of left Jacobian of</span>
-<span class="sd">        :math:`\mathbf{x}_i`. </span>
+<span class="sd">        :math:`\mathbf{x}_i`.</span>
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`SO3_type`</span>
 <span class="sd">      and :obj:`so3_type` (input :math:`\mathbf{x}` is an instance of :meth:`SO3`,</span>
@@ -2688,12 +2689,12 @@
 <span class="sd">            \mathrm{coef}\boldsymbol{\Phi}_i^2</span>
 
 <span class="sd">      where :math:`\mathbf{I}` is the identity matrix with the same dimension as</span>
-<span class="sd">      :math:`\boldsymbol{\Phi}_i`, and </span>
+<span class="sd">      :math:`\boldsymbol{\Phi}_i`, and</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathrm{coef} =</span>
 <span class="sd">                \left\{</span>
-<span class="sd">                \begin{array}{ll} </span>
+<span class="sd">                \begin{array}{ll}</span>
 <span class="sd">                    \frac{1}{\theta_i^2} -</span>
 <span class="sd">                    \frac{\cos{\frac{\theta_i}{2}}}{2\theta\sin{\frac{\theta_i}{2}}},</span>
 <span class="sd">                    \quad \|\theta_i\| &gt; \text{eps}, \\</span>
@@ -2713,35 +2714,35 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) =</span>
 <span class="sd">                \left[</span>
-<span class="sd">                \begin{array}{cc} </span>
-<span class="sd">                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &amp; </span>
+<span class="sd">                \begin{array}{cc}</span>
+<span class="sd">                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &amp;</span>
 <span class="sd">                            - \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
-<span class="sd">                    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) </span>
+<span class="sd">                    \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)</span>
 <span class="sd">                        \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) \\</span>
 <span class="sd">                    \mathbf{0} &amp; \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)</span>
 <span class="sd">                \end{array}</span>
 <span class="sd">                \right]</span>
 
 <span class="sd">        where :math:`\mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i)` is the inverse of left Jacobian</span>
-<span class="sd">        of the SO3 part of :math:`\mathbf{x}_i`. </span>
-<span class="sd">        :math:`\mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)` is </span>
+<span class="sd">        of the SO3 part of :math:`\mathbf{x}_i`.</span>
+<span class="sd">        :math:`\mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i)` is</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) = </span>
+<span class="sd">                \mathbf{Q}_i(\boldsymbol{\tau}_i, \boldsymbol{\phi}_i) =</span>
 <span class="sd">                    \frac{1}{2}\boldsymbol{\Tau}_i &amp;+ c_1</span>
-<span class="sd">                (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i} </span>
+<span class="sd">                (\boldsymbol{\Phi_i\Tau_i} + \boldsymbol{\Tau_i\Phi_i}</span>
 <span class="sd">                    + \boldsymbol{\Phi_i\Tau_i\Phi_i}) \\</span>
-<span class="sd">                 &amp;+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2} </span>
+<span class="sd">                 &amp;+ c_2 (\boldsymbol{\Phi_i^2\Tau_i} + \boldsymbol{\Tau_i\Phi_i^2}</span>
 <span class="sd">                    - 3\boldsymbol{\Phi_i\Tau_i\Phi_i})\\</span>
-<span class="sd">                 &amp;+ c_3 (\boldsymbol{\Phi_i\Tau_i\Phi_i^2} + \boldsymbol{\Phi_i^2\Tau_i\Phi_i})  </span>
+<span class="sd">                 &amp;+ c_3 (\boldsymbol{\Phi_i\Tau_i\Phi_i^2} + \boldsymbol{\Phi_i^2\Tau_i\Phi_i})</span>
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">        where,</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            c_1 = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{\theta_i - \sin\theta_i}{\theta_i^3},</span>
 <span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{6}-\frac{1}{120}\theta_i^2,</span>
@@ -2751,7 +2752,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            c_2 = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
+<span class="sd">                    \begin{array}{ll}</span>
 <span class="sd">                        \frac{\theta_i^2 +2\cos\theta_i - 2}{2\theta_i^4},</span>
 <span class="sd">                            \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{24}-\frac{1}{720}\theta_i^2,</span>
@@ -2761,13 +2762,13 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            c_3 = \left\{</span>
-<span class="sd">                    \begin{array}{ll} </span>
-<span class="sd">                        \frac{2\theta_i - 3\sin\theta_i + \theta_i\cos\theta_i}{2\theta_i^5}, </span>
+<span class="sd">                    \begin{array}{ll}</span>
+<span class="sd">                        \frac{2\theta_i - 3\sin\theta_i + \theta_i\cos\theta_i}{2\theta_i^5},</span>
 <span class="sd">                        \quad \|\theta_i\| &gt; \text{eps}, \\</span>
 <span class="sd">                        \frac{1}{120}-\frac{1}{2520}\theta_i^2,</span>
 <span class="sd">                        \quad \|\theta_i\| \leq \text{eps}</span>
 <span class="sd">                    \end{array}</span>
-<span class="sd">                    \right.           </span>
+<span class="sd">                    \right.</span>
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`Sim3_type`</span>
 <span class="sd">      and :obj:`sim3_type` (input :math:`\mathbf{x}` is an instance of :meth:`Sim3`,</span>
@@ -2775,7 +2776,7 @@
 <span class="sd">      be approximated as:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = </span>
+<span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) =</span>
 <span class="sd">                \sum_{n=0}(-1)^n\frac{B_n}{n!}(\boldsymbol{\xi}_i^{\curlywedge})^n</span>
 
 <span class="sd">        where :math:`B_n` is the Bernoulli number: :math:`B_0 = 1`, :math:`B_1 = -\frac{1}{2}`,</span>
@@ -2786,9 +2787,9 @@
 <span class="sd">        :math:`\boldsymbol{X}_i = \mathrm{Adj}(\mathbf{x}_i)` and :math:`\mathrm{Adj}` is the</span>
 <span class="sd">        adjoint of the Lie group :math:`\mathrm{Sim}(3)`, there is a nice property:</span>
 <span class="sd">        :math:`\mathrm{Adj}(\mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})) =</span>
-<span class="sd">        \mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))`, </span>
+<span class="sd">        \mathrm{Exp}(\mathrm{adj}(\boldsymbol{\xi}_i^{\wedge}))`,</span>
 <span class="sd">        or :math:`\boldsymbol{X}_i = \mathrm{Exp}(\boldsymbol{\xi}_i^{\curlywedge})`.</span>
-<span class="sd">        </span>
+
 
 <span class="sd">    * If input (:math:`\mathbf{x}`, :math:`\mathbf{p}`)&#39;s :obj:`ltype` are :obj:`RxSO3_type`</span>
 <span class="sd">      and :obj:`rxso3_type` (input :math:`\mathbf{x}` is an instance of :meth:`RxSO3`,</span>
@@ -2800,7 +2801,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{J}^{-1}_i(\mathbf{x}_i) = \left[</span>
-<span class="sd">                                \begin{array}{cc} </span>
+<span class="sd">                                \begin{array}{cc}</span>
 <span class="sd">                                    \mathbf{J}_i^{-1}(\boldsymbol{\Phi}_i) &amp; \mathbf{0} \\</span>
 <span class="sd">                                    \mathbf{0} &amp; 1</span>
 <span class="sd">                                \end{array}</span>
@@ -2817,11 +2818,11 @@
 <span class="sd">        * J. Sola et al., `A micro Lie theory for state estimation in</span>
 <span class="sd">          robotics &lt;https://arxiv.org/abs/1812.01537&gt;`_, arXiv preprint arXiv:1812.01537 (2018).</span>
 
-<span class="sd">        In particular, Eq. (146) is the math used in the :obj:`SO3_type`, :obj:`so3_type` scenario; </span>
+<span class="sd">        In particular, Eq. (146) is the math used in the :obj:`SO3_type`, :obj:`so3_type` scenario;</span>
 <span class="sd">        Eq. (179b) and Eq. (180) are the math used in the :obj:`SE3_type`, :obj:`se3_type` scenario.</span>
 
 <span class="sd">        For Lie groups such as :obj:`Sim3_type`, :obj:`sim3_type`,</span>
-<span class="sd">        there is no analytic expression for the left Jacobian and its inverse. </span>
+<span class="sd">        there is no analytic expression for the left Jacobian and its inverse.</span>
 <span class="sd">        Numerical approximation is used based on series expansion.</span>
 <span class="sd">        One can refer to Eq. (26) of this paper for more details about the approximation:</span>
 
@@ -2944,8 +2945,10 @@
      
        <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
          <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="../../../../_static/doctools.js"></script>
-         <script src="../../../../_static/sphinx_highlight.js"></script>
          <script src="../../../../_static/katex.min.js"></script>
          <script src="../../../../_static/auto-render.min.js"></script>
          <script src="../../../../_static/katex_autorenderer.js"></script>
