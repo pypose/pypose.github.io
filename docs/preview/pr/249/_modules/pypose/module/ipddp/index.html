@@ -279,7 +279,9 @@
 
 <span class="sd">    where :math:`\mathbf{\tau}_t` = :math:`\begin{bmatrix} \mathbf{x}_t \\ \mathbf{u}_t</span>
 <span class="sd">    \end{bmatrix}`; :math:`q` and :math:`p` denote the stage and terminal costs, respectively;</span>
-<span class="sd">    :math:`\mathbf{c}` is the stage-wise inequality constraints.</span>
+<span class="sd">    :math:`\mathbf{c}` is the stage-wise inequality constraints. In addition to the notations</span>
+<span class="sd">    defined above, two additional variables :math:`\mathbf{s}` and :math:`\mathbf{y}` are</span>
+<span class="sd">    introduced, which denote the dual variable and the slack variable, respectively.</span>
 
 <span class="sd">    The IPDDP process can be summarised as iterative backward and forward recursions.</span>
 
@@ -330,6 +332,10 @@
 <span class="sd">                \mathbf{r}_t &amp;= \mathbf{S}_t \mathbf{c}_t + \mu  \mathbf{1}  \\</span>
 <span class="sd">            \end{align*}</span>
 
+<span class="sd">      As seen from the above equations, compared with LQR, additional terms involving</span>
+<span class="sd">      :math:`\mathbf{W}` have been added into iteration, which are related to the inequality</span>
+<span class="sd">      constraints. Additionally, feedback gains :math:`\mathbf{K}_t^{\mathbf{s}}`,</span>
+<span class="sd">      :math:`\mathbf{k}_t^{\mathbf{s}}` for the dual variable are also introduced.</span>
 
 <span class="sd">    - The forward recursion.</span>
 
@@ -341,6 +347,8 @@
 <span class="sd">                \mathbf{s}_t &amp;= \mathbf{K}_t^{\mathbf{s}}(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t^{\mathbf{s}}  + \mathbf{s}_t^{-}\\</span>
 <span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t,\mathbf{u}_t,t)  \\</span>
 <span class="sd">            \end{align*}</span>
+
+<span class="sd">      Additionally, some line-search and feasibility check algorithms are implemented therein.</span>
 
 <span class="sd">    Then cost of the system over the time horizon:</span>
 
@@ -360,16 +368,34 @@
 <span class="sd">        &lt;https://arxiv.org/pdf/2004.12710.pdf&gt;`_.</span>
 
 <span class="sd">    Example:</span>
-
+<span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; import torch as torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.nn as nn</span>
+<span class="sd">        &gt;&gt;&gt; from pypose.module.ipddp import IPDDP</span>
+<span class="sd">        &gt;&gt;&gt; from pypose.module.dynamics import NLS</span>
+<span class="sd">        &gt;&gt;&gt; device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; class InvPend(NLS):</span>
+<span class="sd">                def __init__(self, dt, length=[10.0], gravity=10.0):</span>
+<span class="sd">                super(InvPend, self).__init__()</span>
+<span class="sd">                self.tau = dt</span>
+<span class="sd">                self.length = length</span>
+<span class="sd">                self.gravity = gravity</span>
+<span class="sd">        &gt;&gt;&gt; def state_transition(self, state, input, t=None):</span>
+<span class="sd">                force = input.squeeze(-1)</span>
+<span class="sd">                _dstate = torch.stack([state[...,1], force+self.gravity/self.length[0]*torch.sin(state[...,0].clone())], dim=-1)</span>
+<span class="sd">                return state + torch.mul(_dstate, self.tau)</span>
+<span class="sd">        &gt;&gt;&gt; def observation(self, state, input, t=None):</span>
+<span class="sd">                return state</span>
+<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; dt = 0.05   # Delta t</span>
 <span class="sd">        &gt;&gt;&gt; T = 5    # Number of time steps</span>
-<span class="sd">        &gt;&gt;&gt; state = torch.tensor([[-2.,0.], [-1., 0.], [-2.5, 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; state = torch.tensor([[-2.,0.], [-1., 0.], [-2.5, 1.]], device=device)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; sys = InvPend(dt)</span>
 <span class="sd">        &gt;&gt;&gt; ns, nc = 2, 1</span>
 <span class="sd">        &gt;&gt;&gt; n_batch = 3</span>
-<span class="sd">        &gt;&gt;&gt; state_all =      torch.zeros(n_batch, T+1, ns)</span>
-<span class="sd">        &gt;&gt;&gt; input_all = 0.02*torch.ones(n_batch,  T,   nc)</span>
+<span class="sd">        &gt;&gt;&gt; state_all =      torch.zeros(n_batch, T+1, ns, device=device)</span>
+<span class="sd">        &gt;&gt;&gt; input_all = 0.02*torch.ones(n_batch,  T,   nc, device=device)</span>
 <span class="sd">        &gt;&gt;&gt; state_all[...,0,:] = state</span>
 <span class="sd">        &gt;&gt;&gt; init_traj = {&#39;state&#39;: state_all, &#39;input&#39;: input_all}</span>
 <span class="sd">        &gt;&gt;&gt;</span>
@@ -380,9 +406,9 @@
 <span class="sd">        &gt;&gt;&gt; stage_cost = pp.module.QuadCost(Q, R, S, c)</span>
 <span class="sd">        &gt;&gt;&gt; terminal_cost = pp.module.QuadCost(10./dt*Q[...,0:1,:,:], R[...,0:1,:,:], S[...,0:1,:,:], c[...,0:1]) # special stagecost with T=1</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; gx = torch.tile(torch.zeros( 2*nc, ns), (n_batch, T, 1, 1))</span>
-<span class="sd">        &gt;&gt;&gt; gu = torch.tile(torch.vstack( (torch.eye(nc, nc), - torch.eye(nc, nc)) ), (n_batch, T, 1, 1))</span>
-<span class="sd">        &gt;&gt;&gt; g = torch.tile(torch.hstack( (-0.25 * torch.ones(nc), -0.25 * torch.ones(nc)) ), (n_batch, T, 1))</span>
+<span class="sd">        &gt;&gt;&gt; gx = torch.tile(torch.zeros( 2*nc, ns, device=device), (n_batch, T, 1, 1))</span>
+<span class="sd">        &gt;&gt;&gt; gu = torch.tile(torch.vstack( (torch.eye(nc, nc, device=device), - torch.eye(nc, nc, device=device)) ), (n_batch, T, 1, 1))</span>
+<span class="sd">        &gt;&gt;&gt; g = torch.tile(torch.hstack( (-0.25 * torch.ones(nc, device=device), -0.25 * torch.ones(nc, device=device)) ), (n_batch, T, 1))</span>
 <span class="sd">        &gt;&gt;&gt; lincon = pp.module.LinCon(gx, gu, g)</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; traj_opt = [None for batch_id in range(n_batch)]</span>
