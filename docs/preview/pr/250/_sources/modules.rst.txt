@@ -20,3 +20,4 @@ Modules
    module.MPC
    module.ICP
    module.Controller
+   module.ControllerParametersTuner
