@@ -240,6 +240,7 @@
   <h1>Source code for pypose.lietensor.lietensor</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">.basics</span> <span class="kn">import</span> <span class="n">vec2skew</span>
 <span class="kn">import</span> <span class="nn">collections</span><span class="o">,</span> <span class="nn">numbers</span><span class="o">,</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">.operation</span> <span class="kn">import</span> <span class="n">broadcast_inputs</span>
@@ -1461,34 +1462,37 @@
             <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">return</span> <span class="n">result</span></div>
 
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">wrappable_lt</span><span class="p">():</span>
+    <span class="c1"># save the original PyTorch functions</span>
+    <span class="n">torch_make_dual</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span>
+    <span class="n">torch_wrap_tensor_for_grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_functorch</span><span class="o">.</span><span class="n">eager_transforms</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span>
 
-<span class="k">class</span> <span class="nc">WrappableLT</span><span class="p">:</span>
-    <span class="n">tmp_md</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span>
-    <span class="n">tmp_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_functorch</span><span class="o">.</span><span class="n">eager_transforms</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span>
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_dual_wrapper</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">_functorch</span><span class="o">.</span><span class="n">eager_transforms</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span>
-    
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">make_dual_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">tangent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_dual_wrapper</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">tangent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ltype</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ltype</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">WrappableLT</span><span class="o">.</span><span class="n">tmp_md</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">tangent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">torch_make_dual</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">tangent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ltype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span>
             <span class="n">res</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">ltype</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_wrap_tensor_for_grad</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrap_tensor_for_grad_wrapper</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
         <span class="n">ltype</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ltype</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">WrappableLT</span><span class="o">.</span><span class="n">tmp_w</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">torch_wrap_tensor_for_grad</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ltype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span>
             <span class="n">res</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">ltype</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmp_md</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># swap the original PyTorch functions with the wrapper</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span> <span class="o">=</span> <span class="n">make_dual_wrapper</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">_functorch</span><span class="o">.</span><span class="n">eager_transforms</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span> <span class="o">=</span> <span class="n">wrap_tensor_for_grad_wrapper</span>
+        <span class="k">yield</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># restore the original PyTorch functions</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">forward_ad</span><span class="o">.</span><span class="n">make_dual</span> <span class="o">=</span> <span class="n">torch_make_dual</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">_functorch</span><span class="o">.</span><span class="n">eager_transforms</span><span class="o">.</span><span class="n">_wrap_tensor_for_grad</span> <span class="o">=</span> <span class="n">torch_wrap_tensor_for_grad</span>
 </pre></div>
 
              </article>
