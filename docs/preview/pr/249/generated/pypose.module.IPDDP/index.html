@@ -248,7 +248,7 @@
 <h1>pypose.module.IPDDP<a class="headerlink" href="#pypose-module-ipddp" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.IPDDP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">IPDDP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_traj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ipddp/#IPDDP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IPDDP" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">IPDDP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_traj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ipddp/#IPDDP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.IPDDP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interior-point differential dynamic programming.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -287,7 +287,9 @@ for the following optimization problem:</p>
 \end{bmatrix}\)</span>; <span class="math">\(q\)</span> and <span class="math">\(p\)</span> denote the stage and terminal costs, respectively;
 <span class="math">\(\mathbf{c}\)</span> is the stage-wise inequality constraints. In addition to the notations
 defined above, two additional variables <span class="math">\(\mathbf{s}\)</span> and <span class="math">\(\mathbf{y}\)</span> are
-introduced, which denote the dual variable and the slack variable, respectively.</p>
+introduced, which denote the dual variable and the slack variable, respectively.
+We use <span class="math">\(\mathrm{infeas} = 0\)</span> (resp., <span class="math">\(\mathrm{infeas} = 1\)</span>) to denote
+the case where the initial trajectory is feasible (resp., infeasible).</p>
 <p>The IPDDP process can be summarised as iterative backward and forward recursions.</p>
 <ul>
 <li><p>The backward recursion.</p>
@@ -295,20 +297,48 @@ introduced, which denote the dual variable and the slack variable, respectively.
 <blockquote>
 <div><div class="math">
 \[\begin{align*}
-    \mathbf{Q}_t &= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t
+    \mathbf{Q}_t &= \begin{cases}
+    \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t
                         + \mathbf{v}_{t+1} \odot \mathbf{G}_t
-                        - \mathbf{W}_t^\top \mathbf{S}_t \mathbf{C}_t^{-1} \mathbf{W}_t   \\
-    \mathbf{q}_t &= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}
+                        - \mathbf{W}_t^\top \mathbf{S}_t \mathbf{C}_t^{-1} \mathbf{W}_t, \mathrm{if ~infeas} = 0 \\
+     \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t
+                        + \mathbf{v}_{t+1} \odot \mathbf{G}_t
+                        + \mathbf{W}_t^\top \mathbf{S}_t \mathbf{Y}_t^{-1} \mathbf{W}_t, \mathrm{if ~infeas} = 1 \\
+                    \end{cases}                           \\
+    \mathbf{q}_t &= \begin{cases}
+    \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}
                               + \mathbf{W}_t^\top\mathbf{s}_t
-                              - \mathbf{W}_t^\top \mathbf{C}_t^{-1}\mathbf{r}_t\\
+                              - \mathbf{W}_t^\top \mathbf{C}_t^{-1}\mathbf{r}_t, \mathrm{if ~infeas} = 0 \\
+    \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}
+                              + \mathbf{W}_t^\top\mathbf{s}_t
+                              + \mathbf{W}_t^\top \mathbf{Y}_t^{-1}\hat{\mathbf{r}}_t, \mathrm{if ~infeas} = 1 \\
+                    \end{cases}            \\
     \mathbf{K}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}
                                          \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\
     \mathbf{k}_t &= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}
                                                \mathbf{q}_{\mathbf{u}_t}         \\
-    \mathbf{K}_t^{\mathbf{s}} &= - \mathbf{S}_t\mathbf{C}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}
-                            + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t) \\
-    \mathbf{k}_t^{\mathbf{s}} &= - \mathbf{C}_t^{-1} (\mathbf{r}_t + \mathbf{S}_t
-                                        \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t) \\
+    \mathbf{K}_t^{\mathbf{s}} &= \begin{cases}
+    - \mathbf{S}_t\mathbf{C}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}
+                            + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 0 \\
+    \mathbf{S}_t\mathbf{Y}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}
+                            + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 1 \\
+                    \end{cases}
+                     \\
+    \mathbf{k}_t^{\mathbf{s}} &= \begin{cases}
+    - \mathbf{C}_t^{-1} (\mathbf{r}_t + \mathbf{S}_t
+                                        \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t), \mathrm{if ~infeas} = 0 \\
+    \mathbf{Y}_t^{-1} (\hat{\mathbf{r}}_t + \mathbf{S}_t
+                                        \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t), \mathrm{if ~infeas} = 1 \\
+                    \end{cases}                 \\
+    \mathbf{K}_t^{\mathbf{y}} &= \begin{cases}
+    \mathbf{0}, \mathrm{if ~infeas} = 0 \\
+    - (\mathbf{c}_{\mathbf{x}_t}  + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 1 \\
+                    \end{cases}
+                     \\
+    \mathbf{k}_t^{\mathbf{y}} &= \begin{cases}
+    \mathbf{0}, \mathrm{if ~infeas} = 0 \\
+    - (\mathbf{c}_{t} + \mathbf{y}_{t}) - \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t, \mathrm{if ~infeas} = 1 \\
+                    \end{cases}                 \\
     \mathbf{V}_t &= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}
         + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t
         + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}
@@ -335,7 +365,11 @@ introduced, which denote the dual variable and the slack variable, respectively.
                     \mathbf{f}_{\mathbf{u}_t, \mathbf{x}_t}, \mathbf{f}_{\mathbf{u}_t, \mathbf{u}_t}\\  \end{bmatrix} \\
     \mathbf{S}_t &= \mathbf{diag}(\mathbf{s}_t) \\
     \mathbf{C}_t &= \mathbf{diag}(\mathbf{c}_t) \\
-    \mathbf{r}_t &= \mathbf{S}_t \mathbf{c}_t + \mu  \mathbf{1}  \\
+    \mathbf{r}_t &= \begin{cases}
+    \mathbf{S}_t \mathbf{c}_t + \mu  \mathbf{1}, \mathrm{if ~infeas} = 0 \\
+    \mathbf{S}_t \mathbf{y}_t - \mu  \mathbf{1}, \mathrm{if ~infeas} = 1 \\
+                    \end{cases}  \\
+    \hat{\mathbf{r}}_t &= \mathbf{S}_t(\mathbf{c}_t+\mathbf{y}_t) - \mathbf{r}_t
 \end{align*}
 
 \]</div>
@@ -346,12 +380,16 @@ constraints. Additionally, feedback gains <span class="math">\(\mathbf{K}_t^{\ma
 <span class="math">\(\mathbf{k}_t^{\mathbf{s}}\)</span> for the dual variable are also introduced.</p>
 </li>
 <li><p>The forward recursion.</p>
-<p>For <span class="math">\(t\)</span> = 0 to <span class="math">\(T-1\)</span>:</p>
+<p>For <span class="math">\(t = 0\)</span> to <span class="math">\(T-1\)</span>:</p>
 <blockquote>
 <div><div class="math">
 \[\begin{align*}
     \mathbf{u}_t &= \mathbf{K}_t(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t + \mathbf{u}_t^{-}\\
     \mathbf{s}_t &= \mathbf{K}_t^{\mathbf{s}}(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t^{\mathbf{s}}  + \mathbf{s}_t^{-}\\
+    \mathbf{y}_t &= \begin{cases}
+    \mathbf{0}, \mathrm{if ~infeas} = 0 \\
+    \mathbf{K}_t^{\mathbf{y}}(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t^{\mathbf{y}}  + \mathbf{y}_t^{-}, \mathrm{if ~infeas} = 1 \\
+                    \end{cases}  \\
     \mathbf{x}_{t+1} &= \mathbf{f}(\mathbf{x}_t,\mathbf{u}_t,t)  \\
 \end{align*}
 
@@ -429,7 +467,7 @@ which can be integrated into a larger end-to-end learning system.</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">terminal_cost</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">QuadCost</span><span class="p">(</span><span class="mf">10.</span><span class="o">/</span><span class="n">dt</span><span class="o">*</span><span class="n">Q</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,:,:],</span> <span class="n">R</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,:,:],</span> <span class="n">S</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,:,:],</span> <span class="n">c</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">lincon</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">LinCon</span><span class="p">(</span><span class="n">gx</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">gu</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">g</span><span class="p">[</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">init_traj_sample</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">init_traj</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">][</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">init_traj</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">batch_id</span><span class="p">:</span><span class="n">batch_id</span><span class="o">+</span><span class="mi">1</span><span class="p">]}</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">solver</span> <span class="o">=</span> <span class="n">IPDDP</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">stage_cost</span><span class="p">,</span> <span class="n">terminal_cost</span><span class="p">,</span> <span class="n">lincon</span><span class="p">,</span> <span class="n">gx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">init_traj_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">solver</span> <span class="o">=</span> <span class="n">IPDDP</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">stage_cost</span><span class="p">,</span> <span class="n">terminal_cost</span><span class="p">,</span> <span class="n">lincon</span><span class="p">,</span> <span class="n">init_traj_sample</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">traj_opt</span><span class="p">[</span><span class="n">batch_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">optimizer</span><span class="p">()</span>
 </pre></div>
 </div>
