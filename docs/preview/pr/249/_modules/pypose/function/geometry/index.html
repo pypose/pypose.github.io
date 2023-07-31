@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.5.0-beta &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.5.0 &#x25BC</a>
     </div>
     
 
@@ -351,7 +351,7 @@
     <span class="k">return</span> <span class="n">homo2cart</span><span class="p">(</span><span class="n">points</span> <span class="o">@</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span> <span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span> <span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Calculates batched per-pixel reprojection error (pixel distance) for points either in</span>
 <span class="sd">    the camera or world frame given camera intrinsics or extrinsics, respectively.</span>
@@ -366,8 +366,21 @@
 <span class="sd">            The shape has to be (..., 3, 3).</span>
 <span class="sd">        extrinsics (``LieTensor``, optional): The camera extrinsics.</span>
 <span class="sd">            The shape has to be (..., 7). Default: ``None``.</span>
+<span class="sd">        reduction (``str``, optional): The reduction to apply on the output: ``&#39;none&#39;``</span>
+<span class="sd">            | ``&#39;sum&#39;`` | ``&#39;norm&#39;``</span>
+
+<span class="sd">            ``&#39;none&#39;``: No reduction is applied</span>
+
+<span class="sd">            ``&#39;sum&#39;``: The reprojection error on each component (u, v) is summed for</span>
+<span class="sd">            each pixel (L1 Norm)</span>
+
+<span class="sd">            ``&#39;norm&#39;``: The reprojection error&#39;s L2 norm for each pixel</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        Per-pixel reprojection error. The shape is (..., N).</span>
+<span class="sd">        Per-pixel reprojection error.</span>
+
+<span class="sd">        The shape is (..., N) if reduction is ``&#39;sum&#39;`` or ``&#39;norm&#39;``.</span>
+
+<span class="sd">        The shape is (..., N, 2) if reduction is ``&#39;none&#39;``.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
@@ -378,14 +391,21 @@
 <span class="sd">        &gt;&gt;&gt; object = torch.randn(6, 3)</span>
 <span class="sd">        &gt;&gt;&gt; pose = pp.randn_SE3()</span>
 <span class="sd">        &gt;&gt;&gt; pixels = pp.point2pixel(object, intrinsics, pose)</span>
-<span class="sd">        &gt;&gt;&gt; err = pp.reprojerr(object, pixels, intrinsics, pose)</span>
+<span class="sd">        &gt;&gt;&gt; err = pp.reprojerr(object, pixels, intrinsics, pose, reduction=&#39;norm&#39;)</span>
 <span class="sd">        tensor([0., 0., 0., 0., 0., 0.])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> \
            <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
+    <span class="k">assert</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">},</span> \
+           <span class="s2">&quot;Reduction method can only be &#39;norm&#39;|&#39;sum&#39;|&#39;none&#39;.&quot;</span>
     <span class="n">img_repj</span> <span class="o">=</span> <span class="n">point2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;norm&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span></div>
 
 
 <div class="viewcode-block" id="knn"><a class="viewcode-back" href="../../../../generated/pypose.knn/#pypose.knn">[docs]</a><span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
