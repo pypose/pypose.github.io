@@ -282,6 +282,8 @@
 <span class="sd">    :math:`\mathbf{c}` is the stage-wise inequality constraints. In addition to the notations</span>
 <span class="sd">    defined above, two additional variables :math:`\mathbf{s}` and :math:`\mathbf{y}` are</span>
 <span class="sd">    introduced, which denote the dual variable and the slack variable, respectively.</span>
+<span class="sd">    We use :math:`\mathrm{infeas} = 0` (resp., :math:`\mathrm{infeas} = 1`) to denote</span>
+<span class="sd">    the case where the initial trajectory is feasible (resp., infeasible).</span>
 
 <span class="sd">    The IPDDP process can be summarised as iterative backward and forward recursions.</span>
 
@@ -291,20 +293,48 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
-<span class="sd">                \mathbf{Q}_t &amp;= \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t</span>
+<span class="sd">                \mathbf{Q}_t &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t</span>
 <span class="sd">                                    + \mathbf{v}_{t+1} \odot \mathbf{G}_t</span>
-<span class="sd">                                    - \mathbf{W}_t^\top \mathbf{S}_t \mathbf{C}_t^{-1} \mathbf{W}_t   \\</span>
-<span class="sd">                \mathbf{q}_t &amp;= \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}</span>
+<span class="sd">                                    - \mathbf{W}_t^\top \mathbf{S}_t \mathbf{C}_t^{-1} \mathbf{W}_t, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                 \mathbf{Q}_t + \mathbf{F}_t^\top\mathbf{V}_{t+1}\mathbf{F}_t</span>
+<span class="sd">                                    + \mathbf{v}_{t+1} \odot \mathbf{G}_t</span>
+<span class="sd">                                    + \mathbf{W}_t^\top \mathbf{S}_t \mathbf{Y}_t^{-1} \mathbf{W}_t, \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}                           \\</span>
+<span class="sd">                \mathbf{q}_t &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}</span>
 <span class="sd">                                          + \mathbf{W}_t^\top\mathbf{s}_t</span>
-<span class="sd">                                          - \mathbf{W}_t^\top \mathbf{C}_t^{-1}\mathbf{r}_t\\</span>
+<span class="sd">                                          - \mathbf{W}_t^\top \mathbf{C}_t^{-1}\mathbf{r}_t, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                \mathbf{q}_t + \mathbf{F}_t^\top\mathbf{v}_{t+1}</span>
+<span class="sd">                                          + \mathbf{W}_t^\top\mathbf{s}_t</span>
+<span class="sd">                                          + \mathbf{W}_t^\top \mathbf{Y}_t^{-1}\hat{\mathbf{r}}_t, \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}            \\</span>
 <span class="sd">                \mathbf{K}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
 <span class="sd">                                                     \mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t} \\</span>
 <span class="sd">                \mathbf{k}_t &amp;= -\mathbf{Q}_{\mathbf{u}_t, \mathbf{u}_t}^{-1}</span>
 <span class="sd">                                                           \mathbf{q}_{\mathbf{u}_t}         \\</span>
-<span class="sd">                \mathbf{K}_t^{\mathbf{s}} &amp;= - \mathbf{S}_t\mathbf{C}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}</span>
-<span class="sd">                                        + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t) \\</span>
-<span class="sd">                \mathbf{k}_t^{\mathbf{s}} &amp;= - \mathbf{C}_t^{-1} (\mathbf{r}_t + \mathbf{S}_t</span>
-<span class="sd">                                                    \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t) \\</span>
+<span class="sd">                \mathbf{K}_t^{\mathbf{s}} &amp;= \begin{cases}</span>
+<span class="sd">                - \mathbf{S}_t\mathbf{C}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}</span>
+<span class="sd">                                        + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                \mathbf{S}_t\mathbf{Y}_t^{-1} (\mathbf{c}_{\mathbf{x}_t}</span>
+<span class="sd">                                        + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}</span>
+<span class="sd">                                 \\</span>
+<span class="sd">                \mathbf{k}_t^{\mathbf{s}} &amp;= \begin{cases}</span>
+<span class="sd">                - \mathbf{C}_t^{-1} (\mathbf{r}_t + \mathbf{S}_t</span>
+<span class="sd">                                                    \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t), \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                \mathbf{Y}_t^{-1} (\hat{\mathbf{r}}_t + \mathbf{S}_t</span>
+<span class="sd">                                                    \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t), \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}                 \\</span>
+<span class="sd">                \mathbf{K}_t^{\mathbf{y}} &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{0}, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                - (\mathbf{c}_{\mathbf{x}_t}  + \mathbf{c}_{\mathbf{u}_t} \mathbf{K}_t), \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}</span>
+<span class="sd">                                 \\</span>
+<span class="sd">                \mathbf{k}_t^{\mathbf{y}} &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{0}, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                - (\mathbf{c}_{t} + \mathbf{y}_{t}) - \mathbf{c}_{\mathbf{u}_t} \mathbf{k}_t, \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}                 \\</span>
 <span class="sd">                \mathbf{V}_t &amp;= \mathbf{Q}_{\mathbf{x}_t, \mathbf{x}_t}</span>
 <span class="sd">                    + \mathbf{Q}_{\mathbf{x}_t, \mathbf{u}_t}\mathbf{K}_t</span>
 <span class="sd">                    + \mathbf{K}_t^\top\mathbf{Q}_{\mathbf{u}_t, \mathbf{x}_t}</span>
@@ -329,7 +359,11 @@
 <span class="sd">                                \mathbf{f}_{\mathbf{u}_t, \mathbf{x}_t}, \mathbf{f}_{\mathbf{u}_t, \mathbf{u}_t}\\  \end{bmatrix} \\</span>
 <span class="sd">                \mathbf{S}_t &amp;= \mathbf{diag}(\mathbf{s}_t) \\</span>
 <span class="sd">                \mathbf{C}_t &amp;= \mathbf{diag}(\mathbf{c}_t) \\</span>
-<span class="sd">                \mathbf{r}_t &amp;= \mathbf{S}_t \mathbf{c}_t + \mu  \mathbf{1}  \\</span>
+<span class="sd">                \mathbf{r}_t &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{S}_t \mathbf{c}_t + \mu  \mathbf{1}, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                \mathbf{S}_t \mathbf{y}_t - \mu  \mathbf{1}, \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}  \\</span>
+<span class="sd">                \hat{\mathbf{r}}_t &amp;= \mathbf{S}_t(\mathbf{c}_t+\mathbf{y}_t) - \mathbf{r}_t</span>
 <span class="sd">            \end{align*}</span>
 
 <span class="sd">      As seen from the above equations, compared with LQR, additional terms involving</span>
@@ -339,12 +373,16 @@
 
 <span class="sd">    - The forward recursion.</span>
 
-<span class="sd">      For :math:`t` = 0 to :math:`T-1`:</span>
+<span class="sd">      For :math:`t = 0` to :math:`T-1`:</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{align*}</span>
 <span class="sd">                \mathbf{u}_t &amp;= \mathbf{K}_t(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t + \mathbf{u}_t^{-}\\</span>
 <span class="sd">                \mathbf{s}_t &amp;= \mathbf{K}_t^{\mathbf{s}}(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t^{\mathbf{s}}  + \mathbf{s}_t^{-}\\</span>
+<span class="sd">                \mathbf{y}_t &amp;= \begin{cases}</span>
+<span class="sd">                \mathbf{0}, \mathrm{if ~infeas} = 0 \\</span>
+<span class="sd">                \mathbf{K}_t^{\mathbf{y}}(\mathbf{x}_t - \mathbf{x}_t^{-}) + \mathbf{k}_t^{\mathbf{y}}  + \mathbf{y}_t^{-}, \mathrm{if ~infeas} = 1 \\</span>
+<span class="sd">                                \end{cases}  \\</span>
 <span class="sd">                \mathbf{x}_{t+1} &amp;= \mathbf{f}(\mathbf{x}_t,\mathbf{u}_t,t)  \\</span>
 <span class="sd">            \end{align*}</span>
 
@@ -417,11 +455,11 @@
 <span class="sd">        &gt;&gt;&gt;     terminal_cost = pp.module.QuadCost(10./dt*Q[batch_id:batch_id+1,0:1,:,:], R[batch_id:batch_id+1,0:1,:,:], S[batch_id:batch_id+1,0:1,:,:], c[batch_id:batch_id+1,0:1])</span>
 <span class="sd">        &gt;&gt;&gt;     lincon = pp.module.LinCon(gx[batch_id:batch_id+1], gu[batch_id:batch_id+1], g[batch_id:batch_id+1])</span>
 <span class="sd">        &gt;&gt;&gt;     init_traj_sample = {&#39;state&#39;: init_traj[&#39;state&#39;][batch_id:batch_id+1], &#39;input&#39;: init_traj[&#39;input&#39;][batch_id:batch_id+1]}</span>
-<span class="sd">        &gt;&gt;&gt;     solver = IPDDP(sys, stage_cost, terminal_cost, lincon, gx.shape[-2], init_traj_sample)</span>
+<span class="sd">        &gt;&gt;&gt;     solver = IPDDP(sys, stage_cost, terminal_cost, lincon, init_traj_sample)</span>
 <span class="sd">        &gt;&gt;&gt;     traj_opt[batch_id] = solver.optimizer()</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stage_cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminal_cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cons</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stage_cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminal_cost</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f_fn</span> <span class="o">=</span> <span class="n">sys</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_fn</span> <span class="o">=</span> <span class="n">terminal_cost</span>
@@ -432,8 +470,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">contraction_flag</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">init_traj</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">],</span> <span class="n">init_traj</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
         <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">ncons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">n_cons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">ncons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># algorithm parameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">infeas</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0e-7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="kc">False</span>
