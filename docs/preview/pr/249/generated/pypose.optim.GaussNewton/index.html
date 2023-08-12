@@ -128,7 +128,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.5.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.6.0 &#x25BC</a>
     </div>
     
 
@@ -164,6 +164,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
@@ -287,13 +288,19 @@ definite), and <span class="math">\(\rho\)</span> is a robust kernel function to
 <li><p><strong>solver</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – a linear solver. Available linear solvers include
 <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> and <a class="reference internal" href="../pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ" title="pypose.optim.solver.LSTSQ"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.LSTSQ()</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, <a class="reference internal" href="../pypose.optim.solver.PINV/#pypose.optim.solver.PINV" title="pypose.optim.solver.PINV"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solver.PINV()</span></code></a> is used.
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>kernel</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – a robust kernel function. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>corrector</strong> – (nn.Module, optional): a Jacobian and model residual corrector to fit
-the kernel function. If a kernel is given but a corrector is not specified, auto
-correction is used. Auto correction can be unstable when the robust model has
-indefinite Hessian. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – a square positive definite matrix defining the weight of
-model residual. Use this only when all inputs shared the same weight matrices. This is
+<li><p><strong>kernel</strong> (nn.Module, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – the robust kernel function. If a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>,
+the element must be nn.Module or <code class="docutils literal notranslate"><span class="pre">None</span></code> and the length must be 1 or the number of residuals.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>corrector</strong> – (nn.Module, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional): the Jacobian and model residual corrector to
+fit the kernel function. If a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, the element must be nn.Module or <code class="docutils literal notranslate"><span class="pre">None</span></code> and
+the length must be 1 or the number of residuals.
+If a kernel is given but a corrector is not specified, auto correction is
+used. Auto correction can be unstable when the robust model has indefinite Hessian.
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>weight</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – the square positive definite matrix defining
+the weight of model residual. If a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, the element must be <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> and
+the length must be equal to the number of residuals.
+Use this only when all inputs shared the same weight matrices. This is
 ignored when weight is given when calling <a class="reference internal" href="#pypose.optim.GaussNewton.step" title="pypose.optim.GaussNewton.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> or <a class="reference internal" href="../pypose.optim.scheduler.StopOnPlateau/#pypose.optim.scheduler.StopOnPlateau.optimize" title="pypose.optim.scheduler.StopOnPlateau.optimize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize()</span></code></a> method.
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>vectorize</strong> (<em>bool</em><em>, </em><em>optional</em>) – the method of computing Jacobian. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
@@ -341,11 +348,12 @@ More details are in Eq. (5) of the paper “<a class="reference external" href="
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tensor/LieTensor</em><em> or </em><em>tuple of Tensors/LieTensors</em>) – the input to the model.</p></li>
+<li><p><strong>input</strong> (<em>Tensor/LieTensor</em><em>, </em><em>tuple</em><em> or </em><em>a dict of Tensors/LieTensors</em>) – the input to the model.</p></li>
 <li><p><strong>target</strong> (<em>Tensor/LieTensor</em>) – the model target to approximate.
 If not given, the model output is minimized. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – a square positive definite matrix defining the weight of
-model residual. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>weight</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – the square positive definite matrix defining
+the weight of model residual. If a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, the element must be <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> and
+the length must be equal to the number of residuals. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
