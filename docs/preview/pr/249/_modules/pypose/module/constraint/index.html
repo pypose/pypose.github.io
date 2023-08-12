@@ -263,10 +263,11 @@
 <span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/constraint&gt;`_.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cdim</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;strategy&#39;</span><span class="p">:</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">}</span>
         <span class="c1"># self.jacargs = {&#39;vectorize&#39;:False, &#39;strategy&#39;:&#39;reverse-mode&#39;}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cdim</span> <span class="o">=</span> <span class="n">cdim</span>
 
 <div class="viewcode-block" id="Constraint.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.Constraint/#pypose.module.Constraint.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -307,6 +308,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cdim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        dim of constraint</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdim</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">gx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -377,10 +385,12 @@
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gu</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LinCon</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LinCon</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">gx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
         <span class="c1"># assert gx.ndim in (2, 3), &quot;Invalid constraint state coefficient dimensions&quot;</span>
         <span class="k">assert</span> <span class="n">gx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">gu</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="s2">&quot;Invalid coefficient matrices dimensions&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gu</span><span class="p">,</span> <span class="n">g</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_gx&#39;</span><span class="p">,</span> <span class="n">gx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_gu&#39;</span><span class="p">,</span> <span class="n">gu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_g&#39;</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LinCon.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LinCon/#pypose.module.LinCon.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -410,10 +420,6 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gx</span>
 
-    <span class="nd">@gx</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">gx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gx</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gx</span> <span class="o">=</span> <span class="n">gx</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">gu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -421,20 +427,12 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gu</span>
 
-    <span class="nd">@gu</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">gu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gu</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gu</span> <span class="o">=</span> <span class="n">gu</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Constant :obj:`g`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span>
-
-    <span class="nd">@g</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span> <span class="o">=</span> <span class="n">g</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span></div>
 </pre></div>
 
              </article>
