@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.testing.testing &mdash; PyPose main documentation</title>
+  <title>pypose.testing.comparison &mdash; PyPose main documentation</title>
   
 
   
@@ -146,7 +146,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="_modules/pypose/testing/testing.html">
+  <a style="color:#F05732" href="_modules/pypose/testing/comparison.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -211,7 +211,7 @@
         
           <li><a href="../../../">Module code</a> &gt;</li>
         
-      <li>pypose.testing.testing</li>
+      <li>pypose.testing.comparison</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
@@ -239,37 +239,49 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <h1>Source code for pypose.testing.testing</h1><div class="highlight"><pre>
+  <h1>Source code for pypose.testing.comparison</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..function.checking</span> <span class="kn">import</span> <span class="n">is_lietensor</span>
 
-<div class="viewcode-block" id="assert_lietensor_close"><a class="viewcode-back" href="../../../../generated/pypose.testing.assert_lietensor_close/#pypose.testing.assert_lietensor_close">[docs]</a><span class="k">def</span> <span class="nf">assert_lietensor_close</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="assert_close"><a class="viewcode-back" href="../../../../generated/pypose.testing.assert_close/#pypose.testing.assert_close">[docs]</a><span class="k">def</span> <span class="nf">assert_close</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Asserts that ``actual`` and ``expected`` are close.</span>
+<span class="sd">    Asserts that ``actual`` and ``expected`` are close. This function is exactly the same</span>
+<span class="sd">    with `torch.testing.assert_close &lt;https://tinyurl.com/3bm33ps7&gt;`_ except for that it</span>
+<span class="sd">    also accepts ``pypose.LieTensor``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        actual(:obj:`LieTensor`): Actual Lietensor input.</span>
-<span class="sd">        expected(:obj:`LieTensor`): Expected Lietensor input.</span>
-<span class="sd">        *args: parameters in torch.testing.assert_close</span>
-<span class="sd">        **kwargs: parameters in torch.testing.assert_close</span>
+<span class="sd">        actual(:obj:`Tensor` or :obj:`LieTensor`): Actual input.</span>
+<span class="sd">        expected(:obj:`Tensor` or :obj:`LieTensor`): Expected input.</span>
+<span class="sd">        rtol (Optional[float]): Relative tolerance. If specified ``atol`` must also be</span>
+<span class="sd">            specified. If omitted, default values based on the :attr:`~torch.Tensor.dtype`</span>
+<span class="sd">            are selected with the below table.</span>
+<span class="sd">        atol (Optional[float]): Absolute tolerance. If specified ``rtol`` must also be</span>
+<span class="sd">            specified. If omitted, default values based on the :attr:`~torch.Tensor.dtype`</span>
+<span class="sd">            are selected with the below table.</span>
 
-<span class="sd">    If :math:`T_e` and :math:`T_a` are the expected Lietensor and actual Lietensor, they</span>
-<span class="sd">    are considered close if :math:`T_e*T_a^{-1} = \mathbf{O}`, where :math:`\mathbf{O}`</span>
-<span class="sd">    is a zero matrix.</span>
+<span class="sd">    If :math:`T_e` and :math:`T_a` are Lietensor, they are considered close if</span>
+<span class="sd">    :math:`T_e*T_a^{-1} = \mathbf{O}`, where :math:`\mathbf{O}` is close to zero tensor in</span>
+<span class="sd">    the sense of ``torch.testing.assert_close`` is ``True.``</span>
 
-<span class="sd">    Note:</span>
-<span class="sd">        The details of parameters ``*args`` and ``**kwargs`` can be found in</span>
-<span class="sd">        `torch.testing.assert_close &lt;https://pytorch.org/docs/stable/testing.html&gt;`_.</span>
+<span class="sd">    Warning:</span>
+<span class="sd">        The prerequisites for the other arguments align precisely with</span>
+<span class="sd">        `torch.testing.assert_close &lt;https://tinyurl.com/3bm33ps7&gt;`_. Kindly consult it</span>
+<span class="sd">        for further details.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
 <span class="sd">        &gt;&gt;&gt; actual = pp.randn_SE3(3)</span>
-<span class="sd">        &gt;&gt;&gt; expected = actual</span>
-<span class="sd">        &gt;&gt;&gt; pp.testing.assert_lietensor_close(actual, expected)</span>
+<span class="sd">        &gt;&gt;&gt; expected = actual.Log().Exp()</span>
+<span class="sd">        &gt;&gt;&gt; pp.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-5)</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">actual</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">expected</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
-    <span class="n">zero</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="p">(</span><span class="n">actual</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">expected</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">source</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">actual</span><span class="p">,</span> <span class="n">expected</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
              </article>
