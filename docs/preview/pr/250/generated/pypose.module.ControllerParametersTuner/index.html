@@ -340,8 +340,15 @@ the feasiable set. And the parameters can be updated using the following equatio
 </ul>
 </div>
 <dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.ControllerParametersTuner.loss_computation">
+<span class="sig-name descname"><span class="pre">loss_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamic_system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_to_tune</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_get_state_error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner.loss_computation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner.loss_computation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the loss besed on the given controller parameters and state error defined
+by the func_get_state_error input parameter.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.ControllerParametersTuner.tune">
-<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamic_system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_tuning_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_to_tune</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_get_state_error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner.tune"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner.tune" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamic_system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_to_tune</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_get_state_error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner.tune"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner.tune" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -352,15 +359,22 @@ but it has to be able to be used by the controller anf function func_get_state_e
 should not be equal to the system initial state.</p></li>
 <li><p><strong>controller</strong> (<em>pypose.module.controller</em>) – Linear or nonlinear controller to control the dynamic system</p></li>
 <li><p><strong>parameters</strong> (<em>Tensor</em>) – 1d tensor represent the controller parameters</p></li>
-<li><p><strong>parameters_tuning_set</strong> (<em>Tensor</em>) – This set gives the minimum and the maximum
+<li><p><strong>parameters_bound</strong> (<em>Tensor</em>) – This set gives the minimum and the maximum
 value the parameters can reach</p></li>
 <li><p><strong>tau</strong> – time interval considered in system</p></li>
 <li><p><strong>states_to_tune</strong> (<em>Tensor</em>) – choose which state needs to be considered in the
 loss function, usually only position is chosen.</p></li>
 <li><p><strong>func_get_state_error</strong> (<em>function</em>) – function has two inputs: system state and
 ref state. The function needs to be provided by users considering system
-state and ref state are not always in the same formation.</p></li>
+state and ref state are not always in the same formation or dimension.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuned controller parameters, original state loss and
+new state loss using tuned controller parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
 </dd></dl>
