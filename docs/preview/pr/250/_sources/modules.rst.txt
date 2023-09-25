@@ -19,5 +19,5 @@ Modules
    module.EPnP
    module.MPC
    module.ICP
-   module.Controller
+   module.PID
    module.ControllerParametersTuner
