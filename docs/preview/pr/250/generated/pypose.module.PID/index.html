@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.module.ControllerParametersTuner &mdash; PyPose main documentation</title>
+  <title>pypose.module.PID &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="Optimization" href="../../optim/" />
-    <link rel="prev" title="pypose.module.PID" href="../pypose.module.PID/" />
+    <link rel="next" title="pypose.module.ControllerParametersTuner" href="../pypose.module.ControllerParametersTuner/" />
+    <link rel="prev" title="pypose.module.ICP" href="../pypose.module.ICP/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.module.ControllerParametersTuner.html">
+  <a style="color:#F05732" href="generated/pypose.module.PID.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -213,13 +213,13 @@
         
           <li><a href="../../modules/">Modules</a> &gt;</li>
         
-      <li>pypose.module.ControllerParametersTuner</li>
+      <li>pypose.module.PID</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.module.ControllerParametersTuner.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.module.PID.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -245,138 +245,33 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-module-controllerparameterstuner">
-<h1>pypose.module.ControllerParametersTuner<a class="headerlink" href="#pypose-module-controllerparameterstuner" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-module-pid">
+<h1>pypose.module.PID<a class="headerlink" href="#pypose-module-pid" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.module.ControllerParametersTuner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">ControllerParametersTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty_coefficient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pypose.module.PID">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the basic class for all PID controller implementations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pypose.module.PID.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feed_forward_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>learning_rate</strong> (<em>float</em>) – gradient descent step size</p></li>
-<li><p><strong>penalty_coefficient</strong> (<em>float</em>) – controller-effort penalty coefficient</p></li>
-<li><p><strong>device</strong> (<em>string</em>) – on the cpu or cuda to perform the tuning process</p></li>
+<li><p><strong>parameters</strong> – controller parameters, e.g. kp, ki, kd in PID controllers.</p></li>
+<li><p><strong>state</strong> – current system state of dynamic systems.</p></li>
+<li><p><strong>ref_state</strong> – the reference state of systems to reach.</p></li>
+<li><p><strong>feed_forward_quantity</strong> – system plant input generated by other feed forward
+controllers.</p></li>
 </ul>
 </dd>
 </dl>
-<p>This class is the general implementation of the controller parameters tuner based on
-the sensitivity propagation.</p>
-<p>Given a dynamic system, the system state transition can be defined as</p>
-<div class="math">
-\[\mathbf{x_{i+1}} = f(\mathbf{x_i}, \mathbf{u_i}) \tag{1}
-
-\]</div>
-<div class="math">
-\[\mathbf{u_i} = h(\mathbf{x_i}, \mathbf{\hat{x_i}}, \pmb{\pmb{\theta}}) \tag{2}
-
-\]</div>
-<p>Where <span class="math">\(\mathbf{x_{i+1}}\)</span> stands for the dynmamic system states at time <span class="math">\(i+1\)</span>,
-<span class="math">\(\mathbf{x_i} \in \mathbb{R}^n\)</span> gives the dynamic system states at time <span class="math">\(i\)</span>,
-<span class="math">\(\mathbf{\hat x_i} \in \mathbb{R}^n\)</span> gives the system reference states at time <span class="math">\(i\)</span>,
-<span class="math">\(\mathbf{u_i} \in \mathbb{R}^m\)</span> is the controller-generated system inputs at time <span class="math">\(i\)</span>,
-<span class="math">\(\mathbf{\pmb{\theta}}\)</span> is the controller parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For the parameter initial_state and parameters, please use 1d row vector to
-represent these variables at the same time.</p>
-</div>
-<p>Given a dynamic system, a corresponding controller and reference states, assuming all
-these components are differentiable, it is possbile to find the most suitable
-parameters by constructing the loss function <span class="math">\(L\)</span> and computing the gradient of
-<span class="math">\(L\)</span> with respect to controller parameters.</p>
-<div class="math">
-\[L = \sum_{i=1}^N ||\mathbf{x_i} - \mathbf{\hat x_i}||^2 + \sum_{i=0}^{N-1} \lambda|| \mathbf{u_i} ||^2 \tag{3}
-
-\]</div>
-<p>Where <span class="math">\(L\)</span> is the Loss function. Here it works as the control-effort penalty in the loss function. <span class="math">\(\lambda\)</span> is the
-penalty coefficient.</p>
-<p>And we can get the derivatives as following:</p>
-<div class="math">
-\[\begin{align*}
-    \nabla L_{\pmb{\theta}} &= \sum_{i=1}^N \frac{\partial L}{\partial \mathbf{x_i}} \frac{\partial \mathbf{x_i}}{\partial \pmb{\theta}} + \sum_{i=0}^{N-1} \frac{\partial L}{\partial \mathbf{u_i}} \frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}} \\
-    \frac{\partial \mathbf{x_{i+1}}}{\partial \pmb{\theta}} &= (\frac{\partial \mathbf{x_{i+1}}}{\partial \mathbf{x_i}} + \frac{\partial \mathbf{x_{i+1}}}{\partial \mathbf{u_i}}\frac{\partial \mathbf{u_i}}{\partial \mathbf{x_i}})
-    \frac{\partial \mathbf{x_i}}{\partial \pmb{\theta}}+\frac{\partial \mathbf{x_{i+1}}}{\partial \mathbf{u_i}}\frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}} \\
-    \frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}} &= \frac{\partial \mathbf{u_i}}{\partial \mathbf{x_i}} \frac{\partial \mathbf{x_i}}{\partial \pmb{\theta}} + \frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}}
-\end{align*} \tag{4}
-
-\]</div>
-<p>To make sure the controller parameters can stay in the reasonable and safe sets, after updating the parameters, it’s essential to project the new parameters into
-the feasiable set. And the parameters can be updated using the following equation:</p>
-<div class="math">
-\[\pmb{\theta} \leftarrow P_{\Theta}(\pmb{\theta} - \alpha\nabla_{\pmb{\theta}}L) \tag{5}
-
-\]</div>
-<p>The whole controller parameters tuning pipeline can be found here:</p>
-<div class="math">
-\[\begin{aligned}
-     &\rule{120mm}{0.4pt}                                                                        \\
-     &\textbf{input}: \text{Initial state }\mathbf{\bar x_0}, \text{initial controller parameters }\pmb{\theta}_0,
-     \text{feasible set }\Theta, \text{horizon }N,                                               \\
-     &\hspace{12mm} \text{desired states }\mathbf{\hat{x}_{1:N}}, \text{step size }\alpha,
-     \text{and termination condiction } C                                                        \\
-
-     &\rule{120mm}{0.4pt}                                                                        \\
-     &\textbf{Output} \: \text{Tuned parameter: } \pmb{\theta}^{\ast}                                  \\
-     &\hspace{5mm} \text{Initialize }\pmb{\theta} \leftarrow \pmb{\theta}_0                                  \\
-     &\hspace{5mm} \text{While }C \text{ is FALSE }\textbf{do}                                   \\
-     &\hspace{10mm} \text{Reset } \mathbf{x_0} \text{ to } \mathbf{\bar x_0}.                                       \\
-     &\hspace{10mm} \textbf{for } k \leftarrow 0 \text{ to } N \textbf{ do}                           \\
-     &\hspace{15mm} \text{Obtain } \mathbf{x_i} \text{ from system and compute } \mathbf{x_{i+1}} \text{ and } \mathbf{u_i} \text{ using equation (1) and (2)}  \\
-     &\hspace{15mm} \text{Update} \frac{\partial \mathbf{x_i}}{\partial \pmb{\theta}} \text{ and } \frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}} \text{using equation (4)} \\
-     &\hspace{15mm} \text{Compute } \frac{\partial L}{\partial \mathbf{x_i}} \text{ and } \frac{\partial L}{\partial \mathbf{u_i}}. \\
-     &\hspace{15mm} \text{Store } \mathbf{x_i}, \mathbf{u_i}, \frac{\partial \mathbf{x_{i+1}}}{\partial \pmb{\theta}}, \frac{\partial \mathbf{u_i}}{\partial \pmb{\theta}}, \frac{\partial L}{\partial \mathbf{x_i}}\text{ and } \frac{\partial L}{\partial \mathbf{u_i}}\text{ in memory}. \\
-     &\hspace{10mm} \textbf{end for} \\
-     &\hspace{10mm} \text{Compute }\nabla L_{\pmb{\theta}} \text{ using equation (4) and update } \pmb{\theta} \text{with equation (5).} \\
-     &\hspace{5mm} \textbf{end while}                                                \\
-     &\rule{120mm}{0.4pt}                                                            \\[-1.ex]
-     &\bf{return} \:  \text{the tuned parameters }\pmb{\theta}^{\ast} \leftarrow \pmb{\theta}                                                    \\[-1.ex]
-     &\rule{120mm}{0.4pt}                                                            \\[-1.ex]
-\end{aligned}\]</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This controller parameter tuning algorithm is developed based on the method proposed by this paper:</p>
-<ul class="simple">
-<li><p>Cheng, Sheng, et al. <a class="reference external" href="https://arxiv.org/abs/2209.10021">DiffTune: Auto-Tuning through Auto-Differentiation.</a> arXiv preprint arXiv:2209.10021 (2022).</p></li>
-</ul>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.ControllerParametersTuner.loss_computation">
-<span class="sig-name descname"><span class="pre">loss_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamic_system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_to_tune</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_get_state_error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner.loss_computation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner.loss_computation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the loss besed on the given controller parameters and state error defined
-by the func_get_state_error input parameter.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pypose.module.ControllerParametersTuner.tune">
-<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamic_system</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states_to_tune</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_get_state_error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/controller_parameters_tuner/#ControllerParametersTuner.tune"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.ControllerParametersTuner.tune" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dynamic_system</strong> (<em>pypose.module.dynamics</em>) – dynamics system</p></li>
-<li><p><strong>initial_state</strong> (<em>Tensor</em>) – 1d tensor representing the states of the dynamic system</p></li>
-<li><p><strong>ref_states</strong> (<em>object</em>) – these reference states are defined by the user and no need to be specific formation,
-but it has to be able to be used by the controller anf function func_get_state_error. In this function, we assume the first reference state
-should not be equal to the system initial state.</p></li>
-<li><p><strong>controller</strong> (<em>pypose.module.controller</em>) – Linear or nonlinear controller to control the dynamic system</p></li>
-<li><p><strong>parameters</strong> (<em>Tensor</em>) – 1d tensor represent the controller parameters</p></li>
-<li><p><strong>parameters_bound</strong> (<em>Tensor</em>) – This set gives the minimum and the maximum
-value the parameters can reach</p></li>
-<li><p><strong>tau</strong> – time interval considered in system</p></li>
-<li><p><strong>states_to_tune</strong> (<em>Tensor</em>) – choose which state needs to be considered in the
-loss function, usually only position is chosen.</p></li>
-<li><p><strong>func_get_state_error</strong> (<em>function</em>) – function has two inputs: system state and
-ref state. The function needs to be provided by users considering system
-state and ref state are not always in the same formation or dimension.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuned controller parameters, original state loss and
-new state loss using tuned controller parameters</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="pypose.module.PID.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to reset the internal state.
+For example, integrated error in PID controller</p>
 </dd></dl>
 
 </dd></dl>
@@ -391,10 +286,10 @@ new state loss using tuned controller parameters</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../optim/" class="btn btn-neutral float-right" title="Optimization" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.module.ControllerParametersTuner/" class="btn btn-neutral float-right" title="pypose.module.ControllerParametersTuner" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.module.PID/" class="btn btn-neutral" title="pypose.module.PID" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.module.ICP/" class="btn btn-neutral" title="pypose.module.ICP" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
