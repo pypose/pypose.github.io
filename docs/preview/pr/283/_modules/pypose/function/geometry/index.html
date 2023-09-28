@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.6.1 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.6.2 &#x25BC</a>
     </div>
     
 
@@ -351,6 +351,62 @@
         <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">points</span>
     <span class="k">return</span> <span class="n">homo2cart</span><span class="p">(</span><span class="n">points</span> <span class="o">@</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pixel2point"><a class="viewcode-back" href="../../../../generated/pypose.pixel2point/#pypose.pixel2point">[docs]</a><span class="k">def</span> <span class="nf">pixel2point</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert batch of pixels with depth into points (in camera coordinate)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pixels: (``torch.Tensor``) The 2d coordinates of pixels in the camera</span>
+<span class="sd">            pixel coordinate.</span>
+<span class="sd">            Shape has to be (..., N, 2)</span>
+
+<span class="sd">        depth: (``torch.Tensor``) The depths of pixels with respect to the</span>
+<span class="sd">            sensor plane.</span>
+<span class="sd">            Shape has to be (..., N)</span>
+
+<span class="sd">        intrinsics: (``torch.Tensor``): The intrinsic parameters of cameras.</span>
+<span class="sd">            The shape has to be (..., 3, 3).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``torch.Tensor`` The associated 3D-points with shape (..., N, 3)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; f, (H, W) = 2, (9, 9) # focal length and image height, width</span>
+<span class="sd">        &gt;&gt;&gt; intrinsics = torch.tensor([[f, 0, H / 2],</span>
+<span class="sd">        ...                            [0, f, W / 2],</span>
+<span class="sd">        ...                            [0, 0,   1  ]])</span>
+<span class="sd">        &gt;&gt;&gt; pixels = torch.tensor([[0.5, 0.0],</span>
+<span class="sd">        ...                        [1.0, 0.0],</span>
+<span class="sd">        ...                        [0.0, 1.3],</span>
+<span class="sd">        ...                        [1.0, 0.0],</span>
+<span class="sd">        ...                        [0.5, 1.5],</span>
+<span class="sd">        ...                        [5.0, 1.5]])</span>
+<span class="sd">        &gt;&gt;&gt; depths = torch.tensor([5.0, 3.0, 6.5, 2.0, 0.5, 0.7])</span>
+<span class="sd">        &gt;&gt;&gt; points = pp.pixel2point(pixels, depths, intrinsics)</span>
+<span class="sd">        tensor([[-10.0000, -11.2500,   5.0000],</span>
+<span class="sd">                [ -5.2500,  -6.7500,   3.0000],</span>
+<span class="sd">                [-14.6250, -10.4000,   6.5000],</span>
+<span class="sd">                [ -3.5000,  -4.5000,   2.0000],</span>
+<span class="sd">                [ -1.0000,  -0.7500,   0.5000],</span>
+<span class="sd">                [  0.1750,  -1.0500,   0.7000]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Pixels shape incorrect&quot;</span>
+    <span class="k">assert</span> <span class="n">depth</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Depth shape does not match pixels&quot;</span>
+    <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Intrinsics shape incorrect.&quot;</span>
+
+    <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;fx Cannot contain zero&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;fy Cannot contain zero&quot;</span>
+
+    <span class="n">pts3d_z</span> <span class="o">=</span> <span class="n">depth</span>
+    <span class="n">pts3d_x</span> <span class="o">=</span> <span class="p">((</span><span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span> <span class="o">*</span> <span class="n">pts3d_z</span><span class="p">)</span> <span class="o">/</span> <span class="n">fx</span>
+    <span class="n">pts3d_y</span> <span class="o">=</span> <span class="p">((</span><span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span> <span class="o">*</span> <span class="n">pts3d_z</span><span class="p">)</span> <span class="o">/</span> <span class="n">fy</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">pts3d_x</span><span class="p">,</span> <span class="n">pts3d_y</span><span class="p">,</span> <span class="n">pts3d_z</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span> <span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
