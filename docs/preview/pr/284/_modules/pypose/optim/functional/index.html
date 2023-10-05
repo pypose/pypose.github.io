@@ -1,0 +1,613 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.optim.functional &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.6.2 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/optim/functional.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.optim.functional</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.optim.functional</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">hasnan</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
+<span class="kn">from</span> <span class="nn">torch.func</span> <span class="kn">import</span> <span class="n">jacrev</span><span class="p">,</span> <span class="n">jacfwd</span><span class="p">,</span> <span class="n">functional_call</span>
+
+
+<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
+                    <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
+
+<span class="sd">    For a parametric model :math:`\bm{f}(\bm{\theta}, \bm{x})`, where :math:`\bm{\theta}`</span>
+<span class="sd">    is the learnable parameter and :math:`\bm{x}` is the input, it computes the</span>
+<span class="sd">    Jacobian of the :math:`i`-th output and :math:`j`-th parameter as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        {\displaystyle \mathbf{J}_{i,j} =</span>
+<span class="sd">        {\begin{bmatrix}</span>
+<span class="sd">            {\dfrac {\partial \bm{f}_{i,1}}{\partial \bm{\theta}_{j,1}}} &amp;amp;</span>
+<span class="sd">            \cdots&amp;amp;{\dfrac {\partial \bm{f}_{i,1}}{\partial \bm{\theta}_{j,n}}}\\</span>
+<span class="sd">            \vdots &amp;amp;\ddots &amp;amp;\vdots \\</span>
+<span class="sd">            {\dfrac {\partial \bm{f}_{i,m}}{\partial \bm{\theta}_{j,1}}}&amp;amp;</span>
+<span class="sd">            \cdots &amp;amp;{\dfrac {\partial \bm{f}_{i,m}}{\partial \bm{\theta}_{j,n}}}</span>
+<span class="sd">        \end{bmatrix}}}.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): a PyTorch model that takes Tensor or LieTensor</span>
+<span class="sd">            input and returns a tuple of Tensors/LieTensors or a Tensor/LieTensor.</span>
+<span class="sd">        input (tuple of Tensors/LieTensors or Tensor/LieTensor): input to the</span>
+<span class="sd">            model. Defaults to ``None``.</span>
+<span class="sd">        create_graph (bool, optional): If ``True``, the Jacobian will be</span>
+<span class="sd">            computed in a differentiable manner. Note that when ``strict`` is</span>
+<span class="sd">            ``False``, the result can not require gradients or be disconnected</span>
+<span class="sd">            from the input.  Defaults to ``False``.</span>
+<span class="sd">        strict (bool, optional): If ``True``, an error will be raised when we</span>
+<span class="sd">            detect that there exists an input such that all the outputs are</span>
+<span class="sd">            independent of it. If ``False``, we return a Tensor of zeros as the</span>
+<span class="sd">            jacobian for said input, which is the expected mathematical value.</span>
+<span class="sd">            Defaults to ``False``.</span>
+<span class="sd">        vectorize (bool, optional): When computing the jacobian, usually we invoke</span>
+<span class="sd">            ``autograd.grad`` once per row of the jacobian. If this flag is</span>
+<span class="sd">            ``True``, we perform only a single ``autograd.grad`` call with</span>
+<span class="sd">            ``batched_grad=True`` which uses the vmap prototype feature.</span>
+<span class="sd">            Though this should lead to performance improvements in many cases,</span>
+<span class="sd">            because this feature is still experimental, there may be performance</span>
+<span class="sd">            cliffs. See :func:`torch.autograd.grad`&#39;s ``batched_grad`` parameter for</span>
+<span class="sd">            more information.</span>
+<span class="sd">        strategy (str, optional): Set to ``&quot;forward-mode&quot;`` or ``&quot;reverse-mode&quot;`` to</span>
+<span class="sd">            determine whether the Jacobian will be computed with forward or reverse</span>
+<span class="sd">            mode AD. Currently, ``&quot;forward-mode&quot;`` requires ``vectorized=True``.</span>
+<span class="sd">            Defaults to ``&quot;reverse-mode&quot;``. If ``func`` has more outputs than</span>
+<span class="sd">            input, ``&quot;forward-mode&quot;`` tends to be more performant. Otherwise,</span>
+<span class="sd">            prefer to use ``&quot;reverse-mode&quot;``.</span>
+<span class="sd">        flatten (bool, optional): If ``True``, all module parameters and outputs</span>
+<span class="sd">            are flattened and concatenated to form a single vector. The Jacobian</span>
+<span class="sd">            will be computed with respect to this single flattened vectors, thus</span>
+<span class="sd">            a single Tensor will be returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Jacobian (Tensor or nested tuple of Tensors): if there is a single</span>
+<span class="sd">        parameter and output, this will be a single Tensor containing the</span>
+<span class="sd">        Jacobian for the linearized parameter and output. If there are more</span>
+<span class="sd">        than one parameters, then the Jacobian will be a tuple of Tensors.</span>
+<span class="sd">        If there are more than one outputs (even if there is only one parameter),</span>
+<span class="sd">        then the Jacobian will be a tuple of tuple of Tensors where ``Jacobian[i][j]``</span>
+<span class="sd">        will contain the Jacobian of the ``i``\th output and ``j``\th parameter</span>
+<span class="sd">        and will have as size the concatenation of the sizes of the corresponding</span>
+<span class="sd">        output and the corresponding parameter and will have same dtype and device as the</span>
+<span class="sd">        corresponding parameter. If strategy is ``forward-mode``, the dtype will be</span>
+<span class="sd">        that of the output; otherwise, the parameters.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        The function :obj:`modjac` calculate Jacobian of model parameters.</span>
+<span class="sd">        This is in contrast to PyTorch&#39;s function `jacobian</span>
+<span class="sd">        &lt;https://pytorch.org/docs/stable/generated/torch.autograd.functional.jacobian.html&gt;`_,</span>
+<span class="sd">        which computes the Jacobian of a given Python function.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        Calculates Jacobian with respect to all model parameters.</span>
+
+<span class="sd">        &gt;&gt;&gt; model = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=1)</span>
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(1, 1, 1)</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.functional.modjac(model, input)</span>
+<span class="sd">        (tensor([[[[[[[0.3365]]]]]]]), tensor([[[[1.]]]]))</span>
+<span class="sd">        &gt;&gt;&gt; [j.shape for j in J]</span>
+<span class="sd">        [torch.Size([1, 1, 1, 1, 1, 1, 1]), torch.Size([1, 1, 1, 1])]</span>
+
+<span class="sd">        Function with flattened parameters returns a combined Jacobian.</span>
+
+<span class="sd">        &gt;&gt;&gt; input = torch.randn(2, 2, 2)</span>
+<span class="sd">        &gt;&gt;&gt; model = nn.Conv2d(in_channels=2, out_channels=2, kernel_size=1)</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.functional.modjac(model, input, flatten=True)</span>
+<span class="sd">        tensor([[-0.4162,  0.0968,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="sd">                [-0.6042,  1.1886,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="sd">                [ 1.4623,  0.7389,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="sd">                [ 1.0716,  2.4293,  0.0000,  0.0000,  1.0000,  0.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000, -0.4162,  0.0968,  0.0000,  1.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000, -0.6042,  1.1886,  0.0000,  1.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000,  1.4623,  0.7389,  0.0000,  1.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000,  1.0716,  2.4293,  0.0000,  1.0000]])</span>
+<span class="sd">        &gt;&gt;&gt; J.shape</span>
+<span class="sd">        torch.Size([8, 6])</span>
+
+<span class="sd">        Calculate Jacobian with respect to parameter of :obj:`pypose.LieTensor`.</span>
+
+<span class="sd">        &gt;&gt;&gt; class PoseTransform(torch.nn.Module):</span>
+<span class="sd">        ...     def __init__(self):</span>
+<span class="sd">        ...         super().__init__()</span>
+<span class="sd">        ...         self.p = pp.Parameter(pp.randn_so3(2))</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...     def forward(self, x):</span>
+<span class="sd">        ...         return self.p.Exp() * x</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; model, input = PoseTransform(), pp.randn_SO3()</span>
+<span class="sd">        &gt;&gt;&gt; J = pp.optim.functional.modjac(model, input, flatten=True)</span>
+<span class="sd">        tensor([[ 0.4670,  0.7041,  0.0029,  0.0000,  0.0000,  0.0000],</span>
+<span class="sd">                [-0.6591,  0.4554, -0.2566,  0.0000,  0.0000,  0.0000],</span>
+<span class="sd">                [-0.2477,  0.0670,  0.9535,  0.0000,  0.0000,  0.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000],</span>
+<span class="sd">                [ 0.0000,  0.0000,  0.0000,  0.8593,  0.2672,  0.3446],</span>
+<span class="sd">                [ 0.0000,  0.0000,  0.0000, -0.2417,  0.9503, -0.1154],</span>
+<span class="sd">                [ 0.0000,  0.0000,  0.0000, -0.3630, -0.0179,  0.9055],</span>
+<span class="sd">                [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]])</span>
+<span class="sd">        &gt;&gt;&gt; J.shape</span>
+<span class="sd">        torch.Size([8, 6])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">buffers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">()),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_buffers</span><span class="p">())</span>
+    <span class="n">params_names</span><span class="p">,</span> <span class="n">params_values</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">func_param</span><span class="p">(</span><span class="o">*</span><span class="n">new_params_values</span><span class="p">):</span>
+        <span class="n">new_params_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params_names</span><span class="p">,</span> <span class="n">new_params_values</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">functional_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">new_params_dict</span><span class="p">,</span> <span class="n">buffers</span><span class="p">),</span> <span class="nb">input</span><span class="p">)</span>
+
+    <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func_param</span><span class="p">,</span> <span class="n">params_values</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="n">create_graph</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span> \
+                    <span class="n">vectorize</span><span class="o">=</span><span class="n">vectorize</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">hasnan</span><span class="p">(</span><span class="n">J</span><span class="p">),</span> <span class="s1">&#39;Jacobian contains Nan! Check your model and input!&#39;</span>
+
+    <span class="k">if</span> <span class="n">flatten</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">):</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> \
+                    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> \
+                           <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J</span></div>
+
+
+<span class="k">def</span> <span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jacfwd</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
