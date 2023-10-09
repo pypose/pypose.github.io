@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.sparse.sparse_block_tensor &mdash; PyPose main documentation</title>
+  <title>pypose.sparse.sbktensor &mdash; PyPose main documentation</title>
   
 
   
@@ -146,7 +146,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="_modules/pypose/sparse/sparse_block_tensor.html">
+  <a style="color:#F05732" href="_modules/pypose/sparse/sbktensor.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -212,7 +212,7 @@
         
           <li><a href="../../../">Module code</a> &gt;</li>
         
-      <li>pypose.sparse.sparse_block_tensor</li>
+      <li>pypose.sparse.sbktensor</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
@@ -240,10 +240,10 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <h1>Source code for pypose.sparse.sparse_block_tensor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+  <h1>Source code for pypose.sparse.sbktensor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="sd">&#39;&#39;&#39;Sparse Block Tensor (SbkTensor) for PyPose.</span>
 <span class="sd">This module implements the sparse block tensor (referred to as SbkTensor) for PyPose.</span>
@@ -316,7 +316,7 @@
 <span class="k">def</span> <span class="nf">make_coo_indices_and_dims_from_hybrid</span><span class="p">(</span><span class="n">hybrid</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Create index and dimension info for converting a Hybrid tensor to a COO tensor.</span>
 
-<span class="sd">    Create the index and dimension information for converting a Hybrid tensor to a COO tensor.</span>
+<span class="sd">    Create index and dimension information for converting a Hybrid tensor to a COO tensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        hybrid (torch.Tensor): The Hybrid tensor.</span>
@@ -347,10 +347,7 @@
     <span class="c1"># (num_dim, num_b, numel_b)</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="n">block_indices</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="n">shape</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">):</span>
-        <span class="n">shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">shape_b</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">shape_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">shape_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">shape</span>
 
 
@@ -365,9 +362,9 @@
 <span class="sd">    any non-zero element of coo indicates existence of a block of size shape_b.</span>
 <span class="sd">    Each block is filled by repeating an element value generated by the mode argument.</span>
 
-<span class="sd">    For example, when setting `mode` to `&quot;sequence&quot;`, it create a Hybrid tensor based</span>
+<span class="sd">    For example, when setting `mode` to `&quot;sequence&quot;`, it creates a Hybrid tensor-based</span>
 <span class="sd">    spatial structure specified by COO tensor with element value being block sequence</span>
-<span class="sd">    number. When setting `mode` to `&quot;zeros&quot;`, it create a Hybrid tensor with all zero</span>
+<span class="sd">    number. When setting `mode` to `&quot;zeros&quot;`, it creates a Hybrid tensor with all zero</span>
 <span class="sd">    elements.</span>
 
 <span class="sd">    Args:</span>
@@ -395,13 +392,11 @@
 
     <span class="n">shape_p</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-            <span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">val</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">shape_p</span> <span class="o">+</span> <span class="n">shape_b</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">val</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">shape_p</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
 
 
 <span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
-<span class="k">def</span> <span class="nf">hybrid_2_coo</span><span class="p">(</span><span class="n">hybrid</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">hybrid2coo</span><span class="p">(</span><span class="n">hybrid</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Covnert a Hybrid tensor to a COO tensor.</span>
 
 <span class="sd">    This function converts a Hybrid tensor to a COO tensor.</span>
@@ -419,7 +414,7 @@
 
 
 <span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
-<span class="k">def</span> <span class="nf">coo_2_hybrid</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">dense_proxy_thres</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">DENSE_SAFE_PROXY_THRES</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">coo2hybrid</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">dense_proxy_thres</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">DENSE_SAFE_PROXY_THRES</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Convert a COO tensor to a Hybrid tensor by referring to the proxy.</span>
 
 <span class="sd">    A proxy is a COO tensor. Any non-zero element in proxy indicates a block of the</span>
@@ -442,7 +437,7 @@
     <span class="c1"># Figure out the shape of the target Hybrid tensor.</span>
     <span class="n">shape_p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="n">shape_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">dim</span><span class="p">())),</span> \
-        <span class="sa">f</span><span class="s1">&#39;coo and proxy shape are not compatible: coo.shape=</span><span class="si">{</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, shape_p=</span><span class="si">{</span><span class="n">shape_p</span><span class="si">}</span><span class="s1">. &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;coo and proxy shape are incompatible: coo.shape=</span><span class="si">{</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, shape_p=</span><span class="si">{</span><span class="n">shape_p</span><span class="si">}</span><span class="s1">.&#39;</span>
     <span class="n">shape_b</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">//</span> <span class="n">shape_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">dim</span><span class="p">())]</span>
 
     <span class="n">shape_b_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape_b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -452,8 +447,7 @@
     <span class="n">numel_p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>  <span class="c1"># dense number of elements</span>
     <span class="k">if</span> <span class="n">numel_p</span> <span class="o">&lt;</span> <span class="n">dense_proxy_thres</span><span class="p">:</span>  <span class="c1"># check the *dense* shape</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-                <span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="n">proxy</span><span class="o">.</span><span class="n">shape</span>
-            <span class="p">)</span>
+                <span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="n">proxy</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>  <span class="c1"># dense is fast in indexing</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="p">[</span><span class="n">indices_b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_b</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -462,9 +456,7 @@
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">coeff</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">flipud</span><span class="p">()</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flipud</span><span class="p">()</span>
         <span class="n">indices_p</span> <span class="o">=</span> <span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-                <span class="n">indices_p</span><span class="p">,</span>
-                <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">numel_p</span><span class="p">,)</span>
-            <span class="p">)</span>
+                <span class="n">indices_p</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">numel_p</span><span class="p">,))</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">indices_b</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
 
@@ -476,8 +468,8 @@
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">blocks</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">shape_p</span><span class="p">)</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Operation base class</span>
+<span class="k">class</span> <span class="nc">SbkOps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Operation base class for SbkTensor</span>
 
 <span class="sd">    An operation on an SbkTensor will eventually be executed by the __torch_function__</span>
 <span class="sd">    method. An SbkTensor consists of a Storage tensor and a Proxy tensor. All</span>
@@ -488,7 +480,7 @@
 <span class="sd">    override. They are:</span>
 
 <span class="sd">    * storage_pre: This method, most of the time, perform the type stripping operations.</span>
-<span class="sd">    The Hybrid tensor to COO tensor conversion, if necessary, should also be implemented here.</span>
+<span class="sd">    The Hybrid tensor to COO tensor conversion, if necessary, should be implemented here.</span>
 <span class="sd">    * storage_op: The actual operation performed on the Storage tensor.</span>
 <span class="sd">    * proxy_op: The appropriate operation that needs to be performed on the Proxy tensor</span>
 <span class="sd">    to preserve the block structure.</span>
@@ -524,7 +516,8 @@
     <span class="k">def</span> <span class="nf">storage_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">s_outs</span><span class="o">=</span><span class="p">(),</span> <span class="n">p_outs</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">return</span> <span class="n">s_outs</span><span class="p">,</span> <span class="n">p_outs</span>
 
-<span class="k">class</span> <span class="nc">SBTGetOp</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">SbkGetOp</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="n">func_name</span><span class="p">)</span>
 
@@ -535,14 +528,12 @@
 <span class="sd">            s_array (list): A list of Storage tensors. Could be Hybrid tensors.</span>
 <span class="sd">            p_array (list): A list of Proxy tensors.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="n">s_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_s</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
-            <span class="n">p_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
+        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">_s</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">s_array</span><span class="p">,</span> <span class="n">p_array</span>
 
-<span class="k">class</span> <span class="nc">ComputeViaHybrid</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">ComputeViaHybrid</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;An Operation that does not need to disassemble the Storage tensor.</span>
 <span class="sd">    E.g., mostly the inplace operations such as torch.add_().</span>
 
@@ -568,11 +559,8 @@
 <span class="sd">            s_array (list): A list of Storage tensors. Could be Hybrid tensors.</span>
 <span class="sd">            p_array (list): A list of Proxy tensors.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="n">s_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_s</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
-            <span class="n">p_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
+        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">_s</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">s_array</span><span class="p">,</span> <span class="n">p_array</span>
 
     <span class="k">def</span> <span class="nf">proxy_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">stripped_types</span><span class="p">,</span> <span class="n">p_args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
@@ -588,9 +576,8 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Find the first sparse Tensor in operands.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_reduction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="p">[</span> <span class="n">op</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">p_args</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">op</span><span class="o">.</span><span class="n">is_sparse</span> <span class="o">==</span> <span class="kc">True</span>
-            <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">op</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">op</span><span class="o">.</span><span class="n">is_sparse</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">p_args</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_reduction</span> <span class="o">==</span> <span class="s1">&#39;add&#39;</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">p_args</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_reduction</span> <span class="o">==</span> <span class="s1">&#39;mul&#39;</span><span class="p">:</span>
@@ -601,11 +588,12 @@
             <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">p</span>
 
-<span class="k">class</span> <span class="nc">ComputeViaCOO</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;SBT Operations that performs the same operation on the Proxy tensor.</span>
 
-<span class="sd">    This class implements the SBTOperation that performs the same operation on the Proxy tensor.</span>
-<span class="sd">    Most of such operations require to convert the Storage tensor from Hybrid to COO format.</span>
+<span class="k">class</span> <span class="nc">ComputeViaCOO</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;SbkOps that performs the same operation on the Proxy tensor.</span>
+
+<span class="sd">    This class implements the SbkOps that performs the same operation on the Proxy tensor.</span>
+<span class="sd">    Most of such operations require converting the Storage tensor from Hybrid to COO format.</span>
 
 <span class="sd">    E.g., torch.add().</span>
 
@@ -624,14 +612,8 @@
 <span class="sd">            s_array (list): A list of Storage tensors that are converted to COO format.</span>
 <span class="sd">            p_array (list): A list of Proxy tensors.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="c1"># Convert the sparse Hybrid tensor _s to COO tensor.</span>
-            <span class="n">s_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">hybrid_2_coo</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_s</span> <span class="p">)</span>
-                           <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span>
-                           <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
-            <span class="n">p_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="p">)</span>
+        <span class="n">s_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">hybrid2coo</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="n">p_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">_p</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SbkTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">s_array</span><span class="p">,</span> <span class="n">p_array</span>
 
     <span class="k">def</span> <span class="nf">proxy_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">stripped_types</span><span class="p">,</span> <span class="n">p_args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
@@ -654,7 +636,7 @@
 <span class="sd">            s_outs (outs for Storage) and p_outs (outs for Proxy) are assumed to have the</span>
 <span class="sd">            exact same order.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">s_outs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">coo_2_hybrid</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">s_outs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">coo2hybrid</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">is_sparse</span> <span class="o">==</span> <span class="kc">True</span>
                     <span class="k">else</span> <span class="n">s</span>
                     <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">s_outs</span><span class="p">,</span> <span class="n">p_outs</span><span class="p">)</span> <span class="p">]</span>
@@ -704,19 +686,17 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">HANDLED_FUNCS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">op_type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sbt_op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;Thie function is meant to be used as a decorator.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            sbt_op_type (OpType): The OpType object describing the operation type and</span>
+<span class="sd">            op_type (OpType): The OpType object describing the operation type and</span>
 <span class="sd">                the function name.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">sbt_op_type</span><span class="o">.</span><span class="n">func_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">sbt_op_type</span><span class="o">.</span><span class="n">op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="n">sbt_op_type</span><span class="o">.</span><span class="n">func_name</span><span class="p">,</span> <span class="n">sbt_op_type</span><span class="o">.</span><span class="n">op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">func_name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">op_type</span><span class="o">.</span><span class="n">func_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">op_type</span><span class="o">.</span><span class="n">func_name</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">op_type</span><span class="o">.</span><span class="n">op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span>
         <span class="k">return</span> <span class="n">decorator</span>
 
@@ -725,7 +705,7 @@
 <span class="c1"># 2. Register the operation through the @registry.register() decorator.</span>
 
 <span class="c1"># ========== Special Python methods. ==========</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;__get__&#39;</span><span class="p">,</span> <span class="n">SBTGetOp</span> <span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;__get__&#39;</span><span class="p">,</span> <span class="n">SbkGetOp</span> <span class="p">)</span>
 
 <span class="c1"># ========== Linear Algebra operations. ==========</span>
 <span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;matmul&#39;</span><span class="p">,</span> <span class="n">ComputeViaCOO</span> <span class="p">)</span>
@@ -751,46 +731,46 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__torch_function__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;The main entry point for all operations on SparseBlockTensor.&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;The main entry point for all operations on SbkTensor.&#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">registry</span><span class="o">.</span><span class="n">is_handled</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;All operations on SparseBlockTensor must be handled. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;All operations on SbkTensor must be handled. &#39;</span>
                 <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> is not.&#39;</span><span class="p">)</span>
 
-        <span class="n">sbt_op</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">HANDLED_FUNCS</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span>
-        <span class="n">args_storage</span><span class="p">,</span> <span class="n">args_proxy</span> <span class="o">=</span> <span class="n">sbt_op</span><span class="o">.</span><span class="n">storage_pre</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">stripped_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">SbkTensor</span> <span class="k">else</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
-        <span class="n">outputs_storage</span> <span class="o">=</span> <span class="n">sbt_op</span><span class="o">.</span><span class="n">storage_op</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">stripped_types</span><span class="p">,</span> <span class="n">args_storage</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">outputs_proxy</span> <span class="o">=</span> <span class="n">sbt_op</span><span class="o">.</span><span class="n">proxy_op</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">stripped_types</span><span class="p">,</span> <span class="n">args_proxy</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs_storage</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">HANDLED_FUNCS</span><span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span>
+        <span class="n">args_storage</span><span class="p">,</span> <span class="n">args_proxy</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">storage_pre</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">SbkTensor</span> <span class="k">else</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
+        <span class="n">storages</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">storage_op</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args_storage</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">proxies</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">proxy_op</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args_proxy</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storages</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">flag_list</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="n">outputs_storage</span> <span class="o">=</span> <span class="p">[</span><span class="n">outputs_storage</span><span class="p">]</span>
+            <span class="n">storages</span> <span class="o">=</span> <span class="p">[</span><span class="n">storages</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">flag_list</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs_proxy</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="n">outputs_proxy</span> <span class="o">=</span> <span class="p">[</span><span class="n">outputs_proxy</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proxies</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="n">proxies</span><span class="p">]</span>
 
-        <span class="n">outputs_list_storage</span><span class="p">,</span> <span class="n">outputs_list_proxy</span> <span class="o">=</span> \
-            <span class="n">sbt_op</span><span class="o">.</span><span class="n">storage_post</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">stripped_types</span><span class="p">,</span> <span class="n">outputs_storage</span><span class="p">,</span> <span class="n">outputs_proxy</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">outs_storage</span><span class="p">,</span> <span class="n">outs_proxy</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">storage_post</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">storages</span><span class="p">,</span> <span class="n">proxies</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">outputs_list_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">outs_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">outputs_final</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">output_storage</span><span class="p">,</span> <span class="n">output_proxy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">outputs_list_storage</span><span class="p">,</span> <span class="n">outputs_list_proxy</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">storage</span><span class="p">,</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">outs_storage</span><span class="p">,</span> <span class="n">outs_proxy</span><span class="p">):</span>
             <span class="c1"># Recover the types</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_storage</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_storage</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">output_storage</span><span class="o">.</span><span class="n">is_sparse</span><span class="p">:</span>
-                    <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">output_storage</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storage</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storage</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">storage</span><span class="o">.</span><span class="n">is_sparse</span><span class="p">:</span>
+                    <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">storage</span> <span class="p">)</span>
                     <span class="k">continue</span>
                 <span class="n">sbt</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-                <span class="n">sbt</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">output_storage</span>
-                <span class="n">sbt</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">output_proxy</span>
+                <span class="n">sbt</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">storage</span>
+                <span class="n">sbt</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">proxy</span>
                 <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sbt</span><span class="p">)</span>
-            <span class="c1"># noop for the case of not a tensor nor a SbkTensor</span>
-            <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs_storage</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+               <span class="c1"># noop for the case of not a tensor nor a SbkTensor</span>
+                <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">flag_list</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">outputs_final</span>
@@ -813,7 +793,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SparseBlockTensor</span><span class="se">\n</span><span class="s2">storage:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="si">}</span><span class="se">\n</span><span class="s2">proxy:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OpType</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">Operation</span><span class="p">))</span>
+    <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OpType</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">SbkOps</span><span class="p">))</span>
     <span class="k">def</span> <span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -828,11 +808,10 @@
             <span class="n">shape_b</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">num_dim</span><span class="p">:]</span>
             <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="n">num_dim</span>
             <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">num_dim</span><span class="p">]</span>
-            <span class="n">s1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
                     <span class="n">indices</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
                     <span class="n">values</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">),</span>
                     <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">))</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
-            <span class="n">res</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">s1</span>
 
         <span class="k">return</span> <span class="n">res</span>
 
@@ -842,7 +821,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The converted COO tensor.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="n">hybrid_2_coo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">hybrid2coo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SbkTensor.sparse_dim"><a class="viewcode-back" href="../../../../generated/pypose.sparse.SbkTensor.sparse_dim/#pypose.sparse.SbkTensor.sparse_dim">[docs]</a>    <span class="k">def</span> <span class="nf">sparse_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;Return the sparse dimension of the internal storage.&#39;&#39;&#39;</span>
@@ -857,31 +836,29 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span></div>
 
 
-<span class="k">def</span> <span class="nf">sbktensor</span><span class="p">(</span>
-        <span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">sbktensor</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Figure out the block shape.</span>
     <span class="n">num_b</span><span class="p">,</span> <span class="n">shape_b</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">SbkTensor</span><span class="p">()</span>
 
     <span class="c1"># Storage.</span>
-    <span class="n">storage</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
         <span class="n">indices</span><span class="p">,</span>
         <span class="n">values</span><span class="p">,</span>
         <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">),</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-        <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span> <span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
+        <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
 
-    <span class="n">proxy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
+    <span class="c1"># Proxy.</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
         <span class="n">indices</span><span class="p">,</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
         <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-        <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
+        <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
 
-    <span class="n">x</span> <span class="o">=</span> <span class="n">SbkTensor</span><span class="p">()</span>
-    <span class="n">x</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">storage</span> <span class="c1"># s for storage.</span>
-    <span class="n">x</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">proxy</span>
     <span class="k">return</span> <span class="n">x</span>
 </pre></div>
 
