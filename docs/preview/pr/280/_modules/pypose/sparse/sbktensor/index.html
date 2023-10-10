@@ -243,13 +243,11 @@
   <h1>Source code for pypose.sparse.sbktensor</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">jit</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="sd">&#39;&#39;&#39;Sparse Block Tensor (SbkTensor) for PyPose.</span>
 <span class="sd">This module implements the sparse block tensor (referred to as SbkTensor) for PyPose.</span>
 <span class="sd">&#39;&#39;&#39;</span>
-
-<span class="n">DENSE_SAFE_PROXY_THRES</span> <span class="o">=</span> <span class="mi">0</span>
 
 
 <span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
@@ -288,111 +286,10 @@
 <span class="sd">        Each column in the tensor corresponds to the dimension in shape.</span>
 <span class="sd">        Shape: (dim, numel)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">dims</span><span class="p">,</span> <span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">dim_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dims</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">dim</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="n">dim_idx</span><span class="p">]</span>
-        <span class="n">out</span><span class="p">[</span><span class="n">dim_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span> <span class="o">%</span> <span class="n">dim</span><span class="p">)</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="n">dim</span>
-    <span class="k">return</span> <span class="n">out</span>
-
-
-<span class="k">def</span> <span class="nf">prod</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Compute the product of a list of integers. This function is used to replace the</span>
-<span class="sd">    torch.prod function, which is not supported by TorchScript.</span>
-<span class="sd">    Args:</span>
-<span class="sd">        l (list of int): The list of integers.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        int: The product of the list.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">*=</span> <span class="n">x</span>
-    <span class="k">return</span> <span class="n">p</span>
-
-
-<span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
-<span class="k">def</span> <span class="nf">make_coo_indices_and_dims_from_hybrid</span><span class="p">(</span><span class="n">hybrid</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create index and dimension info for converting a Hybrid tensor to a COO tensor.</span>
-
-<span class="sd">    Create index and dimension information for converting a Hybrid tensor to a COO tensor.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        hybrid (torch.Tensor): The Hybrid tensor.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        torch.Tensor: The indices for creating a COO tensor.</span>
-<span class="sd">        list of int: The dimension of the COO tensor.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">hybrid</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
-
-    <span class="k">assert</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;The hybrid tensor must have even number of dims, &#39;</span> \
-                                        <span class="s1">&#39;but got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">())</span>
-    <span class="k">assert</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;hybrid should have dims &gt;= 4, but got </span><span class="si">{</span><span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="n">num_dim</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># Total number of the sparse dimensions.</span>
-    <span class="n">shape_b</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">num_dim</span><span class="p">:]</span>  <span class="c1"># Desne/block shape.</span>
-    <span class="n">shape_p</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">num_dim</span><span class="p">]</span>  <span class="c1"># Sparse/proxy shape.</span>
-    <span class="n">numel_b</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">shape_b</span><span class="p">)</span>  <span class="c1"># Number of elements per block.</span>
-
-    <span class="c1"># in-block offset</span>
-    <span class="c1"># the same as torch.cartesian_prod(*[torch.arange(i) for i in shape_b]).T</span>
-    <span class="n">offset</span> <span class="o">=</span> <span class="n">unravel_index</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">numel_b</span><span class="p">),</span> <span class="n">shape_b</span><span class="p">)</span>
-
-    <span class="c1"># scale the block indices by a factor of block shape</span>
-    <span class="n">block_indices</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (num_dim, num_b, 1)</span>
-    <span class="n">block_indices</span> <span class="o">=</span> <span class="n">block_indices</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">numel_b</span><span class="p">)</span>  <span class="c1"># (num_dim, num_b, numel_b)</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape_b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">hybrid</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-    <span class="c1"># scale, offset, block_indices are all used in the form:</span>
-    <span class="c1"># (num_dim, num_b, numel_b)</span>
-    <span class="n">indices</span> <span class="o">=</span> <span class="n">block_indices</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">shape_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">shape_b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="n">shape</span>
-
-
-<span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
-<span class="k">def</span> <span class="nf">repeated_value_as_hybrid_value</span><span class="p">(</span><span class="n">coo</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-                                   <span class="n">shape_b</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-                                   <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;zeros&#39;</span><span class="p">,</span>
-                                   <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                   <span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a Hybrid tensor based on a COO tensor and the mode value argument.</span>
-<span class="sd">    The resulting hybrid tensor will have the same spatial structure as coo:</span>
-<span class="sd">    any non-zero element of coo indicates existence of a block of size shape_b.</span>
-<span class="sd">    Each block is filled by repeating an element value generated by the mode argument.</span>
-
-<span class="sd">    For example, when setting `mode` to `&quot;sequence&quot;`, it creates a Hybrid tensor-based</span>
-<span class="sd">    spatial structure specified by COO tensor with element value being block sequence</span>
-<span class="sd">    number. When setting `mode` to `&quot;zeros&quot;`, it creates a Hybrid tensor with all zero</span>
-<span class="sd">    elements.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        coo (torch.Tensor): The COO tensor.</span>
-<span class="sd">        shape_b (List[int]): The block shape of the output Hybrid tensor.</span>
-<span class="sd">        mode (str): Value to be repeated.</span>
-<span class="sd">        dtype (torch.dtype): dtype of the created tensor.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Hybrid tensor (torch.Tensor): The created Hybrid tensor.</span>
-
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">coo</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
-    <span class="n">num_b</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_b</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;ones&#39;</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_b</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;sequence&#39;</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_b</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">shape_b</span><span class="p">)</span>
-
-    <span class="n">shape_p</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">val</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">shape_p</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Ensure index is a column vector</span>
+    <span class="n">strides</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">index</span> <span class="o">%</span> <span class="n">strides</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="n">strides</span> <span class="o">//</span> <span class="n">shape</span><span class="p">))</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
 
 
 <span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
@@ -406,15 +303,29 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        COO tensor (torch.Tensor): The created COO tensor.</span>
-
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">hybrid</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
-    <span class="n">indices</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">make_coo_indices_and_dims_from_hybrid</span><span class="p">(</span><span class="n">hybrid</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;The hybrid tensor must have even number of dims, &#39;</span> \
+                                        <span class="s1">&#39;but got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;hybrid should have dims &gt;= 4, but got </span><span class="si">{</span><span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">//</span> <span class="mi">2</span>         <span class="c1"># sparse dimensions.</span>
+    <span class="n">blkshape</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">:]</span>   <span class="c1"># block shape.</span>
+    <span class="n">proxyshape</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">dim</span><span class="p">]</span> <span class="c1"># proxy shape.</span>
+    <span class="n">blknum</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">blknumel</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">blknum</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">//</span> <span class="n">blknum</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">unravel_index</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">blknumel</span><span class="p">),</span> <span class="n">blkshape</span><span class="p">)</span> <span class="c1"># in-block offset</span>
+    <span class="c1"># indices shape (dim, blknum, blknumel)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">blknumel</span><span class="p">)</span>
+    <span class="c1"># scale the block indices by a factor of block shape</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">blkshape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">hybrid</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># scale, offset, indices are all in the form: (dim, blknum, blknumel)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">indices</span> <span class="o">*</span> <span class="n">scale</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">proxyshape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">blkshape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">hybrid</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
 
 
 <span class="nd">@jit</span><span class="o">.</span><span class="n">script</span>
-<span class="k">def</span> <span class="nf">coo2hybrid</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">dense_proxy_thres</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">DENSE_SAFE_PROXY_THRES</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">coo2hybrid</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">dense_proxy_limit</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">30000</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Convert a COO tensor to a Hybrid tensor by referring to the proxy.</span>
 
 <span class="sd">    A proxy is a COO tensor. Any non-zero element in proxy indicates a block of the</span>
@@ -423,6 +334,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        coo (torch.Tensor): The COO tensor.</span>
 <span class="sd">        proxy (torch.Tensor): The proxy tensor as COO format.</span>
+<span class="sd">        dense_proxy_limit (int): a threshold to use dense blocks for faster indexing.</span>
+<span class="sd">            Default: 30000.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Hybrid tensor (torch.Tensor): The created Hybrid tensor.</span>
@@ -442,12 +355,11 @@
 
     <span class="n">shape_b_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape_b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">offsets</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span> <span class="o">%</span> <span class="n">shape_b_t</span>
-    <span class="c1"># block indices.</span>
-    <span class="n">indices_b</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span> <span class="o">//</span> <span class="n">shape_b_t</span>
+    <span class="n">indices_b</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span> <span class="o">//</span> <span class="n">shape_b_t</span> <span class="c1"># block indices</span>
     <span class="n">numel_p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>  <span class="c1"># dense number of elements</span>
-    <span class="k">if</span> <span class="n">numel_p</span> <span class="o">&lt;</span> <span class="n">dense_proxy_thres</span><span class="p">:</span>  <span class="c1"># check the *dense* shape</span>
-        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-                <span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="n">proxy</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">numel_p</span> <span class="o">&lt;</span> <span class="n">dense_proxy_limit</span><span class="p">:</span>  <span class="c1"># check the *dense* shape</span>
+        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">proxy</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>  <span class="c1"># dense is fast in indexing</span>
         <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="p">[</span><span class="n">indices_b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices_b</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -455,15 +367,13 @@
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">shape_p</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">coeff</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">flipud</span><span class="p">()</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flipud</span><span class="p">()</span>
         <span class="n">indices_p</span> <span class="o">=</span> <span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">()</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-                <span class="n">indices_p</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">numel_p</span><span class="p">,))</span>
-        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
-            <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">indices_b</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
+        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">indices_p</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">numel_p</span><span class="p">,))</span>
+        <span class="n">select_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">indices_b</span> <span class="o">*</span> <span class="n">coeff</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">block_seq</span> <span class="o">=</span> <span class="n">block_seq</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">select_index</span><span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
 
-    <span class="n">blocks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-        <span class="n">indices</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">block_seq</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">offsets</span><span class="p">]),</span>
-        <span class="n">values</span><span class="o">=</span><span class="n">coo</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
-        <span class="n">size</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">proxy</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">))</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">block_seq</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">offsets</span><span class="p">])</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">)</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">coo</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">indices</span><span class="p">(),</span> <span class="n">blocks</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">shape_p</span><span class="p">)</span> <span class="o">+</span> <span class="n">shape_b</span><span class="p">)</span>
 
@@ -522,7 +432,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func_name</span><span class="o">=</span><span class="n">func_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">storage_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Separate the Storange and Proxy tensor.</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Separate the Storage and Proxy tensor.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            s_array (list): A list of Storage tensors. Could be Hybrid tensors.</span>
@@ -533,7 +443,7 @@
         <span class="k">return</span> <span class="n">s_array</span><span class="p">,</span> <span class="n">p_array</span>
 
 
-<span class="k">class</span> <span class="nc">ComputeViaHybrid</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">HybridOps</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;An Operation that does not need to disassemble the Storage tensor.</span>
 <span class="sd">    E.g., mostly the inplace operations such as torch.add_().</span>
 
@@ -589,7 +499,7 @@
         <span class="k">return</span> <span class="n">p</span>
 
 
-<span class="k">class</span> <span class="nc">ComputeViaCOO</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CooOps</span><span class="p">(</span><span class="n">SbkOps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;SbkOps that performs the same operation on the Proxy tensor.</span>
 
 <span class="sd">    This class implements the SbkOps that performs the same operation on the Proxy tensor.</span>
@@ -650,8 +560,8 @@
 <span class="sd">        if func_name is None (or not provided), then the __name__ of a function is used.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        op_type (SBTOperation): The type/class of the operation.</span>
-<span class="sd">        func_name (str): The name of the operation used by __torch_function__. Optional.</span>
+<span class="sd">        op_type (SbkOps): The type/class of the operation.</span>
+<span class="sd">        func_name (str, optional): The name of the operation used by __torch_function__.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -662,24 +572,24 @@
 
 <span class="k">class</span> <span class="nc">registry</span><span class="p">:</span>
     <span class="n">HANDLED_FUNCS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="c1"># Key: The name of the operation. Value: An SBTOperation object.</span>
+    <span class="c1"># Key: The name of the operation. Value: An SbkOps object.</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_handled</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Check if a operation is supported by SBT.</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Check if a operation is supported by SbkTensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            bool: True if the operation is supported by SBT. False otherwise.</span>
+<span class="sd">            bool: True if the operation is supported by SbkTensor. False otherwise.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">func_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">HANDLED_FUNCS</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_op</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Add an operation to the supported operations on SBT.</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Add an operation to the supported operations on SbkTensor.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): The name of the operation.</span>
-<span class="sd">            op_type (SBTOperation): The SBTOperation class.</span>
+<span class="sd">            op_type (SbkOps): The SbkOps class.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">HANDLED_FUNCS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The operation </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> is already registered. &#39;</span><span class="p">)</span>
@@ -708,23 +618,23 @@
 <span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;__get__&#39;</span><span class="p">,</span> <span class="n">SbkGetOp</span> <span class="p">)</span>
 
 <span class="c1"># ========== Linear Algebra operations. ==========</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;matmul&#39;</span><span class="p">,</span> <span class="n">ComputeViaCOO</span> <span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span> <span class="s1">&#39;matmul&#39;</span><span class="p">,</span> <span class="n">CooOps</span> <span class="p">)</span>
 
 <span class="c1"># ========== elementwise functions ==========</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;abs&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;asin&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;atan&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;ceil&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;floor&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sinh&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;square&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;tan&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;abs&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;asin&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;atan&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;ceil&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;floor&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sin&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sinh&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;square&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;tan&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">add_op</span><span class="p">(</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">HybridOps</span><span class="p">,</span> <span class="n">proxy_reduction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">SbkTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
@@ -764,10 +674,10 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">storage</span><span class="o">.</span><span class="n">is_sparse</span><span class="p">:</span>
                     <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">storage</span> <span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="n">sbt</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-                <span class="n">sbt</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">storage</span>
-                <span class="n">sbt</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">proxy</span>
-                <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sbt</span><span class="p">)</span>
+                <span class="n">sbk</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+                <span class="n">sbk</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">storage</span>
+                <span class="n">sbk</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">proxy</span>
+                <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sbk</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                <span class="c1"># noop for the case of not a tensor nor a SbkTensor</span>
                 <span class="n">outputs_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
@@ -791,13 +701,13 @@
 <span class="sd">        print( t )</span>
 <span class="sd">        &#39; SparseBlockTensor() &#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SparseBlockTensor</span><span class="se">\n</span><span class="s2">storage:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="si">}</span><span class="se">\n</span><span class="s2">proxy:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SbkTensor Containing:</span><span class="se">\n</span><span class="s2">Storage:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="si">}</span><span class="se">\n</span><span class="s2">Proxy:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OpType</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">SbkOps</span><span class="p">))</span>
     <span class="k">def</span> <span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OpType</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">ComputeViaHybrid</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s1">&#39;mul&#39;</span><span class="p">))</span>
+    <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OpType</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">HybridOps</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s1">&#39;mul&#39;</span><span class="p">))</span>
     <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="c1"># dim auto correction</span>
@@ -808,10 +718,10 @@
             <span class="n">shape_b</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">num_dim</span><span class="p">:]</span>
             <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="n">num_dim</span>
             <span class="k">assert</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">num_dim</span><span class="p">]</span>
-            <span class="n">res</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span>
-                    <span class="n">indices</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
-                    <span class="n">values</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">),</span>
-                    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">))</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">)</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="o">*</span><span class="n">shape_b</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">res</span>
 
@@ -822,6 +732,9 @@
 <span class="sd">            torch.Tensor: The converted COO tensor.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">hybrid2coo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SbkTensor.to_dense"><a class="viewcode-back" href="../../../../generated/pypose.sparse.SbkTensor.to_dense/#pypose.sparse.SbkTensor.to_dense">[docs]</a>    <span class="k">def</span> <span class="nf">to_dense</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">hybrid2coo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SbkTensor.sparse_dim"><a class="viewcode-back" href="../../../../generated/pypose.sparse.SbkTensor.sparse_dim/#pypose.sparse.SbkTensor.sparse_dim">[docs]</a>    <span class="k">def</span> <span class="nf">sparse_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;Return the sparse dimension of the internal storage.&#39;&#39;&#39;</span>
