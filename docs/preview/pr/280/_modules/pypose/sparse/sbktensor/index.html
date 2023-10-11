@@ -689,17 +689,17 @@
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        t = SparseBlockTensor()</span>
+<span class="sd">        t = SbkTensor()</span>
 <span class="sd">        &gt;&gt;&gt;t</span>
-<span class="sd">        SparseBlockTensor()</span>
+<span class="sd">        SbkTensor()</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        t = SparseBlockTensor()</span>
+<span class="sd">        t = SbkTensor()</span>
 <span class="sd">        print( t )</span>
-<span class="sd">        &#39; SparseBlockTensor() &#39;</span>
+<span class="sd">        &#39; SbkTensor() &#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;SbkTensor Containing:</span><span class="se">\n</span><span class="s2">Storage:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="si">}</span><span class="se">\n</span><span class="s2">Proxy:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="si">}</span><span class="s2">&quot;</span>
 
@@ -752,6 +752,8 @@
 <span class="k">def</span> <span class="nf">sbktensor</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Figure out the block shape.</span>
     <span class="n">num_b</span><span class="p">,</span> <span class="n">shape_b</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape_b</span><span class="p">),</span> \
+        <span class="sa">f</span><span class="s1">&#39;sparse_dim = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s1">, dense_dim = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">shape_b</span><span class="p">)</span><span class="si">}</span><span class="s1">. The two must be equal.&#39;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">SbkTensor</span><span class="p">()</span>
 
     <span class="c1"># Storage.</span>
