@@ -161,11 +161,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
 
             
@@ -351,7 +353,7 @@
     <span class="k">return</span> <span class="n">homo2cart</span><span class="p">(</span><span class="n">points</span> <span class="o">@</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">pixel2point</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
+<div class="viewcode-block" id="pixel2point"><a class="viewcode-back" href="../../../../generated/pypose.pixel2point/#pypose.pixel2point">[docs]</a><span class="k">def</span> <span class="nf">pixel2point</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert batch of pixels with depth into points (in camera coordinate)</span>
 
@@ -404,7 +406,7 @@
     <span class="n">pts3d_z</span> <span class="o">=</span> <span class="n">depth</span>
     <span class="n">pts3d_x</span> <span class="o">=</span> <span class="p">((</span><span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span> <span class="o">*</span> <span class="n">pts3d_z</span><span class="p">)</span> <span class="o">/</span> <span class="n">fx</span>
     <span class="n">pts3d_y</span> <span class="o">=</span> <span class="p">((</span><span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span> <span class="o">*</span> <span class="n">pts3d_z</span><span class="p">)</span> <span class="o">/</span> <span class="n">fy</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">pts3d_x</span><span class="p">,</span> <span class="n">pts3d_y</span><span class="p">,</span> <span class="n">pts3d_z</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">pts3d_x</span><span class="p">,</span> <span class="n">pts3d_y</span><span class="p">,</span> <span class="n">pts3d_z</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span> <span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
