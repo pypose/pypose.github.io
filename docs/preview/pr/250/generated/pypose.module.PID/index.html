@@ -250,8 +250,23 @@
 <h1>pypose.module.PID<a class="headerlink" href="#pypose-module-pid" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.PID">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_compute_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_compute_state_diff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class is the basic class for all PID controller implementations.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_compute_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the basic implementation of PID controller.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> – controller parameters, e.g. kp, ki, kd in PID controllers.</p></li>
+<li><p><strong>kp</strong> – proportional gain</p></li>
+<li><p><strong>ki</strong> – integral gain</p></li>
+<li><p><strong>kd</strong> – derivative gain</p></li>
+<li><p><strong>func_compute_error</strong> – the function reveives two arguments: state and ref_state,
+argument state refers to the state of dynamic systems, and ref_state is the desired
+dynamic system state. The reason why this function has to be provided is in some cases
+the ref_state and state cannot be substracted directly, e.g. states in SO3 dimension. If no
+function is provided, the final error is computed by ref_state - state.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.PID.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feed_forward_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.forward" title="Permalink to this definition">¶</a></dt>

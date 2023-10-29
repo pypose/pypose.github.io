@@ -246,18 +246,34 @@
 
 <div class="viewcode-block" id="PID"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID">[docs]</a><span class="k">class</span> <span class="nc">PID</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class is the basic class for all PID controller implementations.</span>
+<span class="sd">    This class is the basic implementation of PID controller.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parameters: controller parameters, e.g. kp, ki, kd in PID controllers.</span>
+<span class="sd">        kp: proportional gain</span>
+<span class="sd">        ki: integral gain</span>
+<span class="sd">        kd: derivative gain</span>
+<span class="sd">        func_compute_error: the function reveives two arguments: state and ref_state,</span>
+<span class="sd">            argument state refers to the state of dynamic systems, and ref_state is the desired</span>
+<span class="sd">            dynamic system state. The reason why this function has to be provided is in some cases</span>
+<span class="sd">            the ref_state and state cannot be substracted directly, e.g. states in SO3 dimension. If no</span>
+<span class="sd">            function is provided, the final error is computed by ref_state - state.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">func_compute_error</span><span class="p">,</span> <span class="n">func_compute_state_diff</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">device</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">kd</span><span class="p">,</span> <span class="n">func_compute_error</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_system_state</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span> <span class="o">=</span> <span class="n">func_compute_error</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_state_diff</span> <span class="o">=</span> <span class="n">func_compute_state_diff</span>
-        <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">=</span> <span class="n">kp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="n">ki</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">=</span> <span class="n">kd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">func_compute_error</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basic_func_compute_error</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span> <span class="o">=</span> <span class="n">func_compute_error</span>
+
+    <span class="k">def</span> <span class="nf">basic_func_compute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ref_state</span> <span class="o">-</span> <span class="n">state</span>
 
 <div class="viewcode-block" id="PID.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">feed_forward_quantity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -271,15 +287,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last_system_state</span> <span class="o">=</span> <span class="n">state</span>
-        
-        <span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">kd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="n">error</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+=</span> <span class="n">error</span>
-        <span class="n">state_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_state_diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_system_state</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">state_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">-</span> <span class="n">error</span>
 
-        <span class="k">return</span> <span class="n">kp</span> <span class="o">*</span> <span class="n">error</span> <span class="o">+</span> <span class="n">ki</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+</span> <span class="n">kd</span> <span class="o">*</span> <span class="n">state_diff</span></div>
+        <span class="k">if</span> <span class="n">feed_forward_quantity</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">feed_forward_quantity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">*</span> <span class="n">error</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">*</span> <span class="n">state_diff</span> <span class="o">/</span> <span class="n">dt</span> \
+            <span class="o">+</span> <span class="n">feed_forward_quantity</span></div>
 
 
 <div class="viewcode-block" id="PID.reset"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -289,7 +307,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last_system_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>
 
