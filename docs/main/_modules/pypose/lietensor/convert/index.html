@@ -249,11 +249,11 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 4)`</span>
-<span class="sd">            or :obj:`(*, 4, 4)`, only the top left 3x3 submatrix is used.</span>
-<span class="sd">        check (bool, optional): flag to check if the input is valid rotation matrices (orthogonal</span>
-<span class="sd">            and with a determinant of one). Set to ``False`` if less computation is needed.</span>
-<span class="sd">            Default: ``True``.</span>
+<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape</span>
+<span class="sd">            :obj:`(*, 3, 4)` or :obj:`(*, 4, 4)`, only the top left 3x3 submatrix is used.</span>
+<span class="sd">        check (bool, optional): flag to check if the input is valid rotation matrices</span>
+<span class="sd">            (orthogonal and with a determinant of one). Set to ``False`` if less</span>
+<span class="sd">            computation is needed. Default: ``True``.</span>
 <span class="sd">        rtol (float, optional): relative tolerance when check is enabled. Default: 1e-05</span>
 <span class="sd">        atol (float, optional): absolute tolerance when check is enabled. Default: 1e-05</span>
 
@@ -267,7 +267,7 @@
 
 <span class="sd">    Let the input be matrix :math:`\mathbf{R}`, :math:`\mathbf{R}_i` represents each individual</span>
 <span class="sd">    matrix in the batch. :math:`\mathbf{R}^{m,n}_i` represents the :math:`m^{\mathrm{th}}` row</span>
-<span class="sd">    and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{R}_i`, :math:`m,n\geq 1`, then the </span>
+<span class="sd">    and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{R}_i`, :math:`m,n\geq 1`, then the</span>
 <span class="sd">    quaternion can be computed by:</span>
 
 <span class="sd">    .. math::</span>
@@ -278,9 +278,10 @@
 <span class="sd">            \sqrt{1 - \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i - \mathbf{R}^{3,3}_i}\\</span>
 <span class="sd">        q^z_i &amp;= \mathrm{sign}(\mathbf{R}^{1,2}_i - \mathbf{R}^{2,1}_i) \frac{1}{2}</span>
 <span class="sd">            \sqrt{1 - \mathbf{R}^{1,1}_i - \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}\\</span>
-<span class="sd">        q^w_i &amp;= \frac{1}{2} \sqrt{1 + \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}</span>
+<span class="sd">        q^w_i &amp;= \frac{1}{2} \sqrt{1 + \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i +</span>
+<span class="sd">            \mathbf{R}^{3,3}_i}</span>
 <span class="sd">        \end{aligned}\right.,</span>
-<span class="sd">    </span>
+
 <span class="sd">    In summary, the output LieTensor should be of format:</span>
 
 <span class="sd">    .. math::</span>
@@ -291,12 +292,13 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
-<span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
-<span class="sd">        </span>
-<span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
-<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed. </span>
-<span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
-<span class="sd">        </span>
+<span class="sd">            |\mathbf{RR}^{T}-\mathbf{I}|\leq\texttt{atol} + \texttt{rtol}\times\mathbf{I}</span>
+
+<span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to</span>
+<span class="sd">        ``True``, illegal input will raise a ``ValueError``. Otherwise, no data validation</span>
+<span class="sd">        is performed. Illegal input will output an irrelevant result, which likely</span>
+<span class="sd">        contains ``nan``.</span>
+
 <span class="sd">    Examples:</span>
 
 <span class="sd">        &gt;&gt;&gt; input = torch.tensor([[0., -1.,  0.],</span>
@@ -406,9 +408,9 @@
 <span class="sd">        Output: :obj:`(*, 7)`</span>
 
 <span class="sd">    Let the input be matrix :math:`\mathbf{T}`,  :math:`\mathbf{T}_i` represents each individual</span>
-<span class="sd">    matrix in the batch. :math:`\mathbf{R}_i\in\mathbb{R}^{3\times 3}` be the top left 3x3 block </span>
-<span class="sd">    matrix of :math:`\mathbf{T}_i`. :math:`\mathbf{T}^{m,n}_i` represents the :math:`m^{\mathrm{th}}` </span>
-<span class="sd">    row and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`, :math:`m,n\geq 1`, then the </span>
+<span class="sd">    matrix in the batch. :math:`\mathbf{R}_i\in\mathbb{R}^{3\times 3}` be the top left 3x3 block</span>
+<span class="sd">    matrix of :math:`\mathbf{T}_i`. :math:`\mathbf{T}^{m,n}_i` represents the :math:`m^{\mathrm{th}}`</span>
+<span class="sd">    row and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`, :math:`m,n\geq 1`, then the</span>
 <span class="sd">    translation and quaternion can be computed by:</span>
 
 <span class="sd">    .. math::</span>
@@ -436,13 +438,13 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
 <span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
-<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed. </span>
+<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed.</span>
 <span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
 
 <span class="sd">        For input with shape :obj:`(*, 4, 4)`, when ``check`` is set to ``True`` and the last row</span>
-<span class="sd">        of the each individual matrix is not ``[0, 0, 0, 1]``, a warning will be triggered. </span>
+<span class="sd">        of the each individual matrix is not ``[0, 0, 0, 1]``, a warning will be triggered.</span>
 <span class="sd">        Even though the last row is not used in the computation, it is worth noting that a matrix not</span>
 <span class="sd">        satisfying this condition is not a valid transformation matrix.</span>
 
@@ -480,7 +482,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
 <span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-    
+
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">zerosone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -501,8 +503,8 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to Sim3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 3)`, </span>
-<span class="sd">            then translation will be filled with zero. For input with shape :obj:`(*, 3, 4)`, </span>
+<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 3)`,</span>
+<span class="sd">            then translation will be filled with zero. For input with shape :obj:`(*, 3, 4)`,</span>
 <span class="sd">            the last row will be treated as ``[0, 0, 0, 1]``.</span>
 <span class="sd">        check (bool, optional): flag to check if the input is valid rotation matrices (orthogonal</span>
 <span class="sd">            and with a determinant of one). Set to ``False`` if less computation is needed.</span>
@@ -519,9 +521,9 @@
 <span class="sd">        Output: :obj:`(*, 8)`</span>
 
 <span class="sd">    Let the input be matrix :math:`\mathbf{T}`,  :math:`\mathbf{T}_i` represents each individual</span>
-<span class="sd">    matrix in the batch. :math:`\mathbf{U}_i\in\mathbb{R}^{3\times 3}` be the top left 3x3 block </span>
-<span class="sd">    matrix of :math:`\mathbf{T}_i`. Let :math:`\mathbf{T}^{m,n}_i` represents the </span>
-<span class="sd">    :math:`m^{\mathrm{th}}` row and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`, </span>
+<span class="sd">    matrix in the batch. :math:`\mathbf{U}_i\in\mathbb{R}^{3\times 3}` be the top left 3x3 block</span>
+<span class="sd">    matrix of :math:`\mathbf{T}_i`. Let :math:`\mathbf{T}^{m,n}_i` represents the</span>
+<span class="sd">    :math:`m^{\mathrm{th}}` row and :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`,</span>
 <span class="sd">    :math:`m,n\geq 1`, then the scaling factor :math:`s_i\in\mathbb{R}` and the rotation matrix</span>
 <span class="sd">    :math:`\mathbf{R}_i\in\mathbb{R}^{3\times 3}` can be computed as:</span>
 
@@ -530,7 +532,7 @@
 <span class="sd">            s_i &amp;= \sqrt[3]{\vert \mathbf{U}_i \vert}\\</span>
 <span class="sd">            \mathbf{R}_i &amp;= \mathbf{U}_i/s_i</span>
 <span class="sd">        \end{aligned}</span>
-<span class="sd">        </span>
+
 <span class="sd">    the translation and quaternion can be computed by:</span>
 
 <span class="sd">    .. math::</span>
@@ -544,9 +546,10 @@
 <span class="sd">            \sqrt{1 - \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i - \mathbf{R}^{3,3}_i}\\</span>
 <span class="sd">        q^z_i &amp;= \mathrm{sign}(\mathbf{R}^{1,2}_i - \mathbf{R}^{2,1}_i) \frac{1}{2}</span>
 <span class="sd">            \sqrt{1 - \mathbf{R}^{1,1}_i - \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}\\</span>
-<span class="sd">        q^w_i &amp;= \frac{1}{2} \sqrt{1 + \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}</span>
+<span class="sd">        q^w_i &amp;= \frac{1}{2} \sqrt{1 + \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i +</span>
+<span class="sd">            \mathbf{R}^{3,3}_i}</span>
 <span class="sd">        \end{aligned}\right.,</span>
-<span class="sd">    </span>
+
 <span class="sd">    In summary, the output LieTensor should be of format:</span>
 
 <span class="sd">    .. math::</span>
@@ -559,16 +562,16 @@
 <span class="sd">            \vert s \vert &gt; \texttt{atol} \\</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
 <span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
-<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed. </span>
+<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed.</span>
 <span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
 
 <span class="sd">        For input with shape :obj:`(*, 4, 4)`, when ``check`` is set to ``True`` and the last row</span>
-<span class="sd">        of the each individual matrix is not ``[0, 0, 0, 1]``, a warning will be triggered. </span>
+<span class="sd">        of the each individual matrix is not ``[0, 0, 0, 1]``, a warning will be triggered.</span>
 <span class="sd">        Even though the last row is not used in the computation, it is worth noting that a matrix not</span>
 <span class="sd">        satisfying this condition is not a valid transformation matrix.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; input = torch.tensor([[ 0.,-0.5,  0., 0.1],</span>
 <span class="sd">        ...                       [0.5,  0.,  0., 0.2],</span>
@@ -591,10 +594,10 @@
 
 <span class="sd">        * J. Sola et al., `A micro Lie theory for state estimation in</span>
 <span class="sd">          robotics &lt;https://arxiv.org/abs/1812.01537&gt;`_, arXiv preprint arXiv:1812.01537 (2018),</span>
-<span class="sd">        </span>
-<span class="sd">        where :math:`\mathbf{R}` is the individual matrix in a batch. The scaling factor </span>
+
+<span class="sd">        where :math:`\mathbf{R}` is the individual matrix in a batch. The scaling factor</span>
 <span class="sd">        :math:`s` defines a linear transformation that enlarges or diminishes the object in the</span>
-<span class="sd">        same ratio across 3 dimensions, the translation vector :math:`\mathbf{t}` defines the </span>
+<span class="sd">        same ratio across 3 dimensions, the translation vector :math:`\mathbf{t}` defines the</span>
 <span class="sd">        displacement between the original position and the transformed position.</span>
 
 <span class="sd">        We also notice that there is another popular convention:</span>
@@ -623,7 +626,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
 <span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-    
+
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">zerosone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -633,7 +636,7 @@
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 
-    <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">rot</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">zeros</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>  <span class="n">zeros</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation matrix not full rank.&quot;</span><span class="p">)</span>
@@ -654,7 +657,7 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to RxSO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 4)` </span>
+<span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 4)`</span>
 <span class="sd">            or :obj:`(*, 4, 4)`, only the top left 3x3 submatrix is used.</span>
 <span class="sd">        check (bool, optional): flag to check if the input is valid rotation matrices (orthogonal</span>
 <span class="sd">            and with a determinant of one). Set to ``False`` if less computation is needed.</span>
@@ -669,11 +672,11 @@
 <span class="sd">        Input: :obj:`(*, 3, 3)` or :obj:`(*, 3, 4)` or :obj:`(*, 4, 4)`</span>
 
 <span class="sd">        Output: :obj:`(*, 5)`</span>
-<span class="sd">    </span>
+
 <span class="sd">    Let the input be matrix :math:`\mathbf{T}`, :math:`\mathbf{T}_i` represents each individual</span>
 <span class="sd">    matrix in the batch. :math:`\mathbf{T}^{m,n}_i` represents the :math:`m^{\mathrm{th}}` row and</span>
-<span class="sd">    :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`, :math:`m,n\geq 1`, then the scaling factor </span>
-<span class="sd">    :math:`s_i\in\mathbb{R}` and the rotation matrix :math:`\mathbf{R}_i\in\mathbb{R}^{3\times 3}` </span>
+<span class="sd">    :math:`n^{\mathrm{th}}` column of :math:`\mathbf{T}_i`, :math:`m,n\geq 1`, then the scaling factor</span>
+<span class="sd">    :math:`s_i\in\mathbb{R}` and the rotation matrix :math:`\mathbf{R}_i\in\mathbb{R}^{3\times 3}`</span>
 <span class="sd">    can be computed as:</span>
 
 <span class="sd">    .. math::</span>
@@ -681,9 +684,9 @@
 <span class="sd">            s_i &amp;= \sqrt[3]{\vert \mathbf{T_i} \vert}\\</span>
 <span class="sd">            \mathbf{R}_i &amp;= \mathbf{R}_i/s_i</span>
 <span class="sd">        \end{aligned},</span>
-<span class="sd">    </span>
+
 <span class="sd">    the translation and quaternion can be computed by:</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        \left\{\begin{aligned}</span>
 <span class="sd">        q^x_i &amp;= \mathrm{sign}(\mathbf{R}^{2,3}_i - \mathbf{R}^{3,2}_i) \frac{1}{2}</span>
@@ -694,7 +697,7 @@
 <span class="sd">            \sqrt{1 - \mathbf{R}^{1,1}_i - \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}\\</span>
 <span class="sd">        q^w_i &amp;= \frac{1}{2} \sqrt{1 + \mathbf{R}^{1,1}_i + \mathbf{R}^{2,2}_i + \mathbf{R}^{3,3}_i}</span>
 <span class="sd">        \end{aligned}\right.,</span>
-<span class="sd">    </span>
+
 <span class="sd">    In summary, the output LieTensor should be of format:</span>
 
 <span class="sd">    .. math::</span>
@@ -707,9 +710,9 @@
 <span class="sd">            \vert s \vert &gt; \texttt{atol} \\</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
 <span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
-<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed. </span>
+<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed.</span>
 <span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
 
 <span class="sd">    Examples:</span>
@@ -721,9 +724,9 @@
 <span class="sd">        tensor([0.0000, 0.0000, 0.7071, 0.7071, 0.5000])</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The individual matrix in a batch can be written as: :math:`s\mathbf{R}_{3\times3}`, </span>
-<span class="sd">        where :math:`\mathbf{R}` is the rotation matrix. where  the scaling factor </span>
-<span class="sd">        :math:`s` defines a linear transformation that enlarges or diminishes the object </span>
+<span class="sd">        The individual matrix in a batch can be written as: :math:`s\mathbf{R}_{3\times3}`,</span>
+<span class="sd">        where :math:`\mathbf{R}` is the rotation matrix. where  the scaling factor</span>
+<span class="sd">        :math:`s` defines a linear transformation that enlarges or diminishes the object</span>
 <span class="sd">        in the same ratio across 3 dimensions.</span>
 
 <span class="sd">    See :meth:`pypose.RxSO3` for more details of the output LieTensor format.</span>
@@ -741,7 +744,7 @@
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 
-    <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">rot</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>  <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation matrix not full rank.&quot;</span><span class="p">)</span>
 
@@ -771,11 +774,11 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
 <span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
-<span class="sd">        </span>
+
 <span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
-<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed. </span>
+<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed.</span>
 <span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Return:</span>
 <span class="sd">        LieTensor: the converted LieTensor.</span>
 <span class="sd">    Examples:</span>
@@ -978,7 +981,7 @@
 <span class="sd">        Tensor: the batched scale scalars.</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        The :obj:`SO3`, :obj:`so3`, :obj:`SE3`, and :obj:`se3` types do not contain scale. </span>
+<span class="sd">        The :obj:`SO3`, :obj:`so3`, :obj:`SE3`, and :obj:`se3` types do not contain scale.</span>
 <span class="sd">        Calling :obj:`scale()` on these types will return one(s).</span>
 
 <span class="sd">    Example:</span>
@@ -1025,7 +1028,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        inputs (:obj:`LieTensor`): the input LieTensor.</span>
-<span class="sd">        eps (:obj:`float`, optional): the threshold to avoid the sigularity caused </span>
+<span class="sd">        eps (:obj:`float`, optional): the threshold to avoid the sigularity caused</span>
 <span class="sd">            by gimbal lock. Default: 2e-4.</span>
 
 <span class="sd">    Return:</span>
@@ -1040,7 +1043,7 @@
 <span class="sd">        solution that can result in the same orientation, while this function</span>
 <span class="sd">        only returns one of them.</span>
 
-<span class="sd">        When the pitch angle is around :math:`\pm \frac{\pi}{2}` (north/south pole), </span>
+<span class="sd">        When the pitch angle is around :math:`\pm \frac{\pi}{2}` (north/south pole),</span>
 <span class="sd">        there will be sigularity problem due to the `gimbal lock</span>
 <span class="sd">        &lt;https://en.wikipedia.org/wiki/Gimbal_lock&gt;`_ and some information can be</span>
 <span class="sd">        found in `this pape &lt;https://tinyurl.com/py8frs6v&gt;`_.</span>
