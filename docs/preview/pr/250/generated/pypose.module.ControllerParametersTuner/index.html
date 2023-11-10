@@ -255,9 +255,9 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dynamic_system</strong> (<em>pypose.module.dynamics</em>) – dynamics system</p></li>
-<li><p><strong>controller</strong> (<em>pypose.module.controller</em>) – Linear or nonlinear controller to control the dynamic system</p></li>
-<li><p><strong>parameters_bound</strong> (<em>Tensor</em>) – This set gives the minimum and the maximum
-value the parameters can reach</p></li>
+<li><p><strong>controller</strong> (<em>pypose.module.controller</em>) – Linear or nonlinear controller to control</p></li>
+<li><p><strong>parameters_bound</strong> (<em>the dynamic system</em>) – This set gives the minimum and</p></li>
+<li><p><strong>reach</strong> (<em>the maximum value the parameters can</em>) – </p></li>
 <li><p><strong>states_to_tune</strong> (<em>Tensor</em>) – choose which state needs to be considered in the
 loss function, usually only position is chosen.</p></li>
 <li><p><strong>func_get_state_error</strong> (<em>function</em>) – function has two inputs: system state and
@@ -295,11 +295,12 @@ these components are differentiable, it is possbile to find the most suitable
 parameters by constructing the loss function <span class="math">\(L\)</span> and computing the gradient of
 <span class="math">\(L\)</span> with respect to controller parameters.</p>
 <div class="math">
-\[L = \sum_{i=1}^N ||\mathbf{x_i} - \mathbf{\hat x_i}||^2 + \sum_{i=0}^{N-1} \lambda|| \mathbf{u_i} ||^2 \tag{3}
+\[L = \sum_{i=1}^N ||\mathbf{x_i} - \mathbf{\hat x_i}||^2 + \sum_{i=0}^{N-1}
+\lambda|| \mathbf{u_i} ||^2 \tag{3}
 
 \]</div>
-<p>Where <span class="math">\(L\)</span> is the Loss function. Here it works as the control-effort penalty in the loss function. <span class="math">\(\lambda\)</span> is the
-penalty coefficient.</p>
+<p>Where <span class="math">\(L\)</span> is the Loss function. Here it works as the control-effort penalty in
+the loss function. <span class="math">\(\lambda\)</span> is the penalty coefficient.</p>
 <p>And we can get the derivatives as following:</p>
 <div class="math">
 \[\begin{align*}
