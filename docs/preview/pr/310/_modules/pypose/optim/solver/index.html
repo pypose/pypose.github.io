@@ -1,0 +1,661 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.optim.solver &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.6.5 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/optim/solver.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.optim.solver</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.optim.solver</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span>
+
+
+<div class="viewcode-block" id="PINV"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV">[docs]</a><span class="k">class</span> <span class="nc">PINV</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with pseudo inversion.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
+
+<span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
+<span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
+
+<span class="sd">    The solution is given by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{x}_i = \mathrm{pinv}(\mathbf{A}_i) \mathbf{b}_i,</span>
+<span class="sd">        </span>
+<span class="sd">    where :math:`\mathrm{pinv}()` is the `pseudo inversion</span>
+<span class="sd">    &lt;https://en.wikipedia.org/wiki/Moore-Penrose_inverse&gt;`_ function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atol (float, Tensor, optional): the absolute tolerance value. When None it&#39;s considered to</span>
+<span class="sd">            be zero. Default: ``None``.</span>
+
+<span class="sd">        rtol (float, Tensor, optional): the relative tolerance value. Default: ``None``.</span>
+
+<span class="sd">        hermitian (bool, optional): indicates whether :math:`\mathbf{A}` is Hermitian if complex or</span>
+<span class="sd">            symmetric if real. Default: ``False``.</span>
+
+<span class="sd">    More details go to `torch.linalg.pinv</span>
+<span class="sd">    &lt;https://pytorch.org/docs/stable/generated/torch.linalg.pinv.html&gt;`_.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        It is always preferred to use :meth:`LSTSQ`, which is faster and more numerically stable.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; A, b = torch.randn(2, 3, 3), torch.randn(2, 3, 1)</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.PINV()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([[[-0.2675],</span>
+<span class="sd">                 [-0.1897],</span>
+<span class="sd">                 [ 0.2708]],</span>
+<span class="sd">                [[-0.3472],</span>
+<span class="sd">                 [ 1.1191],</span>
+<span class="sd">                 [ 0.3301]]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rtol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hermitian</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">hermitian</span>
+
+<div class="viewcode-block" id="PINV.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            A (Tensor): the input batched tensor.</span>
+<span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the solved batched tensor.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rtol</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hermitian</span><span class="p">)</span> <span class="o">@</span> <span class="n">b</span></div></div>
+
+
+
+<div class="viewcode-block" id="LSTSQ"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ">[docs]</a><span class="k">class</span> <span class="nc">LSTSQ</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with fast pseudo inversion.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
+
+<span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
+<span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
+
+<span class="sd">    The solution is given by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{x}_i = \mathrm{lstsq}(\mathbf{A}_i, \mathbf{b}_i),</span>
+<span class="sd">        </span>
+<span class="sd">    where :math:`\mathrm{lstsq}()` computes a solution to the least squares problem</span>
+<span class="sd">    of a system of linear equations. More details go to `torch.linalg.lstsq</span>
+<span class="sd">    &lt;https://pytorch.org/docs/stable/generated/torch.linalg.lstsq.html&gt;`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rcond (float, optional): Cut-off ratio for small singular values. For the purposes of</span>
+<span class="sd">            rank determination, singular values are treated as zero if they are smaller than</span>
+<span class="sd">            rcond times the largest singular value. It is used only when the fast model is</span>
+<span class="sd">            enabled. If ``None``, rcond is set to the machine precision of the dtype of</span>
+<span class="sd">            :math:`\mathbf{A}`. Default: ``None``.</span>
+<span class="sd">        driver (string, optional): chooses the LAPACK/MAGMA function that will be used. It is</span>
+<span class="sd">            used only when the fast model is enabled. For CPU users, the valid values are ``gels``,</span>
+<span class="sd">            ``gelsy``, ``gelsd``, ``gelss``. For CUDA users, the only valid driver is ``gels``,</span>
+<span class="sd">            which assumes that input matrices (:math:`\mathbf{A}`) are full-rank. If ``None``,</span>
+<span class="sd">            ``gelsy`` is used for CPU inputs and ``gels`` for CUDA inputs. Default: ``None``.</span>
+<span class="sd">            To choose the best driver on CPU consider:</span>
+
+<span class="sd">            - If input matrices (:math:`\mathbf{A}`) are well-conditioned (`condition number</span>
+<span class="sd">              &lt;https://en.wikipedia.org/wiki/Condition_number&gt;`_ is not too large), or you do not</span>
+<span class="sd">              mind some precision loss.</span>
+
+<span class="sd">                - For a general matrix: ``gelsy`` (QR with pivoting) (default)</span>
+
+<span class="sd">                - If A is full-rank: ``gels`` (QR)</span>
+
+<span class="sd">            - If input matrices (:math:`\mathbf{A}`) are not well-conditioned.</span>
+
+<span class="sd">                - ``gelsd`` (tridiagonal reduction and SVD)</span>
+
+<span class="sd">                - But if you run into memory issues: ``gelss`` (full SVD).</span>
+
+<span class="sd">            See full description of `drivers &lt;https://www.netlib.org/lapack/lug/node27.html&gt;`_.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This solver is faster and more numerically stable than :meth:`PINV`.</span>
+
+<span class="sd">        It is also preferred to use :meth:`Cholesky` if input matrices (:math:`\mathbf{A}`)</span>
+<span class="sd">        are guaranteed to complex Hermitian or real symmetric positive-definite.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; A, b = torch.randn(2, 3, 3), torch.randn(2, 3, 1)</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.LSTSQ(driver=&#39;gels&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([[[ 0.9997],</span>
+<span class="sd">                 [-1.3288],</span>
+<span class="sd">                 [-1.6327]],</span>
+<span class="sd">                [[ 3.1639],</span>
+<span class="sd">                 [-0.5379],</span>
+<span class="sd">                 [-1.2872]]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rcond</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">rcond</span><span class="p">,</span> <span class="n">driver</span>
+
+<div class="viewcode-block" id="LSTSQ.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            A (Tensor): the input batched tensor.</span>
+<span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the solved batched tensor.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rcond</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">solution</span><span class="p">)),</span> \
+            <span class="s1">&#39;Linear Solver Failed Using LSTSQ. Using PINV() instead&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">solution</span></div></div>
+
+
+<div class="viewcode-block" id="Cholesky"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky">[docs]</a><span class="k">class</span> <span class="nc">Cholesky</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with Cholesky decomposition.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
+
+<span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
+<span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
+<span class="sd">    Note that :math:`\mathbf{A}_i` has to be a complex Hermitian or a real symmetric</span>
+<span class="sd">    positive-definite matrix.</span>
+
+<span class="sd">    The solution is given by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">            \bm{L}_i &amp;= \mathrm{cholesky}(\mathbf{A}_i), \\</span>
+<span class="sd">            \bm{x}_i &amp;= \mathrm{cholesky\_solve}(\mathbf{b}_i, \bm{L}_i), \\</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    where :math:`\mathrm{cholesky}()` is the `Cholesky decomposition</span>
+<span class="sd">    &lt;https://en.wikipedia.org/wiki/Cholesky_decomposition&gt;`_ function.</span>
+
+<span class="sd">    More details go to</span>
+<span class="sd">    `torch.linalg.cholesky &lt;https://pytorch.org/docs/stable/generated/torch.linalg.cholesky.html&gt;`_</span>
+<span class="sd">    and</span>
+<span class="sd">    `torch.cholesky_solve &lt;https://pytorch.org/docs/stable/generated/torch.cholesky_solve.html&gt;`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        upper (bool, optional): whether use an upper triangular matrix in Cholesky decomposition.</span>
+<span class="sd">            Default: ``False``.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.tensor([[[1.00, 0.10, 0.00], [0.10, 1.00, 0.20], [0.00, 0.20, 1.00]],</span>
+<span class="sd">                              [[1.00, 0.20, 0.10], [0.20, 1.00, 0.20], [0.10, 0.20, 1.00]]])</span>
+<span class="sd">        &gt;&gt;&gt; b = torch.tensor([[[1.], [2.], [3.]], [[1.], [2.], [3.]]])</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.Cholesky()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([[[0.8632],</span>
+<span class="sd">                 [1.3684],</span>
+<span class="sd">                 [2.7263]],</span>
+<span class="sd">                [[0.4575],</span>
+<span class="sd">                 [1.3725],</span>
+<span class="sd">                 [2.6797]]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">upper</span>
+
+<div class="viewcode-block" id="Cholesky.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            A (Tensor): the input batched tensor.</span>
+<span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the solved batched tensor.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">L</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">cholesky_ex</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">L</span><span class="p">)),</span> \
+            <span class="s1">&#39;Cholesky decomposition failed. Check your matrix (may not be positive-definite)&#39;</span>
+        <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">cholesky_solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span></div></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
