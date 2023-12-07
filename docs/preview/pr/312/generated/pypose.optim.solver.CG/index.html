@@ -265,7 +265,8 @@ We recommend using only non-batched or batch size 1 input for this solver, as
 the batched version was not appeared in the original scipy version. When handling
 sparse matrices, the batched computation may introduce additional overhead.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># dense example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1802967</span><span class="p">,</span> <span class="mf">0.3151198</span><span class="p">,</span> <span class="mf">0.4548111</span><span class="p">,</span> <span class="mf">0.3860016</span><span class="p">,</span> <span class="mf">0.2870615</span><span class="p">],</span>
 <span class="go">                      [0.3151198, 1.4575327, 1.5533425, 1.0540756, 1.0795838],</span>
 <span class="go">                      [0.4548111, 1.5533425, 2.3674474, 1.1222278, 1.2365348],</span>
@@ -276,7 +277,6 @@ sparse matrices, the batched computation may introduce additional overhead.</p>
 <span class="go">                      [ 0.73612658],</span>
 <span class="go">                      [ 0.51501254],</span>
 <span class="go">                      [-0.26689271]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span> <span class="c1"># optional, used to demonstrate the sparse matrix support</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">CG</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">tensor([[246.4098],</span>
@@ -284,6 +284,21 @@ sparse matrices, the batched computation may introduce additional overhead.</p>
 <span class="go">        [-56.9239],</span>
 <span class="go">        [-161.7914],</span>
 <span class="go">        [137.2683]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># sparse csr example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">crow_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_csr_tensor</span><span class="p">(</span><span class="n">crow_indices</span><span class="p">,</span> <span class="n">col_indices</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>  <span class="c1"># visualize</span>
+<span class="go">tensor([[1., 2.],</span>
+<span class="go">        [3., 4.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">CG</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">tensor([-4.4052e-05,  5.0003e-01])</span>
 </pre></div>
 </div>
 <dl class="py method">
