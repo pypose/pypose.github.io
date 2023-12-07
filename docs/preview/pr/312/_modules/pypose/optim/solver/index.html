@@ -245,7 +245,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">..function.linalg</span> <span class="kn">import</span> <span class="n">bmv</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span>
+<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span><span class="p">,</span> <span class="n">vecdot</span>
 
 
 <div class="viewcode-block" id="PINV"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV">[docs]</a><span class="k">class</span> <span class="nc">PINV</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -475,6 +475,7 @@
 <span class="sd">    sparse matrices, the batched computation may introduce additional overhead.</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # dense example</span>
 <span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
 <span class="sd">        &gt;&gt;&gt; A = torch.tensor([[0.1802967, 0.3151198, 0.4548111, 0.3860016, 0.2870615],</span>
 <span class="sd">                              [0.3151198, 1.4575327, 1.5533425, 1.0540756, 1.0795838],</span>
@@ -486,7 +487,6 @@
 <span class="sd">                              [ 0.73612658],</span>
 <span class="sd">                              [ 0.51501254],</span>
 <span class="sd">                              [-0.26689271]])</span>
-<span class="sd">        &gt;&gt;&gt; A = A.to_sparse_csr() # optional, used to demonstrate the sparse matrix support</span>
 <span class="sd">        &gt;&gt;&gt; solver = ppos.CG()</span>
 <span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
 <span class="sd">        tensor([[246.4098],</span>
@@ -494,6 +494,21 @@
 <span class="sd">                [-56.9239],</span>
 <span class="sd">                [-161.7914],</span>
 <span class="sd">                [137.2683]])</span>
+
+<span class="sd">        &gt;&gt;&gt; # sparse csr example</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; crow_indices = torch.tensor([0, 2, 4])</span>
+<span class="sd">        &gt;&gt;&gt; col_indices = torch.tensor([0, 1, 0, 1])</span>
+<span class="sd">        &gt;&gt;&gt; values = torch.tensor([1, 2, 3, 4], dtype=torch.float)</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.sparse_csr_tensor(crow_indices, col_indices, values)</span>
+<span class="sd">        &gt;&gt;&gt; A.to_dense()  # visualize</span>
+<span class="sd">        tensor([[1., 2.],</span>
+<span class="sd">                [3., 4.]])</span>
+<span class="sd">        &gt;&gt;&gt; b = torch.tensor([[1.], [2.]])</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.CG()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([-4.4052e-05,  5.0003e-01])</span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -532,31 +547,24 @@
             <span class="n">maxiter</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="mi">10</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">maxiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span>
-
-        <span class="n">matvec</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">bmv</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
-        <span class="n">dotprod</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vecdot</span>
-        <span class="n">psolve</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">bmv</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span> <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">matvec</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">b</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-
-        <span class="c1"># Dummy value to initialize var, silences warnings</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">b</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="n">rho_prev</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">return</span> <span class="n">x</span>
 
-            <span class="n">z</span> <span class="o">=</span> <span class="n">psolve</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-            <span class="n">rho_cur</span> <span class="o">=</span> <span class="n">dotprod</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">r</span>
+            <span class="n">rho_cur</span> <span class="o">=</span> <span class="n">vecdot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">beta</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">rho_prev</span>
-                <span class="n">p</span> <span class="o">*=</span> <span class="n">beta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">p</span> <span class="o">+=</span> <span class="n">z</span>
+                <span class="n">p</span> <span class="o">=</span>  <span class="n">p</span> <span class="o">*</span> <span class="n">beta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># First spin</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="n">p</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:]</span>
 
-            <span class="n">q</span> <span class="o">=</span> <span class="n">matvec</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-            <span class="n">alpha</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">dotprod</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">vecdot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">+=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">p</span>
             <span class="n">r</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">q</span>
             <span class="n">rho_prev</span> <span class="o">=</span> <span class="n">rho_cur</span>
