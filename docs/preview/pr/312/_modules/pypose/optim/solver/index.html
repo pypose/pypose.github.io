@@ -466,12 +466,34 @@
 <span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
 <span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
 
-<span class="sd">    This function is a 1:1 replica of `scipy.sparse.linalg.cg &lt;https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html&gt;`_.</span>
+<span class="sd">    This function is a 1:1 replica of `scipy.sparse.linalg.cg &lt;https://docs.scipy.org/doc\</span>
+<span class="sd">        /scipy/reference/generated/scipy.sparse.linalg.cg.html&gt;`_.</span>
 <span class="sd">    The solution is consistent with the scipy version up to numerical precision.</span>
 <span class="sd">    Variable names are kept the same as the scipy version for easy reference.</span>
 <span class="sd">    We recommend using only non-batched or batch size 1 input for this solver, as</span>
 <span class="sd">    the batched version was not appeared in the original scipy version. When handling</span>
 <span class="sd">    sparse matrices, the batched computation may introduce additional overhead.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.tensor([[0.1802967, 0.3151198, 0.4548111, 0.3860016, 0.2870615],</span>
+<span class="sd">                              [0.3151198, 1.4575327, 1.5533425, 1.0540756, 1.0795838],</span>
+<span class="sd">                              [0.4548111, 1.5533425, 2.3674474, 1.1222278, 1.2365348],</span>
+<span class="sd">                              [0.3860016, 1.0540756, 1.1222278, 1.3748058, 1.2223261],</span>
+<span class="sd">                              [0.2870615, 1.0795838, 1.2365348, 1.2223261, 1.2577004]])</span>
+<span class="sd">        &gt;&gt;&gt; b = torch.tensor([[ 2.64306851],</span>
+<span class="sd">                              [-0.03593633],</span>
+<span class="sd">                              [ 0.73612658],</span>
+<span class="sd">                              [ 0.51501254],</span>
+<span class="sd">                              [-0.26689271]])</span>
+<span class="sd">        &gt;&gt;&gt; A = A.to_sparse_csr() # optional, used to demonstrate the sparse matrix support</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.CG()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([[246.4098],</span>
+<span class="sd">                [ 22.6997],</span>
+<span class="sd">                [-56.9239],</span>
+<span class="sd">                [-161.7914],</span>
+<span class="sd">                [137.2683]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
