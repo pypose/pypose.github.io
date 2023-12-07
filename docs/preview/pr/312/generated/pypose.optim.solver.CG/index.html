@@ -258,12 +258,37 @@
 \]</div>
 <p>where <span class="math">\(\mathbf{A}_i \in \mathbb{C}^{M \times N}\)</span> and <span class="math">\(\bm{b}_i \in
 \mathbb{C}^{M \times 1}\)</span> are the <span class="math">\(i\)</span>-th item of batched linear equations.</p>
-<p>This function is a 1:1 replica of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html">scipy.sparse.linalg.cg</a>.
-The solution is consistent with the scipy version up to numerical precision.
+<dl class="simple">
+<dt>This function is a 1:1 replica of <a href="#id1"><span class="problematic" id="id2">`</span></a>scipy.sparse.linalg.cg &lt;<a class="reference external" href="https://docs.scipy.org/doc">https://docs.scipy.org/doc</a></dt><dd><p>/scipy/reference/generated/scipy.sparse.linalg.cg.html&gt;`_.</p>
+</dd>
+</dl>
+<p>The solution is consistent with the scipy version up to numerical precision.
 Variable names are kept the same as the scipy version for easy reference.
 We recommend using only non-batched or batch size 1 input for this solver, as
 the batched version was not appeared in the original scipy version. When handling
 sparse matrices, the batched computation may introduce additional overhead.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose.optim.solver</span> <span class="k">as</span> <span class="nn">ppos</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1802967</span><span class="p">,</span> <span class="mf">0.3151198</span><span class="p">,</span> <span class="mf">0.4548111</span><span class="p">,</span> <span class="mf">0.3860016</span><span class="p">,</span> <span class="mf">0.2870615</span><span class="p">],</span>
+<span class="go">                      [0.3151198, 1.4575327, 1.5533425, 1.0540756, 1.0795838],</span>
+<span class="go">                      [0.4548111, 1.5533425, 2.3674474, 1.1222278, 1.2365348],</span>
+<span class="go">                      [0.3860016, 1.0540756, 1.1222278, 1.3748058, 1.2223261],</span>
+<span class="go">                      [0.2870615, 1.0795838, 1.2365348, 1.2223261, 1.2577004]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span> <span class="mf">2.64306851</span><span class="p">],</span>
+<span class="go">                      [-0.03593633],</span>
+<span class="go">                      [ 0.73612658],</span>
+<span class="go">                      [ 0.51501254],</span>
+<span class="go">                      [-0.26689271]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span> <span class="c1"># optional, used to demonstrate the sparse matrix support</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span> <span class="o">=</span> <span class="n">ppos</span><span class="o">.</span><span class="n">CG</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">tensor([[246.4098],</span>
+<span class="go">        [ 22.6997],</span>
+<span class="go">        [-56.9239],</span>
+<span class="go">        [-161.7914],</span>
+<span class="go">        [137.2683]])</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.optim.solver.CG.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/solver/#CG.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.solver.CG.forward" title="Permalink to this definition">¶</a></dt>
