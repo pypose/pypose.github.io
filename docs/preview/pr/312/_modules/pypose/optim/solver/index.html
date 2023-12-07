@@ -458,16 +458,20 @@
 
 
 <div class="viewcode-block" id="CG"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.CG/#pypose.optim.solver.CG">[docs]</a><span class="k">class</span> <span class="nc">CG</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The non-batched linear solver with conjugate gradient method.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with conjugate gradient method.</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{A} \bm{x} = \mathbf{b},</span>
+<span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
 
-<span class="sd">    where :math:`\mathbf{A} \in \mathbb{C}^{N \times N}` and :math:`\bm{b} \in</span>
-<span class="sd">    \mathbb{C}^{N \times 1}` are the linear equation.</span>
+<span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
+<span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
+
 <span class="sd">    This function is a 1:1 replica of `scipy.sparse.linalg.cg &lt;https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html&gt;`_.</span>
 <span class="sd">    The solution is consistent with the scipy version up to numerical precision.</span>
 <span class="sd">    Variable names are kept the same as the scipy version for easy reference.</span>
+<span class="sd">    We recommend using only non-batched or batch size 1 input for this solver, as</span>
+<span class="sd">    the batched version was not appeared in the original scipy version. When handling</span>
+<span class="sd">    sparse matrices, the batched computation may introduce additional overhead.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>

@@ -251,16 +251,19 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.optim.solver.CG">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.optim.solver.</span></span><span class="sig-name descname"><span class="pre">CG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/solver/#CG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.solver.CG" title="Permalink to this definition">¶</a></dt>
-<dd><p>The non-batched linear solver with conjugate gradient method.</p>
+<dd><p>The batched linear solver with conjugate gradient method.</p>
 <div class="math">
-\[\mathbf{A} \bm{x} = \mathbf{b},
+\[\mathbf{A}_i \bm{x}_i = \mathbf{b}_i,
 
 \]</div>
-<p>where <span class="math">\(\mathbf{A} \in \mathbb{C}^{N \times N}\)</span> and <span class="math">\(\bm{b} \in
-\mathbb{C}^{N \times 1}\)</span> are the linear equation.
-This function is a 1:1 replica of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html">scipy.sparse.linalg.cg</a>.
+<p>where <span class="math">\(\mathbf{A}_i \in \mathbb{C}^{M \times N}\)</span> and <span class="math">\(\bm{b}_i \in
+\mathbb{C}^{M \times 1}\)</span> are the <span class="math">\(i\)</span>-th item of batched linear equations.</p>
+<p>This function is a 1:1 replica of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html">scipy.sparse.linalg.cg</a>.
 The solution is consistent with the scipy version up to numerical precision.
-Variable names are kept the same as the scipy version for easy reference.</p>
+Variable names are kept the same as the scipy version for easy reference.
+We recommend using only non-batched or batch size 1 input for this solver, as
+the batched version was not appeared in the original scipy version. When handling
+sparse matrices, the batched computation may introduce additional overhead.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.optim.solver.CG.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/optim/solver/#CG.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.optim.solver.CG.forward" title="Permalink to this definition">¶</a></dt>
