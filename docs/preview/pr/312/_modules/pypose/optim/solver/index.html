@@ -544,7 +544,7 @@
         <span class="n">n</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">maxiter</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="mi">10</span>
+            <span class="n">maxiter</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">10</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">maxiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">b</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
@@ -558,7 +558,7 @@
             <span class="n">rho_cur</span> <span class="o">=</span> <span class="n">vecdot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">beta</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">rho_prev</span>
-                <span class="n">p</span> <span class="o">=</span>  <span class="n">p</span> <span class="o">*</span> <span class="n">beta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">beta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># First spin</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="n">p</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:]</span>
@@ -569,9 +569,7 @@
             <span class="n">r</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">q</span>
             <span class="n">rho_prev</span> <span class="o">=</span> <span class="n">rho_cur</span>
 
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># for loop exhausted</span>
-            <span class="c1"># Return incomplete progress</span>
-            <span class="k">return</span> <span class="n">x</span></div></div>
+        <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 
              </article>
