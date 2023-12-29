@@ -870,12 +870,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">make_BTV</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">toBTN</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    A helper class that makes the input vector to shape ``[batch, timestep, value]``.</span>
+<span class="sd">    A helper class that reshape the input vector of shape ``[..., n_dim]``</span>
+<span class="sd">    to ``[n_batch, n_timestep, n_dim]``.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The reshaped vector in shape of ``[B, T, V]``.</span>
+<span class="sd">        The reshaped vector in shape of ``[B, T, N]``.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -889,19 +890,21 @@
     <span class="k">return</span> <span class="n">vec</span>
 
 
-<span class="k">def</span> <span class="nf">run_sys</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">x_traj</span><span class="p">,</span> <span class="n">u_traj</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">runsys</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">x_traj</span><span class="p">,</span> <span class="n">u_traj</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    A helper class that runs the system for T steps given x and u trajectory.</span>
-<span class="sd">    Used for LQR and MPC.</span>
+<span class="sd">    A helper class that runs the system for T steps given x and u trajectory or intial state.</span>
+<span class="sd">    Used internally for LQR and MPC modules.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The trajectory of the system based on the input x and u trajectory.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">x_traj</span> <span class="o">=</span> <span class="n">make_BTV</span><span class="p">(</span><span class="n">x_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
-    <span class="n">u_traj</span> <span class="o">=</span> <span class="n">make_BTV</span><span class="p">(</span><span class="n">u_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="c1">#make initial states trajectories if not given</span>
+    <span class="n">x_traj</span> <span class="o">=</span> <span class="n">toBTN</span><span class="p">(</span><span class="n">x_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">u_traj</span> <span class="o">=</span> <span class="n">toBTN</span><span class="p">(</span><span class="n">u_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">u_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
+        <span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">u_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
 
     <span class="k">return</span> <span class="n">x_traj</span>
 </pre></div>
