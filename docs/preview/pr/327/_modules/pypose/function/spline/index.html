@@ -1,0 +1,674 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.function.spline &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.6.6 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/function/spline.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.function.spline</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.function.spline</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">is_SE3</span>
+
+
+<div class="viewcode-block" id="chspline"><a class="viewcode-back" href="../../../../generated/pypose.chspline/#pypose.chspline">[docs]</a><span class="k">def</span> <span class="nf">chspline</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cubic Hermite Spline, a piecewise-cubic interpolator matching values and first</span>
+<span class="sd">    derivatives.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (:obj:`Tensor`): the sequence of points for interpolation with shape</span>
+<span class="sd">            [..., point_num, dim].</span>
+<span class="sd">        interval (:obj:`float`): the unit interval between interpolated points.</span>
+<span class="sd">            We assume the interval of adjacent input points is 1. Therefore, if we set</span>
+<span class="sd">            ``interval`` as ``0.1``, the interpolated points between the points at</span>
+<span class="sd">            :math:`t` and :math:`t+1` will be :math:`[t, t+0.1, ..., t+0.9, t+1]`.</span>
+<span class="sd">            Default: ``0.1``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">       ``Tensor``: the interpolated points.</span>
+
+<span class="sd">    The interpolated points are evenly distributed between a start point and a end point</span>
+<span class="sd">    according to the number of interpolated points. In this function, the interpolated points</span>
+<span class="sd">    are also evenly distributed between the start point and end point.</span>
+
+<span class="sd">    Denote the starting point :math:`p_0` with the starting tangent :math:`m_0` and the</span>
+<span class="sd">    ending point :math:`p_1` with the ending tagent :math:`m_1`. The interpolated point at</span>
+<span class="sd">    :math:`t` can be defined as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            p(t) &amp;= (1-3t^2+2t^3)p_0 + (t-2t^2+t^3)m_0+(3t^2-2t^3)p_1+(-t^2+t^3)m_1\\</span>
+<span class="sd">                 &amp;= \begin{bmatrix}</span>
+<span class="sd">                        p_0, m_0, p_1, m_1</span>
+<span class="sd">                    \end{bmatrix}</span>
+<span class="sd">                    \begin{bmatrix}</span>
+<span class="sd">                        1&amp; 0&amp;-3&amp; 2\\</span>
+<span class="sd">                        0&amp; 1&amp;-2&amp; 1\\</span>
+<span class="sd">                        0&amp; 0&amp; 3&amp;-2\\</span>
+<span class="sd">                        0&amp; 0&amp;-1&amp; 1</span>
+<span class="sd">                    \end{bmatrix}</span>
+<span class="sd">                    \begin{bmatrix}1\\ t\\ t^2\\ t^3\end{bmatrix}</span>
+
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The implementation is based on wiki of `Cubic Hermite spline</span>
+<span class="sd">        &lt;https://en.wikipedia.org/wiki/Cubic_Hermite_spline&gt;`_.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[[0., 0., 0.],</span>
+<span class="sd">        ...                         [1., .5, 0.1],</span>
+<span class="sd">        ...                         [0., 1., 0.2],</span>
+<span class="sd">        ...                         [1., 1.5, 0.4],</span>
+<span class="sd">        ...                         [1.5, 0., 0.],</span>
+<span class="sd">        ...                         [2., 1.5, 0.4],</span>
+<span class="sd">        ...                         [2.5, 0., 0.],</span>
+<span class="sd">        ...                         [1.75, 0.75, 0.2],</span>
+<span class="sd">        ...                         [2.25, 0.75, 0.2],</span>
+<span class="sd">        ...                         [3., 1.5, 0.4],</span>
+<span class="sd">        ...                         [3., 0., 0.],</span>
+<span class="sd">        ...                         [4., 0., 0.],</span>
+<span class="sd">        ...                         [4., 1.5, 0.4],</span>
+<span class="sd">        ...                         [5., 1., 0.2],</span>
+<span class="sd">        ...                         [4., 0.75, 0.2],</span>
+<span class="sd">        ...                         [5., 0., 0.]]])</span>
+<span class="sd">        &gt;&gt;&gt; waypoints = pp.chspline(points, 0.1)</span>
+
+<span class="sd">    .. figure:: /_static/img/module/liespline/CsplineR3.png</span>
+<span class="sd">        :width: 600</span>
+
+<span class="sd">        Fig. 1. Result of Cubic Spline Interpolation in 3D space.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Dimension of points should be [..., N, C]&quot;</span>
+    <span class="k">assert</span> <span class="n">interval</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;The interval should be smaller than 1.&quot;</span>
+    <span class="n">batch</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span>
+    <span class="n">intervals</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span>
+    <span class="n">timeline</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">timeline</span> <span class="o">=</span> <span class="p">(</span><span class="n">timeline</span> <span class="o">+</span> <span class="n">intervals</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="p">(</span><span class="n">intervals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">timeline</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">timeline</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">m</span> <span class="o">/=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,[</span><span class="mi">0</span><span class="p">],:],</span> <span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,:]</span> <span class="o">+</span> <span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,[</span><span class="o">-</span><span class="mi">1</span><span class="p">],:]],</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">xs</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span><span class="p">])</span> <span class="o">/</span> <span class="n">dx</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span><span class="o">**</span><span class="n">alpha</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span>
+    <span class="n">hh</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">@</span> <span class="n">tt</span><span class="p">)</span><span class="o">.</span><span class="n">mT</span>
+    <span class="n">interpoints</span> <span class="o">=</span> <span class="n">hh</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">interpoints</span> <span class="o">+=</span> <span class="n">hh</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">interpoints</span> <span class="o">+=</span> <span class="n">hh</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">interpoints</span> <span class="o">+=</span> <span class="n">hh</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">dx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">interpoints</span></div>
+
+<div class="viewcode-block" id="bspline"><a class="viewcode-back" href="../../../../generated/pypose.bspline/#pypose.bspline">[docs]</a><span class="k">def</span> <span class="nf">bspline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    B-spline interpolation, which currently only supports SE3 LieTensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (:obj:`LieTensor`): the input sparse poses with</span>
+<span class="sd">            [batch_size, poses_num, dim] shape.</span>
+<span class="sd">        interval (:obj:`float`): the unit interval between interpolated poses.</span>
+<span class="sd">            We assume the interval of adjacent input poses is 1. Therefore, if we set</span>
+<span class="sd">            ``interval`` as ``0.1``, the interpolated poses between the poses at</span>
+<span class="sd">            :math:`t` and :math:`t+1` will be at :math:`[t, t+0.1, ..., t+0.9, t+1]`.</span>
+<span class="sd">            Default: ``0.1``.</span>
+<span class="sd">        extrapolate(``bool``): flag to determine whether the interpolate poses pass the</span>
+<span class="sd">            start and end poses. Default: ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`LieTensor`: the interpolated SE3 LieTensor.</span>
+
+<span class="sd">    A poses query at :math:`t \in [t_i, t_{i+1})` (i.e. a segment of the spline)</span>
+<span class="sd">    only relies on the poses at four steps :math:`\{t_{i-1},t_i,t_{i+1},t_{i+2}\}`.</span>
+<span class="sd">    It means that the interpolation between adjacent poses needs four consecutive poses.</span>
+<span class="sd">    In this function, the interpolated poses are evenly distributed between a</span>
+<span class="sd">    pose query according to the interval parameter.</span>
+
+<span class="sd">    The absolute pose of the spline :math:`T_{s}^w(t)`, where :math:`w` denotes the world</span>
+<span class="sd">    and :math:`s` is the spline coordinate frame, can be calculated:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            &amp;T^w_s(t) = T^w_{i-1} \prod^{i+2}_{j=i}\delta T_j,\\</span>
+<span class="sd">            &amp;\delta T_j= \exp(\lambda_{j-i}(t)\delta \hat{\xi}_j),\\</span>
+<span class="sd">            &amp;\lambda(t) = MU(t),</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    :math:`M` is a predefined matrix, shown as follows:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        M = \frac{1}{6}\begin{bmatrix}</span>
+<span class="sd">            5&amp; 3&amp; -3&amp; 1 \\</span>
+<span class="sd">            1&amp; 3&amp; 3&amp; -2\\</span>
+<span class="sd">            0&amp; 0&amp; 0&amp; 1 \\</span>
+<span class="sd">        \end{bmatrix}</span>
+
+<span class="sd">    :math:`U(t)` is a vector:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        U(t) = \begin{bmatrix}</span>
+<span class="sd">                1\\</span>
+<span class="sd">                u(t)\\</span>
+<span class="sd">                u(t)^2\\</span>
+<span class="sd">                u(t)^3\\</span>
+<span class="sd">            \end{bmatrix}</span>
+
+<span class="sd">    where :math:`u(t)=(t-t_i)/\Delta t`, :math:`\Delta t = t_{i+1} - t_{i}`. :math:`t_i`</span>
+<span class="sd">    is the time point of the :math:`i_{th}` given pose. :math:`t` is the interpolation</span>
+<span class="sd">    time point :math:`t \in [t_{i},t_{i+1})`.</span>
+
+<span class="sd">    :math:`\delta \hat{\xi}_j` is the transformation between :math:`\hat{\xi}_{j-1}`</span>
+<span class="sd">    and :math:`\hat{\xi}_{j}`</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \delta \hat{\xi}_j :&amp;= \log(\exp(\hat{\xi} _w^{j-1})\exp(\hat{\xi}_j^w))</span>
+<span class="sd">                                &amp;= \log(T_j^{j-1})\in \mathfrak{se3}</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The implementation is based on Eq. (3), (4), (5), and (6) of this paper:</span>
+<span class="sd">        David Hug, et al.,</span>
+<span class="sd">        `HyperSLAM: A Generic and Modular Approach to Sensor Fusion and Simultaneous</span>
+<span class="sd">        Localization And Mapping in Continuous-Time</span>
+<span class="sd">        &lt;https://ieeexplore.ieee.org/abstract/document/9320417&gt;`_,</span>
+<span class="sd">        2020 International Conference on 3D Vision (3DV), Fukuoka, Japan, 2020.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; a1 = pp.euler2SO3(torch.Tensor([0., 0., 0.]))</span>
+<span class="sd">        &gt;&gt;&gt; a2 = pp.euler2SO3(torch.Tensor([torch.pi / 4., torch.pi / 3., torch.pi / 2.]))</span>
+<span class="sd">        &gt;&gt;&gt; poses = pp.SE3([[[0., 4., 0., a1[0], a1[1], a1[2], a1[3]],</span>
+<span class="sd">        ...                  [0., 3., 0., a1[0], a1[1], a1[2], a1[3]],</span>
+<span class="sd">        ...                  [0., 2., 0., a1[0], a1[1], a1[2], a1[3]],</span>
+<span class="sd">        ...                  [0., 1., 0., a1[0], a1[1], a1[2], a1[3]],</span>
+<span class="sd">        ...                  [1., 0., 1., a2[0], a2[1], a2[2], a2[3]],</span>
+<span class="sd">        ...                  [2., 0., 1., a2[0], a2[1], a2[2], a2[3]],</span>
+<span class="sd">        ...                  [3., 0., 1., a2[0], a2[1], a2[2], a2[3]],</span>
+<span class="sd">        ...                  [4., 0., 1., a2[0], a2[1], a2[2], a2[3]]]])</span>
+<span class="sd">        &gt;&gt;&gt; wayposes = pp.bspline(poses, 0.1)</span>
+
+<span class="sd">    .. figure:: /_static/img/module/liespline/BsplineSE3.png</span>
+
+<span class="sd">        Fig. 1. Result of B Spline Interpolation in SE3.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot;The input poses are not SE3Type.&quot;</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Dimension of data should be [..., N, C].&quot;</span>
+    <span class="k">assert</span> <span class="n">interval</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;The interval should be smaller than 1.&quot;</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">extrapolate</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+                          <span class="n">data</span><span class="p">,</span>
+                          <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Number of poses is less than 4.&quot;</span>
+    <span class="n">Bth</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">device</span><span class="p">}</span>
+    <span class="n">timeline</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">timeline</span> <span class="o">**</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="o">**</span><span class="n">dargs</span><span class="p">)</span> <span class="o">/</span> <span class="mi">6</span>
+    <span class="n">dP</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span> <span class="o">@</span> <span class="n">tt</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Bth</span> <span class="o">+</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">D</span><span class="p">))</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">*</span> <span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:,</span> <span class="p">:])</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+    <span class="n">Aend</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="p">((</span><span class="n">B</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+    <span class="n">Aend</span> <span class="o">=</span> <span class="n">Aend</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">Aend</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">Aend</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">:]</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+    <span class="n">ps</span><span class="p">,</span> <span class="n">pend</span> <span class="o">=</span> <span class="n">dP</span> <span class="o">*</span> <span class="n">A</span><span class="p">,</span><span class="n">dP</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span><span class="o">*</span><span class="n">Aend</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
+    <span class="n">poses</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">ps</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Bth</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">D</span><span class="p">)),</span> <span class="n">pend</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">poses</span></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
