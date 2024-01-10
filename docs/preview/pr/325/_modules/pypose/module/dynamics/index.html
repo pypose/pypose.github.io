@@ -855,15 +855,13 @@
     <span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 
         <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
-        <span class="n">A</span><span class="p">,</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
-        <span class="n">B</span><span class="p">,</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">f</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">c2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 
         <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
-        <span class="n">C</span><span class="p">,</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
-        <span class="n">D</span><span class="p">,</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span>
+        <span class="n">C</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">sysmat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">g</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div>
 
 <span class="k">class</span> <span class="nc">NLSJacWrapper</span><span class="p">(</span><span class="n">NLS</span><span class="p">):</span>
@@ -932,10 +930,6 @@
 <span class="sd">        Matrices A, B, C, D of the linearized system.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">LTV</span><span class="p">):</span>
-        <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">D</span><span class="p">}</span>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">]</span>
-
     <span class="c1">#get total number of time steps for LTI</span>
     <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span>
@@ -944,12 +938,13 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">T</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">LTV</span><span class="p">):</span>
+        <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">D</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">]</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">LTI</span><span class="p">):</span>
         <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="n">system</span><span class="o">.</span><span class="n">D</span><span class="p">}</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">if</span> <span class="n">T</span><span class="o">==</span><span class="mi">1</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">T</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">]</span>
-
-    <span class="c1">#make state and input 2D, a temporary solution before implementing batched jacobian</span>
-    <span class="n">n_s</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">NLS</span><span class="p">):</span>
 
@@ -963,18 +958,17 @@
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">:</span>
-            <span class="n">trans_func</span> <span class="o">=</span> <span class="n">funcs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
-            <span class="n">jacFunc</span> <span class="o">=</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">trans_func</span><span class="p">)</span>
+            <span class="n">jacFunc</span> <span class="o">=</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">funcs</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
             <span class="n">M</span> <span class="o">=</span> <span class="n">jacFunc</span><span class="p">(</span><span class="n">jac_inputs</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span><span class="c1">#some cases</span>
+            <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span> <span class="c1">#some cases for different input shape</span>
                 <span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
             <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;System type not recognized&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;System type not recognized&quot;</span><span class="p">)</span>
 </pre></div>
 
              </article>
