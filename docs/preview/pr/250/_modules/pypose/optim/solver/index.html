@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.6.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.6.7 &#x25BC</a>
     </div>
     
 
@@ -241,8 +241,11 @@
               
   <h1>Source code for pypose.optim.solver</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">..function.linalg</span> <span class="kn">import</span> <span class="n">bmv</span>
+<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span><span class="p">,</span> <span class="n">vecdot</span>
 
 
 <div class="viewcode-block" id="PINV"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV">[docs]</a><span class="k">class</span> <span class="nc">PINV</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -258,7 +261,7 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{x}_i = \mathrm{pinv}(\mathbf{A}_i) \mathbf{b}_i,</span>
-<span class="sd">        </span>
+
 <span class="sd">    where :math:`\mathrm{pinv}()` is the `pseudo inversion</span>
 <span class="sd">    &lt;https://en.wikipedia.org/wiki/Moore-Penrose_inverse&gt;`_ function.</span>
 
@@ -319,7 +322,7 @@
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{x}_i = \mathrm{lstsq}(\mathbf{A}_i, \mathbf{b}_i),</span>
-<span class="sd">        </span>
+
 <span class="sd">    where :math:`\mathrm{lstsq}()` computes a solution to the least squares problem</span>
 <span class="sd">    of a system of linear equations. More details go to `torch.linalg.lstsq</span>
 <span class="sd">    &lt;https://pytorch.org/docs/stable/generated/torch.linalg.lstsq.html&gt;`_.</span>
@@ -452,6 +455,121 @@
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">L</span><span class="p">)),</span> \
             <span class="s1">&#39;Cholesky decomposition failed. Check your matrix (may not be positive-definite)&#39;</span>
         <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">cholesky_solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CG"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.CG/#pypose.optim.solver.CG">[docs]</a><span class="k">class</span> <span class="nc">CG</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with conjugate gradient method.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
+
+<span class="sd">    where :math:`\mathbf{A}_i \in \mathbb{C}^{M \times N}` and :math:`\bm{b}_i \in</span>
+<span class="sd">    \mathbb{C}^{M \times 1}` are the :math:`i`-th item of batched linear equations.</span>
+
+<span class="sd">    This function is a 1:1 replica of `scipy.sparse.linalg.cg &lt;https://docs.scipy.org/doc</span>
+<span class="sd">    /scipy/reference/generated/scipy.sparse.linalg.cg.html&gt;`_.</span>
+<span class="sd">    The solution is consistent with the scipy version up to numerical precision.</span>
+<span class="sd">    Variable names are kept the same as the scipy version for easy reference.</span>
+<span class="sd">    We recommend using only non-batched or batch size 1 input for this solver, as</span>
+<span class="sd">    the batched version was not appeared in the original scipy version. When handling</span>
+<span class="sd">    sparse matrices, the batched computation may introduce additional overhead.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # dense example</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.tensor([[0.1802967, 0.3151198, 0.4548111, 0.3860016, 0.2870615],</span>
+<span class="sd">                              [0.3151198, 1.4575327, 1.5533425, 1.0540756, 1.0795838],</span>
+<span class="sd">                              [0.4548111, 1.5533425, 2.3674474, 1.1222278, 1.2365348],</span>
+<span class="sd">                              [0.3860016, 1.0540756, 1.1222278, 1.3748058, 1.2223261],</span>
+<span class="sd">                              [0.2870615, 1.0795838, 1.2365348, 1.2223261, 1.2577004]])</span>
+<span class="sd">        &gt;&gt;&gt; b = torch.tensor([[ 2.64306851],</span>
+<span class="sd">                              [-0.03593633],</span>
+<span class="sd">                              [ 0.73612658],</span>
+<span class="sd">                              [ 0.51501254],</span>
+<span class="sd">                              [-0.26689271]])</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.CG()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([[246.4098],</span>
+<span class="sd">                [ 22.6997],</span>
+<span class="sd">                [-56.9239],</span>
+<span class="sd">                [-161.7914],</span>
+<span class="sd">                [137.2683]])</span>
+
+<span class="sd">        &gt;&gt;&gt; # sparse csr example</span>
+<span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
+<span class="sd">        &gt;&gt;&gt; crow_indices = torch.tensor([0, 2, 4])</span>
+<span class="sd">        &gt;&gt;&gt; col_indices = torch.tensor([0, 1, 0, 1])</span>
+<span class="sd">        &gt;&gt;&gt; values = torch.tensor([1, 2, 3, 4], dtype=torch.float)</span>
+<span class="sd">        &gt;&gt;&gt; A = torch.sparse_csr_tensor(crow_indices, col_indices, values)</span>
+<span class="sd">        &gt;&gt;&gt; A.to_dense()  # visualize</span>
+<span class="sd">        tensor([[1., 2.],</span>
+<span class="sd">                [3., 4.]])</span>
+<span class="sd">        &gt;&gt;&gt; b = torch.tensor([[1.], [2.]])</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.CG()</span>
+<span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
+<span class="sd">        tensor([-4.4052e-05,  5.0003e-01])</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">maxiter</span><span class="p">,</span> <span class="n">tol</span>
+
+<div class="viewcode-block" id="CG.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.CG/#pypose.optim.solver.CG.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            A (Tensor): the input tensor. It is assumed to be a symmetric</span>
+<span class="sd">                positive-definite matrix. Layout is allowed to be COO, CSR, BSR, or dense.</span>
+<span class="sd">            b (Tensor): the tensor on the right hand side. Layout could be sparse or dense</span>
+<span class="sd">                but is only allowed to be a type that is compatible with the layout of A.</span>
+<span class="sd">                In other words, `A @ b` operation must be supported by the layout of A.</span>
+<span class="sd">            x (Tensor, optional): the initial guess for the solution. Default: ``None``.</span>
+<span class="sd">            M (Tensor, optional): the preconditioner for A. Layout is allowed to be COO,</span>
+<span class="sd">                CSR, BSR, or dense. Default: ``None``.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Tensor: the solved tensor. Layout is the same as the layout of b.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> \
+                <span class="s1">&#39;The number of dimensions of A and b must differ by 1&#39;</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">bnrm2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">bnrm2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">b</span>
+        <span class="n">atol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">*</span> <span class="n">bnrm2</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maxiter</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">10</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maxiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">b</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="n">rho_prev</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">x</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">r</span>
+            <span class="n">rho_cur</span> <span class="o">=</span> <span class="n">vecdot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">beta</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">rho_prev</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">beta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># First spin</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">p</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:]</span>
+
+            <span class="n">q</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">rho_cur</span> <span class="o">/</span> <span class="n">vecdot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">p</span>
+            <span class="n">r</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">q</span>
+            <span class="n">rho_prev</span> <span class="o">=</span> <span class="n">rho_cur</span>
+
+        <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 
              </article>
