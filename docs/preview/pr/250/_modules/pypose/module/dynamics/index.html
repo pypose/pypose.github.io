@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.6.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.6.7 &#x25BC</a>
     </div>
     
 
@@ -326,7 +326,7 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to set the reference point for linearization.</span>
 
-<span class="sd">        Args: </span>
+<span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The reference state of the dynamical system. If ``None``,</span>
 <span class="sd">                the the most recent state is taken. Default: ``None``.</span>
 <span class="sd">            input (:obj:`Tensor`): The reference input to the dynamical system. If ``None``,</span>
@@ -360,7 +360,7 @@
 <div class="viewcode-block" id="LTI"><a class="viewcode-back" href="../../../../generated/pypose.module.LTI/#pypose.module.LTI">[docs]</a><span class="k">class</span> <span class="nc">LTI</span><span class="p">(</span><span class="n">System</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Discrete-time Linear Time-Invariant (LTI) system.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        A (:obj:`Tensor`): The state matrix of LTI system.</span>
 <span class="sd">        B (:obj:`Tensor`): The input matrix of LTI system.</span>
@@ -404,8 +404,8 @@
 <span class="sd">        &gt;&gt;&gt; input = torch.randn(Bd, Id, device=device)</span>
 <span class="sd">        &gt;&gt;&gt; state, observation = lti(state, input)</span>
 <span class="sd">        tensor([[[-8.5639,  0.0523, -0.2576]],</span>
-<span class="sd">                [[ 4.1013, -1.5452, -0.0233]]]), </span>
-<span class="sd">        tensor([[[-3.5780, -2.2970, -2.9314]], </span>
+<span class="sd">                [[ 4.1013, -1.5452, -0.0233]]]),</span>
+<span class="sd">        tensor([[[-3.5780, -2.2970, -2.9314]],</span>
 <span class="sd">                [[-0.4358,  1.7306,  2.7514]]]))</span>
 
 <span class="sd">    Note:</span>
@@ -415,7 +415,7 @@
 <span class="sd">        More practical examples can be found at `examples/module/dynamics</span>
 <span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/dynamics&gt;`_.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">c1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;_A&#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
@@ -430,7 +430,7 @@
 <span class="sd">        Perform one step advance for the LTI system.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system</span>
 <span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
 
 <span class="sd">        Returns:</span>
@@ -446,7 +446,7 @@
 <span class="sd">            \mathbf{x}_{k+1} = \mathbf{A}\mathbf{x}_k + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system</span>
 <span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
 
 <span class="sd">        Returns:</span>
@@ -463,7 +463,7 @@
 <span class="sd">            \mathbf{y}_k = \mathbf{C}\mathbf{x}_k + \mathbf{D}\mathbf{u}_k + \mathbf{c}_2</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system </span>
+<span class="sd">            state (:obj:`Tensor`): The state (:math:`\mathbf{x}`) of the system</span>
 <span class="sd">            input (:obj:`Tensor`): The input (:math:`\mathbf{u}`) of the system.</span>
 
 <span class="sd">        Returns:</span>
@@ -486,7 +486,7 @@
     <span class="k">def</span> <span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;System output matrix.&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_C</span>
- 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;System observation matrix.&#39;&#39;&#39;</span>
@@ -507,7 +507,7 @@
 <div class="viewcode-block" id="LTV"><a class="viewcode-back" href="../../../../generated/pypose.module.LTV/#pypose.module.LTV">[docs]</a><span class="k">class</span> <span class="nc">LTV</span><span class="p">(</span><span class="n">LTI</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Discrete-time Linear Time-Variant (LTV) system.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        A (:obj:`Tensor`, optional): The stacked state matrix of LTI system. Default: ``None``</span>
 <span class="sd">        B (:obj:`Tensor`, optional): The stacked input matrix of LTI system. Default: ``None``</span>
@@ -550,28 +550,28 @@
 <span class="sd">        &gt;&gt;&gt; D = torch.tile(torch.zeros(n_state, n_ctrl), (n_batch, T, 1, 1))</span>
 <span class="sd">        &gt;&gt;&gt; x = torch.randn(n_state)</span>
 <span class="sd">        &gt;&gt;&gt; u = torch.randn(T, n_ctrl)</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; class MyLTV(pp.module.LTV):</span>
 <span class="sd">        ...     def __init__(self, A, B, C, D, T):</span>
 <span class="sd">        ...         super().__init__(A, B, C, D)</span>
 <span class="sd">        ...         self.T = T</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def A(self):</span>
 <span class="sd">        ...         return self._A[...,self._t % self.T,:,:]</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def B(self):</span>
 <span class="sd">        ...         return self._B[...,self._t % self.T,:,:]</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def C(self):</span>
 <span class="sd">        ...         return self._C[...,self._t % self.T,:,:]</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def D(self):</span>
 <span class="sd">        ...         return self._D[...,self._t % self.T,:,:]</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; ltv = MyLTV(A, B, C, D, T)</span>
 <span class="sd">        &gt;&gt;&gt; for t in range(T):</span>
 <span class="sd">        ...     x, y = ltv(x, u[t])</span>
@@ -582,28 +582,28 @@
 <span class="sd">        &gt;&gt;&gt; n_sc = n_state + n_ctrl</span>
 <span class="sd">        &gt;&gt;&gt; x = torch.randn(n_state)</span>
 <span class="sd">        &gt;&gt;&gt; u = torch.randn(T, n_ctrl)</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; class MyLTV(pp.module.LTV):</span>
 <span class="sd">        ...     def __init__(self, A, B, C, D, T):</span>
 <span class="sd">        ...         super().__init__(A, B, C, D)</span>
 <span class="sd">        ...         self.T = T</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def A(self):</span>
 <span class="sd">        ...         return torch.eye(4, 4) * self._t.cos()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def B(self):</span>
 <span class="sd">        ...         return torch.eye(4, 3) * self._t.sin()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def C(self):</span>
 <span class="sd">        ...         return torch.eye(4, 4) * self._t.tan()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     @property</span>
 <span class="sd">        ...     def D(self):</span>
 <span class="sd">        ...         return torch.eye(4, 3)</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; ltv = MyLTV()</span>
 <span class="sd">        &gt;&gt;&gt; for t in range(T):</span>
 <span class="sd">        ...     x, y = ltv(x, u[t])</span>
@@ -619,7 +619,7 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to set the reference point for linearization.</span>
 
-<span class="sd">        Args: </span>
+<span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The reference state of the dynamical system. If ``None``,</span>
 <span class="sd">                the the most recent state is taken. Default: ``None``.</span>
 <span class="sd">            input (:obj:`Tensor`): The reference input to the dynamical system. If ``None``,</span>
@@ -641,14 +641,14 @@
 <div class="viewcode-block" id="NLS"><a class="viewcode-back" href="../../../../generated/pypose.module.NLS/#pypose.module.NLS">[docs]</a><span class="k">class</span> <span class="nc">NLS</span><span class="p">(</span><span class="n">System</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Dynamics model for discrete-time non-linear system (NLS).</span>
-<span class="sd">    </span>
+
 <span class="sd">    The state transision function :math:`\mathbf{f}` and observation function</span>
 <span class="sd">    :math:`\mathbf{g}` are given by:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k), \\</span>
-<span class="sd">            \mathbf{y}_{k}   &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k), </span>
+<span class="sd">            \mathbf{y}_{k}   &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k),</span>
 <span class="sd">        \end{aligned}</span>
 
 <span class="sd">    where :math:`k`, :math:`\mathbf{x}`, :math:`\mathbf{u}`, :math:`\mathbf{y}` are the time</span>
@@ -675,11 +675,11 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \begin{aligned}</span>
-<span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*, </span>
+<span class="sd">            \mathbf{f}(\mathbf{x}, \mathbf{u}, t^*) &amp;\approx \mathbf{f}(\mathbf{x}^*,</span>
 <span class="sd">                \mathbf{u}^*, t^*) +  \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}}</span>
-<span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}} </span>
+<span class="sd">                \right|_{\chi^*} \delta \mathbf{x} + \left. \frac{\partial \mathbf{f}}</span>
 <span class="sd">                {\partial \mathbf{u}} \right|_{\chi^*} \delta \mathbf{u} \\</span>
-<span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A}(\mathbf{x} </span>
+<span class="sd">            &amp;= \mathbf{f}(\mathbf{x}^*, \mathbf{u}^*, t^*) + \mathbf{A}(\mathbf{x}</span>
 <span class="sd">                - \mathbf{x}^*) + \mathbf{B}(\mathbf{u}-\mathbf{u}^*) \\</span>
 <span class="sd">            &amp;= \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u} + \mathbf{c}_1</span>
 <span class="sd">            \end{aligned}</span>
@@ -694,7 +694,7 @@
 <span class="sd">        theory. First, the linearization can be done for arbitrary point(s), not limited to</span>
 <span class="sd">        the system&#39;s equilibrium point(s), and therefore the extra constant terms :math:`\mathbf{c}_1`</span>
 <span class="sd">        and :math:`\mathbf{c}_2` are produced. Second, the linearized equations are represented</span>
-<span class="sd">        by the full states and inputs: :math:`\mathbf{x}` and :math:`\mathbf{u}`, rather than </span>
+<span class="sd">        by the full states and inputs: :math:`\mathbf{x}` and :math:`\mathbf{u}`, rather than</span>
 <span class="sd">        the perturbation format: :math:`\delta \mathbf{x}` and :math:`\delta \mathbf{u}`</span>
 <span class="sd">        so that the model is consistent with, e.g., the LTI model and the iterative LQR</span>
 <span class="sd">        solver. For more details go to :meth:`LTI`.</span>
@@ -707,34 +707,34 @@
 
 <span class="sd">        &gt;&gt;&gt; import math, torch</span>
 <span class="sd">        &gt;&gt;&gt; import pypose as pp</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; class Floquet(pp.module.NLS):</span>
 <span class="sd">        ...     def __init__(self):</span>
 <span class="sd">        ...         super().__init__()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     def state_transition(self, state, input, t):</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...         cc = (2 * math.pi * t / 100).cos()</span>
 <span class="sd">        ...         ss = (2 * math.pi * t / 100).sin()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...         A = torch.tensor([[   1., cc/10],</span>
 <span class="sd">        ...                           [cc/10,    1.]], device=t.device)</span>
 <span class="sd">        ...         B = torch.tensor([[ss],</span>
 <span class="sd">        ...                           [1.]], device=t.device)</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...         return pp.bmv(A, state) + pp.bmv(B, input)</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     def observation(self, state, input, t):</span>
 <span class="sd">        ...         return state + t</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; # Start from t = 8, and advance one step to t = 9.</span>
 <span class="sd">        &gt;&gt;&gt; step, current = 8, torch.tensor([1., 1.])</span>
 <span class="sd">        &gt;&gt;&gt; input = torch.tensor(2 * math.pi / 50 * step).sin()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; system = Floquet().reset(t = step)</span>
 <span class="sd">        &gt;&gt;&gt; next, observation = system(current, input)</span>
 <span class="sd">        &gt;&gt;&gt; system.set_refpoint()</span>
-<span class="sd">        ... </span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; print(next)        # Next state</span>
 <span class="sd">        &gt;&gt;&gt; print(observation) # Observation</span>
 <span class="sd">        &gt;&gt;&gt; print(system.A)    # Linearized state matrix</span>
@@ -778,7 +778,7 @@
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to set the reference point for linearization.</span>
 
-<span class="sd">        Args: </span>
+<span class="sd">        Args:</span>
 <span class="sd">            state (:obj:`Tensor`): The reference state of the dynamical system. If ``None``,</span>
 <span class="sd">                the the most recent state is taken. Default: ``None``.</span>
 <span class="sd">            input (:obj:`Tensor`): The reference input to the dynamical system. If ``None``,</span>
@@ -832,7 +832,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jacargs</span><span class="p">)</span>
- 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">D</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
@@ -868,6 +868,44 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Potential performance loss here - self.C and self.D involves jacobian eval</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_g</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_state</span><span class="p">)</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_input</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">toBTN</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reshape the input tensor of shape ``[..., N]`` to ``[B, T, N]``, where B, T, N</span>
+<span class="sd">    normally refer to the dimension of batch, time step, and state, respectively.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The reshaped tensor in shape of ``[B, T, N]``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">vec</span>
+
+
+<span class="k">def</span> <span class="nf">runsys</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">x_traj</span><span class="p">,</span> <span class="n">u_traj</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Run the system for T steps, given state and input trajectories or vectors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The state trajectory of the system based on the state and input trajectories.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#make initial states trajectories if not given</span>
+    <span class="n">x_traj</span> <span class="o">=</span> <span class="n">toBTN</span><span class="p">(</span><span class="n">x_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">u_traj</span> <span class="o">=</span> <span class="n">toBTN</span><span class="p">(</span><span class="n">u_traj</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">system</span><span class="p">(</span><span class="n">x_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">u_traj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:])</span>
+
+    <span class="k">return</span> <span class="n">x_traj</span>
 </pre></div>
 
              </article>
