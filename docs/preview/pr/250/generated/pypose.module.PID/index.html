@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.module.ControllerParametersTuner" href="../pypose.module.ControllerParametersTuner/" />
+    <link rel="next" title="Optimization" href="../../optim/" />
     <link rel="prev" title="pypose.module.ICP" href="../pypose.module.ICP/" />
 
 <!--
@@ -250,35 +250,49 @@
 <h1>pypose.module.PID<a class="headerlink" href="#pypose-module-pid" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.PID">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_compute_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">PID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is the basic implementation of PID controller.</p>
+<p>A PID controller, standing for proportional-integral-derivative controller, operates
+as a feedback mechanism within a control loop, extensively utilized across industrial
+control systems and various applications where continuous modulation is essential.
+It functions by persistently determining an error value <span class="math">\(\mathbf{e}(t)\)</span>, which
+represents the difference between a targeted setpoint and the actual value of the
+process being controlled. To correct this error, the PID controller implements
+adjustments derived from three key components: the proportional term (P),
+the integral term (I), and the derivative term (D), each contributing to
+the overall control strategy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> – controller parameters, e.g. kp, ki, kd in PID controllers.</p></li>
-<li><p><strong>kp</strong> – proportional gain</p></li>
-<li><p><strong>ki</strong> – integral gain</p></li>
-<li><p><strong>kd</strong> – derivative gain</p></li>
-<li><p><strong>func_compute_error</strong> – the function reveives two arguments: state and ref_state,
-argument state refers to the state of dynamic systems, and ref_state is the desired
-dynamic system state. The reason why this function has to be provided is in some cases
-the ref_state and state cannot be substracted directly, e.g. states in SO3 dimension. If no
-function is provided, the final error is computed by ref_state - state.</p></li>
+<li><p><strong>kp</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – proportional gain to the error</p></li>
+<li><p><strong>ki</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – integral gain to the integration of the error over the past time</p></li>
+<li><p><strong>kd</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – derivative gain to the current rate of change of the error</p></li>
 </ul>
 </dd>
 </dl>
+<p>The output of the PID can be described as</p>
+<div class="math">
+\[\mathbf{u}(t) = \mathbf{K_p} \mathbf{e}(t) + \mathbf{K_i}
+\int_0^t \mathbf{e}(\tau)d \tau + \mathbf{K_d} \frac{d\mathbf{e}(t)}{dt}
+
+\]</div>
+<p>The discritized implmentation of the PID can be described as</p>
+<div class="math">
+\[\mathbf{u}(t_k) = \mathbf{K_p} \mathbf{e}(t_k) + \mathbf{K_i} \sum_{j=0}^k
+\mathbf{e}(t_j) + \mathbf{K_d} (\mathbf{e}(t_k) - \mathbf{e}(t_{k-1}))
+
+\]</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.PID.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feed_forward_quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_dot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parameters</strong> – controller parameters, e.g. kp, ki, kd in PID controllers.</p></li>
-<li><p><strong>state</strong> – current system state of dynamic systems.</p></li>
-<li><p><strong>ref_state</strong> – the reference state of systems to reach.</p></li>
-<li><p><strong>dt</strong> – time interval between last and current function invocation</p></li>
-<li><p><strong>feed_forward_quantity</strong> – system plant input generated by other feed forward
-controllers.</p></li>
+<li><p><strong>error</strong> – error value <span class="math">\(\mathbf{e}(t)\)</span> as the difference between a
+desired setpoint and a measured
+value.</p></li>
+<li><p><strong>error_dot</strong> – The rate of the change of error value.</p></li>
+<li><p><strong>ff</strong> – feedforward system input appened to the output of the pid controller</p></li>
 </ul>
 </dd>
 </dl>
@@ -287,8 +301,7 @@ controllers.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.PID.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/pid/#PID.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.PID.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is used to reset the internal state.
-For example, integrated error in PID controller</p>
+<dd><p>This method is used to reset the internal error integrity.</p>
 </dd></dl>
 
 </dd></dl>
@@ -303,7 +316,7 @@ For example, integrated error in PID controller</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.module.ControllerParametersTuner/" class="btn btn-neutral float-right" title="pypose.module.ControllerParametersTuner" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../optim/" class="btn btn-neutral float-right" title="Optimization" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="../pypose.module.ICP/" class="btn btn-neutral" title="pypose.module.ICP" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>

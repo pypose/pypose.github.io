@@ -248,62 +248,65 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is the basic implementation of PID controller.</span>
 
+<span class="sd">    A PID controller, standing for proportional-integral-derivative controller, operates</span>
+<span class="sd">    as a feedback mechanism within a control loop, extensively utilized across industrial</span>
+<span class="sd">    control systems and various applications where continuous modulation is essential.</span>
+<span class="sd">    It functions by persistently determining an error value :math:`\mathbf{e}(t)`, which</span>
+<span class="sd">    represents the difference between a targeted setpoint and the actual value of the</span>
+<span class="sd">    process being controlled. To correct this error, the PID controller implements</span>
+<span class="sd">    adjustments derived from three key components: the proportional term (P),</span>
+<span class="sd">    the integral term (I), and the derivative term (D), each contributing to</span>
+<span class="sd">    the overall control strategy.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        parameters: controller parameters, e.g. kp, ki, kd in PID controllers.</span>
-<span class="sd">        kp: proportional gain</span>
-<span class="sd">        ki: integral gain</span>
-<span class="sd">        kd: derivative gain</span>
-<span class="sd">        func_compute_error: the function reveives two arguments: state and ref_state,</span>
-<span class="sd">            argument state refers to the state of dynamic systems, and ref_state is the desired</span>
-<span class="sd">            dynamic system state. The reason why this function has to be provided is in some cases</span>
-<span class="sd">            the ref_state and state cannot be substracted directly, e.g. states in SO3 dimension. If no</span>
-<span class="sd">            function is provided, the final error is computed by ref_state - state.</span>
+<span class="sd">        kp (:obj:`Tensor`): proportional gain to the error</span>
+<span class="sd">        ki (:obj:`Tensor`): integral gain to the integration of the error over the past time</span>
+<span class="sd">        kd (:obj:`Tensor`): derivative gain to the current rate of change of the error</span>
+
+<span class="sd">    The output of the PID can be described as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{u}(t) = \mathbf{K_p} \mathbf{e}(t) + \mathbf{K_i}</span>
+<span class="sd">        \int_0^t \mathbf{e}(\tau)d \tau + \mathbf{K_d} \frac{d\mathbf{e}(t)}{dt}</span>
+
+<span class="sd">    The discritized implmentation of the PID can be described as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{u}(t_k) = \mathbf{K_p} \mathbf{e}(t_k) + \mathbf{K_i} \sum_{j=0}^k</span>
+<span class="sd">        \mathbf{e}(t_j) + \mathbf{K_d} (\mathbf{e}(t_k) - \mathbf{e}(t_{k-1}))</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">kd</span><span class="p">,</span> <span class="n">func_compute_error</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">kd</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">=</span> <span class="n">kp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="n">ki</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">=</span> <span class="n">kd</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">func_compute_error</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basic_func_compute_error</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span> <span class="o">=</span> <span class="n">func_compute_error</span>
 
-    <span class="k">def</span> <span class="nf">basic_func_compute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">ref_state</span> <span class="o">-</span> <span class="n">state</span>
-
-<div class="viewcode-block" id="PID.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">feed_forward_quantity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PID.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">error_dot</span><span class="p">,</span> <span class="n">ff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            parameters: controller parameters, e.g. kp, ki, kd in PID controllers.</span>
-<span class="sd">            state:  current system state of dynamic systems.</span>
-<span class="sd">            ref_state:  the reference state of systems to reach.</span>
-<span class="sd">            dt: time interval between last and current function invocation</span>
-<span class="sd">            feed_forward_quantity: system plant input generated by other feed forward</span>
-<span class="sd">                controllers.</span>
+<span class="sd">            error: error value :math:`\mathbf{e}(t)` as the difference between a</span>
+<span class="sd">                desired setpoint and a measured</span>
+<span class="sd">                value.</span>
+<span class="sd">            error_dot: The rate of the change of error value.</span>
+<span class="sd">            ff: feedforward system input appened to the output of the pid controller</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_compute_error</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ref_state</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="n">error</span>
-        
+            <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+=</span> <span class="n">error</span>
-        <span class="n">error_diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">-</span> <span class="n">error</span>
 
-        <span class="k">if</span> <span class="n">feed_forward_quantity</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">feed_forward_quantity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ff</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">*</span> <span class="n">error</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">*</span> <span class="n">error_diff</span> <span class="o">/</span> <span class="n">dt</span> \
-            <span class="o">+</span> <span class="n">feed_forward_quantity</span></div>
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">*</span> <span class="n">error</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">*</span> <span class="n">error_dot</span> <span class="o">+</span> <span class="n">ff</span></div>
 
 <div class="viewcode-block" id="PID.reset"><a class="viewcode-back" href="../../../../generated/pypose.module.PID/#pypose.module.PID.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is used to reset the internal state.</span>
-<span class="sd">        For example, integrated error in PID controller</span>
+<span class="sd">        This method is used to reset the internal error integrity.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrity_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">integity</span> <span class="o">=</span> <span class="kc">None</span>
