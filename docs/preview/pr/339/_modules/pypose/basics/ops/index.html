@@ -324,12 +324,13 @@
 <span class="sd">          :math:`N` is the LieTensor size along the :obj:`dim` dimension.</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # The following operations are equivalent.</span>
 <span class="sd">        &gt;&gt;&gt; input = pp.randn_SE3(2)</span>
-<span class="sd">        &gt;&gt;&gt; input.cumprod(dim = 0)</span>
+<span class="sd">        &gt;&gt;&gt; input.cumprod(dim = 0, left=True)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
 <span class="sd">                [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
-<span class="sd">        &gt;&gt;&gt; pp.cumops(input, 0, lambda a, b : a @ b)</span>
+<span class="sd">        &gt;&gt;&gt; pp.cumops(input, 0, lambda a, b : b @ a) # Left multiplication</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
 <span class="sd">                [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>

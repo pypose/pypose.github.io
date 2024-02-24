@@ -285,12 +285,13 @@ definition of LieTensor, e.g., quaternion.</p></li>
 </ul>
 </div>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># The following operations are equivalent.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
 <span class="go">        [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">cumops</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">:</span> <span class="n">b</span> <span class="o">@</span> <span class="n">a</span><span class="p">)</span> <span class="c1"># Left multiplication</span>
 <span class="go">SE3Type LieTensor:</span>
 <span class="go">tensor([[-0.6466,  0.2956,  2.4055, -0.4428,  0.1893,  0.3933,  0.7833],</span>
 <span class="go">        [ 1.2711,  1.2020,  0.0651, -0.0685,  0.6732,  0.7331, -0.0685]])</span>
