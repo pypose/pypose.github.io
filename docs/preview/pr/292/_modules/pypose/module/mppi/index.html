@@ -242,116 +242,45 @@
   <h1>Source code for pypose.module.mppi</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 
-<span class="k">def</span> <span class="nf">_ensure_non_zero</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">factor</span> <span class="o">*</span> <span class="p">(</span><span class="n">cost</span> <span class="o">-</span> <span class="n">beta</span><span class="p">))</span>
-
-
-<span class="k">def</span> <span class="nf">is_tensor_like</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">squeeze_n</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">n_squeeze</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_squeeze</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">v</span>
-
-
-<span class="c1"># from arm_pytorch_utilities, standalone since that package is not on pypi yet</span>
-<span class="k">def</span> <span class="nf">handle_batch_input</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_handle_batch_input</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;For func that expect 2D input, handle input that have more than 2 dimensions by</span>
-<span class="sd">        flattening them temporarily&quot;&quot;&quot;</span>
-
-        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="c1"># assume inputs that are tensor-like have compatible shapes and is represented</span>
-            <span class="c1"># by the first argument</span>
-            <span class="n">batch_dims</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
-                        <span class="c1"># last dimension is type dependent; all previous ones are batches</span>
-                        <span class="n">batch_dims</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
-                        <span class="k">break</span>
-                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-                        <span class="n">n_batch_dims_to_add</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-                        <span class="n">batch_ones_to_add</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_batch_dims_to_add</span>
-                        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">batch_ones_to_add</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>\
-                            <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-                        <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                            <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">squeeze_n</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">n_batch_dims_to_add</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>\
-                                <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">]</span>
-                            <span class="k">return</span> <span class="n">ret</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
-                                <span class="k">return</span> <span class="n">squeeze_n</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">n_batch_dims_to_add</span><span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="k">return</span> <span class="n">ret</span>
-            <span class="c1"># no batches; just return normally</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">batch_dims</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="c1"># reduce all batch dimensions down to the first one</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):])</span> <span class="k">if</span> <span class="p">(</span><span class="n">is_tensor_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> \
-                <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="c1"># restore original batch dimensions; keep variable dimension (nx)</span>
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span>
-                    <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">batch_dims</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> \
-                        <span class="k">else</span> <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_tensor_like</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
-                        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">batch_dims</span><span class="p">,</span> <span class="o">*</span><span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):])</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">batch_dims</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ret</span>
-
-        <span class="k">return</span> <span class="n">wrapper</span>
-
-    <span class="k">return</span> <span class="n">_handle_batch_input</span>
 
 
 <div class="viewcode-block" id="MPPI"><a class="viewcode-back" href="../../../../generated/pypose.module.MPPI/#pypose.module.MPPI">[docs]</a><span class="k">class</span> <span class="nc">MPPI</span><span class="p">():</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Model Predictive Path Integral (MPPI) control.</span>
-<span class="sd">    This implementation batch samples the trajectories and scales well with the number of</span>
-<span class="sd">    samples :math:`K`.</span>
+<span class="sd">    Model Predictive Path Integral Control (MPPI).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dynamics (callable): Function(state, action) -&gt; next_state. The dynamics model</span>
-<span class="sd">            of the system.</span>
-<span class="sd">        running_cost (callable): Function to compute the cost associated with a given</span>
-<span class="sd">            state and action.</span>
-<span class="sd">        nx (int): Dimension of the state.</span>
-<span class="sd">        noise_sigma (Tensor): Control noise covariance.</span>
-<span class="sd">        num_samples (int): Number of trajectories to sample.</span>
-<span class="sd">        horizon (int): Length of each trajectory.</span>
-<span class="sd">        device (str): PyTorch device.</span>
-<span class="sd">        noise_mu (Tensor, optional): Mean for the control noise distribution. Defaults to</span>
-<span class="sd">            a tensor of zeros.</span>
-<span class="sd">        lambda_ (float, optional): Temperature parameter that weighs the importance of</span>
-<span class="sd">            the cost relative to the control noise. Higher values lead to more exploration.</span>
-<span class="sd">        u_min (Tensor, optional): Minimum boundary for the control action. Defaults to</span>
+<span class="sd">        dynamics (:obj:`callable`): Function(state, action) -&gt; next_state. The dynamics</span>
+<span class="sd">            model of the system.</span>
+<span class="sd">        running_cost (:obj:`callable`): Function to compute the cost for a given state and</span>
+<span class="sd">            action.</span>
+<span class="sd">        nx (:obj:`int`): Dimension of the state space.</span>
+<span class="sd">        noise_sigma (:obj:`Tensor`): Covariance matrix for control noise.</span>
+<span class="sd">        num_samples (:obj:`int`): Number of trajectories to sample.</span>
+<span class="sd">        horizon (:obj:`int`): Length of each trajectory.</span>
+<span class="sd">        device (:obj:`str`): PyTorch device for computation.</span>
+<span class="sd">        noise_mu (:obj:`Tensor`, optional): Mean of the control noise distribution.</span>
+<span class="sd">            Defaults to a tensor of zeros.</span>
+<span class="sd">        lambda_ (:obj:`float`, optional): Temperature parameter that affects the balance</span>
+<span class="sd">            between cost and exploration. Higher values favor exploration.</span>
+<span class="sd">        u_min (:obj:`Tensor`, optional): Lower bounds for control actions. Defaults to</span>
 <span class="sd">            negative infinity.</span>
-<span class="sd">        u_max (Tensor, optional): Maximum boundary for the control action. Defaults to</span>
+<span class="sd">        u_max (:obj:`Tensor`, optional): Upper bounds for control actions. Defaults to</span>
 <span class="sd">            positive infinity.</span>
-<span class="sd">        noise_abs_cost (float, optional): Absolute cost associated with the noise. Helps</span>
-<span class="sd">            in weighing the magnitude of noise added to the control. Defaults to zero.</span>
+<span class="sd">        noise_abs_cost (:obj:`float`, optional): Absolute cost of the noise, aiding in</span>
+<span class="sd">            control noise evaluation. Defaults to zero.</span>
 
-<span class="sd">    MPPI is a variant of NMPC that repeatedly solves finite-horizon optimal control tasks</span>
-<span class="sd">    while utilizing nonlinear dynamics and general cost functions, which can be</span>
-<span class="sd">    nonquadratic and even discontinuous. Specifically, it samples thousands</span>
-<span class="sd">    of trajectories around some mean control sequence in real-time by taking advantage of</span>
-<span class="sd">    the parallel computing capabilities of modern Graphic Processing Units(GPUs), then</span>
-<span class="sd">    produces an optimal trajectory along with its corresponding control sequence by</span>
-<span class="sd">    calculating the weighted average of the cost of all samples</span>
+<span class="sd">    **Model Predictive Path Integral Control** is an advanced form of Nonlinear Model</span>
+<span class="sd">    Predictive Control (NMPC) that efficiently solves finite-horizon optimal control</span>
+<span class="sd">    tasks under nonlinear dynamics and complex cost functions. It leverages the</span>
+<span class="sd">    parallel computing power of GPUs to sample multiple trajectories in real-time,</span>
+<span class="sd">    optimizing control actions based on a weighted average of the sampled costs.</span>
 
-<span class="sd">    Given current state :math:`X`, control signal :math:`U`, and</span>
-<span class="sd">    predicting horizon :math:`N`.At each timestep, the MPPI controller aims to solve:</span>
+<span class="sd">    The operation of MPPI can be described with the following optimization problem,</span>
+<span class="sd">    aiming to minimize the expected value of the cost function over a prediction</span>
+<span class="sd">    horizon :math:`N`:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align*}</span>
@@ -365,53 +294,34 @@
 <span class="sd">                \mathcal{N} (0, \bm{\Sigma}_{\epsilon})</span>
 <span class="sd">        \end{align*}</span>
 
-<span class="sd">    where :math:`J` is the objective function, :math:`\mathbb{E}` is the expected value</span>
-<span class="sd">    , :math:`q_k` is the stage cost, :math:`\phi` is the terminal cost, :math:`F` is</span>
-<span class="sd">    denotes the system&#39;s dynamics which comprises of hexarotor and contact dynamics,</span>
-<span class="sd">    and :math:`\epsilon` represents a sampled noise or perturbation added to the control</span>
-<span class="sd">    sequence at time step :math:`k`, which is modeled by Ornstein-Uhlenbeck process. Under</span>
-<span class="sd">    this definition, the objective is to minimize the expectation of the state and control</span>
-<span class="sd">    costs with a random state vector while satisfying the dynamics constraints.</span>
-
-<span class="sd">    The MPPI algorithm samples :math:`M` trajectories at each time horizon. Let us denote</span>
-<span class="sd">    :math:`\mathbf{U}&#39; = \begin{bmatrix} \mathbf{u}_0&#39; &amp; \mathbf{u}_1&#39;</span>
-<span class="sd">    &amp; \cdots &amp; \mathbf{u}_{N-1}&#39;\end{bmatrix}` as the nominal/mean control sequence,</span>
-<span class="sd">    :math:`\bm{E}^{(j)} = \begin{bmatrix} \bm{\epsilon}_0^{(j)}</span>
-<span class="sd">    &amp; \bm{\epsilon}_1^{(j)} &amp; \cdots &amp; \bm{\epsilon}_{N-1}^{(j)}\end{bmatrix}`,</span>
-<span class="sd">    where :math:`\bm{\epsilon}_k^{(j)} \sim  \mathcal{N}(0, \bm{\Sigma}_{\epsilon})`</span>
-<span class="sd">    as the control disturbance sequence of the :math:`j^{\mathrm{th}}` sampled trajectory,</span>
-<span class="sd">    and :math:`\mathbf{U}^{(j)} = \begin{bmatrix} \mathbf{u}_0^{(j)} &amp; \mathbf{u}_1^{(j)}</span>
-<span class="sd">    &amp; \cdots &amp; \mathbf{u}_{N-1}^{(j)}\end{bmatrix}` as the actual control sequence, such</span>
-<span class="sd">    that :math:`\mathbf{U}^{(j)} = \mathbf{U}&#39; + \bm{E}^{j}`,</span>
-<span class="sd">    where :math:`j = \begin{bmatrix} 1 &amp; \cdots &amp; M\end{bmatrix}`.</span>
-<span class="sd">    The cost of the :math:`j^{\mathrm{th}}` sampled trajectory :math:`S_j` can be computed</span>
-<span class="sd">    based on previous optimization problem.</span>
-<span class="sd">    Then, the MPPI generates the optimal control sequence as well as the mean sequence for</span>
-<span class="sd">    the next iteration by a weighted sum,</span>
+<span class="sd">    Here, :math:`J` is the objective function, :math:`\mathbb{E}` denotes the expected</span>
+<span class="sd">    value, and :math:`\epsilon` represents the control noise modeled by the</span>
+<span class="sd">    Ornstein-Uhlenbeck process. MPPI samples :math:`M` trajectories, computes the cost</span>
+<span class="sd">    for each, and calculates the optimal control as a weighted average of these costs:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{equation*}</span>
 <span class="sd">            \mathbf{U} = \sum_{j = 1}^M w_j\mathbf{U}^{(j)}/\sum_{j = 1}^{M} w_j</span>
 <span class="sd">        \end{equation*}</span>
 
-<span class="sd">    where the weights :math:`w_j` of the :math:`j^{\mathrm{th}}` sample is computed as:</span>
+<span class="sd">    Weights :math:`w_j` for each sample are computed as:</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{equation*}</span>
 <span class="sd">            w_j = \exp\left(-\frac{1}{\lambda}(S_j - \beta)\right)</span>
 <span class="sd">        \end{equation*}</span>
 
-
-<span class="sd">    to optimize the information-theoretical cost, where :math:`\beta =</span>
-<span class="sd">    \min_{j=1,\cdots, M} S_j`, and :math:`\lambda` determines how selective is</span>
-<span class="sd">    the weighted average.</span>
+<span class="sd">    where :math:`\beta = \min_{j=1,\cdots, M} S_j`, and :math:`\lambda` influences</span>
+<span class="sd">    the selectiveness of the weighted average.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The MPPI approach is based on the algorithm from Williams et al., 2017:</span>
-<span class="sd">        &#39;Information Theoretic MPC for Model-Based Reinforcement Learning&#39;.</span>
-<span class="sd">        The implementation is adapted from:</span>
-<span class="sd">        https://github.com/UM-ARM-Lab/pytorch_mppi</span>
-<span class="sd">        and https://github.com/ferreirafabio/mppi_pendulum.</span>
+<span class="sd">        MPPI is based on the algorithm from:</span>
+
+<span class="sd">        - Williams, G., et al., &#39;Information Theoretic MPC for Model-Based</span>
+<span class="sd">          Reinforcement Learning&#39;, 2017.</span>
+<span class="sd">        - Implementations adapted from GitHub repositories for pytorch_mppi</span>
+<span class="sd">          and mppi_pendulum.</span>
+
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch</span>
@@ -452,17 +362,16 @@
 <span class="sd">        &gt;&gt;&gt; print(&#39;u = &#39;, u)</span>
 <span class="sd">        &gt;&gt;&gt; print(&#39;x = &#39;, xn)</span>
 <span class="sd">        u =  tensor([[-1.0977,  0.6999],</span>
-<span class="sd">                     [ 0.4890, -0.6172],</span>
-<span class="sd">                     [ 1.3908, -0.6498],</span>
-<span class="sd">                     [-0.1326, -0.2450],</span>
-<span class="sd">                     [ 0.6668, -0.9944]])</span>
+<span class="sd">                        [ 0.4890, -0.6172],</span>
+<span class="sd">                        [ 1.3908, -0.6498],</span>
+<span class="sd">                        [-0.1326, -0.2450],</span>
+<span class="sd">                        [ 0.6668, -0.9944]])</span>
 <span class="sd">        x =  tensor([[ 0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
-<span class="sd">                     [-1.0977e-01,  0.0000e+00,  6.9991e-02],</span>
-<span class="sd">                     [-6.0990e-02,  3.4199e-03,  8.2744e-03],</span>
-<span class="sd">                     [ 7.8084e-02,  4.5706e-03, -5.6704e-02],</span>
-<span class="sd">                     [ 6.4848e-02,  5.3220e-03, -8.1209e-02],</span>
-<span class="sd">                     [ 1.3131e-01, -8.6915e-05, -1.8065e-01]])</span>
-
+<span class="sd">                        [-1.0977e-01,  0.0000e+00,  6.9991e-02],</span>
+<span class="sd">                        [-6.0990e-02,  3.4199e-03,  8.2744e-03],</span>
+<span class="sd">                        [ 7.8084e-02,  4.5706e-03, -5.6704e-02],</span>
+<span class="sd">                        [ 6.4848e-02,  5.3220e-03, -8.1209e-02],</span>
+<span class="sd">                        [ 1.3131e-01, -8.6915e-05, -1.8065e-01]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -477,7 +386,8 @@
                  <span class="n">noise_mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">u_min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">u_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">noise_abs_cost</span><span class="o">=</span><span class="kc">False</span>
+                 <span class="n">noise_abs_cost</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span>
                  <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">device</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">noise_sigma</span><span class="o">.</span><span class="n">dtype</span>
@@ -493,17 +403,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">noise_mu</span> <span class="o">=</span> <span class="n">noise_mu</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">noise_sigma</span> <span class="o">=</span> <span class="n">noise_sigma</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="c1"># bounds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="n">u_min</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="o">=</span> <span class="n">u_max</span>
-        <span class="c1"># make sure if any of them is specified, both are specified</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="n">u_min</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">u_max</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">u_min</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
@@ -513,7 +422,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma_inv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_dist</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_mu</span><span class="p">,</span> \
             <span class="n">covariance_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">dynamics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">dynamics</span><span class="o">.</span><span class="n">state_transition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running_cost</span> <span class="o">=</span> <span class="n">running_cost</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">noise_abs_cost</span> <span class="o">=</span> <span class="n">noise_abs_cost</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="kc">None</span>
@@ -523,117 +432,96 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
 
-    <span class="nd">@handle_batch_input</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="c1">#if self.step_dependency else self.system(state, u)</span>
 
-    <span class="nd">@handle_batch_input</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_running_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_cost</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MPPI.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPPI/#pypose.module.MPPI.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">u_init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Perform MPPI for discrete system</span>
+<span class="sd">            Executes the MPPI control loop for a given initial state and optional initial control input.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            state (:obj:`Tensor`): The initial state of the system.</span>
-<span class="sd">            u_init (:obj:`Tensor`, optinal): The current inputs of the system along a</span>
-<span class="sd">                trajectory. Default: ``None``.</span>
+<span class="sd">            Args:</span>
+<span class="sd">                state (:obj:`Tensor`): The initial state of the system.</span>
+<span class="sd">                u_init (:obj:`Tensor`, optional): Initial guess for the control inputs. Defaults to None.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved input</span>
-<span class="sd">            sequence :math:`\mathbf{u}` and the solved state sequence :math:`\mathbf{x}`</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                :obj:`Tensor`: The optimal control sequence over the time horizon.</span>
+<span class="sd">                :obj:`Tensor`: The sequence of states resulting from applying the optimal control sequence.</span>
+
+
+<span class="sd">            The MPPI controller generates a base control sequence and then samples multiple perturbations around this sequence using the specified noise distribution. Constraints on control inputs are enforced, and the costs associated with each trajectory are evaluated to compute a weighted average of the perturbed controls, forming the final optimal control sequence.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># shift command 1 time step</span>
-        <span class="k">if</span> <span class="n">u_init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">u_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_mu</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">u_init</span> <span class="o">=</span> <span class="n">u_init</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_init</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
-        <span class="n">cost_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_total_cost_batch</span><span class="p">()</span>
-        <span class="n">beta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cost_total</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cost_total_non_zero</span> <span class="o">=</span> <span class="n">_ensure_non_zero</span><span class="p">(</span><span class="n">cost_total</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span><span class="p">)</span>
-        <span class="n">eta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_total_non_zero</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_total_non_zero</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> \
-                <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[:,</span> <span class="n">t</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
-        <span class="n">action2states</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-            <span class="n">cur_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">action2states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">action</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">action2states</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">action2states</span><span class="p">,</span><span class="n">cur_state</span><span class="p">),</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">action</span><span class="p">,</span> <span class="n">action2states</span></div>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">else</span> <span class="n">state</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">u_init</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_mu</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="n">u_init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">u_init</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_rollout_costs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perturbed_actions</span><span class="p">):</span>
-        <span class="n">K</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nu</span> <span class="o">=</span> <span class="n">perturbed_actions</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="n">nu</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
-        <span class="n">cost_total</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="c1">#cost_samples = cost_total.repeat(self.M, 1)</span>
-        <span class="n">cost_samples</span> <span class="o">=</span> <span class="n">cost_total</span>
-        <span class="c1"># allow propagation of a sample of states (ex. to carry a distribution),</span>
-        <span class="c1"># or to start with a single state</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-        <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
-            <span class="n">u</span> <span class="o">=</span> <span class="n">perturbed_actions</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamics</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_cost</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-            <span class="n">cost_samples</span> <span class="o">=</span> <span class="n">cost_samples</span> <span class="o">+</span> <span class="n">c</span>
-            <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="c1"># Actions is K x T x nu</span>
-        <span class="c1"># States is K x T x nx</span>
-        <span class="n">actions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">cost_total</span> <span class="o">=</span> <span class="n">cost_total</span> <span class="o">+</span> <span class="n">cost_samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cost_total</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">actions</span>
 
-    <span class="k">def</span> <span class="nf">_compute_total_cost_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># parallelize sampling across trajectories</span>
-        <span class="c1"># resample noise each time we take an action</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
-        <span class="c1"># broadcast own control to noise over samples; now it&#39;s K x T x nu</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span>
-        <span class="c1"># naively bound control</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bound_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perturbed_action</span><span class="p">)</span>
-        <span class="c1"># bounded noise after bounding (some got cut off,</span>
-        <span class="c1"># so we don&#39;t penalize that in action cost)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_action</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">U</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_abs_cost</span><span class="p">:</span>
-            <span class="n">action_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma_inv</span>
-            <span class="c1"># NOTE: The original paper does</span>
-            <span class="c1"># self.lambda_ * torch.abs(self.noise) @ self.noise_sigma_inv,</span>
-            <span class="c1"># but this biases the actions with low noise if all states have the same cost.</span>
-            <span class="c1"># With abs(noise) we prefer actions close to the nomial trajectory.</span>
-        <span class="k">else</span><span class="p">:</span><span class="c1"># Like original paper</span>
-            <span class="n">action_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma_inv</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cost_total</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span>\
-            <span class="bp">self</span><span class="o">.</span><span class="n">_compute_rollout_costs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perturbed_action</span><span class="p">)</span>
-        <span class="c1"># action perturbation cost</span>
-        <span class="n">perturbation_cost</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">U</span> <span class="o">*</span> <span class="n">action_cost</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cost_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_total</span> <span class="o">+</span> <span class="n">perturbation_cost</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_total</span>
+        <span class="n">U_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,))</span>
+        <span class="n">U_base</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">U_base</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">U_base</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_init</span>
 
-    <span class="k">def</span> <span class="nf">_bound_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+        <span class="n">perturbed_action</span> <span class="o">=</span> <span class="n">U_base</span> <span class="o">+</span> <span class="n">noise</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
-                <span class="n">u</span> <span class="o">=</span> <span class="n">action</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice_control</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">perturbed_action</span><span class="p">[:,</span> <span class="nb">slice</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)]</span>
                 <span class="n">cu</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_min</span><span class="p">)</span>
-                <span class="n">action</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice_control</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="o">=</span> <span class="n">cu</span>
-        <span class="k">return</span> <span class="n">action</span>
+                <span class="n">perturbed_action</span><span class="p">[:,</span> <span class="nb">slice</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)]</span> <span class="o">=</span> <span class="n">cu</span>
 
-    <span class="k">def</span> <span class="nf">_slice_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span></div>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">perturbed_action</span> <span class="o">-</span> <span class="n">U_base</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_abs_cost</span><span class="p">:</span>
+            <span class="n">action_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma_inv</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">*</span> <span class="n">noise</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise_sigma_inv</span>
+
+        <span class="n">K</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nu</span> <span class="o">=</span> <span class="n">perturbed_action</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">nu</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
+        <span class="n">cost_total_temp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">cost_samples</span> <span class="o">=</span> <span class="n">cost_total_temp</span>
+        <span class="n">states_temp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">actions_temp</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Repeat the initial state to match the batch size</span>
+        <span class="n">state_temp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">perturbed_action</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span>
+            <span class="c1">#import pdb; pdb.set_trace()</span>
+            <span class="n">state_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">state_temp</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+            <span class="c1">#import pdb; pdb.set_trace()</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_cost</span><span class="p">(</span><span class="n">state_temp</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">cost_samples</span> <span class="o">=</span> <span class="n">cost_samples</span> <span class="o">+</span> <span class="n">c</span>
+            <span class="n">states_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state_temp</span><span class="p">)</span>
+            <span class="n">actions_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+
+        <span class="n">cost_total_temp</span> <span class="o">=</span> <span class="n">cost_total_temp</span> <span class="o">+</span> <span class="n">cost_samples</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cost_total</span> <span class="o">=</span> <span class="n">cost_total_temp</span>
+
+        <span class="c1"># Action perturbation cost</span>
+        <span class="n">perturbation_cost</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">U_base</span> <span class="o">*</span> <span class="n">action_cost</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">cost_total</span> <span class="o">=</span> <span class="n">cost_total</span> <span class="o">+</span> <span class="n">perturbation_cost</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cost_total</span><span class="p">)</span>
+        <span class="n">cost_total_non_zero</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cost_total</span> <span class="o">-</span> <span class="n">beta</span><span class="p">))</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cost_total_non_zero</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="n">cost_total_non_zero</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">U_base</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">U_base</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> \
+                <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">omega</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise</span><span class="p">[:,</span> <span class="n">t</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+        <span class="n">action2states</span> <span class="o">=</span> <span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="c1"># Start with initial state in a list</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">cur_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">action2states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">U_base</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">action2states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_state</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+
+        <span class="c1"># Convert list of tensors to a single tensor</span>
+        <span class="n">action2states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">action2states</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">U_base</span><span class="p">,</span> <span class="n">action2states</span></div></div>
 </pre></div>
 
              </article>

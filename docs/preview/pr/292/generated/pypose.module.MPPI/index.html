@@ -250,44 +250,41 @@
 <h1>pypose.module.MPPI<a class="headerlink" href="#pypose-module-mppi" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.module.MPPI">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">MPPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">running_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_abs_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mppi/#MPPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPPI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Model Predictive Path Integral (MPPI) control.
-This implementation batch samples the trajectories and scales well with the number of
-samples <span class="math">\(K\)</span>.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.module.</span></span><span class="sig-name descname"><span class="pre">MPPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">running_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_abs_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mppi/#MPPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model Predictive Path Integral Control (MPPI).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dynamics</strong> (<em>callable</em>) – Function(state, action) -&gt; next_state. The dynamics model
-of the system.</p></li>
-<li><p><strong>running_cost</strong> (<em>callable</em>) – Function to compute the cost associated with a given
-state and action.</p></li>
-<li><p><strong>nx</strong> (<em>int</em>) – Dimension of the state.</p></li>
-<li><p><strong>noise_sigma</strong> (<em>Tensor</em>) – Control noise covariance.</p></li>
-<li><p><strong>num_samples</strong> (<em>int</em>) – Number of trajectories to sample.</p></li>
-<li><p><strong>horizon</strong> (<em>int</em>) – Length of each trajectory.</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – PyTorch device.</p></li>
-<li><p><strong>noise_mu</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Mean for the control noise distribution. Defaults to
-a tensor of zeros.</p></li>
-<li><p><strong>lambda</strong> (<em>float</em><em>, </em><em>optional</em>) – Temperature parameter that weighs the importance of
-the cost relative to the control noise. Higher values lead to more exploration.</p></li>
-<li><p><strong>u_min</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Minimum boundary for the control action. Defaults to
+<li><p><strong>dynamics</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code>) – Function(state, action) -&gt; next_state. The dynamics
+model of the system.</p></li>
+<li><p><strong>running_cost</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">callable</span></code>) – Function to compute the cost for a given state and
+action.</p></li>
+<li><p><strong>nx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Dimension of the state space.</p></li>
+<li><p><strong>noise_sigma</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – Covariance matrix for control noise.</p></li>
+<li><p><strong>num_samples</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Number of trajectories to sample.</p></li>
+<li><p><strong>horizon</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Length of each trajectory.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – PyTorch device for computation.</p></li>
+<li><p><strong>noise_mu</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – Mean of the control noise distribution.
+Defaults to a tensor of zeros.</p></li>
+<li><p><strong>lambda</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Temperature parameter that affects the balance
+between cost and exploration. Higher values favor exploration.</p></li>
+<li><p><strong>u_min</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – Lower bounds for control actions. Defaults to
 negative infinity.</p></li>
-<li><p><strong>u_max</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Maximum boundary for the control action. Defaults to
+<li><p><strong>u_max</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – Upper bounds for control actions. Defaults to
 positive infinity.</p></li>
-<li><p><strong>noise_abs_cost</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute cost associated with the noise. Helps
-in weighing the magnitude of noise added to the control. Defaults to zero.</p></li>
+<li><p><strong>noise_abs_cost</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Absolute cost of the noise, aiding in
+control noise evaluation. Defaults to zero.</p></li>
 </ul>
 </dd>
 </dl>
-<p>MPPI is a variant of NMPC that repeatedly solves finite-horizon optimal control tasks
-while utilizing nonlinear dynamics and general cost functions, which can be
-nonquadratic and even discontinuous. Specifically, it samples thousands
-of trajectories around some mean control sequence in real-time by taking advantage of
-the parallel computing capabilities of modern Graphic Processing Units(GPUs), then
-produces an optimal trajectory along with its corresponding control sequence by
-calculating the weighted average of the cost of all samples</p>
-<p>Given current state <span class="math">\(X\)</span>, control signal <span class="math">\(U\)</span>, and
-predicting horizon <span class="math">\(N\)</span>.At each timestep, the MPPI controller aims to solve:</p>
+<p><strong>Model Predictive Path Integral Control</strong> is an advanced form of Nonlinear Model
+Predictive Control (NMPC) that efficiently solves finite-horizon optimal control
+tasks under nonlinear dynamics and complex cost functions. It leverages the
+parallel computing power of GPUs to sample multiple trajectories in real-time,
+optimizing control actions based on a weighted average of the sampled costs.</p>
+<p>The operation of MPPI can be described with the following optimization problem,
+aiming to minimize the expected value of the cost function over a prediction
+horizon <span class="math">\(N\)</span>:</p>
 <div class="math">
 \[\begin{align*}
     \min_{\mathbf{U}} J (\mathbf{U}) &= \mathbb{E} \left[ \sum_{k=0}^{N-1}
@@ -301,51 +298,34 @@ predicting horizon <span class="math">\(N\)</span>.At each timestep, the MPPI co
 \end{align*}
 
 \]</div>
-<p>where <span class="math">\(J\)</span> is the objective function, <span class="math">\(\mathbb{E}\)</span> is the expected value
-, <span class="math">\(q_k\)</span> is the stage cost, <span class="math">\(\phi\)</span> is the terminal cost, <span class="math">\(F\)</span> is
-denotes the system’s dynamics which comprises of hexarotor and contact dynamics,
-and <span class="math">\(\epsilon\)</span> represents a sampled noise or perturbation added to the control
-sequence at time step <span class="math">\(k\)</span>, which is modeled by Ornstein-Uhlenbeck process. Under
-this definition, the objective is to minimize the expectation of the state and control
-costs with a random state vector while satisfying the dynamics constraints.</p>
-<p>The MPPI algorithm samples <span class="math">\(M\)</span> trajectories at each time horizon. Let us denote
-<span class="math">\(\mathbf{U}' = \begin{bmatrix} \mathbf{u}_0' &amp; \mathbf{u}_1'
-&amp; \cdots &amp; \mathbf{u}_{N-1}'\end{bmatrix}\)</span> as the nominal/mean control sequence,
-<span class="math">\(\bm{E}^{(j)} = \begin{bmatrix} \bm{\epsilon}_0^{(j)}
-&amp; \bm{\epsilon}_1^{(j)} &amp; \cdots &amp; \bm{\epsilon}_{N-1}^{(j)}\end{bmatrix}\)</span>,
-where <span class="math">\(\bm{\epsilon}_k^{(j)} \sim  \mathcal{N}(0, \bm{\Sigma}_{\epsilon})\)</span>
-as the control disturbance sequence of the <span class="math">\(j^{\mathrm{th}}\)</span> sampled trajectory,
-and <span class="math">\(\mathbf{U}^{(j)} = \begin{bmatrix} \mathbf{u}_0^{(j)} &amp; \mathbf{u}_1^{(j)}
-&amp; \cdots &amp; \mathbf{u}_{N-1}^{(j)}\end{bmatrix}\)</span> as the actual control sequence, such
-that <span class="math">\(\mathbf{U}^{(j)} = \mathbf{U}' + \bm{E}^{j}\)</span>,
-where <span class="math">\(j = \begin{bmatrix} 1 &amp; \cdots &amp; M\end{bmatrix}\)</span>.
-The cost of the <span class="math">\(j^{\mathrm{th}}\)</span> sampled trajectory <span class="math">\(S_j\)</span> can be computed
-based on previous optimization problem.
-Then, the MPPI generates the optimal control sequence as well as the mean sequence for
-the next iteration by a weighted sum,</p>
+<p>Here, <span class="math">\(J\)</span> is the objective function, <span class="math">\(\mathbb{E}\)</span> denotes the expected
+value, and <span class="math">\(\epsilon\)</span> represents the control noise modeled by the
+Ornstein-Uhlenbeck process. MPPI samples <span class="math">\(M\)</span> trajectories, computes the cost
+for each, and calculates the optimal control as a weighted average of these costs:</p>
 <div class="math">
 \[\begin{equation*}
     \mathbf{U} = \sum_{j = 1}^M w_j\mathbf{U}^{(j)}/\sum_{j = 1}^{M} w_j
 \end{equation*}
 
 \]</div>
-<p>where the weights <span class="math">\(w_j\)</span> of the <span class="math">\(j^{\mathrm{th}}\)</span> sample is computed as:</p>
+<p>Weights <span class="math">\(w_j\)</span> for each sample are computed as:</p>
 <div class="math">
 \[\begin{equation*}
     w_j = \exp\left(-\frac{1}{\lambda}(S_j - \beta)\right)
 \end{equation*}
 
 \]</div>
-<p>to optimize the information-theoretical cost, where <span class="math">\(\beta =
-\min_{j=1,\cdots, M} S_j\)</span>, and <span class="math">\(\lambda\)</span> determines how selective is
-the weighted average.</p>
+<p>where <span class="math">\(\beta = \min_{j=1,\cdots, M} S_j\)</span>, and <span class="math">\(\lambda\)</span> influences
+the selectiveness of the weighted average.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The MPPI approach is based on the algorithm from Williams et al., 2017:
-‘Information Theoretic MPC for Model-Based Reinforcement Learning’.
-The implementation is adapted from:
-<a class="reference external" href="https://github.com/UM-ARM-Lab/pytorch_mppi">https://github.com/UM-ARM-Lab/pytorch_mppi</a>
-and <a class="reference external" href="https://github.com/ferreirafabio/mppi_pendulum">https://github.com/ferreirafabio/mppi_pendulum</a>.</p>
+<p>MPPI is based on the algorithm from:</p>
+<ul class="simple">
+<li><p>Williams, G., et al., ‘Information Theoretic MPC for Model-Based
+Reinforcement Learning’, 2017.</p></li>
+<li><p>Implementations adapted from GitHub repositories for pytorch_mppi
+and mppi_pendulum.</p></li>
+</ul>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
@@ -386,38 +366,38 @@ and <a class="reference external" href="https://github.com/ferreirafabio/mppi_pe
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;u = &#39;</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x = &#39;</span><span class="p">,</span> <span class="n">xn</span><span class="p">)</span>
 <span class="go">u =  tensor([[-1.0977,  0.6999],</span>
-<span class="go">             [ 0.4890, -0.6172],</span>
-<span class="go">             [ 1.3908, -0.6498],</span>
-<span class="go">             [-0.1326, -0.2450],</span>
-<span class="go">             [ 0.6668, -0.9944]])</span>
+<span class="go">                [ 0.4890, -0.6172],</span>
+<span class="go">                [ 1.3908, -0.6498],</span>
+<span class="go">                [-0.1326, -0.2450],</span>
+<span class="go">                [ 0.6668, -0.9944]])</span>
 <span class="go">x =  tensor([[ 0.0000e+00,  0.0000e+00,  0.0000e+00],</span>
-<span class="go">             [-1.0977e-01,  0.0000e+00,  6.9991e-02],</span>
-<span class="go">             [-6.0990e-02,  3.4199e-03,  8.2744e-03],</span>
-<span class="go">             [ 7.8084e-02,  4.5706e-03, -5.6704e-02],</span>
-<span class="go">             [ 6.4848e-02,  5.3220e-03, -8.1209e-02],</span>
-<span class="go">             [ 1.3131e-01, -8.6915e-05, -1.8065e-01]])</span>
+<span class="go">                [-1.0977e-01,  0.0000e+00,  6.9991e-02],</span>
+<span class="go">                [-6.0990e-02,  3.4199e-03,  8.2744e-03],</span>
+<span class="go">                [ 7.8084e-02,  4.5706e-03, -5.6704e-02],</span>
+<span class="go">                [ 6.4848e-02,  5.3220e-03, -8.1209e-02],</span>
+<span class="go">                [ 1.3131e-01, -8.6915e-05, -1.8065e-01]])</span>
 </pre></div>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pypose.module.MPPI.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/mppi/#MPPI.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.MPPI.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform MPPI for discrete system</p>
+<dd><p>Executes the MPPI control loop for a given initial state and optional initial control input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>) – The initial state of the system.</p></li>
-<li><p><strong>u_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optinal) – The current inputs of the system along a
-trajectory. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>u_init</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – Initial guess for the control inputs. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of tensors including the solved input
-sequence <span class="math">\(\mathbf{u}\)</span> and the solved state sequence <span class="math">\(\mathbf{x}\)</span></p>
+<dd class="field-even"><p>The optimal control sequence over the time horizon.
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>: The sequence of states resulting from applying the optimal control sequence.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </dd>
 </dl>
+<p>The MPPI controller generates a base control sequence and then samples multiple perturbations around this sequence using the specified noise distribution. Constraints on control inputs are enforced, and the costs associated with each trajectory are evaluated to compute a weighted average of the perturbed controls, forming the final optimal control sequence.</p>
 </dd></dl>
 
 </dd></dl>
