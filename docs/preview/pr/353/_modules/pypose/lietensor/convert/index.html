@@ -1072,8 +1072,8 @@
 
 <div class="viewcode-block" id="quat2unit"><a class="viewcode-back" href="../../../../generated/pypose.quat2unit/#pypose.quat2unit">[docs]</a><span class="k">def</span> <span class="nf">quat2unit</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LieTensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Normalize the quaternion part of a ``LieTensor``, which has to be a Lie Group.</span>
-<span class="sd">    If input is a Lie algebra, then do nothing and return the input tensor.</span>
+<span class="sd">    Normalize the quaternion part of a ``LieTensor``, which has to be a Lie group.</span>
+<span class="sd">    If input is a not a Lie group, then do nothing and return the input.</span>
 <span class="sd">    If the quaternion parts are zeros, then initilize identity quaternions.</span>
 
 <span class="sd">    The quaternion parts :math:`v` are normalized as</span>
@@ -1090,11 +1090,7 @@
 <span class="sd">    Return:</span>
 <span class="sd">        :obj:`LieTensor`: the output LieTensor.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">),</span> <span class="s2">&quot;Input should be a LieTensor&quot;</span>
-
-    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="n">liealgebra</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">input</span>
-    <span class="k">elif</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="n">liegroup</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="n">liegroup</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SO3_type</span><span class="p">,</span> <span class="n">RxSO3_type</span><span class="p">]:</span>
             <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
@@ -1105,7 +1101,8 @@
             <span class="n">output</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">identity_</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">output</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="s2">&quot;LieType of Input LieTensor not recognized.&quot;</span></div>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Input is not Lie group, doing thing and returning input..&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">input</span></div>
 </pre></div>
 
              </article>
