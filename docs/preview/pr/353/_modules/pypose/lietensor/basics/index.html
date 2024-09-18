@@ -1,0 +1,778 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.lietensor.basics &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.6.8 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="_modules/pypose/lietensor/basics.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../../">Module code</a> &gt;</li>
+        
+      <li>pypose.lietensor.basics</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for pypose.lietensor.basics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This basics file includes functions needed to implement LieTensor.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="vec2skew"><a class="viewcode-back" href="../../../../generated/pypose.vec2skew/#pypose.vec2skew">[docs]</a><span class="k">def</span> <span class="nf">vec2skew</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert batched vectors to skew matrices.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (Tensor): the tensor :math:`\mathbf{x}` to convert.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        Tensor: the skew matrices :math:`\mathbf{y}`.</span>
+
+<span class="sd">    Shape:</span>
+<span class="sd">        Input: :obj:`(*, 3)`</span>
+
+<span class="sd">        Output: :obj:`(*, 3, 3)`</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        {\displaystyle \mathbf{y}_i={\begin{bmatrix}\,\,</span>
+<span class="sd">        0&amp;\!-x_{i,3}&amp;\,\,\,x_{i,2}\\\,\,\,x_{i,3}&amp;0&amp;\!-x_{i,1}</span>
+<span class="sd">        \\\!-x_{i,2}&amp;\,\,x_{i,1}&amp;\,\,0\end{bmatrix}}}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The last dimension of the input tensor has to be 3.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; pp.vec2skew(torch.randn(1,3))</span>
+<span class="sd">        tensor([[[ 0.0000, -2.2059, -1.2761],</span>
+<span class="sd">                [ 2.2059,  0.0000,  0.2929],</span>
+<span class="sd">                [ 1.2761, -0.2929,  0.0000]]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">input</span>
+    <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Last dim should be 3&quot;</span>
+    <span class="n">O</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>        <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>  <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span> <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>         <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>  <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>         <span class="n">O</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_"><a class="viewcode-back" href="../../../../generated/pypose.add_/#pypose.add_">[docs]</a><span class="k">def</span> <span class="nf">add_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Inplace version of :meth:`pypose.add`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add"><a class="viewcode-back" href="../../../../generated/pypose.add/#pypose.add">[docs]</a><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Adds other, scaled by alpha, to input LieTensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (:obj:`LieTensor`): the input LieTensor (Lie Algebra or Lie Group).</span>
+
+<span class="sd">        other (:obj:`Tensor`): the tensor to add to input. The last dimension has to be no less</span>
+<span class="sd">            than the shape of the corresponding Lie Algebra of the input.</span>
+
+<span class="sd">        alpha (:obj:`Number`): the multiplier for other.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`LieTensor`: the output LieTensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{y}_i =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">        \alpha * \bm{a}_i + \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Algebra} \\</span>
+<span class="sd">        \mathrm{Exp}(\alpha * \bm{a}_i) \times \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Group}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where :math:`\bm{x}` is the ``input`` LieTensor, :math:`\bm{a}` is the ``other`` Tensor to add,</span>
+<span class="sd">    and :math:`\bm{y}` is the output LieTensor.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        For better readability, we suggest calling ``a + b`` instead of ``a.add(b)`` or</span>
+<span class="sd">        ``pypose.add(a, b)``, which have the same behaviors.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        A Lie Group normally requires a larger space than its corresponding Lie Algebra, thus</span>
+<span class="sd">        the elements in the last dimension of the ``other`` Tensor (treated as a Lie Algebra</span>
+<span class="sd">        in this function) beyond the expected shape of the Lie Algebra are ignored. This is</span>
+<span class="sd">        because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)</span>
+<span class="sd">        in its tangent space and is stored in the LieGroup&#39;s :obj:`LieTensor.grad`, which has</span>
+<span class="sd">        the same storage space with the LieGroup.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \begin{align*}</span>
+<span class="sd">                \frac{D f(\mathcal{X})}{D \mathcal{X}} &amp; \overset{\underset{\mathrm{def}}{}}{=}</span>
+<span class="sd">                \displaystyle \lim_{\bm{\tau} \to \bm{0}} \frac{f(\bm{\tau} \oplus \mathcal{X})</span>
+<span class="sd">                    \ominus f(\mathcal{X})}{\bm{\tau}} \\</span>
+<span class="sd">                &amp; = \left.\frac{\partial\mathrm{Log}(f(\mathrm{Exp}(\bm{\tau})\times\mathcal{X}))</span>
+<span class="sd">                    \times f(\mathcal{X})^{-1})}{\partial \bm{\tau}}\right|_{\bm{\tau=\bm{0}}}</span>
+<span class="sd">            \end{align*},</span>
+
+<span class="sd">        where :math:`\mathcal{X}` is a Lie Group and :math:`\bm{\tau}` is its left perturbation.</span>
+
+<span class="sd">        See Eq.(44) in `Micro Lie theory &lt;https://arxiv.org/abs/1812.01537&gt;`_ for more details of</span>
+<span class="sd">        the gradient for a Lie Group.</span>
+
+<span class="sd">        This provides convenience to work with PyTorch optimizers like :obj:`torch.optim.SGD`,</span>
+<span class="sd">        which calls function :meth:`.add_` of a Lie Group to adjust parameters by gradients</span>
+<span class="sd">        (:obj:`LieTensor.grad`, where the last element is often zero since tangent vector requires</span>
+<span class="sd">        smaller storage space).</span>
+
+<span class="sd">    See :meth:`LieTensor` for types of Lie Algebra and Lie Group.</span>
+
+<span class="sd">    See :meth:`Exp` for Exponential mapping of Lie Algebra.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        The following operations are equivalent.</span>
+
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SE3()</span>
+<span class="sd">        &gt;&gt;&gt; a = torch.randn(6)</span>
+<span class="sd">        &gt;&gt;&gt; x + a</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; pp.add(x, a)</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; pp.se3(a).Exp() @ x</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">        &gt;&gt;&gt; x + torch.cat([a, torch.randn(1)])</span>
+<span class="sd">        SE3Type LieTensor:</span>
+<span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="mul"><a class="viewcode-back" href="../../../../generated/pypose.mul/#pypose.mul">[docs]</a><span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Multiply input LieTensor by other.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{y}_i =</span>
+<span class="sd">        \bm{x}_i \ast \bm{a}_i</span>
+
+<span class="sd">    where :math:`\bm{x}` is the ``input`` LieTensor, :math:`\bm{a}` is the ``other`` Tensor or</span>
+<span class="sd">    LieTensor, and :math:`\bm{y}` is the output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (:obj:`LieTensor`): the input LieTensor (Lie Group or Lie Algebra).</span>
+
+<span class="sd">        other (:obj:`Number`, :obj:`Tensor`, or :obj:`LieTensor`): the value for input to be</span>
+<span class="sd">            multiplied by.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`Tensor`/:obj:`LieTensor`: the product of ``input`` and ``other``.</span>
+
+<span class="sd">    .. list-table:: List of :obj:`pypose.mul` cases</span>
+<span class="sd">        :widths: 25 30 25</span>
+<span class="sd">        :header-rows: 1</span>
+
+<span class="sd">        * - input :obj:`LieTensor`</span>
+<span class="sd">          - other</span>
+<span class="sd">          - output</span>
+<span class="sd">        * - Lie Algebra</span>
+<span class="sd">          - :obj:`Number`</span>
+<span class="sd">          - :obj:`Lie Algebra`</span>
+<span class="sd">        * - Lie Group</span>
+<span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times3}}`</span>
+<span class="sd">          - :obj:`Tensor`</span>
+<span class="sd">        * - Lie Group</span>
+<span class="sd">          - :obj:`Tensor` :math:`\in \mathbb{R^{*\times4}}`</span>
+<span class="sd">          - :obj:`Tensor`</span>
+<span class="sd">        * - Lie Group</span>
+<span class="sd">          - :obj:`Lie Group`</span>
+<span class="sd">          - :obj:`Lie Group`</span>
+
+<span class="sd">    When multiplying a Lie Group by another Lie Group, they must have the</span>
+<span class="sd">    same Lie type.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        For better readability, we suggest calling ``a * b`` or ``a @ b`` instead of</span>
+<span class="sd">        ``a.mul(b)`` or ``pypose.mul(a, b)``, which have the same behaviors.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - When ``other`` is a Tensor, this operator is equivalent to :meth:`Act`.</span>
+<span class="sd">        - When ``other`` is a number and ``input`` is a Lie Algebra, this operator performs</span>
+<span class="sd">          simple element-wise multiplication.</span>
+<span class="sd">        - When ``input`` is a Lie Group, more details are shown below.</span>
+
+<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`SO3_type`</span>
+<span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SO3`):</span>
+
+<span class="sd">      .. math::</span>
+<span class="sd">        {\displaystyle \bm{y}_i={\begin{bmatrix}</span>
+<span class="sd">              q_i^wq_i^{w&#39;} - q_i^xq_i^{x&#39;} -q_i^yq_i^{y&#39;} - q_i^zq_i^{z&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{x&#39;} + q_i^xq_i^{w&#39;} +q_i^yq_i^{z&#39;} - q_i^zq_i^{y&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{y&#39;} - q_i^xq_i^{z&#39;} +q_i^yq_i^{w&#39;} + q_i^zq_i^{x&#39;}\\</span>
+<span class="sd">              q_i^wq_i^{z&#39;} + q_i^xq_i^{y&#39;} -q_i^yq_i^{x&#39;} + q_i^zq_i^{w&#39;}</span>
+<span class="sd">              \end{bmatrix}</span>
+<span class="sd">        }^T},</span>
+
+<span class="sd">      where :math:`\bm{x}_i = [q_i^x, q_i^y, q_i^z, q_i^w]` and</span>
+<span class="sd">      :math:`\bm{a}_i = [q_i^{x&#39;}, q_i^{y&#39;}, q_i^{z&#39;}, q_i^{w&#39;}]` are the ``input``</span>
+<span class="sd">      and ``other`` LieTensor, respectively.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        :math:`\mathbf{y}_i` can be simply derived by taking the complex number multiplication.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \bm{y}_i =</span>
+<span class="sd">            (q_i^x\mathbf{i} + q_i^y\mathbf{j} + q_i^z\mathbf{k} + q_i^w) \ast</span>
+<span class="sd">            (q_i^{x&#39;}\mathbf{i} + q_i^{y&#39;}\mathbf{j} + q_i^{z&#39;}\mathbf{k} + q_i^{w&#39;}),</span>
+
+<span class="sd">        where and :math:`\mathbf{i}` :math:`\mathbf{j}`, and :math:`\mathbf{k}` are the imaginary</span>
+<span class="sd">        units.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{i}^2 = \mathbf{j}^2 = \mathbf{k}^2 = \mathbf{ijk} = -1</span>
+
+<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`SE3_type`</span>
+<span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SE3`):</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i&#39; + \mathbf{t}_i,</span>
+<span class="sd">                        \mathbf{q}_i * \mathbf{q}_i&#39;]</span>
+
+<span class="sd">        where :math:`\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i]` and</span>
+<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i&#39;, \mathbf{q}_i&#39;]` are the ``input`` and ``other``</span>
+<span class="sd">        LieTensor, respectively; :math:`\mathbf{t}_i`, :math:`\mathbf{t}_i&#39;` and</span>
+<span class="sd">        :math:`\mathbf{q}_i`, :math:`\mathbf{q}_i&#39;` are their translation and :obj:`SO3`</span>
+<span class="sd">        parts, respectively; the operator :math:`\ast` denotes the obj:`SO3_type`</span>
+<span class="sd">        multiplication introduced above.</span>
+
+<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`RxSO3_type`</span>
+<span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`RxSO3`)</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{q}_i&#39;, s_is_i&#39;]</span>
+
+<span class="sd">        where :math:`s_i` and :math:`s_i&#39;` are the scale parts of the ``input`` and</span>
+<span class="sd">        ``other`` LieTensor, respectively.</span>
+
+<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`Sim3_type`</span>
+<span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`Sim3`):</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i&#39; + \mathbf{t}_i,</span>
+<span class="sd">                            \mathbf{q}_i * \mathbf{q}_i&#39;, s_is_i&#39;]</span>
+
+<span class="sd">        where :math:`\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i, s_i]` and</span>
+<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i&#39;, \mathbf{q}_i&#39;, s_i&#39;]` are the ``input`` and</span>
+<span class="sd">        ``other`` LieTensor, respectively.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        * :obj:`Lie Algebra` :math:`*` :obj:`Number` :math:`\mapsto` :obj:`Lie Algebra`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_so3()</span>
+<span class="sd">            &gt;&gt;&gt; x</span>
+<span class="sd">            so3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.3018, -1.0246,  0.7784])</span>
+<span class="sd">            &gt;&gt;&gt; a = 5</span>
+<span class="sd">            &gt;&gt;&gt; # The following two operations are equivalent.</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            so3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 1.5090, -5.1231,  3.8919])</span>
+<span class="sd">            &gt;&gt;&gt; pp.mul(x, 5)</span>
+<span class="sd">            so3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 1.5090, -5.1231,  3.8919])</span>
+
+<span class="sd">        * :obj:`Lie Group` :math:`*` :obj:`Tensor` :math:`\mapsto` :obj:`Tensor`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SO3()</span>
+<span class="sd">            &gt;&gt;&gt; a = torch.randn(3)</span>
+<span class="sd">            &gt;&gt;&gt; x, a</span>
+<span class="sd">            (SO3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.6047, -0.2129, -0.1781,  0.7465]),</span>
+<span class="sd">            tensor([-0.1811, -0.2278, -1.9956]))</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            tensor([ 0.9089,  1.6984, -0.5969])</span>
+<span class="sd">            &gt;&gt;&gt; a = torch.randn(4)</span>
+<span class="sd">            &gt;&gt;&gt; a</span>
+<span class="sd">            tensor([ 1.5236, -1.2757, -0.7140,  0.2467])</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            tensor([ 1.6588, -0.4687, -1.2196,  0.2467]</span>
+
+<span class="sd">        * :obj:`SO3_type` :math:`*` :obj:`SO3_type` :math:`\mapsto` :obj:`SO3_type`</span>
+
+<span class="sd">            &gt;&gt;&gt; a = pp.randn_SO3()</span>
+<span class="sd">            &gt;&gt;&gt; a</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.0118, -0.7042, -0.4516,  0.5478])</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            SO3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.3108, -0.3714, -0.8579,  0.1715])</span>
+
+<span class="sd">        * :obj:`SE3_type` :math:`*` :obj:`SE3_type` :math:`\mapsto` :obj:`SE3_type`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_SE3()</span>
+<span class="sd">            &gt;&gt;&gt; a = pp.randn_SE3()</span>
+<span class="sd">            &gt;&gt;&gt; x, a</span>
+<span class="sd">            (SE3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.7819,  1.8541, -0.2857, -0.1970,  0.4742,  0.1109,  0.8509]),</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.6039, -1.4076,  0.3496,  0.7297,  0.3971,  0.2849,  0.4783]))</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            SE3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 1.8949,  0.7456, -0.3104,  0.6177,  0.7017, -0.1287,  0.3308])</span>
+
+<span class="sd">        * :obj:`RxSO3_type` :math:`*` :obj:`RxSO3_type` :math:`\mapsto` :obj:`RxSO3_type`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_RxSO3()</span>
+<span class="sd">            &gt;&gt;&gt; a = pp.randn_RxSO3()</span>
+<span class="sd">            &gt;&gt;&gt; x, a</span>
+<span class="sd">            (RxSO3Type LieTensor:</span>
+<span class="sd">            LieTensor([-0.7518, -0.6481,  0.0933, -0.0775,  1.5791]),</span>
+<span class="sd">            RxSO3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.2757,  0.3102, -0.4086,  0.8129,  0.6593]))</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            RxSO3Type LieTensor:</span>
+<span class="sd">            LieTensor([-0.3967, -0.8323,  0.0530,  0.3835,  1.0411])</span>
+
+<span class="sd">        * :obj:`Sim3_type` :math:`*` :obj:`Sim3_type` :math:`\mapsto` :obj:`Sim3_type`</span>
+
+<span class="sd">            &gt;&gt;&gt; x = pp.randn_Sim3()</span>
+<span class="sd">            &gt;&gt;&gt; a = pp.randn_Sim3()</span>
+<span class="sd">            &gt;&gt;&gt; x, a</span>
+<span class="sd">            (Sim3Type LieTensor:</span>
+<span class="sd">            LieTensor([-0.3439, -0.2309, -0.6571,  0.3170, -0.6594, -0.1100,  0.6728, 0.6296]),</span>
+<span class="sd">            Sim3Type LieTensor:</span>
+<span class="sd">            LieTensor([-0.7434,  1.8613, -2.1315,  0.7688, -0.0268,  0.0520,  0.6367, 1.7745]))</span>
+<span class="sd">            &gt;&gt;&gt; x * a</span>
+<span class="sd">            Sim3Type LieTensor:</span>
+<span class="sd">            LieTensor([ 0.5740,  1.3197, -0.2752,  0.6819, -0.5389,  0.4634,  0.1727, 1.1172])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">*</span> <span class="n">other</span></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+         <script src="../../../../_static/jquery.js"></script>
+         <script src="../../../../_static/underscore.js"></script>
+         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../../_static/doctools.js"></script>
+         <script src="../../../../_static/katex.min.js"></script>
+         <script src="../../../../_static/auto-render.min.js"></script>
+         <script src="../../../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
