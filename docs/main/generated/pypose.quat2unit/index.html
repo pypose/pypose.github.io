@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.matrix &mdash; PyPose main documentation</title>
+  <title>pypose.quat2unit &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.quat2unit" href="../pypose.quat2unit/" />
-    <link rel="prev" title="pypose.scale" href="../pypose.scale/" />
+    <link rel="next" title="pypose.cart2homo" href="../pypose.cart2homo/" />
+    <link rel="prev" title="pypose.matrix" href="../pypose.matrix/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.matrix.html">
+  <a style="color:#F05732" href="generated/pypose.quat2unit.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -214,13 +214,13 @@
         
           <li><a href="../../convert/">Convert</a> &gt;</li>
         
-      <li>pypose.matrix</li>
+      <li>pypose.quat2unit</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.matrix.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.quat2unit.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -246,34 +246,34 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-matrix">
-<h1>pypose.matrix<a class="headerlink" href="#pypose-matrix" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-quat2unit">
+<h1>pypose.quat2unit<a class="headerlink" href="#pypose-quat2unit" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="pypose.matrix">
-<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a> into matrix form.</p>
+<dt class="sig sig-object py" id="pypose.quat2unit">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">quat2unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#quat2unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.quat2unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize the quaternion part of a <code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, which has to be a Lie group.
+If input is a not a Lie group, then do nothing and return the input.
+If the quaternion parts contain pure zeros, then raise an error.</p>
+<p>The quaternion parts <span class="math">\(v\)</span> are normalized as</p>
+<div class="math">
+\[v = \frac{v}{\max(\lVert v \rVert_2, \epsilon)},
+
+\]</div>
+<p>where <span class="math">\(\epsilon\)</span> is a small value to avoid division by zero</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>inputs</strong> (<a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a>) – the input LieTensor.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>) – input LieTensor of any type and shape.</p></li>
+<li><p><strong>eps</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>) – small value to avoid division by zero. Default: 1e-12.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the batched matrix form (torch.Tensor) of LieTensor.</p>
+<dd class="field-even"><p>the output LieTensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SO3</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
-<span class="go">tensor([[[ 0.9285, -0.0040, -0.3713],</span>
-<span class="go">         [ 0.2503,  0.7454,  0.6178],</span>
-<span class="go">         [ 0.2743, -0.6666,  0.6931]],</span>
-<span class="go">        [[ 0.4805,  0.8602, -0.1706],</span>
-<span class="go">         [-0.7465,  0.2991, -0.5944],</span>
-<span class="go">         [-0.4603,  0.4130,  0.7858]]])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -286,10 +286,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.quat2unit/" class="btn btn-neutral float-right" title="pypose.quat2unit" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.cart2homo/" class="btn btn-neutral float-right" title="pypose.cart2homo" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.scale/" class="btn btn-neutral" title="pypose.scale" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.matrix/" class="btn btn-neutral" title="pypose.matrix" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
