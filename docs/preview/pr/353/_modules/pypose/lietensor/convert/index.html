@@ -1074,7 +1074,7 @@
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Normalize the quaternion part of a ``LieTensor``, which has to be a Lie group.</span>
 <span class="sd">    If input is a not a Lie group, then do nothing and return the input.</span>
-<span class="sd">    If the quaternion parts are zeros, then initilize identity quaternions.</span>
+<span class="sd">    If the quaternion parts contain pure zeros, then raise an error.</span>
 
 <span class="sd">    The quaternion parts :math:`v` are normalized as</span>
 
@@ -1097,8 +1097,8 @@
         <span class="k">elif</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SE3_type</span><span class="p">,</span> <span class="n">Sim3_type</span><span class="p">]:</span>
             <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">ltype</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">rotation</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">identity_</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Detected zero quaternions, which cannot be normalized.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Input is not Lie group, doing thing and returning input..&quot;</span><span class="p">)</span>
