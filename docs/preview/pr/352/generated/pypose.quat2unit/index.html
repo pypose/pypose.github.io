@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.func.jacrev &mdash; PyPose main documentation</title>
+  <title>pypose.quat2unit &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="Functions" href="../../functions/" />
-    <link rel="prev" title="Func" href="../../func/" />
+    <link rel="next" title="pypose.cart2homo" href="../pypose.cart2homo/" />
+    <link rel="prev" title="pypose.matrix" href="../pypose.matrix/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.func.jacrev.html">
+  <a style="color:#F05732" href="generated/pypose.quat2unit.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -164,9 +164,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
@@ -212,15 +212,15 @@
       </li>
 
         
-          <li><a href="../../func/">Func</a> &gt;</li>
+          <li><a href="../../convert/">Convert</a> &gt;</li>
         
-      <li>pypose.func.jacrev</li>
+      <li>pypose.quat2unit</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.func.jacrev.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.quat2unit.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -246,56 +246,34 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-func-jacrev">
-<h1>pypose.func.jacrev<a class="headerlink" href="#pypose-func-jacrev" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-quat2unit">
+<h1>pypose.quat2unit<a class="headerlink" href="#pypose-quat2unit" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="pypose.func.jacrev">
-<span class="sig-prename descclassname"><span class="pre">pypose.func.</span></span><span class="sig-name descname"><span class="pre">jacrev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">argnums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_aux</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_preallocate_and_copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/func/jac/#jacrev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.func.jacrev" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function provides the exact same functionality as <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.func.jacrev.html#torch.func.jacrev">torch.func.jacrev()</a>,
-except that it allows LieTensor to be used as input when calculating the jacobian.</p>
+<dt class="sig sig-object py" id="pypose.quat2unit">
+<span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">quat2unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/convert/#quat2unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.quat2unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize the quaternion part of a <code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>, which has to be a Lie group.
+If input is a not a Lie group, then do nothing and return the input.
+If the quaternion parts contain pure zeros, then raise an error.</p>
+<p>The quaternion parts <span class="math">\(v\)</span> are normalized as</p>
+<div class="math">
+\[v = \frac{v}{\max(\lVert v \rVert_2, \epsilon)},
+
+\]</div>
+<p>where <span class="math">\(\epsilon\)</span> is a small value to avoid division by zero</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>func</strong> (<em>function</em>) – A Python function that takes one or more arguments,
-one of which must be a Tensor, and returns one or more Tensors</p></li>
-<li><p><strong>argnums</strong> (<em>int</em><em> or </em><em>Tuple</em><em>[</em><em>int</em><em>]</em>) – Optional, integer or tuple of integers,
-saying which arguments to get the Jacobian with respect to.
-Default: 0.</p></li>
-<li><p><strong>has_aux</strong> (<em>bool</em>) – Flag indicating that <code class="docutils literal notranslate"><span class="pre">func</span></code> returns a
-<code class="docutils literal notranslate"><span class="pre">(output,</span> <span class="pre">aux)</span></code> tuple where the first element is the output of
-the function to be differentiated and the second element is
-auxiliary objects that will not be differentiated.
-Default: False.</p></li>
-<li><p><strong>chunk_size</strong> (<em>None</em><em> or </em><em>int</em>) – If None (default), use the maximum chunk size
-(equivalent to doing a single vmap over vjp to compute the jacobian).
-If 1, then compute the jacobian row-by-row with a for-loop.
-If not None, then compute the jacobian <code class="xref py py-attr docutils literal notranslate"><span class="pre">chunk_size</span></code> rows at a time
-(equivalent to doing multiple vmap over vjp). If you run into memory issues
-computing the jacobian, please try to specify a non-None chunk_size.</p></li>
+<li><p><strong>input</strong> (<code class="docutils literal notranslate"><span class="pre">LieTensor</span></code>) – input LieTensor of any type and shape.</p></li>
+<li><p><strong>eps</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>) – small value to avoid division by zero. Default: 1e-12.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Returns a function that takes in the same inputs as <code class="docutils literal notranslate"><span class="pre">func</span></code> and
-returns the Jacobian of <code class="docutils literal notranslate"><span class="pre">func</span></code> with respect to the arg(s) at
-<code class="docutils literal notranslate"><span class="pre">argnums</span></code>. If <code class="docutils literal notranslate"><span class="pre">has_aux</span> <span class="pre">is</span> <span class="pre">True</span></code>, then the returned function
-instead returns a <code class="docutils literal notranslate"><span class="pre">(jacobian,</span> <span class="pre">aux)</span></code> tuple where <code class="docutils literal notranslate"><span class="pre">jacobian</span></code>
-is the Jacobian and <code class="docutils literal notranslate"><span class="pre">aux</span></code> is auxiliary objects returned by <code class="docutils literal notranslate"><span class="pre">func</span></code>.</p>
+<dd class="field-even"><p>the output LieTensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LieTensor</span></code></a></p>
 </dd>
 </dl>
-<p>A basic usage with our LieTensor type would be the transformation function.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">pose</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">pose</span> <span class="o">@</span> <span class="n">points</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jacobian</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">jacrev</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">pose</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jacobian</span>
-<span class="go">tensor([[[[ 1.0000,  0.0000,  0.0000,  0.0000,  1.5874, -0.2061,  0.0000]],</span>
-<span class="go">        [[ 0.0000,  1.0000,  0.0000, -1.5874,  0.0000, -1.4273,  0.0000]],</span>
-<span class="go">        [[ 0.0000,  0.0000,  1.0000,  0.2061,  1.4273,  0.0000,  0.0000]]]])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -308,10 +286,10 @@ is the Jacobian and <code class="docutils literal notranslate"><span class="pre"
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../functions/" class="btn btn-neutral float-right" title="Functions" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.cart2homo/" class="btn btn-neutral float-right" title="pypose.cart2homo" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../../func/" class="btn btn-neutral" title="Func" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.matrix/" class="btn btn-neutral" title="pypose.matrix" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
