@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.random_filter &mdash; PyPose main documentation</title>
+  <title>pypose.nbr_filter &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.voxel_filter" href="../pypose.voxel_filter/" />
-    <link rel="prev" title="pypose.bspline" href="../pypose.bspline/" />
+    <link rel="next" title="Convert" href="../../convert/" />
+    <link rel="prev" title="pypose.voxel_filter" href="../pypose.voxel_filter/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.random_filter.html">
+  <a style="color:#F05732" href="generated/pypose.nbr_filter.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -214,13 +214,13 @@
         
           <li><a href="../../functions/">Functions</a> &gt;</li>
         
-      <li>pypose.random_filter</li>
+      <li>pypose.nbr_filter</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.random_filter.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.nbr_filter.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -246,39 +246,61 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-random-filter">
-<h1>pypose.random_filter<a class="headerlink" href="#pypose-random-filter" title="Permalink to this heading">¶</a></h1>
+  <section id="pypose-nbr-filter">
+<h1>pypose.nbr_filter<a class="headerlink" href="#pypose-nbr-filter" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pypose.random_filter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">random_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#random_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.random_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Randomly sample a number of points from a batched point cloud.</p>
+<dt class="sig sig-object py" id="pypose.nbr_filter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">nbr_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pdim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/function/geometry/#nbr_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.nbr_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter point outliers by checking if a point has less than n neighbors (nbr) within a
+radius.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the input point cloud, where the last dimension (D)
-is the dimension of the points. The shape should be (…, N, D), where N is
-the number of points.</p></li>
-<li><p><strong>num</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – the number of points to sample.</p></li>
+<li><p><strong>points</strong> (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>) – the input point cloud. It is possible that the last
+dimension (D) is larger than <code class="docutils literal notranslate"><span class="pre">pdim</span></code>, with point’s coordinates using first
+<code class="docutils literal notranslate"><span class="pre">pdim</span></code> values. Subsequent values may contain additional information like
+intensity, RGB channels, etc. The shape has to be (N, D).</p></li>
+<li><p><strong>nbr</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – the minimum number of neighbors (nbr) within a certain radius.</p></li>
+<li><p><strong>radius</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>) – the radius of the sphere for counting the neighbors.</p></li>
+<li><p><strong>pdim</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – the dimsion of points, where <span class="math">\(\text{pdim} \le D\)</span>.
+Default to the last dimension of points, if <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>return_mask</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – return the mask of inliers of not.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The sampled points, with the shape (…, num, D).</p>
+<dd class="field-even"><p>The point clouds removed outliers.
+<code class="docutils literal notranslate"><span class="pre">torch.BoolTensor</span></code>: The mask of point clouds removed outliers, where the inlier
+is True and the outlier is False. The shape is (…, N).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>output (<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>)</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code></p>
 </dd>
 </dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Note that this operation does not support batch operations, since the number of
+output voxels can be different on different batches.</p>
+</div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">7.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">],</span>
-<span class="gp">... </span>                       <span class="p">[</span><span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">random_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="go">tensor([[ 4.,  5.,  6.],</span>
-<span class="go">        [ 1.,  2.,  3.],</span>
-<span class="go">        [10., 11., 12.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">nbr_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">nbr</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">tensor([[0., 0., 0.],</span>
+<span class="go">        [1., 0., 0.],</span>
+<span class="go">        [0., 1., 0.],</span>
+<span class="go">        [0., 1., 1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">nbr_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">nbr</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">return_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(tensor([[ 0.,  0.,  0.],</span>
+<span class="go">         [ 1.,  0.,  0.],</span>
+<span class="go">         [ 0.,  1.,  0.],</span>
+<span class="go">         [ 0.,  1.,  1.],</span>
+<span class="go">         [10.,  1.,  1.]]),</span>
+<span class="go">tensor([ True,  True,  True,  True,  True, False]))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -293,10 +315,10 @@ the number of points.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.voxel_filter/" class="btn btn-neutral float-right" title="pypose.voxel_filter" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../convert/" class="btn btn-neutral float-right" title="Convert" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.bspline/" class="btn btn-neutral" title="pypose.bspline" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.voxel_filter/" class="btn btn-neutral" title="pypose.voxel_filter" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
