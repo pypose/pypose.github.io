@@ -601,9 +601,67 @@
     <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="nbr_filter"><a class="viewcode-back" href="../../../../generated/pypose.nbr_filter/#pypose.nbr_filter">[docs]</a><span class="k">def</span> <span class="nf">nbr_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">nbr</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">pdim</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">return_mask</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Filter point outliers by checking if a point has less than n neighbors (nbr) within a</span>
+<span class="sd">    radius.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (``torch.Tensor``): the input point cloud. It is possible that the last</span>
+<span class="sd">            dimension (D) is larger than ``pdim``, with point&#39;s coordinates using first</span>
+<span class="sd">            ``pdim`` values. Subsequent values may contain additional information like</span>
+<span class="sd">            intensity, RGB channels, etc. The shape has to be (N, D).</span>
+<span class="sd">        nbr (``int``): the minimum number of neighbors (nbr) within a certain radius.</span>
+<span class="sd">        radius (``float``): the radius of the sphere for counting the neighbors.</span>
+<span class="sd">        pdim (``int``, optional): the dimsion of points, where :math:`\text{pdim} \le D`.</span>
+<span class="sd">            Default to the last dimension of points, if ``None``.</span>
+<span class="sd">        return_mask (``bool``, optional): return the mask of inliers of not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``torch.Tensor``: The point clouds removed outliers.</span>
+<span class="sd">        ``torch.BoolTensor``: The mask of point clouds removed outliers, where the inlier</span>
+<span class="sd">        is True and the outlier is False. The shape is (..., N).</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Note that this operation does not support batch operations, since the number of</span>
+<span class="sd">        output voxels can be different on different batches.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[0., 0., 0.],</span>
+<span class="sd">        ...                        [1., 0., 0.],</span>
+<span class="sd">        ...                        [0., 1., 0.],</span>
+<span class="sd">        ...                        [0., 1., 1.],</span>
+<span class="sd">        ...                        [10., 1., 1.],</span>
+<span class="sd">        ...                        [10., 1., 10.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.nbr_filter(points, nbr=2, radius=5)</span>
+<span class="sd">        tensor([[0., 0., 0.],</span>
+<span class="sd">                [1., 0., 0.],</span>
+<span class="sd">                [0., 1., 0.],</span>
+<span class="sd">                [0., 1., 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.nbr_filter(points, nbr=2, radius=12, return_mask=True)</span>
+<span class="sd">        (tensor([[ 0.,  0.,  0.],</span>
+<span class="sd">                 [ 1.,  0.,  0.],</span>
+<span class="sd">                 [ 0.,  1.,  0.],</span>
+<span class="sd">                 [ 0.,  1.,  1.],</span>
+<span class="sd">                 [10.,  1.,  1.]]),</span>
+<span class="sd">        tensor([ True,  True,  True,  True,  True, False]))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
+    <span class="n">pdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pdim</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pdim</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">&quot;The last dim of points should not less than pdim.&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">nbr</span>
+    <span class="k">if</span> <span class="n">return_mask</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">mask</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span></div>
+
+
 <div class="viewcode-block" id="random_filter"><a class="viewcode-back" href="../../../../generated/pypose.random_filter/#pypose.random_filter">[docs]</a><span class="k">def</span> <span class="nf">random_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Randomly sample a number of points from a point cloud.</span>
+<span class="sd">    Randomly sample a number of points from a batched point cloud.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points (``torch.Tensor``): the input point cloud, where the last dimension (D)</span>
@@ -641,8 +699,8 @@
 <span class="sd">    them into voxels and selecting a representative point for each voxel.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        points (``torch.Tensor``): The input point cloud. It is essential that the last</span>
-<span class="sd">            dimension (D) is not less than dimension of voxel :math:`v` (vdim), with the</span>
+<span class="sd">        points (``torch.Tensor``): The input point cloud. It is possible that the last</span>
+<span class="sd">            dimension (D) is larger than dimension of voxel :math:`v` (vdim), with the</span>
 <span class="sd">            point&#39;s coordinates as the first :math:`v` values.</span>
 <span class="sd">            Subsequent values are additional information such as intensity, RGB channels.</span>
 <span class="sd">            The shape has to be (N, D), where :math:`D \geq v`.</span>
@@ -677,6 +735,7 @@
 <span class="sd">                [10., 11., 12.],</span>
 <span class="sd">                [13., 14., 15.]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
     <span class="n">D</span><span class="p">,</span> <span class="n">vdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxel</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">D</span> <span class="o">&gt;=</span> <span class="n">vdim</span><span class="p">,</span> <span class="s2">&quot;The last dimension of the pointcloud should exceed </span><span class="se">\</span>
 <span class="s2">        the dimenson of the voxel space.&quot;</span>
