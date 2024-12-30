@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.6.5 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.7.0 &#x25BC</a>
     </div>
     
 
@@ -241,6 +241,7 @@
               
   <h1>Source code for pypose.function.geometry</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">mat2SE3</span>
 <span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">pm</span>
 <span class="kn">from</span> <span class="nn">.checking</span> <span class="kn">import</span> <span class="n">is_lietensor</span>
@@ -466,7 +467,7 @@
     <span class="k">return</span> <span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span></div>
 
 
-<div class="viewcode-block" id="knn"><a class="viewcode-back" href="../../../../generated/pypose.knn/#pypose.knn">[docs]</a><span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Select the k nearest neighbor points of reference from neighbors in each batch.</span>
 
@@ -551,7 +552,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">nbr</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="n">largest</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="nb">sorted</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="n">largest</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="nb">sorted</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="svdtf"><a class="viewcode-back" href="../../../../generated/pypose.svdtf/#pypose.svdtf">[docs]</a><span class="k">def</span> <span class="nf">svdtf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -598,6 +599,237 @@
     <span class="n">t</span> <span class="o">=</span> <span class="n">ctntarget</span><span class="o">.</span><span class="n">mT</span> <span class="o">-</span> <span class="n">R</span> <span class="o">@</span> <span class="n">ctnsource</span><span class="o">.</span><span class="n">mT</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mat2SE3</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="nbr_filter"><a class="viewcode-back" href="../../../../generated/pypose.nbr_filter/#pypose.nbr_filter">[docs]</a><span class="k">def</span> <span class="nf">nbr_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">nbr</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">pdim</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">ord</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">return_mask</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Filter point outliers by checking if a point has less than n neighbors (nbr) within a</span>
+<span class="sd">    radius.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (``torch.Tensor``): the input point cloud. It is possible that the last</span>
+<span class="sd">            dimension (D) is larger than ``pdim``, with point&#39;s coordinates using first</span>
+<span class="sd">            ``pdim`` values. Subsequent values may contain additional information like</span>
+<span class="sd">            intensity, RGB channels, etc. The shape has to be (N, D).</span>
+<span class="sd">        nbr (``int``): the minimum number of neighbors (nbr) within a certain radius.</span>
+<span class="sd">        ord (``int``, optional): the order of norm to use for distance calculation.</span>
+<span class="sd">            Default: ``2`` (Euclidean distance).</span>
+<span class="sd">        radius (``float``): the radius of the sphere for counting the neighbors.</span>
+<span class="sd">        pdim (``int``, optional): the dimsion of points, where :math:`\text{pdim} \le D`.</span>
+<span class="sd">            Default to the last dimension of points, if ``None``.</span>
+<span class="sd">        return_mask (``bool``, optional): return the mask of inliers of not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``torch.Tensor``: The point clouds removed outliers.</span>
+<span class="sd">        ``torch.BoolTensor``: The mask of point clouds removed outliers, where the inlier</span>
+<span class="sd">        is True and the outlier is False. The shape is (..., N).</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Note that this operation does not support batch operations, since the number of</span>
+<span class="sd">        output voxels can be different on different batches.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[0., 0., 0.],</span>
+<span class="sd">        ...                        [1., 0., 0.],</span>
+<span class="sd">        ...                        [0., 1., 0.],</span>
+<span class="sd">        ...                        [0., 1., 1.],</span>
+<span class="sd">        ...                        [10., 1., 1.],</span>
+<span class="sd">        ...                        [10., 1., 10.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.nbr_filter(points, nbr=2, radius=5)</span>
+<span class="sd">        tensor([[0., 0., 0.],</span>
+<span class="sd">                [1., 0., 0.],</span>
+<span class="sd">                [0., 1., 0.],</span>
+<span class="sd">                [0., 1., 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.nbr_filter(points, nbr=2, radius=12, return_mask=True)</span>
+<span class="sd">        (tensor([[ 0.,  0.,  0.],</span>
+<span class="sd">                 [ 1.,  0.,  0.],</span>
+<span class="sd">                 [ 0.,  1.,  0.],</span>
+<span class="sd">                 [ 0.,  1.,  1.],</span>
+<span class="sd">                 [10.,  1.,  1.]]),</span>
+<span class="sd">        tensor([ True,  True,  True,  True,  True, False]))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
+    <span class="n">pdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pdim</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pdim</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">&quot;The last dim of points should not less than pdim.&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">nbr</span>
+    <span class="k">if</span> <span class="n">return_mask</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">mask</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="random_filter"><a class="viewcode-back" href="../../../../generated/pypose.random_filter/#pypose.random_filter">[docs]</a><span class="k">def</span> <span class="nf">random_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Randomly sample a number of points from a batched point cloud.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (``torch.Tensor``): the input point cloud, where the last dimension (D)</span>
+<span class="sd">            is the dimension of the points. The shape should be (..., N, D), where N is</span>
+<span class="sd">            the number of points.</span>
+<span class="sd">        num (``int``): the number of points to sample.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output (``torch.Tensor``): The sampled points, with the shape (..., num, D).</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[1., 2., 3.],</span>
+<span class="sd">        ...                        [4., 5., 6.],</span>
+<span class="sd">        ...                        [7., 8., 9.],</span>
+<span class="sd">        ...                        [10., 11., 12.],</span>
+<span class="sd">        ...                        [13., 14., 15.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.random_filter(points, 3)</span>
+<span class="sd">        tensor([[ 4.,  5.,  6.],</span>
+<span class="sd">                [ 1.,  2.,  3.],</span>
+<span class="sd">                [10., 11., 12.]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The last dim of the points should not less than 1.&quot;</span>
+    <span class="k">assert</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Number of points to sample must not larger than &quot;</span> \
+        <span class="s2">&quot;the number of input points.&quot;</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))[:</span><span class="n">num</span><span class="p">]</span>
+    <span class="c1"># return torch.index_select(points, 0, indices)</span>
+    <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="p">:]</span></div>
+
+
+<div class="viewcode-block" id="voxel_filter"><a class="viewcode-back" href="../../../../generated/pypose.voxel_filter/#pypose.voxel_filter">[docs]</a><span class="k">def</span> <span class="nf">voxel_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">voxel</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">random</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Perform voxel filtering on a point cloud to reduce the number of points by grouping</span>
+<span class="sd">    them into voxels and selecting a representative point for each voxel.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (``torch.Tensor``): The input point cloud. It is possible that the last</span>
+<span class="sd">            dimension (D) is larger than dimension of voxel :math:`v` (vdim), with the</span>
+<span class="sd">            point&#39;s coordinates as the first :math:`v` values.</span>
+<span class="sd">            Subsequent values are additional information such as intensity, RGB channels.</span>
+<span class="sd">            The shape has to be (N, D), where :math:`D \geq v`.</span>
+
+<span class="sd">        voxel (list of ``float``): The sizes of the voxel in each dimension, provided as</span>
+<span class="sd">            :math:`\left[v_1, v_2, \cdots, v_{\text{dim}}\right]`.</span>
+<span class="sd">        random (``bool``, optional): If ``True``, a random point within each voxel is</span>
+<span class="sd">            chosen as the representative, othewise the centroid of the points is used.</span>
+<span class="sd">            Default: ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output (``torch.Tensor``): The sampled point cloud, with each point representing a</span>
+<span class="sd">            voxel. The shape is (M, D), where M (:math:`M\le N`) is the number of voxels.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Note that this operation does not support batch operations, since the number of</span>
+<span class="sd">        output voxels can be differeent on each batch.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[ 1.,  2.,  3.],</span>
+<span class="sd">        ...                        [ 4.,  5.,  6.],</span>
+<span class="sd">        ...                        [ 7.,  8.,  9.],</span>
+<span class="sd">        ...                        [10., 11., 12.],</span>
+<span class="sd">        ...                        [13., 14., 15.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.voxel_filter(points, [5., 5., 5.])</span>
+<span class="sd">        tensor([[ 2.5000,  3.5000,  4.5000],</span>
+<span class="sd">                [ 8.5000,  9.5000, 10.5000],</span>
+<span class="sd">                [13.0000, 14.0000, 15.0000]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.voxel_filter(points, [5., 5., 5.], random=True)</span>
+<span class="sd">        tensor([[ 4.,  5.,  6.],</span>
+<span class="sd">                [10., 11., 12.],</span>
+<span class="sd">                [13., 14., 15.]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
+    <span class="n">D</span><span class="p">,</span> <span class="n">vdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxel</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">D</span> <span class="o">&gt;=</span> <span class="n">vdim</span><span class="p">,</span> <span class="s2">&quot;The last dimension of the pointcloud should exceed </span><span class="se">\</span>
+<span class="s2">        the dimenson of the voxel space.&quot;</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">voxel</span><span class="p">),</span> <span class="s2">&quot;Voxel size should be nonzero.&quot;</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span>
+
+    <span class="n">minp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">vdim</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">((</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">vdim</span><span class="p">]</span> <span class="o">-</span> <span class="n">minp</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">voxel</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+    <span class="n">unique_indices</span><span class="p">,</span> <span class="n">inverse_indices</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+        <span class="n">indices</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">random</span><span class="p">:</span>
+        <span class="n">sorting_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">inverse_indices</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="n">sorted_points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">sorting_indices</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">_rand</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">count</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))</span> <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">]</span>
+        <span class="n">random_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">_rand</span><span class="p">)</span>
+        <span class="n">selected_indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">random_indices</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">counts</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">sorted_points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">selected_indices</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">unique_indices</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_indices</span><span class="p">),</span> <span class="n">D</span><span class="o">-</span><span class="n">vdim</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">voxels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">means</span><span class="p">,</span> <span class="n">values</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">unique_indices</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">voxels</span><span class="o">.</span><span class="n">index_add_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inverse_indices</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+        <span class="n">_ones</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">inverse_indices</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">counts</span><span class="o">.</span><span class="n">index_add_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inverse_indices</span><span class="p">,</span> <span class="n">_ones</span><span class="p">)</span>
+        <span class="n">voxels</span> <span class="o">/=</span> <span class="n">counts</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">voxels</span></div>
+
+
+<div class="viewcode-block" id="knn_filter"><a class="viewcode-back" href="../../../../generated/pypose.knn_filter/#pypose.knn_filter">[docs]</a><span class="k">def</span> <span class="nf">knn_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">pdim</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">ord</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Filter batched points by averaging its k-nearest neighbors and that point, removing</span>
+<span class="sd">    points if number of neighbors within radius is less than k.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points (``torch.Tensor``): the input point cloud, where the last dimension (D)</span>
+<span class="sd">            is the dimension of the points. The shape should be (..., N, D), where N is</span>
+<span class="sd">            the number of points in each batch.</span>
+<span class="sd">        k (``int``): the number of neighbors within a radius.</span>
+<span class="sd">        pdim (``int``, optional): the dimsion of points, where :math:`\text{pdim} \le D`.</span>
+<span class="sd">            Default to the last dimension of points, if ``None``.</span>
+<span class="sd">        radius (``float``, optional): the radius of the sphere for counting the neighbors.</span>
+<span class="sd">            Not use if None,</span>
+<span class="sd">            Default: ``None``</span>
+<span class="sd">        ord (``int``, optional): the order of norm to use for distance calculation.</span>
+<span class="sd">            Default: ``2`` (Euclidean distance).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        output (``torch.Tensor``): The sampled points, with the shape (..., num, D).</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        This operation **supports** batch operations if ``radius`` is **not** given, where</span>
+<span class="sd">        the dimension of input points is (..., N, D), otherwise it has to be (N, D).</span>
+<span class="sd">        This is because given a radius to remove outliers, the number of output points in</span>
+<span class="sd">        each batch can be different.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
+<span class="sd">        &gt;&gt;&gt; points = torch.tensor([[0.,  0.,  0.],</span>
+<span class="sd">        ...                        [1.,  0.,  0.],</span>
+<span class="sd">        ...                        [0.,  1.,  0.],</span>
+<span class="sd">        ...                        [0.,  1.,  1.],</span>
+<span class="sd">        ...                        [10., 1.,  1.],</span>
+<span class="sd">        ...                        [10., 1., 10.]])</span>
+<span class="sd">        &gt;&gt;&gt; pp.knn_filter(points, k=2, radius=5)</span>
+<span class="sd">        tensor([[0.3333, 0.3333, 0.0000],</span>
+<span class="sd">                [0.3333, 0.3333, 0.0000],</span>
+<span class="sd">                [0.0000, 0.6667, 0.3333],</span>
+<span class="sd">                [0.0000, 0.6667, 0.3333]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The points dimension has to be 2 given radius.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The points dimension cannot be less than 2.&quot;</span>
+    <span class="n">pdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pdim</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pdim</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">&quot;The last dim of points should not less than pdim.&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">rmask</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">k</span>
+        <span class="n">points</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">rmask</span><span class="p">],</span> <span class="n">dist</span><span class="p">[</span><span class="n">rmask</span><span class="p">]</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># expand to [B, D, K+1]</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># expand to [B, D, K+1]</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 </pre></div>
 
              </article>
