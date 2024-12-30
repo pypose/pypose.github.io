@@ -240,10 +240,10 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.optim.solver</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">hasnan</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">..function.linalg</span> <span class="kn">import</span> <span class="n">bmv</span>
 <span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span><span class="p">,</span> <span class="n">vecdot</span>
 
@@ -569,8 +569,8 @@
             <span class="n">r</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">q</span>
             <span class="n">rho_prev</span> <span class="o">=</span> <span class="n">rho_cur</span>
 
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> \
-            <span class="s1">&#39;Conjugate Gradient Solver Failed. Check your matrix (may not be Symmetric Positive Definite)&#39;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">hasnan</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;Conjugate Gradient Solver Failed. </span><span class="se">\</span>
+<span class="s1">            Check your matrix (may not be Symmetric Positive Definite)&#39;</span>
 
         <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
