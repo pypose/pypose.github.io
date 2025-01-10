@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,13 +241,13 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.mpc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">.lqr</span> <span class="kn">import</span> <span class="n">LQR</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">..utils.stepper</span> <span class="kn">import</span> <span class="n">ReduceToBason</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lqr</span><span class="w"> </span><span class="kn">import</span> <span class="n">LQR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.stepper</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReduceToBason</span>
 
 
-<div class="viewcode-block" id="MPC"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC">[docs]</a><span class="k">class</span> <span class="nc">MPC</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="MPC"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MPC</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Model Predictive Control (MPC) based on iterative LQR.</span>
 
@@ -439,13 +440,13 @@
 <span class="sd">                      [-0.0530],</span>
 <span class="sd">                      [ 0.1023]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span> <span class="o">=</span> <span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">stepper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stepper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">-=</span> <span class="mi">1</span> <span class="c1"># n-1 loops, 1 loop with gradient</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lqr</span> <span class="o">=</span> <span class="n">LQR</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">u_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MPC.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.MPC/#pypose.module.MPC.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">u_init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs MPC for the discrete system.</span>
 

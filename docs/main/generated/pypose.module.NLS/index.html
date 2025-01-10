@@ -169,6 +169,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/">Testing</a></li>
 </ul>
@@ -312,14 +313,14 @@ solver. For more details go to <a class="reference internal" href="../pypose.mod
 <p>A simple linear time-varying system, but defined via NLS. Here we show an example
 for advancing one time step of the system at a given time step and computing the
 linearization.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span><span class="o">,</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Floquet</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">NLS</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Floquet</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">NLS</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="gp">...</span>
 <span class="gp">... </span>        <span class="n">cc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="n">ss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
@@ -331,7 +332,7 @@ linearization.</p>
 <span class="gp">...</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">bmv</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span> <span class="o">+</span> <span class="n">t</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start from t = 8, and advance one step to t = 9.</span>

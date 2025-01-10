@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,14 +241,14 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.lietensor.convert</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="kn">import</span> <span class="n">normalize</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">SO3</span><span class="p">,</span> <span class="n">so3</span><span class="p">,</span> <span class="n">SE3</span><span class="p">,</span> <span class="n">RxSO3</span><span class="p">,</span> <span class="n">Sim3</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span>  <span class="n">liegroup</span><span class="p">,</span> <span class="n">liealgebra</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">RxSO3_type</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">SO3</span><span class="p">,</span> <span class="n">so3</span><span class="p">,</span> <span class="n">SE3</span><span class="p">,</span> <span class="n">RxSO3</span><span class="p">,</span> <span class="n">Sim3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span>  <span class="n">liegroup</span><span class="p">,</span> <span class="n">liealgebra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">RxSO3_type</span>
 
 
-<div class="viewcode-block" id="mat2SO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SO3/#pypose.mat2SO3">[docs]</a><span class="k">def</span> <span class="nf">mat2SO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="mat2SO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SO3/#pypose.mat2SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2SO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -294,12 +295,11 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            |{\rm det}(\mathbf{R}) - 1| \leq \texttt{atol} + \texttt{rtol}\times 1\\</span>
-<span class="sd">            |\mathbf{RR}^{T}-\mathbf{I}|\leq\texttt{atol} + \texttt{rtol}\times\mathbf{I}</span>
+<span class="sd">            |\mathbf{RR}^{T} - \mathbf{I}| \leq \texttt{atol} + \texttt{rtol}\times \mathbf{I}</span>
 
-<span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to</span>
-<span class="sd">        ``True``, illegal input will raise a ``ValueError``. Otherwise, no data validation</span>
-<span class="sd">        is performed. Illegal input will output an irrelevant result, which likely</span>
-<span class="sd">        contains ``nan``.</span>
+<span class="sd">        where :math:`|\cdot |` is element-wise absolute function. When ``check`` is set to ``True``,</span>
+<span class="sd">        illegal input will raise a ``ValueError``. Otherwise, no data validation is performed.</span>
+<span class="sd">        Illegal input will output an irrelevant result, which likely contains ``nan``.</span>
 
 <span class="sd">    Examples:</span>
 
@@ -388,7 +388,7 @@
     <span class="k">return</span> <span class="n">SO3</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mat2SE3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SE3/#pypose.mat2SE3">[docs]</a><span class="k">def</span> <span class="nf">mat2SE3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="mat2SE3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SE3/#pypose.mat2SE3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2SE3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to SE3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -501,7 +501,7 @@
     <span class="k">return</span> <span class="n">SE3</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mat2Sim3"><a class="viewcode-back" href="../../../../generated/pypose.mat2Sim3/#pypose.mat2Sim3">[docs]</a><span class="k">def</span> <span class="nf">mat2Sim3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="mat2Sim3"><a class="viewcode-back" href="../../../../generated/pypose.mat2Sim3/#pypose.mat2Sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2Sim3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to Sim3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -655,7 +655,7 @@
     <span class="k">return</span> <span class="n">Sim3</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mat2RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2RxSO3/#pypose.mat2RxSO3">[docs]</a><span class="k">def</span> <span class="nf">mat2RxSO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="mat2RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2RxSO3/#pypose.mat2RxSO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2RxSO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to RxSO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -756,7 +756,7 @@
     <span class="k">return</span> <span class="n">RxSO3</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="from_matrix"><a class="viewcode-back" href="../../../../generated/pypose.from_matrix/#pypose.from_matrix">[docs]</a><span class="k">def</span> <span class="nf">from_matrix</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="from_matrix"><a class="viewcode-back" href="../../../../generated/pypose.from_matrix/#pypose.from_matrix">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">from_matrix</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -842,12 +842,12 @@
 <span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ltype</span><span class="p">))</span></div>
 
 
-<span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">lietensor</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">lietensor</span><span class="p">):</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lietensor</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">lietensor</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="euler2SO3"><a class="viewcode-back" href="../../../../generated/pypose.euler2SO3/#pypose.euler2SO3">[docs]</a><span class="k">def</span> <span class="nf">euler2SO3</span><span class="p">(</span><span class="n">euler</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="euler2SO3"><a class="viewcode-back" href="../../../../generated/pypose.euler2SO3/#pypose.euler2SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">euler2SO3</span><span class="p">(</span><span class="n">euler</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -906,7 +906,7 @@
     <span class="k">return</span> <span class="n">SO3</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">lview</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="tensor"><a class="viewcode-back" href="../../../../generated/pypose.tensor/#pypose.tensor">[docs]</a><span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="tensor"><a class="viewcode-back" href="../../../../generated/pypose.tensor/#pypose.tensor">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">tensor</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert a :obj:`LieTensor` into a :obj:`torch.Tensor` without changing data.</span>
 
@@ -925,7 +925,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="translation"><a class="viewcode-back" href="../../../../generated/pypose.translation/#pypose.translation">[docs]</a><span class="k">def</span> <span class="nf">translation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="translation"><a class="viewcode-back" href="../../../../generated/pypose.translation/#pypose.translation">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">translation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the translation part from a :obj:`LieTensor`.</span>
 
@@ -952,7 +952,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="rotation"><a class="viewcode-back" href="../../../../generated/pypose.rotation/#pypose.rotation">[docs]</a><span class="k">def</span> <span class="nf">rotation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="rotation"><a class="viewcode-back" href="../../../../generated/pypose.rotation/#pypose.rotation">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the rotation part from a :obj:`LieTensor`.</span>
 
@@ -972,7 +972,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="scale"><a class="viewcode-back" href="../../../../generated/pypose.scale/#pypose.scale">[docs]</a><span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="scale"><a class="viewcode-back" href="../../../../generated/pypose.scale/#pypose.scale">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Extract the scale part from a :obj:`LieTensor`.</span>
 
@@ -1001,7 +1001,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">scale</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="matrix"><a class="viewcode-back" href="../../../../generated/pypose.matrix/#pypose.matrix">[docs]</a><span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<div class="viewcode-block" id="matrix"><a class="viewcode-back" href="../../../../generated/pypose.matrix/#pypose.matrix">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert a :obj:`LieTensor` into matrix form.</span>
 
@@ -1024,7 +1024,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">):</span>
+<div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Convert batched LieTensor into Euler angles (roll, pitch, yaw).</span>
 
@@ -1070,7 +1070,7 @@
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">euler</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="quat2unit"><a class="viewcode-back" href="../../../../generated/pypose.quat2unit/#pypose.quat2unit">[docs]</a><span class="k">def</span> <span class="nf">quat2unit</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LieTensor</span><span class="p">:</span>
+<div class="viewcode-block" id="quat2unit"><a class="viewcode-back" href="../../../../generated/pypose.quat2unit/#pypose.quat2unit">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">quat2unit</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LieTensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Normalize the quaternion part of a ``LieTensor``, which has to be a Lie group.</span>
 <span class="sd">    If input is a not a Lie group, then do nothing and return the input.</span>

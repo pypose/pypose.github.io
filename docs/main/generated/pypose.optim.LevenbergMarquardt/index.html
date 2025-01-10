@@ -169,6 +169,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/">Testing</a></li>
 </ul>
@@ -398,12 +399,12 @@ Tensor/LieTensor or a tuple of Tensors/LieTensors.</p>
 </div>
 <p class="rubric">Example</p>
 <p>Optimizing a simple module to <strong>approximate pose inversion</strong>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">dim</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="c1"># the last dimension of the output is 6,</span>
 <span class="gp">... </span>        <span class="c1"># which will be the residual dimension.</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span> <span class="o">@</span> <span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span>

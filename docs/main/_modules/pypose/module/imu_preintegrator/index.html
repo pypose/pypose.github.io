@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,14 +241,14 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.imu_preintegrator</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">..basics</span> <span class="kn">import</span> <span class="n">cumprod</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">so3</span><span class="p">,</span> <span class="n">SO3</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">identity_SO3</span><span class="p">,</span> <span class="n">vec2skew</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..basics</span><span class="w"> </span><span class="kn">import</span> <span class="n">cumprod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">so3</span><span class="p">,</span> <span class="n">SO3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">identity_SO3</span><span class="p">,</span> <span class="n">vec2skew</span>
 
 
-<div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator">[docs]</a><span class="k">class</span> <span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">IMUPreintegrator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Applies preintegration over IMU input signals.</span>
 
@@ -330,7 +331,7 @@
 <span class="sd">        The examples generating the above figures can be found at `examples/module/imu</span>
 <span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/imu&gt;`_.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">rot</span> <span class="o">=</span> <span class="n">identity_SO3</span><span class="p">(),</span>
                        <span class="n">vel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
                        <span class="n">gravity</span> <span class="o">=</span> <span class="mf">9.81007</span><span class="p">,</span>
@@ -358,7 +359,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;acc_cov&#39;</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">,</span> <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Rij</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># rotation corresponding to the &quot;zero-state&quot; covariance Sigma_ii.</span>
 
-    <span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -367,7 +368,7 @@
                 <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">obj</span>
 
-<div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">acc_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propagate IMU states from duration (:math:`\delta t`), angular rate</span>
 <span class="sd">        (:math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame, as well as</span>
@@ -553,7 +554,7 @@
 
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">cov</span><span class="p">}</span></div>
 
-<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IMUPreintegrator.integrate"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.integrate">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">gyro</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init_rot</span><span class="p">:</span><span class="n">SO3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Integrate the IMU sensor signals gyroscope (angular rate</span>
 <span class="sd">        :math:`\omega`), linear acceleration (:math:`\mathbf{a}`) in body frame to</span>
@@ -626,7 +627,7 @@
                 <span class="s1">&#39;Dt&#39;</span><span class="p">:</span><span class="n">incre_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]}</span></div>
 
 <div class="viewcode-block" id="IMUPreintegrator.predict"><a class="viewcode-back" href="../../../../generated/pypose.module.IMUPreintegrator/#pypose.module.IMUPreintegrator.predict">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">integrate</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propogate the next IMU state from the initial IMU state (:obj:`init_state`) with</span>
 <span class="sd">        the preintegrated IMU measurements (:math:`\Delta{p}`, :math:`\Delta{v}` and</span>
@@ -668,7 +669,7 @@
         <span class="p">}</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">propagate_cov</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">,</span> <span class="n">init_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">propagate_cov</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cov_input</span><span class="p">,</span> <span class="n">init_cov</span><span class="p">,</span> <span class="n">gyro_cov</span><span class="p">,</span> <span class="n">acc_cov</span><span class="p">):</span>
         <span class="c1">## The input acc_cov and gyro cov should be a vector of 3</span>
         <span class="n">B</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">device</span><span class="p">;</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">cov_input</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>

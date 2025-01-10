@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,15 +241,15 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.lietensor.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">LieType</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">se3_type</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">so3_type</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">sim3_type</span>
-<span class="kn">from</span> <span class="nn">.lietensor</span> <span class="kn">import</span> <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">LieType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">SE3_type</span><span class="p">,</span> <span class="n">se3_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">SO3_type</span><span class="p">,</span> <span class="n">so3_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sim3_type</span><span class="p">,</span> <span class="n">sim3_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lietensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">RxSO3_type</span><span class="p">,</span> <span class="n">rxso3_type</span>
 
 
-<span class="k">def</span> <span class="nf">_LieTensor_wrapper_add_docstr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">embedding_doc</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_LieTensor_wrapper_add_docstr</span><span class="p">(</span><span class="n">wrapper</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">embedding_doc</span><span class="p">):</span>
     <span class="n">ltype</span><span class="p">:</span> <span class="n">LieType</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;ltype&#39;</span><span class="p">]</span>
     <span class="n">type_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">ltype</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">type_dim</span> <span class="o">=</span> <span class="n">ltype</span><span class="o">.</span><span class="n">dimension</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -465,7 +466,7 @@
 <span class="sd">        tensor([0., 0., 0., 0., 0., 0., 1.])</span>
 <span class="sd">    &#39;&#39;&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="randn_like"><a class="viewcode-back" href="../../../../generated/pypose.randn_like/#pypose.randn_like">[docs]</a><span class="k">def</span> <span class="nf">randn_like</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_like"><a class="viewcode-back" href="../../../../generated/pypose.randn_like/#pypose.randn_like">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_like</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns a LieTensor with the same size as input that is filled with random</span>
 <span class="sd">    LieTensor with the corresponding :obj:`input.ltype`.</span>
@@ -557,7 +558,7 @@
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="o">*</span><span class="nb">input</span><span class="o">.</span><span class="n">lshape</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_so3"><a class="viewcode-back" href="../../../../generated/pypose.randn_so3/#pypose.randn_so3">[docs]</a><span class="k">def</span> <span class="nf">randn_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_so3"><a class="viewcode-back" href="../../../../generated/pypose.randn_so3/#pypose.randn_so3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`so3_type` LieTensor filled with random numbers.</span>
 
@@ -651,7 +652,7 @@
     <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_SO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SO3/#pypose.randn_SO3">[docs]</a><span class="k">def</span> <span class="nf">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_SO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SO3/#pypose.randn_SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SO3_type` LieTensor filled with the Exponential map of the random</span>
 <span class="sd">    :obj:`so3_type` LieTensor.</span>
@@ -720,7 +721,7 @@
     <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_se3"><a class="viewcode-back" href="../../../../generated/pypose.randn_se3/#pypose.randn_se3">[docs]</a><span class="k">def</span> <span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_se3"><a class="viewcode-back" href="../../../../generated/pypose.randn_se3/#pypose.randn_se3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`se3_type` LieTensor filled with random numbers.</span>
 
@@ -794,7 +795,7 @@
     <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_SE3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SE3/#pypose.randn_SE3">[docs]</a><span class="k">def</span> <span class="nf">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_SE3"><a class="viewcode-back" href="../../../../generated/pypose.randn_SE3/#pypose.randn_SE3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`SE3_type` LieTensor filled with the Exponential map of the random</span>
 <span class="sd">    :obj:`se3_type` LieTensor generated using :meth:`pypose.randn_se3()`.</span>
@@ -872,7 +873,7 @@
     <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_sim3/#pypose.randn_sim3">[docs]</a><span class="k">def</span> <span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_sim3/#pypose.randn_sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`sim3_type` LieTensor filled with random numbers.</span>
 
@@ -948,7 +949,7 @@
     <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_Sim3/#pypose.randn_Sim3">[docs]</a><span class="k">def</span> <span class="nf">randn_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.randn_Sim3/#pypose.randn_Sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`Sim3_type` LieTensor filled with the Exponential map of the random</span>
 <span class="sd">    :obj:`sim3_type` LieTensor generated using :meth:`randn_sim3()`.</span>
@@ -1030,7 +1031,7 @@
     <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.randn_rxso3/#pypose.randn_rxso3">[docs]</a><span class="k">def</span> <span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.randn_rxso3/#pypose.randn_rxso3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`rxso3_type` LieTensor filled with random numbers.</span>
 
@@ -1092,7 +1093,7 @@
     <span class="k">return</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="randn_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_RxSO3/#pypose.randn_RxSO3">[docs]</a><span class="k">def</span> <span class="nf">randn_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="randn_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.randn_RxSO3/#pypose.randn_RxSO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">randn_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns :obj:`RxSO3_type` LieTensor filled with the Exponential map of the random</span>
 <span class="sd">    :obj:`rxso3_type` LieTensor. The :obj:`rxso3_type` LieTensor is generated using</span>
@@ -1157,7 +1158,7 @@
     <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_like"><a class="viewcode-back" href="../../../../generated/pypose.identity_like/#pypose.identity_like">[docs]</a><span class="k">def</span> <span class="nf">identity_like</span><span class="p">(</span><span class="n">liegroup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_like"><a class="viewcode-back" href="../../../../generated/pypose.identity_like/#pypose.identity_like">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_like</span><span class="p">(</span><span class="n">liegroup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">     Returns identity LieTensor with the same :obj:`lsize` and :obj:`ltype` as the given LieTensor.</span>
 
@@ -1192,7 +1193,7 @@
     <span class="k">return</span> <span class="n">liegroup</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">identity_like</span><span class="p">(</span><span class="o">*</span><span class="n">liegroup</span><span class="o">.</span><span class="n">lshape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_SO3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SO3/#pypose.identity_SO3">[docs]</a><span class="k">def</span> <span class="nf">identity_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_SO3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SO3/#pypose.identity_SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_SO3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`SO3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1241,7 +1242,7 @@
     <span class="k">return</span> <span class="n">SO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_so3"><a class="viewcode-back" href="../../../../generated/pypose.identity_so3/#pypose.identity_so3">[docs]</a><span class="k">def</span> <span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_so3"><a class="viewcode-back" href="../../../../generated/pypose.identity_so3/#pypose.identity_so3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_so3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`so3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1290,7 +1291,7 @@
     <span class="k">return</span> <span class="n">so3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_SE3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SE3/#pypose.identity_SE3">[docs]</a><span class="k">def</span> <span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_SE3"><a class="viewcode-back" href="../../../../generated/pypose.identity_SE3/#pypose.identity_SE3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`SE3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1340,7 +1341,7 @@
     <span class="k">return</span> <span class="n">SE3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_se3"><a class="viewcode-back" href="../../../../generated/pypose.identity_se3/#pypose.identity_se3">[docs]</a><span class="k">def</span> <span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_se3"><a class="viewcode-back" href="../../../../generated/pypose.identity_se3/#pypose.identity_se3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_se3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`se3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1389,7 +1390,7 @@
     <span class="k">return</span> <span class="n">se3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_sim3/#pypose.identity_sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_sim3/#pypose.identity_sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`sim3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1438,7 +1439,7 @@
     <span class="k">return</span> <span class="n">sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_Sim3/#pypose.identity_Sim3">[docs]</a><span class="k">def</span> <span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_Sim3"><a class="viewcode-back" href="../../../../generated/pypose.identity_Sim3/#pypose.identity_Sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_Sim3</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`Sim3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1487,7 +1488,7 @@
     <span class="k">return</span> <span class="n">Sim3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">lsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.identity_rxso3/#pypose.identity_rxso3">[docs]</a><span class="k">def</span> <span class="nf">identity_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_rxso3"><a class="viewcode-back" href="../../../../generated/pypose.identity_rxso3/#pypose.identity_rxso3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_rxso3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Returns identity :obj:`rxso3_type` LieTensor with the given :obj:`lsize`.</span>
 
@@ -1536,7 +1537,7 @@
     <span class="k">return</span> <span class="n">rxso3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="identity_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.identity_RxSO3/#pypose.identity_RxSO3">[docs]</a><span class="k">def</span> <span class="nf">identity_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="identity_RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.identity_RxSO3/#pypose.identity_RxSO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">identity_RxSO3</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;Returns identity :obj:`RxSO3_type` LieTensor with the given :obj:`lsize`.</span>
 
 <span class="sd">    See :obj:`RxSO3()` for implementation details.</span>
@@ -1584,9 +1585,9 @@
     <span class="k">return</span> <span class="n">RxSO3_type</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">assert_ltype</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_ltype</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">checker</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checker</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">LieTensor</span><span class="p">),</span> <span class="s2">&quot;Invalid LieTensor Type.&quot;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out</span>
@@ -1594,7 +1595,7 @@
 
 
 <div class="viewcode-block" id="Exp"><a class="viewcode-back" href="../../../../generated/pypose.Exp/#pypose.Exp">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Exp</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Exp</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Exponential map for :obj:`LieTensor` (Lie Algebra).</span>
 
 <span class="sd">    .. math::</span>
@@ -1830,7 +1831,7 @@
 
 
 <div class="viewcode-block" id="Log"><a class="viewcode-back" href="../../../../generated/pypose.Log/#pypose.Log">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Log</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Log</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Logarithm map for :obj:`LieTensor` (Lie Group).</span>
 
 <span class="sd">    .. math::</span>
@@ -2067,7 +2068,7 @@
 
 
 <div class="viewcode-block" id="Inv"><a class="viewcode-back" href="../../../../generated/pypose.Inv/#pypose.Inv">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Inv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Inv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The inverse of the input lieTensor.</span>
 
@@ -2280,12 +2281,12 @@
 
 
 <span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">@</span> <span class="n">y</span>
 
 
 <div class="viewcode-block" id="Retr"><a class="viewcode-back" href="../../../../generated/pypose.Retr/#pypose.Retr">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Retr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Retr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Perform batched retraction with a given direction.</span>
 
 <span class="sd">    .. math::</span>
@@ -2339,7 +2340,7 @@
 
 
 <div class="viewcode-block" id="Act"><a class="viewcode-back" href="../../../../generated/pypose.Act/#pypose.Act">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Act</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Act</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Apply the batched transform to points in Euclidean or homogeneous coordinates.</span>
 
 <span class="sd">    .. math::</span>
@@ -2394,7 +2395,7 @@
 
 
 <div class="viewcode-block" id="Adj"><a class="viewcode-back" href="../../../../generated/pypose.Adj/#pypose.Adj">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Adj</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Adj</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The dot product between the Adjoint matrix at the point given by an input (Lie Group) and</span>
 <span class="sd">    the second point (Lie Algebra).</span>
@@ -2621,12 +2622,12 @@
 
 
 <div class="viewcode-block" id="AdjT"><a class="viewcode-back" href="../../../../generated/pypose.AdjT/#pypose.AdjT">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">AdjT</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">AdjT</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">AdjT</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Jinvp"><a class="viewcode-back" href="../../../../generated/pypose.Jinvp/#pypose.Jinvp">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Jinvp</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Jinvp</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The dot product between left Jacobian inverse at the point given</span>
 <span class="sd">    by input (Lie Group) and second point (Lie Algebra).</span>
@@ -2879,7 +2880,7 @@
 
 
 <div class="viewcode-block" id="Jr"><a class="viewcode-back" href="../../../../generated/pypose.Jr/#pypose.Jr">[docs]</a><span class="nd">@assert_ltype</span>
-<span class="k">def</span> <span class="nf">Jr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Jr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The batched right Jacobian of a LieTensor.</span>
 
