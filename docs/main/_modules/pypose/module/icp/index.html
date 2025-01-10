@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,13 +241,13 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.icp</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span><span class="p">,</span> <span class="n">is_SE3</span>
-<span class="kn">from</span> <span class="nn">..utils.stepper</span> <span class="kn">import</span> <span class="n">ReduceToBason</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">knn</span><span class="p">,</span> <span class="n">svdtf</span><span class="p">,</span> <span class="n">is_SE3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.stepper</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReduceToBason</span>
 
 
-<div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span> <span class="nc">ICP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ICP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation</span>
 <span class="sd">    between two sets of points using Singular Value Decomposition (SVD).</span>
@@ -306,13 +307,13 @@
 <span class="sd">    Warning:</span>
 <span class="sd">        It&#39;s important to note that the solution is sensitive to the initialization.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span> <span class="o">=</span> <span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="k">if</span> <span class="n">stepper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stepper</span>
         <span class="k">assert</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
 
-<div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            source (``torch.Tensor``): the source point clouds with shape</span>

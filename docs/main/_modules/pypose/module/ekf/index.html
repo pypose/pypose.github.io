@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,13 +241,13 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.ekf</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">bmv</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">bmv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">pinv</span>
 
 
-<div class="viewcode-block" id="EKF"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF">[docs]</a><span class="k">class</span> <span class="nc">EKF</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="EKF"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EKF</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Performs Batched Extended Kalman Filter (EKF).</span>
 
@@ -366,12 +367,12 @@
 <span class="sd">          &lt;https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345&gt;`_,</span>
 <span class="sd">          Cleveland State University, 2006</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_uncertainty</span><span class="p">(</span><span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="EKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs one step estimation.</span>
 
@@ -406,7 +407,7 @@
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        The covariance of system transition noise.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -416,7 +417,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Q</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        The covariance of system observation noise.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -425,7 +426,7 @@
 <span class="s1">                                        transition covariance R.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span>
 
-<div class="viewcode-block" id="EKF.set_uncertainty"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.set_uncertainty">[docs]</a>    <span class="k">def</span> <span class="nf">set_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EKF.set_uncertainty"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.set_uncertainty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Set the covariance matrices of transition noise and observation noise.</span>
 

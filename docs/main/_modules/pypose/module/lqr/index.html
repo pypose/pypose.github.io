@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,14 +241,14 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.lqr</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">bmv</span><span class="p">,</span> <span class="n">bvmv</span>
-<span class="kn">from</span> <span class="nn">.dynamics</span> <span class="kn">import</span> <span class="n">runsys</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">cholesky</span><span class="p">,</span> <span class="n">vecdot</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">bmv</span><span class="p">,</span> <span class="n">bvmv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.dynamics</span><span class="w"> </span><span class="kn">import</span> <span class="n">runsys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">cholesky</span><span class="p">,</span> <span class="n">vecdot</span>
 
 
-<div class="viewcode-block" id="LQR"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR">[docs]</a><span class="k">class</span> <span class="nc">LQR</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="LQR"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LQR</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Linear Quadratic Regulator (LQR) with Dynamic Programming.</span>
 
@@ -501,7 +502,7 @@
 <span class="sd">                     [-0.3017, -0.2897,  0.7251],</span>
 <span class="sd">                     [-0.0728,  0.7290, -0.3117]]])</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span>
@@ -523,7 +524,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">&quot;Tensor data type not compatible.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">}</span>
 
-<div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Performs LQR for the discrete system.</span>
 
@@ -549,7 +550,7 @@
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_forward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">u_lower</span><span class="p">,</span> <span class="n">u_upper</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div>
 
-    <span class="k">def</span> <span class="nf">lqr_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lqr_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="n">ns</span><span class="p">,</span> <span class="n">nsc</span> <span class="o">=</span> <span class="n">x_init</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">nc</span> <span class="o">=</span> <span class="n">nsc</span> <span class="o">-</span> <span class="n">ns</span>
@@ -596,7 +597,7 @@
 
         <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span>
 
-    <span class="k">def</span> <span class="nf">lqr_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lqr_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">device</span>
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span>

@@ -169,6 +169,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/">Testing</a></li>
 </ul>
@@ -294,13 +295,13 @@ model residual. Default: <code class="docutils literal notranslate"><span class=
 <p>The above arguments are sent to optimizers. More details go to
 <a class="reference internal" href="../pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt" title="pypose.optim.LevenbergMarquardt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.optim.LevenbergMarquardt</span></code></a> or <a class="reference internal" href="../pypose.optim.GaussNewton/#pypose.optim.GaussNewton" title="pypose.optim.GaussNewton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypose.optim.GaussNewton</span></code></a>.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">dim</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">@</span> <span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
@@ -331,13 +332,13 @@ model residual. Default: <code class="docutils literal notranslate"><span class=
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">PoseInv</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dim</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">randn_SE3</span><span class="p">(</span><span class="o">*</span><span class="n">dim</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pose</span> <span class="o">@</span> <span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>

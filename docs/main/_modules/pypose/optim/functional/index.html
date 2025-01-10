@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,14 +241,14 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.optim.functional</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">hasnan</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
-<span class="kn">from</span> <span class="nn">torch.func</span> <span class="kn">import</span> <span class="n">jacrev</span><span class="p">,</span> <span class="n">jacfwd</span><span class="p">,</span> <span class="n">functional_call</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasnan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.autograd.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacobian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.func</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacrev</span><span class="p">,</span> <span class="n">jacfwd</span><span class="p">,</span> <span class="n">functional_call</span>
 
 
-<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span> <span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
+<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
                     <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
@@ -374,7 +375,7 @@
     <span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">func_param</span><span class="p">(</span><span class="o">*</span><span class="n">new_params_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">func_param</span><span class="p">(</span><span class="o">*</span><span class="n">new_params_values</span><span class="p">):</span>
         <span class="n">new_params_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">params_names</span><span class="p">,</span> <span class="n">new_params_values</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">functional_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">new_params_dict</span><span class="p">,</span> <span class="n">buffers</span><span class="p">),</span> <span class="nb">input</span><span class="p">)</span>
 
@@ -394,13 +395,13 @@
     <span class="k">return</span> <span class="n">J</span></div>
 
 
-<span class="k">def</span> <span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jacfwd</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>

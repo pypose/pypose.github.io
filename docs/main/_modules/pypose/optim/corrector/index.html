@@ -166,6 +166,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,13 +241,13 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.optim.corrector</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span><span class="o">,</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">grad</span>
-<span class="kn">from</span> <span class="nn">torch.autograd.functional</span> <span class="kn">import</span> <span class="n">jacobian</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.autograd</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.autograd.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacobian</span>
 
 
-<div class="viewcode-block" id="FastTriggs"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.FastTriggs/#pypose.optim.corrector.FastTriggs">[docs]</a><span class="k">class</span> <span class="nc">FastTriggs</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="FastTriggs"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.FastTriggs/#pypose.optim.corrector.FastTriggs">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">FastTriggs</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Faster yet stable version of Triggs correction of model residual and Jacobian.</span>
 
@@ -308,11 +309,11 @@
 <span class="sd">            \sum_i {\mathbf{J}_i^\rho}^T \mathbf{J}_i^\rho \bm{\delta}</span>
 <span class="sd">            = - \sum_i {\mathbf{J}_i^\rho}^T \mathbf{R}_i^\rho</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<div class="viewcode-block" id="FastTriggs.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.FastTriggs/#pypose.optim.corrector.FastTriggs.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">J</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="FastTriggs.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.FastTriggs/#pypose.optim.corrector.FastTriggs.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">J</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            R (Tensor): the model residual.</span>
@@ -332,7 +333,7 @@
         <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">R</span><span class="p">,</span> <span class="n">sj</span> <span class="o">*</span> <span class="n">J</span></div></div>
 
 
-<div class="viewcode-block" id="Triggs"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs">[docs]</a><span class="k">class</span> <span class="nc">Triggs</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="Triggs"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Triggs</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The Triggs correction of model residual and Jacobian.</span>
 
 <span class="sd">    .. math::</span>
@@ -366,19 +367,19 @@
 <span class="sd">        The :meth:`FastTriggs` corrector is preferred when the kernel function has a</span>
 <span class="sd">        negative 2nd order derivative.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">compute_grads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_grads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">g1</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">g2</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">g1</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">detach_</span><span class="p">(),</span> <span class="n">g1</span><span class="o">.</span><span class="n">detach_</span><span class="p">(),</span> <span class="n">g2</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Triggs.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">J</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+<div class="viewcode-block" id="Triggs.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.corrector.Triggs/#pypose.optim.corrector.Triggs.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">J</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            R (Tensor): the model residual.</span>
