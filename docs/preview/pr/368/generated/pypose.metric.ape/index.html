@@ -1,0 +1,564 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypose.metric.ape &mdash; PyPose main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pypose.metric.rpe" href="../pypose.metric.rpe/" />
+    <link rel="prev" title="Metrics" href="../../metric/" />
+
+<!--
+  Search engines should not index the master version of documentation.
+  Stable documentation are built without release == 'main'.
+-->
+<meta name="robots" content="noindex">
+
+
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+
+          <!-- <li> -->
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+
+          <!-- <li class="active docs-active"> -->
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Doc</a>
+          </li>
+
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/pypose/pypose">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+    <div class="version">
+      <a href='https://pypose.org/docs/versions.html'>0.7.1 &#x25BC</a>
+    </div>
+    
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          </div>
+
+          
+
+<div>
+  <a style="color:#F05732" href="generated/pypose.metric.ape.html">
+    You are viewing unstable developer preview docs.
+    Click here to view docs for latest stable release.
+  </a>
+</div>
+
+
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../func/">Func</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../metric/">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/">Testing</a></li>
+</ul>
+
+            
+          
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../metric/">Metrics</a> &gt;</li>
+        
+      <li>pypose.metric.ape</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/pypose.metric.ape.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <section id="pypose-metric-ape">
+<h1>pypose.metric.ape<a class="headerlink" href="#pypose-metric-ape" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pypose.metric.ape">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.metric.</span></span><span class="sig-name descname"><span class="pre">ape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rstamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epose</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'translation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nposes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">otype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'All'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/metric/ape_rpe/#ape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.metric.ape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Absolute Pose Error (APE) between two trajectories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rstamp</strong> (array-like of <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The timestamps of the reference trajectory.
+Must have the same length as <cite>rpose</cite>.
+For example, <cite>torch.tensor([…])</cite> or <cite>None</cite>.</p></li>
+<li><p><strong>rpose</strong> (array-like of <code class="docutils literal notranslate"><span class="pre">SE3</span></code>) – The poses of the reference trajectory.
+Must have the same length as <cite>rstamp</cite>.
+For example, <cite>pypose.SE3(torch.rand(10, 7))</cite>.</p></li>
+<li><p><strong>estamp</strong> (array-like of <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The timestamps of the estimated trajectory.
+Must have the same length as <cite>epose</cite>.
+For example, <cite>torch.tensor([…])</cite> or <cite>None</cite>.</p></li>
+<li><p><strong>epose</strong> (array-like of <code class="docutils literal notranslate"><span class="pre">SE3</span></code>) – The poses of the estimated trajectory.
+Must have the same length as <cite>estamp</cite>.
+For example, <cite>pypose.SE3(torch.rand(10, 7))</cite>.</p></li>
+<li><p><strong>etype</strong> (<code class="docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>The type of pose error. Supported options include:</p>
+<p><code class="docutils literal notranslate"><span class="pre">'translation'</span></code>: <span class="math">\(|| t_{e} - t_{r} ||_2\)</span></p>
+<p><code class="docutils literal notranslate"><span class="pre">'rotation'</span></code>: <span class="math">\(|| R_{e}^T * R_{r} - I_3 ||_2\)</span></p>
+<p><code class="docutils literal notranslate"><span class="pre">'pose'</span></code>: <span class="math">\(|| T_{e}^{-1} * T_{r} - I_4 ||_2\)</span></p>
+<p><code class="docutils literal notranslate"><span class="pre">'radian'</span></code>: <span class="math">\(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2\)</span></p>
+<p><code class="docutils literal notranslate"><span class="pre">'degree'</span></code>: <span class="math">\(\mathrm{Degree}(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2)\)</span></p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">'translation'</span></code></p>
+</p></li>
+<li><p><strong>diff</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – The maximum allowed absolute time difference (in seconds)
+for associating poses. Defaults to 0.01.</p></li>
+<li><p><strong>offset</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – The aligned offset (in seconds) for the second timestamps.
+Defaults to 0.0.</p></li>
+<li><p><strong>align</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, the trajectory is aligned using a scaled SVD method.
+Defaults to False.</p></li>
+<li><p><strong>scale</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, the scale is corrected using the SVD method.
+Defaults to False.</p></li>
+<li><p><strong>nposes</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, optional) – The number of poses to use for alignment. If -1, all
+poses are used. Defaults to -1.</p></li>
+<li><p><strong>origin</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If True, the trajectory is aligned by the first pose.
+Defaults to False.</p></li>
+<li><p><strong>thresh</strong> (<code class="docutils literal notranslate"><span class="pre">float</span></code>, optional) – The threshold for valid matching pairs. If the ratio of
+matching pairs is below this threshold, a warning is issued.
+Defaults to 0.3.</p></li>
+<li><p><strong>otype</strong> (<code class="docutils literal notranslate"><span class="pre">str</span></code>, optional) – <p>The output type for the metric. Supported options include:</p>
+<p><code class="docutils literal notranslate"><span class="pre">'All'</span></code>: All metrics will be computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'Max'</span></code>: The Max error is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'Min'</span></code>: The Min error is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'Mean'</span></code>: The Mean error is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'Median'</span></code>: The Median error is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'RMSE'</span></code>: The root mean square error (RMSE) is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'SSE'</span></code>: The sum of square error (SSE) is computed and returned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'STD'</span></code>: The standard deviation (STD) is computed and returned.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">'All'</span></code>.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed statistics of the APE (Absolute Pose Error).
+The return is a <code class="docutils literal notranslate"><span class="pre">dict</span></code> if <code class="docutils literal notranslate"><span class="pre">otype</span></code> is not <code class="docutils literal notranslate"><span class="pre">'all'</span></code>, otherwise a <code class="docutils literal notranslate"><span class="pre">Tensor</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dict</span></code> or <code class="docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rstamp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1311868163.8696999550</span><span class="p">,</span> <span class="mf">1311868163.8731000423</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="mf">1311868163.8763999939</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rpose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.1357000023</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4217000008</span><span class="p">,</span>  <span class="mf">1.4764000177</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="mf">0.6452999711</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5497999787</span><span class="p">,</span>  <span class="mf">0.3362999856</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4101000130</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="o">-</span><span class="mf">0.1357000023</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4218000174</span><span class="p">,</span>  <span class="mf">1.4764000177</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="mf">0.6453999877</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5497000217</span><span class="p">,</span>  <span class="mf">0.3361000121</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4101999998</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="o">-</span><span class="mf">0.1358000040</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4219000340</span><span class="p">,</span>  <span class="mf">1.4764000177</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="mf">0.6455000043</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5498999953</span><span class="p">,</span>  <span class="mf">0.3357999921</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4101000130</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estamp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1311868164.3631811142</span><span class="p">,</span> <span class="mf">1311868164.3990259171</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="mf">1311868164.4309399128</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">epose</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">SE3</span><span class="p">([[</span><span class="mf">0.0000000000</span><span class="p">,</span> <span class="mf">0.0000000000</span><span class="p">,</span> <span class="mf">0.0000000000</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="mf">0.0000000000</span><span class="p">,</span> <span class="mf">0.0000000000</span><span class="p">,</span> <span class="mf">0.0000000000</span><span class="p">,</span> <span class="mf">1.0000000000</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="o">-</span><span class="mf">0.0005019300</span><span class="p">,</span> <span class="mf">0.0010138600</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0020097860</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="o">-</span><span class="mf">0.0020761820</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0010706080</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0007627490</span><span class="p">,</span> <span class="mf">0.9999969602</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="p">[</span><span class="mf">0.0004298200</span><span class="p">,</span> <span class="mf">0.0019603260</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0048985220</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="o">-</span><span class="mf">0.0043526068</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0036625920</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0023494449</span><span class="p">,</span> <span class="mf">0.9999810457</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">ape</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">)</span>
+<span class="go">{&#39;Max&#39;: tensor(2.0590, dtype=torch.float64),</span>
+<span class="go"> &#39;Min&#39;: tensor(2.0541, dtype=torch.float64),</span>
+<span class="go"> &#39;Mean&#39;: tensor(2.0565, dtype=torch.float64),</span>
+<span class="go"> &#39;Median&#39;: tensor(2.0562, dtype=torch.float64),</span>
+<span class="go"> &#39;RMSE&#39;: tensor(2.0565, dtype=torch.float64),</span>
+<span class="go"> &#39;SSE&#39;: tensor(12.6871, dtype=torch.float64),</span>
+<span class="go"> &#39;STD&#39;: tensor(0.0025, dtype=torch.float64)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">ape</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">,</span> <span class="n">otype</span><span class="o">=</span><span class="s1">&#39;Mean&#39;</span><span class="p">)</span>
+<span class="go">tensor(2.0565, dtype=torch.float64)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../pypose.metric.rpe/" class="btn btn-neutral float-right" title="pypose.metric.rpe" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="../../metric/" class="btn btn-neutral" title="Metrics" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, PyPose Contributors.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <a class="twitter-timeline" data-chrome="noborders" href="https://twitter.com/pypose_org?ref_src=twsrc%5Etfw">Tweets by pypose_org<br>You need VPN if you see this.</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+         <script src="../../_static/jquery.js"></script>
+         <script src="../../_static/underscore.js"></script>
+         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../_static/doctools.js"></script>
+         <script src="../../_static/katex.min.js"></script>
+         <script src="../../_static/auto-render.min.js"></script>
+         <script src="../../_static/katex_autorenderer.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+<script script type="text/javascript">
+  var collapsedSections = ['Developer Notes', 'Language Bindings', 'Libraries', 'Community'];
+</script>
+
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/795629140/?label=txkmCPmdtosBENSssfsC&amp;guid=ON&amp;script=0"/>
+
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access documentation for PyPose</p>
+          <a class="with-right-arrow" href="https://pypose.org/docs/main/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get started with tutorials and examples</p>
+          <a class="with-right-arrow" href="https://pypose.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Get Started</h2>
+          <p>Find resources and how to start using pypose</p>
+          <a class="with-right-arrow" href="https://pypose.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pypose.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/">Pypose</a></li>
+            <li><a href="https://pypose.org/get-started">Get Started</a></li>
+            <li><a href="https://pypose.org/features">Features</a></li>
+            <li><a href="https://github.com/pypose/pypose/blob/main/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pypose.org/resources">Resources</a></li>
+            <li><a href="https://pypose.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pypose.org/docs/main/index.html">Docs</a></li>
+            <li><a href="https://github.com/pypose/pypose/issues" target="_blank">Github Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://twitter.com/pypose_org" target="_blank">Twitter</a></li>
+            <li><a href="https://github.com/pypose/pypose" target="_blank">GitHub</a></li>
+
+          </ul>  
+          </div>
+        </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pypose.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pypose.org/get-started">Get Started</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/tutorials">Tutorials</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/docs/main/index.html">Docs</a>
+          </li>
+          <li>
+            <a href="https://pypose.org/about-us">About Us</a>
+          </li>
+          <li>
+            <a href="https://github.com/pypose/pypose">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
