@@ -270,7 +270,7 @@ Ignored if provided during each iteration. Default: <code class="docutils litera
 \[\begin{aligned}
     \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,
     \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\
-    \mathbf{y}_{k} &= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,
+    \mathbf{y}_{k} &= \mathbf{h}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,
     \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
 \end{aligned}
 
@@ -291,7 +291,7 @@ is omited for simplicity.</p>
 <li><p>Priori State Estimation.</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{x}^{-} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1
+\[\mathbf{x}^{-} = \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k)
 
 \]</div>
 </div></blockquote>
@@ -317,7 +317,7 @@ is omited for simplicity.</p>
 <blockquote>
 <div><div class="math">
 \[\mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y} -
-            \mathbf{C}\mathbf{x}^{-} - \mathbf{D}\mathbf{u} - \mathbf{c}_2)
+            \mathbf{h}(\mathbf{x}^{-}, \mathbf{u}))
 
 \]</div>
 </div></blockquote>
@@ -325,7 +325,7 @@ is omited for simplicity.</p>
 <li><p>Posteriori Covariance Estimation</p>
 <blockquote>
 <div><div class="math">
-\[\mathbf{P} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}
+\[\mathbf{P}^{+} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}
 
 \]</div>
 </div></blockquote>
@@ -392,7 +392,7 @@ introduces noise.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Implementation is based on Section 5.1 of this book</p>
+<p>Implementation is based on Section 13.2 of this book</p>
 <ul class="simple">
 <li><p>Dan Simon, <a class="reference external" href="https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345">Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</a>,
 Cleveland State University, 2006</p></li>
