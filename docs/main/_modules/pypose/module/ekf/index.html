@@ -265,7 +265,7 @@
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,</span>
 <span class="sd">            \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\</span>
-<span class="sd">            \mathbf{y}_{k} &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,</span>
+<span class="sd">            \mathbf{y}_{k} &amp;= \mathbf{h}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,</span>
 <span class="sd">            \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})</span>
 <span class="sd">        \end{aligned}</span>
 
@@ -285,7 +285,7 @@
 <span class="sd">    1. Priori State Estimation.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{x}^{-} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}_k + \mathbf{c}_1</span>
+<span class="sd">            \mathbf{x}^{-} = \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k)</span>
 
 <span class="sd">    2. Priori Covariance Propagation.</span>
 
@@ -302,12 +302,12 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y} -</span>
-<span class="sd">                        \mathbf{C}\mathbf{x}^{-} - \mathbf{D}\mathbf{u} - \mathbf{c}_2)</span>
+<span class="sd">                        \mathbf{h}(\mathbf{x}^{-}, \mathbf{u}))</span>
 
 <span class="sd">    5. Posteriori Covariance Estimation</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \mathbf{P} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}</span>
+<span class="sd">            \mathbf{P}^{+} = (\mathbf{I} - \mathbf{K}\mathbf{C}) \mathbf{P}^{-}</span>
 
 <span class="sd">    where superscript :math:`\cdot^{-}` and :math:`\cdot^{+}` denote the priori and</span>
 <span class="sd">    posteriori estimation, respectively.</span>
@@ -361,7 +361,7 @@
 <span class="sd">        introduces noise.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        Implementation is based on Section 5.1 of this book</span>
+<span class="sd">        Implementation is based on Section 13.2 of this book</span>
 
 <span class="sd">        * Dan Simon, `Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</span>
 <span class="sd">          &lt;https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345&gt;`_,</span>
@@ -394,17 +394,17 @@
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">B</span>
         <span class="n">C</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">D</span>
-        <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">c1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">c2</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">R</span> <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">bmv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">+</span> <span class="n">c1</span>        <span class="c1"># 1. System transition</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">P</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">Q</span>                  <span class="c1"># 2. Covariance predict</span>
+        <span class="n">xm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>        <span class="c1"># 1. System transition</span>
+
+        <span class="n">P</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">P</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">Q</span>                 <span class="c1"># 2. Covariance predict</span>
         <span class="n">K</span> <span class="o">=</span> <span class="n">P</span> <span class="o">@</span> <span class="n">C</span><span class="o">.</span><span class="n">mT</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">C</span> <span class="o">@</span> <span class="n">P</span> <span class="o">@</span> <span class="n">C</span><span class="o">.</span><span class="n">mT</span> <span class="o">+</span> <span class="n">R</span><span class="p">)</span> <span class="c1"># 3. Kalman gain</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">bmv</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">c2</span>    <span class="c1">#    predicted observation error</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>                     <span class="c1"># 4. Posteriori state</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>    <span class="c1">#    predicted observation error</span>
+        <span class="n">xp</span> <span class="o">=</span> <span class="n">xm</span> <span class="o">+</span> <span class="n">bmv</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>                     <span class="c1"># 4. Posteriori state</span>
         <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">K</span> <span class="o">@</span> <span class="n">C</span><span class="p">)</span> <span class="o">@</span> <span class="n">P</span>                   <span class="c1"># 5. Posteriori covariance</span>
-        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span></div>
+        <span class="k">return</span> <span class="n">xp</span><span class="p">,</span> <span class="n">P</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
