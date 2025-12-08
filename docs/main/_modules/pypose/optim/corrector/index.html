@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -256,7 +256,7 @@
 <span class="sd">            \mathbf{R}_i^\rho &amp;= \sqrt{\rho&#39;(c_i)} \mathbf{R}_i\\</span>
 <span class="sd">            \mathbf{J}_i^\rho &amp;= \sqrt{\rho&#39;(c_i)} \mathbf{J}_i</span>
 <span class="sd">        \end{align*},</span>
-<span class="sd">    </span>
+
 <span class="sd">    where :math:`\mathbf{R}_i` and :math:`\mathbf{J}_i` are the :math:`i`-th item of the</span>
 <span class="sd">    model residual and Jacobian, respectively. :math:`\rho()` is the kernel function and</span>
 <span class="sd">    :math:`c_i = \mathbf{R}_i^T\mathbf{R}_i` is the point to compute the gradient.</span>
@@ -282,7 +282,7 @@
 <span class="sd">        :math:`\mathbf{g}(\bm{\delta})` to zero, we have</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \frac{\partial \bm{g}}{\partial \bm{\delta}} </span>
+<span class="sd">            \frac{\partial \bm{g}}{\partial \bm{\delta}}</span>
 <span class="sd">            = \sum_i \frac{\partial \rho}{\partial c_i} \frac{\partial c_i}{\partial \bm{\delta}}</span>
 <span class="sd">            = \bm{0}</span>
 
@@ -295,9 +295,9 @@
 <span class="sd">        Rearrange the gradient of :math:`\rho`, we have</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T </span>
+<span class="sd">            \sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T</span>
 <span class="sd">                \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right) \bm{\delta}</span>
-<span class="sd">            = - \sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T </span>
+<span class="sd">            = - \sum_i \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{J}_i\right)^T</span>
 <span class="sd">                \left(\sqrt{\frac{\partial \rho}{\partial c_i}} \mathbf{R}_i\right)</span>
 
 <span class="sd">        This gives us the corrected model residual :math:`\mathbf{R}_i^\rho` and Jacobian</span>
@@ -327,8 +327,13 @@
 <span class="sd">            function is not supposed to be directly called by PyPose users. It will be called</span>
 <span class="sd">            internally by optimizers such as :meth:`pypose.optim.GN` and :meth:`pypose.optim.LM`.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_inference_mode_enabled</span><span class="p">(),</span> \
+            <span class="s2">&quot;FastTriggs modifier does not work in torch.inference_mode.&quot;</span>
+
         <span class="n">x</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">square</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+
         <span class="n">sj</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">R</span><span class="p">,</span> <span class="n">sj</span> <span class="o">*</span> <span class="n">J</span></div></div>
 
@@ -342,7 +347,7 @@
 <span class="sd">            \mathbf{J}_i^\rho &amp;= \sqrt{\rho&#39;(c_i)} \left(\mathbf{I} - \alpha</span>
 <span class="sd">                \frac{\mathbf{R}_i^T\mathbf{R}_i}{\|\mathbf{R}_i\|^2} \right) \mathbf{J}_i,</span>
 <span class="sd">        \end{align*}</span>
-<span class="sd">    </span>
+
 <span class="sd">    where :math:`\alpha` is a root of</span>
 
 <span class="sd">    .. math::</span>
@@ -361,7 +366,7 @@
 <span class="sd">        * Bill Triggs, etc., `Bundle Adjustment -- A Modern Synthesis</span>
 <span class="sd">          &lt;https://link.springer.com/chapter/10.1007/3-540-44480-7_21&gt;`_, International</span>
 <span class="sd">          Workshop on Vision Algorithms, 1999.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Warning:</span>
 
 <span class="sd">        The :meth:`FastTriggs` corrector is preferred when the kernel function has a</span>
