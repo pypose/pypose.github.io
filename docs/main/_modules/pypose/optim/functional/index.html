@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -248,7 +248,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.func</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacrev</span><span class="p">,</span> <span class="n">jacfwd</span><span class="p">,</span> <span class="n">functional_call</span>
 
 
-<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
+<div class="viewcode-block" id="modjac"><a class="viewcode-back" href="../../../../generated/pypose.optim.functional.modjac/#pypose.optim.functional.modjac">[docs]</a><span class="nd">@torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modjac</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> \
                     <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;reverse-mode&#39;</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Compute the model Jacobian with respect to the model parameters.</span>
@@ -395,12 +396,14 @@
     <span class="k">return</span> <span class="n">J</span></div>
 
 
+<span class="nd">@torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">modjacrev</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jacrev</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="n">argnums</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="n">has_aux</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
 
 
+<span class="nd">@torch</span><span class="o">.</span><span class="n">enable_grad</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">modjacfwd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">has_aux</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">functional_call</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
