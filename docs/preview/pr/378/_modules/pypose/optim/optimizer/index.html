@@ -784,6 +784,41 @@
 <span class="sd">            Pose Inversion error: 0.0000004 @ 3 it</span>
 <span class="sd">            Early Stopping with error: 4.443569991963159e-07</span>
 
+<span class="sd">            Optimizing a simple module with **sparse LM** (requires ``bae`` and CUDA).</span>
+
+<span class="sd">            Here, ``TrackingTensor`` wraps the parameter tensor so ``bae`` can trace</span>
+<span class="sd">            tensor dependencies and assemble sparse Jacobians for the sparse LM backend.</span>
+
+<span class="sd">            &gt;&gt;&gt; from bae.autograd.function import TrackingTensor</span>
+<span class="sd">            &gt;&gt;&gt; device = torch.device(&quot;cuda&quot;)</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; class SparseIdentity(nn.Module):</span>
+<span class="sd">            ...     def __init__(self, x0):</span>
+<span class="sd">            ...         super().__init__()</span>
+<span class="sd">            ...         self.x = nn.Parameter(TrackingTensor(x0))</span>
+<span class="sd">            ...</span>
+<span class="sd">            ...     def forward(self):</span>
+<span class="sd">            ...         return self.x</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; target = torch.tensor([[1.0], [2.0]], dtype=torch.float64, device=device)</span>
+<span class="sd">            &gt;&gt;&gt; sparse_id = SparseIdentity(target + 0.1).to(device)</span>
+<span class="sd">            &gt;&gt;&gt; strategy = pp.optim.strategy.Constant(damping=1e-6)</span>
+<span class="sd">            &gt;&gt;&gt; optimizer = pp.optim.LM(</span>
+<span class="sd">            ...     sparse_id,</span>
+<span class="sd">            ...     solver=pp.optim.solver.CG(),</span>
+<span class="sd">            ...     strategy=strategy,</span>
+<span class="sd">            ...     sparse=True)</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; for idx in range(3):</span>
+<span class="sd">            ...     loss = optimizer.step(input=(), target=target)</span>
+<span class="sd">            ...     print(&#39;Sparse LM loss %.7f @ %d it&#39;%(loss, idx))</span>
+<span class="sd">            ...     if loss &lt; 1e-5:</span>
+<span class="sd">            ...         print(&#39;Early Stopping with loss:&#39;, loss.item())</span>
+<span class="sd">            ...         break</span>
+<span class="sd">            ...</span>
+<span class="sd">            Sparse LM loss 0.0000000 @ 0 it</span>
+<span class="sd">            Early Stopping with loss: 1.9999959966527992e-14</span>
+
 <span class="sd">        Note:</span>
 <span class="sd">            More practical examples, e.g., pose graph optimization (PGO), can be found at</span>
 <span class="sd">            `examples/module/pgo</span>
