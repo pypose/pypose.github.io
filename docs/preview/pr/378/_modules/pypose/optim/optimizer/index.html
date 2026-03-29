@@ -623,9 +623,12 @@
 <span class="sd">            gradient of each scalar in output with respect to the model parameters will be</span>
 <span class="sd">            computed in parallel with ``&quot;reverse-mode&quot;``. More details go to</span>
 <span class="sd">            :meth:`pypose.optim.functional.modjac`. Default: ``True``.</span>
-<span class="sd">        sparse (bool, optional): use sparse solver or not. Default: ``False``.</span>
+<span class="sd">        sparse (bool, optional): if ``True``, use the sparse LM path based on sparse Jacobians</span>
+<span class="sd">            and sparse normal equations. This mode currently requires ``bae``, is intended to be</span>
+<span class="sd">            used with sparse linear solvers such as :meth:`solver.CG`. Default: ``False``.</span>
 
-<span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`, :meth:`solver.Cholesky`.</span>
+<span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`; :meth:`solver.Cholesky`;</span>
+<span class="sd">    :meth:`solver.CG`.</span>
 
 <span class="sd">    Available kernels: :meth:`kernel.Huber`; :meth:`kernel.PseudoHuber`; :meth:`kernel.Cauchy`.</span>
 
@@ -633,6 +636,16 @@
 
 <span class="sd">    Available strategies: :meth:`strategy.Constant`; :meth:`strategy.Adaptive`;</span>
 <span class="sd">    :meth:`strategy.TrustRegion`;</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Setting ``sparse=True`` enables the sparse Jacobian / sparse LM backend.</span>
+<span class="sd">        It should be used when the underlying optimization problem exhibits a large, structured</span>
+<span class="sd">        sparse Jacobian, where each residual depends only on a small subset of parameters.</span>
+<span class="sd">        Please cite the following paper implementing the sparse LM backend:</span>
+
+<span class="sd">        * Zitong Zhan, Huan Xu, Zihang Fang, Xinpeng Wei, Yaoyu Hu, Chen Wang,</span>
+<span class="sd">          `Bundle Adjustment in the Eager Mode &lt;https://arxiv.org/abs/2409.12190&gt;`_,</span>
+<span class="sd">          arXiv preprint arXiv:2409.12190, 2024.</span>
 
 <span class="sd">    Warning:</span>
 <span class="sd">        The output of model :math:`\bm{f}(\bm{\theta},\bm{x}_i)` and target :math:`\bm{y}_i`</span>
@@ -716,7 +729,8 @@
 <span class="sd">                If not given, the squared model output is minimized. Defaults: ``None``.</span>
 <span class="sd">            weight (:obj:`Tensor`, or :obj:`list`, optional): the square positive definite matrix defining</span>
 <span class="sd">                the weight of model residual. If a :obj:`list`, the element must be :obj:`Tensor` and</span>
-<span class="sd">                the length must be equal to the number of residuals. Default: ``None``.</span>
+<span class="sd">                the length must be equal to the number of residuals. This argument is currently not</span>
+<span class="sd">                supported when ``sparse=True``. Default: ``None``.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the minimized model loss.</span>
@@ -736,6 +750,10 @@
 <span class="sd">            `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the</span>
 <span class="sd">            model error has to be a scalar, the output of model :math:`\bm{f}` can be a</span>
 <span class="sd">            Tensor/LieTensor or a tuple of Tensors/LieTensors.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When ``sparse=True``, only a single residual tensor is currently supported. If the</span>
+<span class="sd">            model returns multiple residuals, only the first one is used.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            Optimizing a simple module to **approximate pose inversion**.</span>
