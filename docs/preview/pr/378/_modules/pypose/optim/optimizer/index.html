@@ -256,14 +256,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.autograd.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacobian</span> <span class="k">as</span> <span class="n">_bae_jacobian</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.autograd.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacobian</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">bae.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingTensor</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">bae.sparse.py_ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">diagonal_op_</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.sparse.spgemm</span><span class="w"> </span><span class="kn">import</span> <span class="n">CuSparse</span>
     <span class="n">BAE_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">BAE_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">_bae_jacobian</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">jacobian</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Trivial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -681,7 +680,6 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">BAE_AVAILABLE</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Please install bae to use sparse mode.&quot;</span>
                                   <span class="s2">&quot;pip install git+https://github.com/zitongzhan/bae.git&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mm</span> <span class="o">=</span> <span class="n">CuSparse</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">Cholesky</span><span class="p">()</span> <span class="k">if</span> <span class="n">solver</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">solver</span>
@@ -800,12 +798,12 @@
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Sparse mode only supports a single residual. Using the first one.&quot;</span><span class="p">)</span>
                     <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-                <span class="n">J</span> <span class="o">=</span> <span class="n">_bae_jacobian</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
+                <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">TrackingTensor</span><span class="p">):</span>
                     <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
                 <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">to_sparse_coo</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
                 <span class="n">J_T</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">mT</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
-                <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">J_T</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="n">J_T</span> <span class="o">@</span> <span class="n">J</span>
                 <span class="n">diagonal_op_</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">clamp_</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">pg</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">pg</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weight</span>
