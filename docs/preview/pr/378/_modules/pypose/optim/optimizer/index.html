@@ -254,15 +254,35 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">_require_backend_attr</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.autograd.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">jacobian</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingTensor</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bae.sparse.py_ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">diagonal_op_</span>
-    <span class="n">BAE_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">BAE_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">jacobian</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">jacobian</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">diagonal_op_</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_tracking_tensor</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="n">TrackingTensor</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+        <span class="s2">&quot;bae.autograd.function&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TrackingTensor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pypose.optim.LM(..., sparse=True)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TrackingTensor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_sparse_backend_globals</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">diagonal_op_</span>
+    <span class="k">if</span> <span class="n">jacobian</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+            <span class="s2">&quot;bae.autograd.graph&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jacobian&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pypose.optim.LM(..., sparse=True)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">diagonal_op_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">diagonal_op_</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+            <span class="s2">&quot;bae.sparse.py_ops&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;diagonal_op_&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pypose.optim.LM(..., sparse=True)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Trivial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -623,11 +643,12 @@
 <span class="sd">            computed in parallel with ``&quot;reverse-mode&quot;``. More details go to</span>
 <span class="sd">            :meth:`pypose.optim.functional.modjac`. Default: ``True``.</span>
 <span class="sd">        sparse (bool, optional): if ``True``, use the sparse LM path based on sparse Jacobians</span>
-<span class="sd">            and sparse normal equations. This mode currently requires ``bae``, is intended to be</span>
-<span class="sd">            used with sparse linear solvers such as :meth:`solver.CG`. Default: ``False``.</span>
+<span class="sd">            and sparse normal equations. This mode requires the optional sparse backend `bae`</span>
+<span class="sd">            and is intended to be used with sparse linear solvers such as :meth:`solver.CG`.</span>
+<span class="sd">            Default: ``False``.</span>
 
 <span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`; :meth:`solver.Cholesky`;</span>
-<span class="sd">    :meth:`solver.CG`.</span>
+<span class="sd">    :meth:`solver.CG`; :meth:`solver.PCG`.</span>
 
 <span class="sd">    Available kernels: :meth:`kernel.Huber`; :meth:`kernel.PseudoHuber`; :meth:`kernel.Cauchy`.</span>
 
@@ -677,9 +698,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span> <span class="o">=</span> <span class="n">sparse</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">BAE_AVAILABLE</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Please install bae to use sparse mode.&quot;</span>
-                                  <span class="s2">&quot;pip install git+https://github.com/zitongzhan/bae.git&quot;</span><span class="p">)</span>
+            <span class="n">_load_sparse_backend_globals</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">Cholesky</span><span class="p">()</span> <span class="k">if</span> <span class="n">solver</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">solver</span>
@@ -784,13 +803,14 @@
 <span class="sd">            Pose Inversion error: 0.0000004 @ 3 it</span>
 <span class="sd">            Early Stopping with error: 4.443569991963159e-07</span>
 
-<span class="sd">            Optimizing a tiny **pose graph** with **sparse LM** (requires ``bae`` and CUDA).</span>
+<span class="sd">            Optimizing a tiny **pose graph** with **sparse LM** (requires the optional sparse</span>
+<span class="sd">            backend `bae` and CUDA).</span>
 
-<span class="sd">            Here, ``map_transform`` marks the relative-pose residual so ``bae`` can assemble</span>
-<span class="sd">            sparse Jacobians for the sparse LM backend. The root pose is fixed, and the</span>
-<span class="sd">            remaining poses are optimized only from relative-pose edge errors.</span>
+<span class="sd">            Here, ``map_transform`` marks the relative-pose residual so the sparse backend can</span>
+<span class="sd">            assemble sparse Jacobians for sparse LM. The root pose is fixed, and the remaining</span>
+<span class="sd">            poses are optimized only from relative-pose edge errors.</span>
 
-<span class="sd">            &gt;&gt;&gt; from bae.autograd.function import TrackingTensor, map_transform</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import TrackingTensor, map_transform</span>
 <span class="sd">            &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">            &gt;&gt;&gt; device = torch.device(&quot;cuda&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; dtype = torch.float64</span>
@@ -825,7 +845,7 @@
 <span class="sd">            &gt;&gt;&gt; strategy = pp.optim.strategy.Constant(damping=1e-4)</span>
 <span class="sd">            &gt;&gt;&gt; optimizer = pp.optim.LM(</span>
 <span class="sd">            ...     graph,</span>
-<span class="sd">            ...     solver=pp.optim.solver.CG(),</span>
+<span class="sd">            ...     solver=pp.optim.solver.PCG(),</span>
 <span class="sd">            ...     strategy=strategy,</span>
 <span class="sd">            ...     sparse=True)</span>
 <span class="sd">            ...</span>
@@ -855,7 +875,7 @@
                     <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">TrackingTensor</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">_is_tracking_tensor</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
                     <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
                 <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">to_sparse_coo</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
                 <span class="n">J_T</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">mT</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
