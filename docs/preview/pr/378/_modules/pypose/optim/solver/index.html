@@ -247,6 +247,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">pinv</span><span class="p">,</span> <span class="n">lstsq</span><span class="p">,</span> <span class="n">cholesky_ex</span><span class="p">,</span> <span class="n">vecdot</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">_format_sparse_backend_error</span><span class="p">,</span> <span class="n">_load_optional_backend_attr</span>
+
 
 <div class="viewcode-block" id="PINV"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PINV</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with pseudo inversion.</span>
@@ -579,6 +581,37 @@
             <span class="n">rho_prev</span> <span class="o">=</span> <span class="n">rho_cur</span>
 
         <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_missing_pcg</span><span class="p">():</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">PCG</span><span class="p">(</span><span class="n">CG</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Placeholder for the optional sparse backend preconditioned CG solver.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">&quot;pypose.optim.solver.PCG&quot;</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">&quot;pypose.optim.solver.PCG&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">PCG</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;PCG&quot;</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_optional_backend_attr</span><span class="p">(</span><span class="s2">&quot;bae.utils.pysolvers&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">_missing_pcg</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;PCG&quot;</span><span class="p">})</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PINV&quot;</span><span class="p">,</span> <span class="s2">&quot;LSTSQ&quot;</span><span class="p">,</span> <span class="s2">&quot;Cholesky&quot;</span><span class="p">,</span> <span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;PCG&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
