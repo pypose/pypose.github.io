@@ -810,7 +810,7 @@
 <span class="sd">            assemble sparse Jacobians for sparse LM. The root pose is fixed, and the remaining</span>
 <span class="sd">            poses are optimized only from relative-pose edge errors.</span>
 
-<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import TrackingTensor, map_transform</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import Track, map_transform</span>
 <span class="sd">            &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">            &gt;&gt;&gt; device = torch.device(&quot;cuda&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; dtype = torch.float64</span>
@@ -823,7 +823,7 @@
 <span class="sd">            ...     def __init__(self, root, nodes):</span>
 <span class="sd">            ...         super().__init__()</span>
 <span class="sd">            ...         self.register_buffer(&#39;root&#39;, root.tensor())</span>
-<span class="sd">            ...         self.nodes = nn.Parameter(TrackingTensor(nodes.tensor()))</span>
+<span class="sd">            ...         self.nodes = nn.Parameter(Track(nodes.tensor()))</span>
 <span class="sd">            ...         self.nodes.trim_SE3_grad = True</span>
 <span class="sd">            ...</span>
 <span class="sd">            ...     def forward(self, edges, relposes):</span>
