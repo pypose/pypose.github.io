@@ -453,15 +453,19 @@ model returns multiple residuals, only the first one is used.</p>
 </div>
 <p>Optimizing a tiny <strong>pose graph</strong> with <strong>sparse LM</strong> (requires the optional sparse
 backend <cite>bae</cite> and CUDA).</p>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">map_transform</span></code> marks the relative-pose residual so the sparse backend can
-assemble sparse Jacobians for sparse LM. The root pose is fixed, and the remaining
-poses are optimized only from relative-pose edge errors.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pypose.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">Track</span><span class="p">,</span> <span class="n">map_transform</span>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">parallel_for_sparse_jacobian</span></code> marks the relative-pose residual so the
+sparse backend can assemble sparse Jacobians for sparse LM. Use it on factorwise
+residual functions that take batch inputs and return one residual block per
+batch item. When you call the function normally, it behaves the same as before;
+the decorator only helps the sparse backend build sparse Jacobians.
+In the example, the root pose is fixed, and the remaining poses are optimized
+only from relative-pose edge errors.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pypose.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">Track</span><span class="p">,</span> <span class="n">parallel_for_sparse_jacobian</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@map_transform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@parallel_for_sparse_jacobian</span>
 <span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">edge_error</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="n">relpose</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">relpose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node1</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node2</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 <span class="gp">...</span>
