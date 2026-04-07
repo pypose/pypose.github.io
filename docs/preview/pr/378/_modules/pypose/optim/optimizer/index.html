@@ -805,16 +805,20 @@
 <span class="sd">            Optimizing a tiny **pose graph** with **sparse LM** (requires the optional sparse</span>
 <span class="sd">            backend `bae` and CUDA).</span>
 
-<span class="sd">            Here, ``map_transform`` marks the relative-pose residual so the sparse backend can</span>
-<span class="sd">            assemble sparse Jacobians for sparse LM. The root pose is fixed, and the remaining</span>
-<span class="sd">            poses are optimized only from relative-pose edge errors.</span>
+<span class="sd">            Here, ``parallel_for_sparse_jacobian`` marks the relative-pose residual so the</span>
+<span class="sd">            sparse backend can assemble sparse Jacobians for sparse LM. Use it on factorwise</span>
+<span class="sd">            residual functions that take batch inputs and return one residual block per</span>
+<span class="sd">            batch item. When you call the function normally, it behaves the same as before;</span>
+<span class="sd">            the decorator only helps the sparse backend build sparse Jacobians.</span>
+<span class="sd">            In the example, the root pose is fixed, and the remaining poses are optimized</span>
+<span class="sd">            only from relative-pose edge errors.</span>
 
-<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import Track, map_transform</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import Track, parallel_for_sparse_jacobian</span>
 <span class="sd">            &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">            &gt;&gt;&gt; device = torch.device(&quot;cuda&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; dtype = torch.float64</span>
 <span class="sd">            &gt;&gt;&gt;</span>
-<span class="sd">            &gt;&gt;&gt; @map_transform</span>
+<span class="sd">            &gt;&gt;&gt; @parallel_for_sparse_jacobian</span>
 <span class="sd">            ... def edge_error(node1, node2, relpose):</span>
 <span class="sd">            ...     return (relpose.Inv() @ node1.Inv() @ node2).Log().tensor()</span>
 <span class="sd">            ...</span>
