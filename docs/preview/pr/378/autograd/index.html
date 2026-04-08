@@ -266,7 +266,7 @@ output tensor is the batch dimension.</p>
 <p class="admonition-title">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@parallel_for_sparse_jacobian</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">edge_error</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="n">relpose</span><span class="p">):</span>
-    <span class="c1"># node1: (N, 7), node2: (N, 7), relpose: (N, 7)</span>
+    <span class="c1"># node1: pp.SE3 (N, 7), node2: pp.SE3 (N, 7), relpose: pp.SE3 (N, 7)</span>
     <span class="c1"># returns: (N, 6)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">relpose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node1</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node2</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 </pre></div>
