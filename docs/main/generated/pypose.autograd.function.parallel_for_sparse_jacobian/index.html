@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.randn_RxSO3 &mdash; PyPose main documentation</title>
+  <title>pypose.autograd.function.parallel_for_sparse_jacobian &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="pypose.randn_like" href="../pypose.randn_like/" />
-    <link rel="prev" title="pypose.randn_rxso3" href="../pypose.randn_rxso3/" />
+    <link rel="next" title="Func" href="../../func/" />
+    <link rel="prev" title="Autograd" href="../../autograd/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.randn_RxSO3.html">
+  <a style="color:#F05732" href="generated/pypose.autograd.function.parallel_for_sparse_jacobian.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -164,9 +164,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../autograd/">Autograd</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../autograd/">Autograd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../func/">Func</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../functions/">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
@@ -214,15 +214,15 @@
       </li>
 
         
-          <li><a href="../../functions/">Functions</a> &gt;</li>
+          <li><a href="../../autograd/">Autograd</a> &gt;</li>
         
-      <li>pypose.randn_RxSO3</li>
+      <li>pypose.autograd.function.parallel_for_sparse_jacobian</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.randn_RxSO3.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.autograd.function.parallel_for_sparse_jacobian.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -248,71 +248,45 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-randn-rxso3">
-<h1>pypose.randn_RxSO3<a class="headerlink" href="#pypose-randn-rxso3" title="Permalink to this heading">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="pypose.randn_RxSO3">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">randn_RxSO3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/utils/#randn_RxSO3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.randn_RxSO3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> LieTensor filled with the Exponential map of the random
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code> LieTensor. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">rxso3_type</span></code> LieTensor is generated using
-<a class="reference internal" href="../pypose.randn_rxso3/#pypose.randn_rxso3" title="pypose.randn_rxso3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn_rxso3()</span></code></a>.</p>
-<div class="math">
-\[\mathrm{data}[*, :] = \mathrm{Exp}([\delta_x, \delta_y, \delta_z, \log s]),
-
-\]</div>
-<p>where rotation <span class="math">\([\delta_x, \delta_y, \delta_z]\)</span> is generated using
-<a class="reference internal" href="../pypose.randn_so3/#pypose.randn_so3" title="pypose.randn_so3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pypose.randn_so3()</span></code></a> with standard deviation <span class="math">\(\sigma_r\)</span>, scale <span class="math">\(\log s\)</span>
-is generated from a normal distribution <span class="math">\(\mathcal{N}(0, \sigma_s)\)</span>, and
-<span class="math">\(\mathrm{Exp}()\)</span> is the Exponential map. Note that standard deviations
-<span class="math">\(\sigma_r\)</span> and <span class="math">\(\sigma_s\)</span> are specified by <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (<span class="math">\(\sigma\)</span>), where
-<span class="math">\(\sigma = (\sigma_r, \sigma_s)\)</span>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lsize</strong> (<em>int</em><em>...</em>) – a sequence of integers defining the lshape of the output tensor.
-Can be a variable number of arguments or a collection like a list or tuple.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em><em> or </em><em>(</em><em>float</em><em>...</em><em>)</em><em>, </em><em>optional</em>) – standard deviation (<span class="math">\(\sigma_r\)</span>,
-and <span class="math">\(\sigma_s\)</span>) for the two normal distribution. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>optional</em>) – If autograd should record operations on
-the returned tensor. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>generator</strong> (<em>torch.Generator</em><em>, </em><em>optional</em>) – a pseudorandom number generator for sampling</p></li>
-<li><p><strong>dtype</strong> (<em>torch.dtype</em><em>, </em><em>optional</em>) – the desired data type of returned tensor.
-Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, uses a global default
-(see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>).</p></li>
-<li><p><strong>layout</strong> (<em>torch.layout</em><em>, </em><em>optional</em>) – the desired layout of returned Tensor.
-Default: <code class="docutils literal notranslate"><span class="pre">torch.strided</span></code>.</p></li>
-<li><p><strong>device</strong> (<em>torch.device</em><em>, </em><em>optional</em>) – the desired device of returned tensor.
-Default: “None”. If None, uses the current device for the default tensor
-type (see <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.set_default_tensor_type()</span></code>). Device will be the CPU
-for CPU tensor types and the current CUDA device for CUDA tensor types.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> LieTensor</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor">LieTensor</a></p>
-</dd>
-</dl>
+  <section id="pypose-autograd-function-parallel-for-sparse-jacobian">
+<h1>pypose.autograd.function.parallel_for_sparse_jacobian<a class="headerlink" href="#pypose-autograd-function-parallel-for-sparse-jacobian" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pypose.autograd.function.parallel_for_sparse_jacobian">
+<span class="sig-prename descclassname"><span class="pre">pypose.autograd.function.</span></span><span class="sig-name descname"><span class="pre">parallel_for_sparse_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pypose.autograd.function.parallel_for_sparse_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#pypose.autograd.function.parallel_for_sparse_jacobian" title="pypose.autograd.function.parallel_for_sparse_jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">parallel_for_sparse_jacobian()</span></code></a> decorator allows PyPose’s optional
+sparse backend to trace and assemble sparse Jacobians more efficiently. It
+wraps a batched function whose batch samples are independent, so the function
+can be treated as a parallel computation along the batch dimension during
+sparse Jacobian construction. Here, the leading dimension of each input and
+output tensor is the batch dimension.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This decorator is required by sparse
+<a class="reference internal" href="../pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt" title="pypose.optim.LevenbergMarquardt"><code class="xref py py-class docutils literal notranslate"><span class="pre">pypose.optim.LevenbergMarquardt</span></code></a> with <code class="docutils literal notranslate"><span class="pre">sparse=True</span></code>.</p>
+</div>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@parallel_for_sparse_jacobian</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">edge_error</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="n">relpose</span><span class="p">):</span>
+    <span class="c1"># node1: pp.SE3 (N, 7), node2: pp.SE3 (N, 7), relpose: pp.SE3 (N, 7)</span>
+    <span class="c1"># returns: (N, 6)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">relpose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node1</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node2</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here, each output is the error for one pose-graph edge, computed
+only from the matching input of <code class="docutils literal notranslate"><span class="pre">node1</span></code>, <code class="docutils literal notranslate"><span class="pre">node2</span></code>, and <code class="docutils literal notranslate"><span class="pre">relpose</span></code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Similar to <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.vmap.html">torch.vmap</a>,
+it should not be used for functions that mix information across rows, such as
+batch reductions, global statistics, or any computation where one output in the batch
+depends on multiple input batch samples.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The parameter <span class="math">\(\sigma\)</span> can either be:</p>
-<ul class="simple">
-<li><p>a single <code class="docutils literal notranslate"><span class="pre">float</span></code> – in which all the elements in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">RxSO3_type</span></code> share
-the same sigma, i.e., <span class="math">\(\sigma_{\rm{r}}\)</span> = <span class="math">\(\sigma_{\rm{s}}\)</span> =
-<span class="math">\(\sigma\)</span>.</p></li>
-<li><p>a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> of two floats – in which case, the specific sigmas for the two parts
-are assigned independently, i.e., <span class="math">\(\sigma\)</span> = (<span class="math">\(\sigma_{\rm{r}}\)</span>,
-<span class="math">\(\sigma_{\rm{s}}\)</span>).</p></li>
-</ul>
-</div>
-<p class="rubric">Example</p>
-<p>For <span class="math">\(\sigma = (\sigma_r, \sigma_s)\)</span></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">randn_RxSO3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
-<span class="go">RxSO3Type LieTensor:</span>
-<span class="go">tensor([[-0.1929, -0.0141,  0.2859,  0.9385,  4.5562],</span>
-<span class="go">        [-0.2871,  0.0134, -0.2903,  0.9128,  3.1044]])</span>
-</pre></div>
+<p>This decorator doesn’t change the function behavior. It only adds tracing
+information for sparse Jacobian construction.</p>
 </div>
 </dd></dl>
 
@@ -326,10 +300,10 @@ are assigned independently, i.e., <span class="math">\(\sigma\)</span> = (<span 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pypose.randn_like/" class="btn btn-neutral float-right" title="pypose.randn_like" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../../func/" class="btn btn-neutral float-right" title="Func" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.randn_rxso3/" class="btn btn-neutral" title="pypose.randn_rxso3" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../../autograd/" class="btn btn-neutral" title="Autograd" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
