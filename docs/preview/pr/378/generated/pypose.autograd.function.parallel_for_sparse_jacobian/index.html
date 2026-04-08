@@ -273,15 +273,15 @@ output tensor is the batch dimension.</p>
     <span class="k">return</span> <span class="p">(</span><span class="n">relpose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node1</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node2</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Here, each row of <code class="docutils literal notranslate"><span class="pre">residual</span></code> is the error for one pose-graph edge, computed
-only from the matching rows of <code class="docutils literal notranslate"><span class="pre">node1</span></code>, <code class="docutils literal notranslate"><span class="pre">node2</span></code>, and <code class="docutils literal notranslate"><span class="pre">relpose</span></code>.</p>
+<p>Here, each output is the error for one pose-graph edge, computed
+only from the matching input of <code class="docutils literal notranslate"><span class="pre">node1</span></code>, <code class="docutils literal notranslate"><span class="pre">node2</span></code>, and <code class="docutils literal notranslate"><span class="pre">relpose</span></code>.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Similar to <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.vmap.html">torch.vmap</a>,
 it should not be used for functions that mix information across rows, such as
-batch reductions, global statistics, or any computation where one residual
-depends on multiple rows of the input.</p>
+batch reductions, global statistics, or any computation where one output in the batch
+depends on multiple input batch samples.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
