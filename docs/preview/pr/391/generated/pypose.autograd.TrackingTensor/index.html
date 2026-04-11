@@ -276,12 +276,14 @@ when the optimization model is instantiated.</p>
         <span class="k">return</span> <span class="n">features</span> <span class="o">-</span> <span class="n">target</span>
 </pre></div>
 </div>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">self.table</span></code> is an optimizable parameter;
-the <code class="docutils literal notranslate"><span class="pre">[idx]</span></code> operation is applied on <code class="docutils literal notranslate"><span class="pre">self.table</span></code>, and the result is
-concatenated with <code class="docutils literal notranslate"><span class="pre">ones</span></code>. <a class="reference internal" href="#pypose.autograd.TrackingTensor" title="pypose.autograd.TrackingTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrackingTensor</span></code></a> lets the sparse backend remember
-that indexing pattern,  the concatenation with <code class="docutils literal notranslate"><span class="pre">ones</span></code>, and <code class="docutils literal notranslate"><span class="pre">-</span> <span class="pre">target</span></code> subtraction.
-Since <code class="docutils literal notranslate"><span class="pre">ones</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> are not being optimized and their Jacobians are not needed,
-they do not need to be wrapped with <a class="reference internal" href="#pypose.autograd.TrackingTensor" title="pypose.autograd.TrackingTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrackingTensor</span></code></a>.</p>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">self.table</span></code> is the parameter being optimized.
+In <code class="docutils literal notranslate"><span class="pre">forward</span></code>, the model first selects batch entries from <code class="docutils literal notranslate"><span class="pre">self.table</span></code> using <code class="docutils literal notranslate"><span class="pre">idx</span></code>,
+then concatenates the result with <code class="docutils literal notranslate"><span class="pre">ones</span></code>, and finally subtracts <code class="docutils literal notranslate"><span class="pre">target</span></code>.
+<code class="docutils literal notranslate"><span class="pre">TrackingTensor</span></code> records this chain of operations
+so the sparse backend knows how the output depends on <code class="docutils literal notranslate"><span class="pre">self.table</span></code>.
+<code class="docutils literal notranslate"><span class="pre">ones</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> do not need to be wrapped in <code class="docutils literal notranslate"><span class="pre">TrackingTensor</span></code>
+because they are fixed values, not optimization variables,
+so their Jacobians are unnecessary.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
