@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pypose.autograd.function.parallel_for_sparse_jacobian &mdash; PyPose main documentation</title>
+  <title>pypose.autograd.TT &mdash; PyPose main documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
-    <link rel="next" title="Func" href="../../func/" />
-    <link rel="prev" title="pypose.autograd.TT" href="../pypose.autograd.TT/" />
+    <link rel="next" title="pypose.autograd.function.parallel_for_sparse_jacobian" href="../pypose.autograd.function.parallel_for_sparse_jacobian/" />
+    <link rel="prev" title="pypose.autograd.TrackingTensor" href="../pypose.autograd.TrackingTensor/" />
 
 <!--
   Search engines should not index the master version of documentation.
@@ -149,7 +149,7 @@
           
 
 <div>
-  <a style="color:#F05732" href="generated/pypose.autograd.function.parallel_for_sparse_jacobian.html">
+  <a style="color:#F05732" href="generated/pypose.autograd.TT.html">
     You are viewing unstable developer preview docs.
     Click here to view docs for latest stable release.
   </a>
@@ -216,13 +216,13 @@
         
           <li><a href="../../autograd/">Autograd</a> &gt;</li>
         
-      <li>pypose.autograd.function.parallel_for_sparse_jacobian</li>
+      <li>pypose.autograd.TT</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../../_sources/generated/pypose.autograd.function.parallel_for_sparse_jacobian.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
+            <a href="../../_sources/generated/pypose.autograd.TT.rst.txt" rel="nofollow"><img src="../../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -248,46 +248,12 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="pypose-autograd-function-parallel-for-sparse-jacobian">
-<h1>pypose.autograd.function.parallel_for_sparse_jacobian<a class="headerlink" href="#pypose-autograd-function-parallel-for-sparse-jacobian" title="Permalink to this heading">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="pypose.autograd.function.parallel_for_sparse_jacobian">
-<span class="sig-prename descclassname"><span class="pre">pypose.autograd.function.</span></span><span class="sig-name descname"><span class="pre">parallel_for_sparse_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pypose.autograd.function.parallel_for_sparse_jacobian" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#pypose.autograd.function.parallel_for_sparse_jacobian" title="pypose.autograd.function.parallel_for_sparse_jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">parallel_for_sparse_jacobian()</span></code></a> decorator allows PyPose’s optional
-sparse backend to trace and assemble sparse Jacobians more efficiently. It
-wraps a batched function whose batch samples are independent, so the function
-can be treated as a parallel computation along the batch dimension during
-sparse Jacobian construction. Here, the leading dimension of each input and
-output tensor is the batch dimension.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This decorator is required by sparse
-<a class="reference internal" href="../pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt" title="pypose.optim.LevenbergMarquardt"><code class="xref py py-class docutils literal notranslate"><span class="pre">pypose.optim.LevenbergMarquardt</span></code></a> with <code class="docutils literal notranslate"><span class="pre">sparse=True</span></code>.</p>
-</div>
-<div class="admonition-example admonition">
-<p class="admonition-title">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@parallel_for_sparse_jacobian</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">edge_error</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="n">relpose</span><span class="p">):</span>
-    <span class="c1"># node1: pp.SE3 (N, 7), node2: pp.SE3 (N, 7), relpose: pp.SE3 (N, 7)</span>
-    <span class="c1"># returns: (N, 6)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">relpose</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node1</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">node2</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Here, each output is the error for one pose-graph edge, computed
-only from the matching input of <code class="docutils literal notranslate"><span class="pre">node1</span></code>, <code class="docutils literal notranslate"><span class="pre">node2</span></code>, and <code class="docutils literal notranslate"><span class="pre">relpose</span></code>.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Similar to <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.vmap.html">torch.vmap</a>,
-it should not be used for functions that mix information across rows, such as
-batch reductions, global statistics, or any computation where one output in the batch
-depends on multiple input batch samples.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This decorator doesn’t change the function behavior. It only adds tracing
-information for sparse Jacobian construction.</p>
-</div>
+  <section id="pypose-autograd-tt">
+<h1>pypose.autograd.TT<a class="headerlink" href="#pypose-autograd-tt" title="Permalink to this heading">¶</a></h1>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pypose.autograd.TT">
+<span class="sig-prename descclassname"><span class="pre">pypose.autograd.</span></span><span class="sig-name descname"><span class="pre">TT</span></span><a class="headerlink" href="#pypose.autograd.TT" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">TrackingTensor</span></code></p>
 </dd></dl>
 
 </section>
@@ -300,10 +266,10 @@ information for sparse Jacobian construction.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../func/" class="btn btn-neutral float-right" title="Func" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../pypose.autograd.function.parallel_for_sparse_jacobian/" class="btn btn-neutral float-right" title="pypose.autograd.function.parallel_for_sparse_jacobian" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../pypose.autograd.TT/" class="btn btn-neutral" title="pypose.autograd.TT" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../pypose.autograd.TrackingTensor/" class="btn btn-neutral" title="pypose.autograd.TrackingTensor" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
