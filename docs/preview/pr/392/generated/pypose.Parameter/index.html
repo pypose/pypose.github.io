@@ -274,11 +274,19 @@ the sparse backend, when the optimization model is instantiated.</p>
 <p class="admonition-title">Note</p>
 <p>Recommend to use alias <a class="reference internal" href="../pypose.autograd.function.psjac/#pypose.autograd.function.psjac" title="pypose.autograd.function.psjac"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.autograd.function.psjac()</span></code></a> for brevity.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>Wrap the original batched tensor before performing any operation.
 If you use a regular tensor or LieTensor instead,
 the sparse backend will not recover the Jacobian for the tensor.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p><a class="reference internal" href="#pypose.Parameter" title="pypose.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> does not change numerical results. It only adds
 tracing information for sparse Jacobian construction when setting <cite>sjac=True</cite>.</p>
+</div>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
 <p>Below, <code class="docutils literal notranslate"><span class="pre">self.poses</span></code> and <code class="docutils literal notranslate"><span class="pre">self.points_3d</span></code> are the optimization variables
 in a bundle-adjustment model.
 <code class="docutils literal notranslate"><span class="pre">pp.Parameter(...,</span> <span class="pre">sjac=True)</span></code> records the indexing and reprojection operations
@@ -313,6 +321,7 @@ not optimization variables.</p>
         <span class="n">points_proj</span> <span class="o">=</span> <span class="n">Reproj</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">poses</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">points_proj</span> <span class="o">-</span> <span class="n">observations</span>
 </pre></div>
+</div>
 </div>
 </dd></dl>
 

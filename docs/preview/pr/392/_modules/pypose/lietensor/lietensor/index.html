@@ -1499,53 +1499,53 @@
 
 <span class="sd">    .. warning::</span>
 
-<span class="sd">    Wrap the original batched tensor before performing any operation.</span>
-<span class="sd">    If you use a regular tensor or LieTensor instead,</span>
-<span class="sd">    the sparse backend will not recover the Jacobian for the tensor.</span>
+<span class="sd">        Wrap the original batched tensor before performing any operation.</span>
+<span class="sd">        If you use a regular tensor or LieTensor instead,</span>
+<span class="sd">        the sparse backend will not recover the Jacobian for the tensor.</span>
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">    :class:`Parameter` does not change numerical results. It only adds</span>
-<span class="sd">    tracing information for sparse Jacobian construction when setting `sjac=True`.</span>
+<span class="sd">        :class:`Parameter` does not change numerical results. It only adds</span>
+<span class="sd">        tracing information for sparse Jacobian construction when setting `sjac=True`.</span>
 
 <span class="sd">    .. admonition:: Example</span>
 
-<span class="sd">    Below, ``self.poses`` and ``self.points_3d`` are the optimization variables</span>
-<span class="sd">    in a bundle-adjustment model.</span>
-<span class="sd">    ``pp.Parameter(..., sjac=True)`` records the indexing and reprojection operations</span>
-<span class="sd">    so the sparse backend knows how each entry in the output depends on these variables.</span>
-<span class="sd">    This includes tracing :func:`psjac` functions as well,</span>
-<span class="sd">    so the dependency through ``project`` is preserved.</span>
-<span class="sd">    ``observations``, ``camera_indices``, and ``point_indices``</span>
-<span class="sd">    do not need to be wrapped in ``Parameter`` because they are fixed inputs,</span>
-<span class="sd">    not optimization variables.</span>
+<span class="sd">        Below, ``self.poses`` and ``self.points_3d`` are the optimization variables</span>
+<span class="sd">        in a bundle-adjustment model.</span>
+<span class="sd">        ``pp.Parameter(..., sjac=True)`` records the indexing and reprojection operations</span>
+<span class="sd">        so the sparse backend knows how each entry in the output depends on these variables.</span>
+<span class="sd">        This includes tracing :func:`psjac` functions as well,</span>
+<span class="sd">        so the dependency through ``project`` is preserved.</span>
+<span class="sd">        ``observations``, ``camera_indices``, and ``point_indices``</span>
+<span class="sd">        do not need to be wrapped in ``Parameter`` because they are fixed inputs,</span>
+<span class="sd">        not optimization variables.</span>
 
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">        .. code-block:: python</span>
 
-<span class="sd">        import pypose as pp</span>
-<span class="sd">        from torch import nn</span>
-<span class="sd">        from pypose.autograd.function import psjac</span>
+<span class="sd">            import pypose as pp</span>
+<span class="sd">            from torch import nn</span>
+<span class="sd">            from pypose.autograd.function import psjac</span>
 
-<span class="sd">        class Reproj(nn.Module):</span>
-<span class="sd">            def __init__(self, poses, points_3d):</span>
-<span class="sd">                # self.points_3d: tensor (P, 3), self.poses: pp.SE3 (C, 7)</span>
-<span class="sd">                super().__init__()</span>
-<span class="sd">                self.poses = pp.Parameter(poses, sjac=True)</span>
-<span class="sd">                self.points_3d = pp.Parameter(points_3d, sjac=True)</span>
+<span class="sd">            class Reproj(nn.Module):</span>
+<span class="sd">                def __init__(self, poses, points_3d):</span>
+<span class="sd">                    # self.points_3d: tensor (P, 3), self.poses: pp.SE3 (C, 7)</span>
+<span class="sd">                    super().__init__()</span>
+<span class="sd">                    self.poses = pp.Parameter(poses, sjac=True)</span>
+<span class="sd">                    self.points_3d = pp.Parameter(points_3d, sjac=True)</span>
 
-<span class="sd">            @psjac</span>
-<span class="sd">            def project(points, poses):</span>
-<span class="sd">                # points: tensor (N, 3), poses: pp.SE3 (N, 7)</span>
-<span class="sd">                # returns: (N, 2)</span>
-<span class="sd">                points = poses.Act(points)</span>
-<span class="sd">                return -points[..., :2] / points[..., 2].unsqueeze(-1)</span>
+<span class="sd">                @psjac</span>
+<span class="sd">                def project(points, poses):</span>
+<span class="sd">                    # points: tensor (N, 3), poses: pp.SE3 (N, 7)</span>
+<span class="sd">                    # returns: (N, 2)</span>
+<span class="sd">                    points = poses.Act(points)</span>
+<span class="sd">                    return -points[..., :2] / points[..., 2].unsqueeze(-1)</span>
 
-<span class="sd">            def forward(self, observations, camera_indices, point_indices):</span>
-<span class="sd">                # observations: tensor (N, 2), camera_indices: (N,), point_indices: (N,)</span>
-<span class="sd">                poses = self.poses[camera_indices]</span>
-<span class="sd">                points = self.points_3d[point_indices]</span>
-<span class="sd">                points_proj = Reproj.project(points, poses)</span>
-<span class="sd">                return points_proj - observations</span>
+<span class="sd">                def forward(self, observations, camera_indices, point_indices):</span>
+<span class="sd">                    # observations: tensor (N, 2), camera_indices: (N,), point_indices: (N,)</span>
+<span class="sd">                    poses = self.poses[camera_indices]</span>
+<span class="sd">                    points = self.points_3d[point_indices]</span>
+<span class="sd">                    points_proj = Reproj.project(points, poses)</span>
+<span class="sd">                    return points_proj - observations</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
