@@ -1178,11 +1178,18 @@
 
 <div class="viewcode-block" id="LieTensor.new_empty"><a class="viewcode-back" href="../../../../generated/pypose.LieTensor/#pypose.LieTensor.new_empty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">new_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="n">requires_grad</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-                        <span class="n">pin_memory</span><span class="o">=</span><span class="n">pin_memory</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">),</span>
-            <span class="n">LieTensor</span>
-        <span class="p">)</span></div>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="n">size</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dtype</span><span class="p">,</span>
+            <span class="n">layout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">layout</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">device</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="n">pin_memory</span><span class="p">,</span>
+            <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="k">if</span> <span class="n">requires_grad</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">requires_grad</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">):</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span>
+        <span class="k">return</span> <span class="n">out</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__torch_function__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
@@ -1471,35 +1478,99 @@
 
 
 <div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../../../generated/pypose.Parameter/#pypose.Parameter">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Parameter</span><span class="p">(</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    A kind of LieTensor that is to be considered a module parameter.</span>
-
-<span class="sd">    Parameters are of :meth:`LieTensor` and :meth:`torch.nn.Parameter`,</span>
-<span class="sd">    that have a very special property when used with Modules: when</span>
-<span class="sd">    they are assigned as Module attributes they are automatically</span>
-<span class="sd">    added to the list of its parameters, and will appear, e.g., in</span>
-<span class="sd">    :meth:`parameters()` iterator.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class:`Parameter` wraps a :class:`torch.Tensor` or :class:`pypose.LieTensor`.</span>
+<span class="sd">    When setting `sjac=True`, it tracks all operations performed on the tensor,</span>
+<span class="sd">    allowing PyPose&#39;s sparse backend to build structured sparse Jacobians.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (LieTensor): parameter LieTensor.</span>
+<span class="sd">        data (Tensor or LieTensor): parameter data.</span>
 <span class="sd">        requires_grad (bool, optional): if the parameter requires</span>
 <span class="sd">            gradient. Default: ``True``</span>
+<span class="sd">        sjac (bool, optional): if ``True``, sparse Jacobian tracing is enabled.</span>
+<span class="sd">            Default: ``False``</span>
 
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
-<span class="sd">        &gt;&gt;&gt; x = pp.Parameter(pp.randn_SO3(2))</span>
-<span class="sd">        &gt;&gt;&gt; x.Log().sum().backward()</span>
-<span class="sd">        &gt;&gt;&gt; x.grad</span>
-<span class="sd">        tensor([[0.8590, 1.4069, 0.6261, 0.0000],</span>
-<span class="sd">                [1.2869, 1.0748, 0.5385, 0.0000]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ltype</span>
+<span class="sd">    Use `sjac=True` together with :func:`pypose.autograd.function.parallel_for_sparse_jacobian`</span>
+<span class="sd">    (alias :func:`psjac`) for any :class:`pypose.Parameter` that needs to be optimized with</span>
+<span class="sd">    the sparse backend, when the optimization model is instantiated.</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        Recommend to use alias :func:`pypose.autograd.function.psjac` for brevity.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        Wrap the original batched tensor before performing any operation.</span>
+<span class="sd">        If you use a regular tensor or LieTensor instead,</span>
+<span class="sd">        the sparse backend will not recover the Jacobian for the tensor.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        :class:`Parameter` does not change numerical results. It only adds</span>
+<span class="sd">        tracing information for sparse Jacobian construction when setting `sjac=True`.</span>
+
+<span class="sd">    .. admonition:: Example</span>
+
+<span class="sd">        Below, ``self.poses`` and ``self.points_3d`` are the optimization variables</span>
+<span class="sd">        in a bundle-adjustment model.</span>
+<span class="sd">        ``pp.Parameter(..., sjac=True)`` records the indexing and reprojection operations</span>
+<span class="sd">        so the sparse backend knows how each entry in the output depends on these variables.</span>
+<span class="sd">        This includes tracing :func:`psjac` functions as well,</span>
+<span class="sd">        so the dependency through ``project`` is preserved.</span>
+<span class="sd">        ``observations``, ``camera_indices``, and ``point_indices``</span>
+<span class="sd">        do not need to be wrapped in ``Parameter`` because they are fixed inputs,</span>
+<span class="sd">        not optimization variables.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import pypose as pp</span>
+<span class="sd">            from torch import nn</span>
+<span class="sd">            from pypose.autograd.function import psjac</span>
+
+<span class="sd">            class Reproj(nn.Module):</span>
+<span class="sd">                def __init__(self, poses, points_3d):</span>
+<span class="sd">                    # self.points_3d: tensor (P, 3), self.poses: pp.SE3 (C, 7)</span>
+<span class="sd">                    super().__init__()</span>
+<span class="sd">                    self.poses = pp.Parameter(poses, sjac=True)</span>
+<span class="sd">                    self.points_3d = pp.Parameter(points_3d, sjac=True)</span>
+
+<span class="sd">                @psjac</span>
+<span class="sd">                def project(points, poses):</span>
+<span class="sd">                    # points: tensor (N, 3), poses: pp.SE3 (N, 7)</span>
+<span class="sd">                    # returns: (N, 2)</span>
+<span class="sd">                    points = poses.Act(points)</span>
+<span class="sd">                    return -points[..., :2] / points[..., 2].unsqueeze(-1)</span>
+
+<span class="sd">                def forward(self, observations, camera_indices, point_indices):</span>
+<span class="sd">                    # observations: tensor (N, 2), camera_indices: (N,), point_indices: (N,)</span>
+<span class="sd">                    poses = self.poses[camera_indices]</span>
+<span class="sd">                    points = self.points_3d[point_indices]</span>
+<span class="sd">                    points_proj = Reproj.project(points, poses)</span>
+<span class="sd">                    return points_proj - observations</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sjac</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ltype</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sjac</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span>
-        <span class="k">return</span> <span class="n">LieTensor</span><span class="o">.</span><span class="n">_make_subclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sjac</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">_require_backend_attr</span>
+            <span class="n">TrackingTensor</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+                <span class="s2">&quot;bae.autograd.function&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;TrackingTensor&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pypose.Parameter(..., sjac=True)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">TrackingTensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">):</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">_make_subclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tensor</span><span class="p">(),</span> <span class="n">requires_grad</span><span class="p">)</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">ltype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ltype</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">_is_param</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">param</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">:</span>
