@@ -257,11 +257,11 @@
 <a class="reference internal" href="../pypose.LieTensor/#pypose.LieTensor" title="pypose.LieTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">pypose.LieTensor</span></code></a> and tracks all operations performed on the tensor,
 allowing PyPose’s sparse backend to build structured sparse Jacobians.</p>
 <p>Use it together with <a class="reference internal" href="../pypose.autograd.function.parallel_for_sparse_jacobian/#pypose.autograd.function.parallel_for_sparse_jacobian" title="pypose.autograd.function.parallel_for_sparse_jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">pypose.autograd.function.parallel_for_sparse_jacobian()</span></code></a>
-(alias <code class="xref py py-func docutils literal notranslate"><span class="pre">pjac()</span></code>) for any <a class="reference internal" href="../pypose.Parameter/#pypose.Parameter" title="pypose.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pypose.Parameter</span></code></a> that needs to be optimized with
+(alias <code class="xref py py-func docutils literal notranslate"><span class="pre">psjac()</span></code>) for any <a class="reference internal" href="../pypose.Parameter/#pypose.Parameter" title="pypose.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pypose.Parameter</span></code></a> that needs to be optimized with
 the sparse backend, when the optimization model is instantiated.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Recommend to use alias <a class="reference internal" href="../pypose.autograd.TT/#pypose.autograd.TT" title="pypose.autograd.TT"><code class="xref py py-class docutils literal notranslate"><span class="pre">TT</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">pjac()</span></code> for brevity.</p>
+<p>Recommend to use alias <a class="reference internal" href="../pypose.autograd.TT/#pypose.autograd.TT" title="pypose.autograd.TT"><code class="xref py py-class docutils literal notranslate"><span class="pre">TT</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">psjac()</span></code> for brevity.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -280,14 +280,14 @@ tracing information for sparse Jacobian construction.</p>
 in a bundle-adjustment model.
 <code class="docutils literal notranslate"><span class="pre">TrackingTensor</span></code> records the indexing and reprojection operations
 so the sparse backend knows how each entry in the output depends on these variables.
-This includes tracing <code class="xref py py-func docutils literal notranslate"><span class="pre">pjac()</span></code> functions as well,
+This includes tracing <code class="xref py py-func docutils literal notranslate"><span class="pre">psjac()</span></code> functions as well,
 so the dependency through <code class="docutils literal notranslate"><span class="pre">project</span></code> is preserved.
 <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">camera_indices</span></code>, and <code class="docutils literal notranslate"><span class="pre">point_indices</span></code>
 do not need to be wrapped in <code class="docutils literal notranslate"><span class="pre">TrackingTensor</span></code> because they are fixed inputs,
 not optimization variables.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pypose.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">TT</span><span class="p">,</span> <span class="n">pjac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pypose.autograd.function</span><span class="w"> </span><span class="kn">import</span> <span class="n">TT</span><span class="p">,</span> <span class="n">psjac</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Reproj</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poses</span><span class="p">,</span> <span class="n">points_3d</span><span class="p">):</span>
@@ -296,7 +296,7 @@ not optimization variables.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">poses</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">TT</span><span class="p">(</span><span class="n">poses</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">points_3d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">TT</span><span class="p">(</span><span class="n">points_3d</span><span class="p">))</span>
 
-    <span class="nd">@pjac</span>
+    <span class="nd">@psjac</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">project</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">poses</span><span class="p">):</span>
         <span class="c1"># points: tensor (N, 3), poses: pp.SE3 (N, 7)</span>
         <span class="c1"># returns: (N, 2)</span>
