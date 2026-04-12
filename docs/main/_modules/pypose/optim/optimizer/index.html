@@ -814,7 +814,7 @@
 <span class="sd">            In the example, the root pose is fixed, and the remaining poses are optimized</span>
 <span class="sd">            only from relative-pose edge errors.</span>
 
-<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import TT, parallel_for_sparse_jacobian</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import parallel_for_sparse_jacobian</span>
 <span class="sd">            &gt;&gt;&gt; torch.manual_seed(0)</span>
 <span class="sd">            &gt;&gt;&gt; device = torch.device(&quot;cuda&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; dtype = torch.float64</span>
@@ -827,7 +827,7 @@
 <span class="sd">            ...     def __init__(self, root, nodes):</span>
 <span class="sd">            ...         super().__init__()</span>
 <span class="sd">            ...         self.register_buffer(&#39;root&#39;, root)</span>
-<span class="sd">            ...         self.nodes = nn.Parameter(TT(nodes))</span>
+<span class="sd">            ...         self.nodes = pp.Parameter(nodes, sjac=True)</span>
 <span class="sd">            ...</span>
 <span class="sd">            ...     def forward(self, edges, relposes):</span>
 <span class="sd">            ...         nodes = torch.cat((self.root, self.nodes), dim=0)</span>
