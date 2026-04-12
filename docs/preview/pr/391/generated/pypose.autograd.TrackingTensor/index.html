@@ -272,7 +272,7 @@ when the optimization model is instantiated.</p>
     <span class="n">xy</span> <span class="o">=</span> <span class="o">-</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">xy</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Residual</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Reproj</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poses</span><span class="p">,</span> <span class="n">points_3d</span><span class="p">):</span>
         <span class="c1"># self.points_3d: tensor (P, 3), self.poses: pp.SE3 (C, 7)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -290,7 +290,7 @@ when the optimization model is instantiated.</p>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">self.poses</span></code> and <code class="docutils literal notranslate"><span class="pre">self.points_3d</span></code> are the optimization variables
 in a bundle-adjustment model.
 <code class="docutils literal notranslate"><span class="pre">TrackingTensor</span></code> records the indexing and reprojection operations
-so the sparse backend knows how the residual depends on these variables.
+so the sparse backend knows how each entry in the output depends on these variables.
 This includes tracing <code class="xref py py-func docutils literal notranslate"><span class="pre">parallel_for_sparse_jacobian()</span></code> functions as well,
 so the dependency through <code class="docutils literal notranslate"><span class="pre">project</span></code> is preserved.
 <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">camera_indices</span></code>, and <code class="docutils literal notranslate"><span class="pre">point_indices</span></code>
