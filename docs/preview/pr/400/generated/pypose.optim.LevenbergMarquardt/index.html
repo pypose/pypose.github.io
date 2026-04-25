@@ -456,13 +456,13 @@ model returns multiple residuals, only the first one is used.</p>
 </div>
 <p>Solving bundle adjustment by minimizing reprojection error with <strong>sparse LM</strong>.
 (requires the optional sparse backend <cite>bae</cite> and CUDA).</p>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">psjac</span></code> marks the relative-pose residual so the
+<p>Here, psjac marks the reprojection residual so the
 sparse backend can assemble sparse Jacobians for sparse LM. Use it on factorwise
 residual functions that take batch inputs and return one residual block per
 batch item. When you call the function normally, it behaves the same as before;
 the decorator only helps the sparse backend build sparse Jacobians.
-In the example, the root pose is fixed, and the remaining poses are optimized
-only from relative-pose edge errors.</p>
+In the example, both camera poses and 3D points are optimized to minimize
+the reprojection error.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
