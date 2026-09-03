@@ -247,8 +247,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">is_lietensor</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">geodesic_loss</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;Apply geodesic loss of the rotation part of input LieTensor and target LieTensor.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">geodesic_loss</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''Apply geodesic loss of the rotation part of input LieTensor and target LieTensor.</span>
 <span class="sd">    See :class:`pypose.module.GeodesicLoss` for details.</span>
 
 <span class="sd">    Examples:</span>
@@ -262,28 +262,28 @@
 <span class="sd">                   [ 0.3086,  0.1362,  0.2598,  0.9048]])</span>
 <span class="sd">        &gt;&gt;&gt; geodesic_loss(input, target)</span>
 <span class="sd">        tensor(1.4034)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
 
     <span class="c1"># input and target should be LieTensor</span>
-    <span class="k">assert</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">target</span><span class="p">),</span> <span class="s2">&quot;input should be LieTensor&quot;</span>
-    <span class="k">assert</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">],</span> <span class="s2">&quot;reduction type not supported&quot;</span>
+    <span class="k">assert</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">target</span><span class="p">),</span> <span class="s2">"input should be LieTensor"</span>
+    <span class="k">assert</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'none'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="s1">'sum'</span><span class="p">],</span> <span class="s2">"reduction type not supported"</span>
 
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">rotation</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="s1">&#39;fro&#39;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="s1">'fro'</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">'none'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">theta</span> <span class="c1"># return batched tensors</span>
-    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">'mean'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="c1"># return scalar</span>
-    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">'sum'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">theta</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="c1"># return scalar</span>
 
 
 <div class="viewcode-block" id="GeodesicLoss"><a class="viewcode-back" href="../../../../generated/pypose.module.GeodesicLoss/#pypose.module.GeodesicLoss">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GeodesicLoss</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Creates a criterion that measures the Geodesic Error between the rotation part of</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Creates a criterion that measures the Geodesic Error between the rotation part of</span>
 <span class="sd">    the input LieTensor :math:`x` and target LieTensor :math:`y`.</span>
 
 <span class="sd">    .. math::</span>
@@ -303,27 +303,27 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        reduction (``str``, optional): Specifies the reduction to apply to the output:</span>
-<span class="sd">            ``&#39;none&#39;`` | ``&#39;mean&#39;`` | ``&#39;sum&#39;``. ``&#39;none&#39;``: no reduction is applied,</span>
-<span class="sd">            ``&#39;mean&#39;``: the sum of the output is divided by the number of</span>
-<span class="sd">            elements in the output, ``&#39;sum&#39;``: the output is summed. Default: ``&#39;mean&#39;``</span>
+<span class="sd">            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction is applied,</span>
+<span class="sd">            ``'mean'``: the sum of the output is divided by the number of</span>
+<span class="sd">            elements in the output, ``'sum'``: the output is summed. Default: ``'mean'``</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; input, target = pp.randn_SO3(2), pp.randn_SO3(2)</span>
-<span class="sd">        &gt;&gt;&gt; criterion = pp.module.GeodesicLoss(reduction=&#39;mean&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; criterion = pp.module.GeodesicLoss(reduction='mean')</span>
 <span class="sd">        &gt;&gt;&gt; loss = criterion(input, target)</span>
 <span class="sd">        tensor(1.0112)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__constants__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;reduction&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">__constants__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"reduction"</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">size_average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GeodesicLoss.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.GeodesicLoss/#pypose.module.GeodesicLoss.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span><span class="n">LieTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (``pp.LieTensor``): input LieTensor.</span>
 <span class="sd">            target (``pp.LieTensor``): target LieTensor.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">return</span> <span class="n">geodesic_loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="p">)</span></div></div>
 </pre></div>
 

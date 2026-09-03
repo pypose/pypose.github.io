@@ -250,7 +250,7 @@
 
 
 <div class="viewcode-block" id="mat2SO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SO3/#pypose.mat2SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2SO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to SO3Type LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched rotation or transformation matrices to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape</span>
@@ -312,17 +312,17 @@
 <span class="sd">        tensor([0.0000, 0.0000, 0.7071, 0.7071])</span>
 
 <span class="sd">    See :meth:`pypose.SO3` for more details of the output LieTensor format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
         <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4 tensor. </span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4 tensor. </span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
@@ -332,11 +332,11 @@
             <span class="n">e0</span> <span class="o">=</span> <span class="n">mat</span> <span class="o">@</span> <span class="n">mat</span><span class="o">.</span><span class="n">mT</span>
             <span class="n">e1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">e0</span><span class="p">,</span> <span class="n">e1</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">e0</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input rotation matrices are not all orthogonal matrix&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input rotation matrices are not all orthogonal matrix"</span><span class="p">)</span>
 
             <span class="n">ones</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="n">ones</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input rotation matrices&#39; determinant are not all equal to 1&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input rotation matrices' determinant are not all equal to 1"</span><span class="p">)</span>
 
     <span class="n">rmat_t</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">mT</span>
 
@@ -390,7 +390,7 @@
 
 
 <div class="viewcode-block" id="mat2SE3"><a class="viewcode-back" href="../../../../generated/pypose.mat2SE3/#pypose.mat2SE3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2SE3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to SE3Type LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched rotation or transformation matrices to SE3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 3)`, then</span>
@@ -475,22 +475,22 @@
 
 
 <span class="sd">    See :meth:`pypose.SE3` for more details of the output LieTensor format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
         <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">zerosone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:],</span> <span class="n">zerosone</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;input of shape 4x4 last rows are not all equal [0, 0, 0, 1]&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"input of shape 4x4 last rows are not all equal [0, 0, 0, 1]"</span><span class="p">)</span>
 
     <span class="n">q</span> <span class="o">=</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
@@ -503,7 +503,7 @@
 
 
 <div class="viewcode-block" id="mat2Sim3"><a class="viewcode-back" href="../../../../generated/pypose.mat2Sim3/#pypose.mat2Sim3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2Sim3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to Sim3Type LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched rotation or transformation matrices to Sim3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 3)`,</span>
@@ -619,22 +619,22 @@
 <span class="sd">        Please make sure your own convention before using this function.</span>
 
 <span class="sd">    See :meth:`pypose.Sim3` for more details of the output LieTensor format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
         <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">zerosone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:],</span> <span class="n">zerosone</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Input of shape 4x4 last rows are not all equal [0, 0, 0, 1]&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Input of shape 4x4 last rows are not all equal [0, 0, 0, 1]"</span><span class="p">)</span>
 
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
@@ -642,7 +642,7 @@
     <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">rot</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">zeros</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>  <span class="n">zeros</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation matrix not full rank.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Rotation matrix not full rank."</span><span class="p">)</span>
 
     <span class="n">q</span> <span class="o">=</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">rot</span><span class="o">/</span><span class="n">s</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
 
@@ -657,7 +657,7 @@
 
 
 <div class="viewcode-block" id="mat2RxSO3"><a class="viewcode-back" href="../../../../generated/pypose.mat2RxSO3/#pypose.mat2RxSO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mat2RxSO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to RxSO3Type LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched rotation or transformation matrices to RxSO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mat (Tensor): the batched matrices to convert. If input is of shape :obj:`(*, 3, 4)`</span>
@@ -733,23 +733,23 @@
 <span class="sd">        in the same ratio across 3 dimensions.</span>
 
 <span class="sd">    See :meth:`pypose.RxSO3` for more details of the output LieTensor format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
         <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="n">shape</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">rot</span><span class="p">),</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>  <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation matrix not full rank.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Rotation matrix not full rank."</span><span class="p">)</span>
 
     <span class="n">q</span> <span class="o">=</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">rot</span><span class="o">/</span><span class="n">s</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
     <span class="n">vec</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">q</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -758,7 +758,7 @@
 
 
 <div class="viewcode-block" id="from_matrix"><a class="viewcode-back" href="../../../../generated/pypose.from_matrix/#pypose.from_matrix">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">from_matrix</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched rotation or transformation matrices to LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched rotation or transformation matrices to LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mat (Tensor): the matrix to convert.</span>
@@ -819,16 +819,16 @@
 <span class="sd">        ...                              [0.,  0., 0.5]]), ltype=pp.RxSO3_type)</span>
 <span class="sd">        RxSO3Type LieTensor:</span>
 <span class="sd">        tensor([0.0000, 0.0000, 0.7071, 0.7071, 0.5000])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
         <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be at least 2 dimensions. Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input size must be a * x 3 x 3 or * x 3 x 4 or * x 4 x 4  tensor. </span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">ltype</span> <span class="o">==</span> <span class="n">SO3_type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
@@ -839,8 +839,8 @@
     <span class="k">elif</span> <span class="n">ltype</span> <span class="o">==</span> <span class="n">RxSO3_type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">mat2RxSO3</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input ltype must be one of SO3_type, SE3_type, Sim3_type or RxSO3_type.</span><span class="se">\</span>
-<span class="s2">                Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ltype</span><span class="p">))</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Input ltype must be one of SO3_type, SE3_type, Sim3_type or RxSO3_type.</span><span class="se">\</span>
+<span class="s2">                Got </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ltype</span><span class="p">))</span></div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">lietensor</span><span class="p">):</span>
@@ -849,7 +849,7 @@
 
 
 <div class="viewcode-block" id="euler2SO3"><a class="viewcode-back" href="../../../../generated/pypose.euler2SO3/#pypose.euler2SO3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">euler2SO3</span><span class="p">(</span><span class="n">euler</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Convert batched Euler angles (roll, pitch, and yaw) to SO3Type LieTensor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        euler (Tensor): the euler angles in radians to convert.</span>
@@ -890,7 +890,7 @@
 <span class="sd">                [ 0.3813,  0.4059, -0.2966,  0.7758]], dtype=torch.float64, grad_fn=&lt;AliasBackward0&gt;)</span>
 
 <span class="sd">    See :obj:`euler` for more information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">euler</span><span class="p">):</span>
         <span class="n">euler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">euler</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">euler</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
@@ -908,7 +908,7 @@
 
 
 <div class="viewcode-block" id="tensor"><a class="viewcode-back" href="../../../../generated/pypose.tensor/#pypose.tensor">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">tensor</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Convert a :obj:`LieTensor` into a :obj:`torch.Tensor` without changing data.</span>
 
 <span class="sd">    Args:</span>
@@ -922,12 +922,12 @@
 <span class="sd">        &gt;&gt;&gt; x.tensor()</span>
 <span class="sd">        tensor([[ 0.1196,  0.2339, -0.6824,  0.6822],</span>
 <span class="sd">                [ 0.9198, -0.2704, -0.2395,  0.1532]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="translation"><a class="viewcode-back" href="../../../../generated/pypose.translation/#pypose.translation">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">translation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Extract the translation part from a :obj:`LieTensor`.</span>
 
 <span class="sd">    Args:</span>
@@ -949,12 +949,12 @@
 <span class="sd">        &gt;&gt;&gt; y.translation()</span>
 <span class="sd">        tensor([[0., 0., 0.],</span>
 <span class="sd">                [0., 0., 0.]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="rotation"><a class="viewcode-back" href="../../../../generated/pypose.rotation/#pypose.rotation">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Extract the rotation part from a :obj:`LieTensor`.</span>
 
 <span class="sd">    Args:</span>
@@ -969,12 +969,12 @@
 <span class="sd">        SO3Type LieTensor:</span>
 <span class="sd">        tensor([[-0.8302,  0.5200, -0.0056,  0.2006],</span>
 <span class="sd">                [-0.2541, -0.3184,  0.6305,  0.6607]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="scale"><a class="viewcode-back" href="../../../../generated/pypose.scale/#pypose.scale">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Extract the scale part from a :obj:`LieTensor`.</span>
 
 <span class="sd">    Args:</span>
@@ -998,12 +998,12 @@
 <span class="sd">        &gt;&gt;&gt; y.scale()</span>
 <span class="sd">        tensor([[1.],</span>
 <span class="sd">                [1.]])</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">scale</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="matrix"><a class="viewcode-back" href="../../../../generated/pypose.matrix/#pypose.matrix">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Convert a :obj:`LieTensor` into matrix form.</span>
 
 <span class="sd">    Args:</span>
@@ -1021,12 +1021,12 @@
 <span class="sd">                [[ 0.4805,  0.8602, -0.1706],</span>
 <span class="sd">                 [-0.7465,  0.2991, -0.5944],</span>
 <span class="sd">                 [-0.4603,  0.4130,  0.7858]]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="euler"><a class="viewcode-back" href="../../../../generated/pypose.euler/#pypose.euler">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">euler</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Convert batched LieTensor into Euler angles (roll, pitch, yaw).</span>
 
 <span class="sd">    Args:</span>
@@ -1067,12 +1067,12 @@
 <span class="sd">        tensor([ 1.2676, -0.4783, -0.3596])</span>
 
 <span class="sd">    See :obj:`euler2SO3` for more information.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="n">inputs</span><span class="o">.</span><span class="n">euler</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="quat2unit"><a class="viewcode-back" href="../../../../generated/pypose.quat2unit/#pypose.quat2unit">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">quat2unit</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">LieTensor</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LieTensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Normalize the quaternion part of a ``LieTensor``, which has to be a Lie group.</span>
 <span class="sd">    If input is a not a Lie group, then do nothing and return the input.</span>
 <span class="sd">    If the quaternion parts contain pure zeros, then raise an error.</span>
@@ -1090,19 +1090,25 @@
 
 <span class="sd">    Return:</span>
 <span class="sd">        :obj:`LieTensor`: the output LieTensor.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="n">liegroup</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SO3_type</span><span class="p">,</span> <span class="n">RxSO3_type</span><span class="p">]:</span>
-            <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+            <span class="c1"># Build a fresh tensor instead of writing through ``data``.  The</span>
+            <span class="c1"># latter is a view of the input storage and in-place assignment</span>
+            <span class="c1"># breaks autograd for leaf LieTensors (and can invalidate saved</span>
+            <span class="c1"># intermediates in differentiable robot-geometry pipelines).</span>
+            <span class="n">quat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">quat</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">input</span><span class="o">.</span><span class="n">ltype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SE3_type</span><span class="p">,</span> <span class="n">Sim3_type</span><span class="p">]:</span>
-            <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+            <span class="n">quat</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">quat</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">7</span><span class="p">:]),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">LieTensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">ltype</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Detected zero quaternions, which cannot be normalized.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Detected zero quaternions, which cannot be normalized."</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Input is not Lie group, doing thing and returning input..&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Input is not Lie group, doing thing and returning input.."</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">input</span></div>
 </pre></div>
 
