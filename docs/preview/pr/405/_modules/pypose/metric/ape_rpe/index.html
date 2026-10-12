@@ -250,7 +250,7 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">StampedSE3</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">poses_SE3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        Internal class for represent the trajectory with timestamps.</span>
 
 <span class="sd">        Args:</span>
@@ -271,11 +271,11 @@
 <span class="sd">        Error:</span>
 <span class="sd">            1. ValueError: The poses have shape problem.</span>
 <span class="sd">            2. ValueError: The timestamps have shape problem.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">poses_SE3</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;The pose must be not None&quot;</span><span class="p">}</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">poses_SE3</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span>  <span class="p">{</span><span class="s2">&quot;The pose must be not empty&quot;</span><span class="p">}</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">poses_SE3</span><span class="o">.</span><span class="n">lshape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Only one trajectory estimation is support,</span><span class="se">\</span>
-<span class="s2">                The shape of the trajectory must be 2&quot;</span><span class="p">}</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">poses_SE3</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="p">{</span><span class="s2">"The pose must be not None"</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">poses_SE3</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span>  <span class="p">{</span><span class="s2">"The pose must be not empty"</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">poses_SE3</span><span class="o">.</span><span class="n">lshape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Only one trajectory estimation is support,</span><span class="se">\</span>
+<span class="s2">                The shape of the trajectory must be 2"</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">poses</span> <span class="o">=</span> <span class="n">poses_SE3</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">timestamps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -284,11 +284,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">timestamps</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">poses_SE3</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;The timestamp should be one array&quot;</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="s2">"The timestamp should be one array"</span><span class="p">}</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">poses</span><span class="o">.</span><span class="n">lshape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> \
-            <span class="p">{</span><span class="s2">&quot;timestamps and poses must have same length&quot;</span><span class="p">}</span>
+            <span class="p">{</span><span class="s2">"timestamps and poses must have same length"</span><span class="p">}</span>
         <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="p">),</span> \
-            <span class="p">{</span><span class="s2">&quot;timestamps must be accending&quot;</span><span class="p">}</span>
+            <span class="p">{</span><span class="s2">"timestamps must be accending"</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">poses</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">poses</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -349,7 +349,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">matching_time_indices</span><span class="p">(</span><span class="n">stamps_1</span><span class="p">,</span> <span class="n">stamps_2</span><span class="p">,</span> <span class="n">max_diff</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Search for the best matching timestamps of two lists of timestamps.</span>
 
 <span class="sd">    Args:</span>
@@ -371,7 +371,7 @@
 <span class="sd">            Indices of timestamps_1 that match with timestamps_1.</span>
 <span class="sd">        matching_indices_2: ``list[int]``</span>
 <span class="sd">            Indices of timestamps_2 that match with timestamps_2.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">stamps_2</span> <span class="o">+=</span> <span class="n">offset_2</span>
     <span class="n">diff_mat</span> <span class="o">=</span> <span class="p">(</span><span class="n">stamps_1</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">stamps_2</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
     <span class="n">indices_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stamps_1</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">stamps_1</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -384,7 +384,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">associate_traj</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">max_diff</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Associate two trajectories by matching their timestamps.</span>
 
 <span class="sd">    Args:</span>
@@ -411,7 +411,7 @@
 
 <span class="sd">    Warning:</span>
 <span class="sd">        The matched stamps are under the threshold.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">snd_longer</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">etraj</span><span class="o">.</span><span class="n">timestamps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">rtraj</span><span class="o">.</span><span class="n">timestamps</span><span class="p">)</span>
     <span class="n">traj_long</span> <span class="o">=</span> <span class="n">etraj</span> <span class="k">if</span> <span class="n">snd_longer</span> <span class="k">else</span> <span class="n">rtraj</span>
     <span class="n">traj_short</span> <span class="o">=</span> <span class="n">rtraj</span> <span class="k">if</span> <span class="n">snd_longer</span> <span class="k">else</span> <span class="n">etraj</span>
@@ -422,7 +422,7 @@
         <span class="n">offset_2</span> <span class="k">if</span> <span class="n">snd_longer</span> <span class="k">else</span> <span class="o">-</span><span class="n">offset_2</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_indices_short</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_indices_long</span><span class="p">),</span> \
-        <span class="p">{</span><span class="sa">r</span><span class="s2">&quot;matching_time_indices returned unequal number of indices&quot;</span><span class="p">}</span>
+        <span class="p">{</span><span class="sa">r</span><span class="s2">"matching_time_indices returned unequal number of indices"</span><span class="p">}</span>
 
     <span class="n">num_matches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_indices_long</span><span class="p">)</span>
     <span class="n">traj_short</span> <span class="o">=</span> <span class="n">traj_short</span><span class="p">[</span><span class="n">matching_indices_short</span><span class="p">]</span>
@@ -432,21 +432,21 @@
     <span class="n">etraj_aligned</span> <span class="o">=</span> <span class="n">traj_long</span> <span class="k">if</span> <span class="n">snd_longer</span> <span class="k">else</span> <span class="n">traj_short</span>
 
     <span class="k">assert</span> <span class="n">num_matches</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> \
-        <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;found no matching timestamps between estimation and reference with max time &quot;</span>
-            <span class="s2">&quot;diff </span><span class="si">{max_diff}</span><span class="s2"> (s) and time offset </span><span class="si">{offset_2}</span><span class="s2"> (s)&quot;</span><span class="p">}</span>
+        <span class="p">{</span><span class="sa">f</span><span class="s2">"found no matching timestamps between estimation and reference with max time "</span>
+            <span class="s2">"diff </span><span class="si">{max_diff}</span><span class="s2"> (s) and time offset </span><span class="si">{offset_2}</span><span class="s2"> (s)"</span><span class="p">}</span>
 
     <span class="k">if</span> <span class="n">num_matches</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">max_pairs</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Alert !!!!!!!!!!!!!!!!!!!!!!! </span><span class="se">\</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Alert !!!!!!!!!!!!!!!!!!!!!!! </span><span class="se">\</span>
 <span class="s2">                       The estimated trajectory has not enough </span><span class="se">\</span>
 <span class="s2">                       timestamps within the GT timestamps. </span><span class="se">\</span>
-<span class="s2">                       May be not be enough for aligned and not accurate results.&quot;</span><span class="p">,</span>
+<span class="s2">                       May be not be enough for aligned and not accurate results."</span><span class="p">,</span>
                       <span class="n">category</span><span class="o">=</span><span class="ne">Warning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rtraj_aligned</span><span class="p">,</span> <span class="n">etraj_aligned</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">compute_error</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;translation&#39;</span><span class="p">,</span> <span class="n">mtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ape&#39;</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;All&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_error</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'translation'</span><span class="p">,</span> <span class="n">mtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'ape'</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">'All'</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Get the error of the pose based on the output type.</span>
 
 <span class="sd">    Args:</span>
@@ -456,10 +456,10 @@
 <span class="sd">            The estimated trajectory.</span>
 <span class="sd">        output: (``str``, optional):</span>
 <span class="sd">            The type of pose error.</span>
-<span class="sd">            Including: &#39;translation&#39;, &#39;rotation&#39;, &#39;pose&#39;, &#39;rotation&#39;, &#39;radian&#39;, &#39;degree&#39;.</span>
+<span class="sd">            Including: 'translation', 'rotation', 'pose', 'rotation', 'radian', 'degree'.</span>
 <span class="sd">        mtype: (``str``, optional):</span>
 <span class="sd">            The type of metrics.</span>
-<span class="sd">            Including: &#39;ape&#39;, &#39;rpe&#39;.</span>
+<span class="sd">            Including: 'ape', 'rpe'.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        error: The all errors of the pose.</span>
@@ -468,72 +468,72 @@
 <span class="sd">        ValueError: The output type is not supported.</span>
 
 <span class="sd">    Remarks:</span>
-<span class="sd">        if mtype == &#39;ape&#39;</span>
-<span class="sd">            &#39;translation&#39;: || t_{e} - t_{r} ||_2</span>
-<span class="sd">            &#39;rotation&#39;: || R_{e}^T * R_{r} - I_3 ||_2</span>
-<span class="sd">            &#39;pose&#39;:  || T_{e}^{-1} * T_{r} - I_4 ||_2</span>
-<span class="sd">            &#39;radian&#39;: :math:`|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2`</span>
-<span class="sd">            &#39;degree&#39;: :math:`\mathrm{Degree}(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2)`</span>
-<span class="sd">        if mtype == &#39;rpe&#39;:</span>
-<span class="sd">            &#39;translation&#39;: :math:`|| -{R_{r}^{rel}}^T * t_{r}^{rel} + {R_{e}^{rel}}^T * t_{e}^{rel} ||_2`</span>
-<span class="sd">            &#39;rotation&#39;: :math:`|| {R_{r}^{rel}}^T * R_{e}^{rel} - I_3 ||_2`</span>
-<span class="sd">            &#39;pose&#39;: :math:`|| {T_{r}^{rel}}^{-1} * T_{e}^{rel} - I_4 ||_2`</span>
-<span class="sd">            &#39;radian&#39;: :math:`|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2)`</span>
-<span class="sd">            &#39;degree&#39;: :math:`\mathrm{Degree}(|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2))`</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;ape&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;translation&#39;</span><span class="p">:</span>
+<span class="sd">        if mtype == 'ape'</span>
+<span class="sd">            'translation': || t_{e} - t_{r} ||_2</span>
+<span class="sd">            'rotation': || R_{e}^T * R_{r} - I_3 ||_2</span>
+<span class="sd">            'pose':  || T_{e}^{-1} * T_{r} - I_4 ||_2</span>
+<span class="sd">            'radian': :math:`|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2`</span>
+<span class="sd">            'degree': :math:`\mathrm{Degree}(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2)`</span>
+<span class="sd">        if mtype == 'rpe':</span>
+<span class="sd">            'translation': :math:`|| -{R_{r}^{rel}}^T * t_{r}^{rel} + {R_{e}^{rel}}^T * t_{e}^{rel} ||_2`</span>
+<span class="sd">            'rotation': :math:`|| {R_{r}^{rel}}^T * R_{e}^{rel} - I_3 ||_2`</span>
+<span class="sd">            'pose': :math:`|| {T_{r}^{rel}}^{-1} * T_{e}^{rel} - I_4 ||_2`</span>
+<span class="sd">            'radian': :math:`|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2)`</span>
+<span class="sd">            'degree': :math:`\mathrm{Degree}(|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2))`</span>
+<span class="sd">    '''</span>
+    <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">'ape'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'translation'</span><span class="p">:</span>
             <span class="n">E</span> <span class="o">=</span> <span class="n">etraj</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span> <span class="o">-</span> <span class="n">rtraj</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">etraj</span><span class="o">.</span><span class="n">poses</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">rtraj</span><span class="o">.</span><span class="n">poses</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;rpe&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">'rpe'</span><span class="p">:</span>
         <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">rtraj</span><span class="o">.</span><span class="n">poses</span><span class="o">.</span><span class="n">Inv</span><span class="p">()</span> <span class="o">@</span> <span class="n">etraj</span><span class="o">.</span><span class="n">poses</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;translation&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;ape&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'translation'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">'ape'</span><span class="p">:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;rpe&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">'rpe'</span><span class="p">:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">E</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;rotation&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'rotation'</span><span class="p">:</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">E</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">E</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">I</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;pose&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'pose'</span><span class="p">:</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">E</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
         <span class="n">error</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">E</span> <span class="o">-</span> <span class="n">I</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;radian&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'radian'</span><span class="p">:</span>
         <span class="n">error</span> <span class="o">=</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">E</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;degree&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">'degree'</span><span class="p">:</span>
         <span class="n">error</span> <span class="o">=</span> <span class="n">mat2SO3</span><span class="p">(</span><span class="n">E</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">Log</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown output type: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown output type: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="s1">&#39;Max&#39;</span><span class="p">,</span> <span class="s1">&#39;Min&#39;</span><span class="p">,</span> <span class="s1">&#39;Mean&#39;</span><span class="p">,</span> <span class="s1">&#39;Median&#39;</span><span class="p">,</span> <span class="s1">&#39;RMSE&#39;</span><span class="p">,</span> <span class="s1">&#39;SSE&#39;</span><span class="p">,</span> <span class="s1">&#39;STD&#39;</span><span class="p">]</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'All'</span><span class="p">,</span> <span class="s1">'Max'</span><span class="p">,</span> <span class="s1">'Min'</span><span class="p">,</span> <span class="s1">'Mean'</span><span class="p">,</span> <span class="s1">'Median'</span><span class="p">,</span> <span class="s1">'RMSE'</span><span class="p">,</span> <span class="s1">'SSE'</span><span class="p">,</span> <span class="s1">'STD'</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">otype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown output metric type, select one in </span><span class="si">{</span><span class="n">options</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown output metric type, select one in </span><span class="si">{</span><span class="n">options</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;Max&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;Max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;Min&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;Min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;Mean&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;Mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;Median&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;Median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;RMSE&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;RMSE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;SSE&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;SSE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;STD&#39;</span> <span class="ow">or</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
-        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;STD&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'Max'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'Max'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'Min'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'Min'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'Mean'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'Mean'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'Median'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'Median'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'RMSE'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'RMSE'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'SSE'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'SSE'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'STD'</span> <span class="ow">or</span> <span class="s1">'All'</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">'STD'</span><span class="p">]</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
 
-    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">otype</span> <span class="o">==</span> <span class="s1">'All'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">results</span> <span class="c1"># return a dict</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="n">otype</span><span class="p">]</span> <span class="c1"># return a tensor</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pairs_by_frames</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Get index of pairs in the trajectory by its index distance.</span>
 
 <span class="sd">    Args:</span>
@@ -547,10 +547,10 @@
 
 <span class="sd">    Returns: list</span>
 <span class="sd">        id_pairs: list of index pairs.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">traj_len</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">num_poses</span>
     <span class="n">delta</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;delta must &gt;= 1&quot;</span>
+    <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"delta must &gt;= 1"</span>
     <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
         <span class="n">ids_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">traj_len</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">traj</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
         <span class="n">ids_2</span> <span class="o">=</span> <span class="n">ids_1</span> <span class="o">+</span> <span class="n">delta</span>
@@ -564,7 +564,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pairs_by_dist</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Get index of pairs in the trajectory by its path distance.</span>
 
 <span class="sd">    Args:</span>
@@ -581,7 +581,7 @@
 
 <span class="sd">    Returns: list</span>
 <span class="sd">        id_pairs: list of index pairs.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
         <span class="n">idx_0</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">idx_1</span> <span class="o">=</span> <span class="p">[]</span>
@@ -609,8 +609,8 @@
     <span class="k">return</span> <span class="n">id_pairs</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">pair_id</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">associate</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pair_id</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">associate</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">'frame'</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Get index of pairs with distance==delta from a trajectory.</span>
 
 <span class="sd">    Args:</span>
@@ -618,11 +618,11 @@
 <span class="sd">            The trajectory.</span>
 <span class="sd">        delta (``float``, optional):</span>
 <span class="sd">            The interval step used to select the pair. For example, when</span>
-<span class="sd">            `associate=&#39;distance&#39;`, it can represent the distance</span>
+<span class="sd">            `associate='distance'`, it can represent the distance</span>
 <span class="sd">            step in meters. Defaults to 1.0.</span>
 <span class="sd">        associate (``str``, optional):</span>
 <span class="sd">            The method used to associate pairs between the two trajectories.</span>
-<span class="sd">            Supported options: &#39;frame&#39;, &#39;distance&#39;. Defaults to &#39;frame&#39;.</span>
+<span class="sd">            Supported options: 'frame', 'distance'. Defaults to 'frame'.</span>
 <span class="sd">        rtol (``float``, optional):</span>
 <span class="sd">            The relative tolerance for accepting or rejecting deltas.</span>
 <span class="sd">            Defaults to 0.1.</span>
@@ -632,26 +632,26 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: list of index pairs.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">if</span> <span class="n">associate</span> <span class="o">==</span> <span class="s1">&#39;frame&#39;</span><span class="p">:</span>
+<span class="sd">    '''</span>
+    <span class="k">if</span> <span class="n">associate</span> <span class="o">==</span> <span class="s1">'frame'</span><span class="p">:</span>
         <span class="n">id_pairs</span> <span class="o">=</span> <span class="n">pairs_by_frames</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span> <span class="nb">all</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">associate</span> <span class="o">==</span> <span class="s1">&#39;distance&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">associate</span> <span class="o">==</span> <span class="s1">'distance'</span><span class="p">:</span>
         <span class="n">id_pairs</span> <span class="o">=</span> <span class="n">pairs_by_dist</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">rtol</span><span class="p">,</span> <span class="nb">all</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unsupported delta unit: </span><span class="si">{</span><span class="n">associate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unsupported delta unit: </span><span class="si">{</span><span class="n">associate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_pairs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;delta = </span><span class="si">{</span><span class="n">delta</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">associate</span><span class="si">}</span><span class="s2">) produced an empty index list - &quot;</span>
-            <span class="s2">&quot;try lower values or a less strict tolerance&quot;</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s2">"delta = </span><span class="si">{</span><span class="n">delta</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">associate</span><span class="si">}</span><span class="s2">) produced an empty index list - "</span>
+            <span class="s2">"try lower values or a less strict tolerance"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">id_pairs</span>
 
 
-<div class="viewcode-block" id="ape"><a class="viewcode-back" href="../../../../generated/pypose.metric.ape/#pypose.metric.ape">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ape</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">,</span> <span class="n">etype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;translation&quot;</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+<div class="viewcode-block" id="ape"><a class="viewcode-back" href="../../../../generated/pypose.metric.ape/#pypose.metric.ape">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ape</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">,</span> <span class="n">etype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"translation"</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nposes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;All&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+        <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'All'</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Compute the Absolute Pose Error (APE) between two trajectories.</span>
 
 <span class="sd">    Args:</span>
@@ -674,17 +674,17 @@
 <span class="sd">        etype (``str``, optional):</span>
 <span class="sd">            The type of pose error. Supported options include:</span>
 
-<span class="sd">            ``&#39;translation&#39;``: :math:`|| t_{e} - t_{r} ||_2`</span>
+<span class="sd">            ``'translation'``: :math:`|| t_{e} - t_{r} ||_2`</span>
 
-<span class="sd">            ``&#39;rotation&#39;``: :math:`|| R_{e}^T * R_{r} - I_3 ||_2`</span>
+<span class="sd">            ``'rotation'``: :math:`|| R_{e}^T * R_{r} - I_3 ||_2`</span>
 
-<span class="sd">            ``&#39;pose&#39;``: :math:`|| T_{e}^{-1} * T_{r} - I_4 ||_2`</span>
+<span class="sd">            ``'pose'``: :math:`|| T_{e}^{-1} * T_{r} - I_4 ||_2`</span>
 
-<span class="sd">            ``&#39;radian&#39;``: :math:`|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2`</span>
+<span class="sd">            ``'radian'``: :math:`|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2`</span>
 
-<span class="sd">            ``&#39;degree&#39;``: :math:`\mathrm{Degree}(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2)`</span>
+<span class="sd">            ``'degree'``: :math:`\mathrm{Degree}(|| \mathrm{Log}(R_{e}^T * R_{r}) ||_2)`</span>
 
-<span class="sd">            Default: ``&#39;translation&#39;``</span>
+<span class="sd">            Default: ``'translation'``</span>
 
 <span class="sd">        diff (``float``, optional):</span>
 <span class="sd">            The maximum allowed absolute time difference (in seconds)</span>
@@ -711,27 +711,27 @@
 <span class="sd">        otype (``str``, optional):</span>
 <span class="sd">            The output type for the metric. Supported options include:</span>
 
-<span class="sd">            ``&#39;All&#39;``: All metrics will be computed and returned.</span>
+<span class="sd">            ``'All'``: All metrics will be computed and returned.</span>
 
-<span class="sd">            ``&#39;Max&#39;``: The Max error is computed and returned.</span>
+<span class="sd">            ``'Max'``: The Max error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Min&#39;``: The Min error is computed and returned.</span>
+<span class="sd">            ``'Min'``: The Min error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Mean&#39;``: The Mean error is computed and returned.</span>
+<span class="sd">            ``'Mean'``: The Mean error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Median&#39;``: The Median error is computed and returned.</span>
+<span class="sd">            ``'Median'``: The Median error is computed and returned.</span>
 
-<span class="sd">            ``&#39;RMSE&#39;``: The root mean square error (RMSE) is computed and returned.</span>
+<span class="sd">            ``'RMSE'``: The root mean square error (RMSE) is computed and returned.</span>
 
-<span class="sd">            ``&#39;SSE&#39;``: The sum of square error (SSE) is computed and returned.</span>
+<span class="sd">            ``'SSE'``: The sum of square error (SSE) is computed and returned.</span>
 
-<span class="sd">            ``&#39;STD&#39;``: The standard deviation (STD) is computed and returned.</span>
+<span class="sd">            ``'STD'``: The standard deviation (STD) is computed and returned.</span>
 
-<span class="sd">            Defaults to ``&#39;All&#39;``.</span>
+<span class="sd">            Defaults to ``'All'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``dict`` or ``Tensor``: The computed statistics of the APE (Absolute Pose Error).</span>
-<span class="sd">        The return is a ``dict`` if ``otype`` is not ``&#39;all&#39;``, otherwise a ``Tensor``.</span>
+<span class="sd">        The return is a ``dict`` if ``otype`` is not ``'all'``, otherwise a ``Tensor``.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import torch</span>
@@ -753,16 +753,16 @@
 <span class="sd">        ...                 [0.0004298200, 0.0019603260, -0.0048985220,</span>
 <span class="sd">        ...                 -0.0043526068,-0.0036625920, -0.0023494449, 0.9999810457]])</span>
 <span class="sd">        &gt;&gt;&gt; pp.metric.ape(rstamp, rpose, estamp, epose)</span>
-<span class="sd">        {&#39;Max&#39;: tensor(2.0590, dtype=torch.float64),</span>
-<span class="sd">         &#39;Min&#39;: tensor(2.0541, dtype=torch.float64),</span>
-<span class="sd">         &#39;Mean&#39;: tensor(2.0565, dtype=torch.float64),</span>
-<span class="sd">         &#39;Median&#39;: tensor(2.0562, dtype=torch.float64),</span>
-<span class="sd">         &#39;RMSE&#39;: tensor(2.0565, dtype=torch.float64),</span>
-<span class="sd">         &#39;SSE&#39;: tensor(12.6871, dtype=torch.float64),</span>
-<span class="sd">         &#39;STD&#39;: tensor(0.0025, dtype=torch.float64)}</span>
-<span class="sd">        &gt;&gt;&gt; pp.metric.ape(rstamp, rpose, estamp, epose, otype=&#39;Mean&#39;)</span>
+<span class="sd">        {'Max': tensor(2.0590, dtype=torch.float64),</span>
+<span class="sd">         'Min': tensor(2.0541, dtype=torch.float64),</span>
+<span class="sd">         'Mean': tensor(2.0565, dtype=torch.float64),</span>
+<span class="sd">         'Median': tensor(2.0562, dtype=torch.float64),</span>
+<span class="sd">         'RMSE': tensor(2.0565, dtype=torch.float64),</span>
+<span class="sd">         'SSE': tensor(12.6871, dtype=torch.float64),</span>
+<span class="sd">         'STD': tensor(0.0025, dtype=torch.float64)}</span>
+<span class="sd">        &gt;&gt;&gt; pp.metric.ape(rstamp, rpose, estamp, epose, otype='Mean')</span>
 <span class="sd">        tensor(2.0565, dtype=torch.float64)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span> <span class="o">=</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">),</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">)</span>
     <span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span> <span class="o">=</span> <span class="n">associate_traj</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
     <span class="n">trans_mat</span> <span class="o">=</span> <span class="n">identity_Sim3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">etraj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">etraj</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -777,14 +777,14 @@
 
     <span class="n">etraj</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">trans_mat</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">etype</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="s1">&#39;ape&#39;</span><span class="p">,</span> <span class="n">otype</span><span class="o">=</span><span class="n">otype</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">etype</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="s1">'ape'</span><span class="p">,</span> <span class="n">otype</span><span class="o">=</span><span class="n">otype</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rpe"><a class="viewcode-back" href="../../../../generated/pypose.metric.rpe/#pypose.metric.rpe">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rpe</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">,</span> <span class="n">etype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;translation&quot;</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+<div class="viewcode-block" id="rpe"><a class="viewcode-back" href="../../../../generated/pypose.metric.rpe/#pypose.metric.rpe">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rpe</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">,</span> <span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">,</span> <span class="n">etype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"translation"</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nposes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">associate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
-        <span class="nb">all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">rpair</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;All&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+        <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">associate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'frame'</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="nb">all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">rpair</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">otype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'All'</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Compute the Relative Pose Error (RPE) between two trajectories.</span>
 
 <span class="sd">    Args:</span>
@@ -807,17 +807,17 @@
 <span class="sd">        etype (``str``, optional):</span>
 <span class="sd">            The type of pose error. Supported options include:</span>
 
-<span class="sd">            ``&#39;translation&#39;``: :math:`||{R_{r}^{rel}}^T * t_{r}^{rel} - {R_{e}^{rel}}^T * t_{e}^{rel}||_2`</span>
+<span class="sd">            ``'translation'``: :math:`||{R_{r}^{rel}}^T * t_{r}^{rel} - {R_{e}^{rel}}^T * t_{e}^{rel}||_2`</span>
 
-<span class="sd">            ``&#39;rotation&#39;``: :math:`|| {R_{r}^{rel}}^T * R_{e}^{rel} - I_3 ||_2`</span>
+<span class="sd">            ``'rotation'``: :math:`|| {R_{r}^{rel}}^T * R_{e}^{rel} - I_3 ||_2`</span>
 
-<span class="sd">            ``&#39;pose&#39;``: :math:`|| {T_{r}^{rel}}^{-1} * T_{e}^{rel} - I_4 ||_2`</span>
+<span class="sd">            ``'pose'``: :math:`|| {T_{r}^{rel}}^{-1} * T_{e}^{rel} - I_4 ||_2`</span>
 
-<span class="sd">            ``&#39;radian&#39;``: :math:`|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2`</span>
+<span class="sd">            ``'radian'``: :math:`|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2`</span>
 
-<span class="sd">            ``&#39;degree&#39;``: :math:`\mathrm{Degree}(|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2))`</span>
+<span class="sd">            ``'degree'``: :math:`\mathrm{Degree}(|| \mathrm{Log}({R_{r}^{rel}}^T * R_{e}^{rel}) ||_2))`</span>
 
-<span class="sd">            Default: ``&#39;translation&#39;``</span>
+<span class="sd">            Default: ``'translation'``</span>
 
 <span class="sd">        diff (``float``, optional):</span>
 <span class="sd">            The maximum allowed absolute time difference (in seconds)</span>
@@ -839,10 +839,10 @@
 <span class="sd">            Defaults to False.</span>
 <span class="sd">        associate (``str``, optional):</span>
 <span class="sd">            The method used to associate pairs between the two trajectories.</span>
-<span class="sd">            Supported options: &#39;frame&#39;, &#39;distance&#39;. Defaults to &#39;frame&#39;.</span>
+<span class="sd">            Supported options: 'frame', 'distance'. Defaults to 'frame'.</span>
 <span class="sd">        delta (``float``, optional):</span>
 <span class="sd">            The interval step used to select the pair. For example, when</span>
-<span class="sd">            `associate=&#39;distance&#39;`, it can represent the distance</span>
+<span class="sd">            `associate='distance'`, it can represent the distance</span>
 <span class="sd">            step in meters. Defaults to 1.0.</span>
 <span class="sd">        rtol (``float``, optional):</span>
 <span class="sd">            The relative tolerance for accepting or rejecting deltas.</span>
@@ -859,27 +859,27 @@
 <span class="sd">        otype (``str``, optional):</span>
 <span class="sd">            The output type for the metric. Supported options include:</span>
 
-<span class="sd">            ``&#39;All&#39;``: All metrics will be computed and returned.</span>
+<span class="sd">            ``'All'``: All metrics will be computed and returned.</span>
 
-<span class="sd">            ``&#39;Max&#39;``: The Max error is computed and returned.</span>
+<span class="sd">            ``'Max'``: The Max error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Min&#39;``: The Min error is computed and returned.</span>
+<span class="sd">            ``'Min'``: The Min error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Mean&#39;``: The Mean error is computed and returned.</span>
+<span class="sd">            ``'Mean'``: The Mean error is computed and returned.</span>
 
-<span class="sd">            ``&#39;Median&#39;``: The Median error is computed and returned.</span>
+<span class="sd">            ``'Median'``: The Median error is computed and returned.</span>
 
-<span class="sd">            ``&#39;RMSE&#39;``: The root mean square error (RMSE) is computed and returned.</span>
+<span class="sd">            ``'RMSE'``: The root mean square error (RMSE) is computed and returned.</span>
 
-<span class="sd">            ``&#39;SSE&#39;``: The sum of square error (SSE) is computed and returned.</span>
+<span class="sd">            ``'SSE'``: The sum of square error (SSE) is computed and returned.</span>
 
-<span class="sd">            ``&#39;STD&#39;``: The standard deviation (STD) is computed and returned.</span>
+<span class="sd">            ``'STD'``: The standard deviation (STD) is computed and returned.</span>
 
-<span class="sd">            Defaults to ``&#39;All&#39;``.</span>
+<span class="sd">            Defaults to ``'All'``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ``dict`` or ``Tensor``: The computed statistics of the RPE (Relative Pose Error).</span>
-<span class="sd">        The return is a ``dict`` if ``otype`` is not ``&#39;all&#39;``, otherwise a ``Tensor``.</span>
+<span class="sd">        The return is a ``dict`` if ``otype`` is not ``'all'``, otherwise a ``Tensor``.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import torch</span>
@@ -901,16 +901,16 @@
 <span class="sd">        ...                 [0.0004298200, 0.0019603260, -0.0048985220,</span>
 <span class="sd">        ...                 -0.0043526068, -0.0036625920, -0.0023494449, 0.9999810457]])</span>
 <span class="sd">        &gt;&gt;&gt; pp.metric.rpe(rstamp, rpose, estamp, epose)</span>
-<span class="sd">        {&#39;Max&#39;: tensor(0.0032, dtype=torch.float64),</span>
-<span class="sd">         &#39;Min&#39;: tensor(0.0023, dtype=torch.float64),</span>
-<span class="sd">         &#39;Mean&#39;: tensor(0.0027, dtype=torch.float64),</span>
-<span class="sd">         &#39;Median&#39;: tensor(0.0023, dtype=torch.float64),</span>
-<span class="sd">         &#39;RMSE&#39;: tensor(0.0028, dtype=torch.float64),</span>
-<span class="sd">         &#39;SSE&#39;: tensor(1.5428e-05, dtype=torch.float64),</span>
-<span class="sd">         &#39;STD&#39;: tensor(0.0006, dtype=torch.float64)}</span>
-<span class="sd">        &gt;&gt;&gt; pp.metric.rpe(rstamp, rpose, estamp, epose, otype=&#39;Mean&#39;)</span>
+<span class="sd">        {'Max': tensor(0.0032, dtype=torch.float64),</span>
+<span class="sd">         'Min': tensor(0.0023, dtype=torch.float64),</span>
+<span class="sd">         'Mean': tensor(0.0027, dtype=torch.float64),</span>
+<span class="sd">         'Median': tensor(0.0023, dtype=torch.float64),</span>
+<span class="sd">         'RMSE': tensor(0.0028, dtype=torch.float64),</span>
+<span class="sd">         'SSE': tensor(1.5428e-05, dtype=torch.float64),</span>
+<span class="sd">         'STD': tensor(0.0006, dtype=torch.float64)}</span>
+<span class="sd">        &gt;&gt;&gt; pp.metric.rpe(rstamp, rpose, estamp, epose, otype='Mean')</span>
 <span class="sd">        tensor(0.0027, dtype=torch.float64)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span> <span class="o">=</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">rstamp</span><span class="p">,</span> <span class="n">rpose</span><span class="p">),</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">estamp</span><span class="p">,</span> <span class="n">epose</span><span class="p">)</span>
     <span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span> <span class="o">=</span> <span class="n">associate_traj</span><span class="p">(</span><span class="n">rtraj</span><span class="p">,</span> <span class="n">etraj</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
     <span class="n">trans_mat</span> <span class="o">=</span> <span class="n">identity_Sim3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">etraj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">etraj</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -932,7 +932,7 @@
     <span class="n">rtraj_rela</span> <span class="o">=</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">rtraj</span><span class="p">[</span><span class="n">sour_id</span><span class="p">]</span><span class="o">.</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">rpose_rela</span><span class="p">)</span>
     <span class="n">etraj_rela</span> <span class="o">=</span> <span class="n">StampedSE3</span><span class="p">(</span><span class="n">etraj</span><span class="p">[</span><span class="n">sour_id</span><span class="p">]</span><span class="o">.</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">epose_rela</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">rtraj_rela</span><span class="p">,</span> <span class="n">etraj_rela</span><span class="p">,</span> <span class="n">etype</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="s1">&#39;rpe&#39;</span><span class="p">,</span> <span class="n">otype</span> <span class="o">=</span> <span class="n">otype</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">rtraj_rela</span><span class="p">,</span> <span class="n">etraj_rela</span><span class="p">,</span> <span class="n">etype</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="s1">'rpe'</span><span class="p">,</span> <span class="n">otype</span> <span class="o">=</span> <span class="n">otype</span><span class="p">)</span></div>
 </pre></div>
 
              </article>

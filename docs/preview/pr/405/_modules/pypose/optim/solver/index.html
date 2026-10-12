@@ -252,7 +252,7 @@
 
 
 <div class="viewcode-block" id="PINV"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PINV</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with pseudo inversion.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''The batched linear solver with pseudo inversion.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
@@ -269,7 +269,7 @@
 <span class="sd">    &lt;https://en.wikipedia.org/wiki/Moore-Penrose_inverse&gt;`_ function.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        atol (float, Tensor, optional): the absolute tolerance value. When None it&#39;s considered to</span>
+<span class="sd">        atol (float, Tensor, optional): the absolute tolerance value. When None it's considered to</span>
 <span class="sd">            be zero. Default: ``None``.</span>
 
 <span class="sd">        rtol (float, Tensor, optional): the relative tolerance value. Default: ``None``.</span>
@@ -294,26 +294,26 @@
 <span class="sd">                [[-0.3472],</span>
 <span class="sd">                 [ 1.1191],</span>
 <span class="sd">                 [ 0.3301]]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rtol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hermitian</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">hermitian</span>
 
 <div class="viewcode-block" id="PINV.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.PINV/#pypose.optim.solver.PINV.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            A (Tensor): the input batched tensor.</span>
 <span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the solved batched tensor.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">return</span> <span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rtol</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hermitian</span><span class="p">)</span> <span class="o">@</span> <span class="n">b</span></div></div>
 
 
 
 <div class="viewcode-block" id="LSTSQ"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LSTSQ</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with fast pseudo inversion.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''The batched linear solver with fast pseudo inversion.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
@@ -368,7 +368,7 @@
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import pypose.optim.solver as ppos</span>
 <span class="sd">        &gt;&gt;&gt; A, b = torch.randn(2, 3, 3), torch.randn(2, 3, 1)</span>
-<span class="sd">        &gt;&gt;&gt; solver = ppos.LSTSQ(driver=&#39;gels&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; solver = ppos.LSTSQ(driver='gels')</span>
 <span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
 <span class="sd">        tensor([[[ 0.9997],</span>
 <span class="sd">                 [-1.3288],</span>
@@ -376,28 +376,28 @@
 <span class="sd">                [[ 3.1639],</span>
 <span class="sd">                 [-0.5379],</span>
 <span class="sd">                 [-1.2872]]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rcond</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">rcond</span><span class="p">,</span> <span class="n">driver</span>
 
 <div class="viewcode-block" id="LSTSQ.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.LSTSQ/#pypose.optim.solver.LSTSQ.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            A (Tensor): the input batched tensor.</span>
 <span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the solved batched tensor.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rcond</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="p">)</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">solution</span><span class="p">)),</span> \
-            <span class="s1">&#39;Linear Solver Failed Using LSTSQ. Using PINV() instead&#39;</span>
+            <span class="s1">'Linear Solver Failed Using LSTSQ. Using PINV() instead'</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">solution</span></div></div>
 
 
 <div class="viewcode-block" id="Cholesky"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Cholesky</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with Cholesky decomposition.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''The batched linear solver with Cholesky decomposition.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
@@ -440,28 +440,28 @@
 <span class="sd">                [[0.4575],</span>
 <span class="sd">                 [1.3725],</span>
 <span class="sd">                 [2.6797]]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">upper</span>
 
 <div class="viewcode-block" id="Cholesky.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.Cholesky/#pypose.optim.solver.Cholesky.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            A (Tensor): the input batched tensor.</span>
 <span class="sd">            b (Tensor): the batched tensor on the right hand side.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the solved batched tensor.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">L</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">cholesky_ex</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">L</span><span class="p">)),</span> \
-            <span class="s1">&#39;Cholesky decomposition failed. Check your matrix (may not be positive-definite)&#39;</span>
+            <span class="s1">'Cholesky decomposition failed. Check your matrix (may not be positive-definite)'</span>
         <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">cholesky_solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="CG"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.CG/#pypose.optim.solver.CG">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">CG</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;The batched linear solver with conjugate gradient method.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''The batched linear solver with conjugate gradient method.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{A}_i \bm{x}_i = \mathbf{b}_i,</span>
@@ -512,14 +512,14 @@
 <span class="sd">        &gt;&gt;&gt; x = solver(A, b)</span>
 <span class="sd">        tensor([-4.4052e-05,  5.0003e-01])</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">maxiter</span><span class="p">,</span> <span class="n">tol</span>
 
 <div class="viewcode-block" id="CG.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.solver.CG/#pypose.optim.solver.CG.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            A (Tensor): the input tensor. It is assumed to be a symmetric</span>
 <span class="sd">                positive-definite matrix. Layout is allowed to be COO, CSR, BSR, or dense.</span>
@@ -532,12 +532,12 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the solved tensor. Layout is the same as the layout of b.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">if</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> \
-                <span class="s1">&#39;The number of dimensions of A and b must be the same or one more than b&#39;</span>
+                <span class="s1">'The number of dimensions of A and b must be the same or one more than b'</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
         <span class="n">bnrm2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -586,33 +586,33 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_missing_pcg</span><span class="p">():</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">PCG</span><span class="p">(</span><span class="n">CG</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Placeholder for the optional sparse backend preconditioned CG solver.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Placeholder for the optional sparse backend preconditioned CG solver."""</span>
 
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">&quot;pypose.optim.solver.PCG&quot;</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">"pypose.optim.solver.PCG"</span><span class="p">))</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">M</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">&quot;pypose.optim.solver.PCG&quot;</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_format_sparse_backend_error</span><span class="p">(</span><span class="s2">"pypose.optim.solver.PCG"</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">PCG</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;PCG&quot;</span><span class="p">:</span>
-        <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_optional_backend_attr</span><span class="p">(</span><span class="s2">&quot;bae.utils.pysolvers&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"PCG"</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_optional_backend_attr</span><span class="p">(</span><span class="s2">"bae.utils.pysolvers"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">_missing_pcg</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
         <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">value</span>
-    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"module </span><span class="si">{</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;PCG&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">globals</span><span class="p">())</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"PCG"</span><span class="p">})</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PINV&quot;</span><span class="p">,</span> <span class="s2">&quot;LSTSQ&quot;</span><span class="p">,</span> <span class="s2">&quot;Cholesky&quot;</span><span class="p">,</span> <span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="s2">&quot;PCG&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"PINV"</span><span class="p">,</span> <span class="s2">"LSTSQ"</span><span class="p">,</span> <span class="s2">"Cholesky"</span><span class="p">,</span> <span class="s2">"CG"</span><span class="p">,</span> <span class="s2">"PCG"</span><span class="p">]</span>
 </pre></div>
 
              </article>

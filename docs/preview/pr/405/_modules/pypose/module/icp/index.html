@@ -249,7 +249,7 @@
 
 
 <div class="viewcode-block" id="ICP"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ICP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Batched Iterative Closest Point (ICP) algorithm to find a rigid transformation</span>
 <span class="sd">    between two sets of points using Singular Value Decomposition (SVD).</span>
 
@@ -306,16 +306,16 @@
 <span class="sd">        LieTensor([[0.2000, 0.1000, 0.0000, 0.0000, 0.0000, 0.1736, 0.9848]])</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        It&#39;s important to note that the solution is sensitive to the initialization.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">        It's important to note that the solution is sensitive to the initialization.</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stepper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span> <span class="o">=</span> <span class="n">ReduceToBason</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span> <span class="k">if</span> <span class="n">stepper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stepper</span>
-        <span class="k">assert</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type.&quot;</span>
+        <span class="k">assert</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">"The initial transformation is not SE3Type."</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">init</span>
 
 <div class="viewcode-block" id="ICP.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.ICP/#pypose.module.ICP.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            source (``torch.Tensor``): the source point clouds with shape</span>
 <span class="sd">                (..., points_num, 3).</span>
@@ -333,11 +333,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            ``LieTensor``: The estimated transformation (``SE3type``) from source to</span>
 <span class="sd">            target point cloud.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">temporal</span> <span class="o">=</span> <span class="n">source</span>
         <span class="n">init</span> <span class="o">=</span> <span class="n">init</span> <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span>
         <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">&quot;The initial transformation is not SE3Type LieTensor.&quot;</span>
+            <span class="k">assert</span> <span class="n">is_SE3</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="s2">"The initial transformation is not SE3Type LieTensor."</span>
             <span class="n">temporal</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">temporal</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>

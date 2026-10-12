@@ -250,7 +250,7 @@
 
 
 <div class="viewcode-block" id="LQR"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LQR</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Linear Quadratic Regulator (LQR) with Dynamic Programming.</span>
 
 <span class="sd">    Args:</span>
@@ -478,8 +478,8 @@
 <span class="sd">        &gt;&gt;&gt; dt = 1</span>
 <span class="sd">        &gt;&gt;&gt; LQR = pp.module.LQR(lti, Q, p, T)</span>
 <span class="sd">        &gt;&gt;&gt; x, u, cost = LQR(x_init, dt)</span>
-<span class="sd">        &gt;&gt;&gt; print(&quot;x = &quot;, x)</span>
-<span class="sd">        &gt;&gt;&gt; print(&quot;u = &quot;, u)</span>
+<span class="sd">        &gt;&gt;&gt; print("x = ", x)</span>
+<span class="sd">        &gt;&gt;&gt; print("u = ", u)</span>
 <span class="sd">        x = tensor([[[-0.2633, -0.3466,  2.3803, -0.0423],</span>
 <span class="sd">                     [ 0.1849, -1.3884,  1.0898, -1.6229],</span>
 <span class="sd">                     [ 1.2138, -0.7161,  0.2954, -0.6819],</span>
@@ -502,7 +502,7 @@
 <span class="sd">                     [ 0.0436,  0.5782,  1.0127],</span>
 <span class="sd">                     [-0.3017, -0.2897,  0.7251],</span>
 <span class="sd">                     [-0.0728,  0.7290, -0.3117]]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
@@ -518,15 +518,15 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;Device not compatible.&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">&quot;Tensor data type not compatible.&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">"Shape not compatible."</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"Shape not compatible."</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Shape not compatible."</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s2">"Device not compatible."</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">"Tensor data type not compatible."</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'dtype'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="s1">'device'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">device</span><span class="p">}</span>
 
 <div class="viewcode-block" id="LQR.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.LQR/#pypose.module.LQR.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">u_traj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs LQR for the discrete system.</span>
 
 <span class="sd">        Args:</span>
@@ -546,7 +546,7 @@
 <span class="sd">            List of :obj:`Tensor`: A list of tensors including the solved state sequence</span>
 <span class="sd">            :math:`\mathbf{x}`, the solved input sequence :math:`\mathbf{u}`, and the</span>
 <span class="sd">            associated quadratic costs :math:`\mathbf{c}` over the time horizon.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_backward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">u_traj</span><span class="p">,</span> <span class="n">u_lower</span><span class="p">,</span> <span class="n">u_upper</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lqr_forward</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">u_lower</span><span class="p">,</span> <span class="n">u_upper</span><span class="p">,</span> <span class="n">du</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">cost</span></div>
@@ -602,7 +602,7 @@
 
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">device</span>
         <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">K</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
+        <span class="k">assert</span> <span class="n">x_init</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Shape not compatible."</span>
 
         <span class="n">ns</span><span class="p">,</span> <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_traj</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_traj</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 

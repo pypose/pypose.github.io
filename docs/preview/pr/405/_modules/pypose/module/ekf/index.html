@@ -249,7 +249,7 @@
 
 
 <div class="viewcode-block" id="EKF"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EKF</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs Batched Extended Kalman Filter (EKF).</span>
 
 <span class="sd">    Args:</span>
@@ -352,11 +352,11 @@
 <span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
 <span class="sd">        ...     states[i+1], observ[i] = model(states[i] + w, inputs[i])</span>
 <span class="sd">        ...     estim[i+1], P[i+1] = ekf(estim[i], observ[i] + v, inputs[i], P[i], Q, R)</span>
-<span class="sd">        ... print(&#39;Est error:&#39;, (states - estim).norm(dim=-1))</span>
+<span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
 <span class="sd">        Est error: tensor([5.7655, 5.3436, 3.5947, 0.3359, 0.0639])</span>
 
 <span class="sd">    Warning:</span>
-<span class="sd">        Don&#39;t introduce noise in ``System`` methods ``state_transition`` and ``observation``</span>
+<span class="sd">        Don't introduce noise in ``System`` methods ``state_transition`` and ``observation``</span>
 <span class="sd">        for filter testing, as those methods are used for automatically linearizing the system</span>
 <span class="sd">        by the parent class ``pypose.module.NLS``, unless your system model explicitly</span>
 <span class="sd">        introduces noise.</span>
@@ -367,14 +367,14 @@
 <span class="sd">        * Dan Simon, `Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</span>
 <span class="sd">          &lt;https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345&gt;`_,</span>
 <span class="sd">          Cleveland State University, 2006</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_uncertainty</span><span class="p">(</span><span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
 <div class="viewcode-block" id="EKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs one step estimation.</span>
 
 <span class="sd">        Args:</span>
@@ -389,7 +389,7 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_refpoint</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">P</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -409,36 +409,36 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        The covariance of system transition noise.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_Q&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Call set_uncertainty() to define</span><span class="se">\</span>
-<span class="s1">                                        transition covariance Q.&#39;</span><span class="p">)</span>
+<span class="sd">        '''</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'_Q'</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Call set_uncertainty() to define</span><span class="se">\</span>
+<span class="s1">                                        transition covariance Q.'</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Q</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">R</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        The covariance of system observation noise.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_R&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Call set_uncertainty() to define</span><span class="se">\</span>
-<span class="s1">                                        transition covariance R.&#39;</span><span class="p">)</span>
+<span class="sd">        '''</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'_R'</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Call set_uncertainty() to define</span><span class="se">\</span>
+<span class="s1">                                        transition covariance R.'</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_R</span>
 
 <div class="viewcode-block" id="EKF.set_uncertainty"><a class="viewcode-back" href="../../../../generated/pypose.module.EKF/#pypose.module.EKF.set_uncertainty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Set the covariance matrices of transition noise and observation noise.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            Q (:obj:`Tensor`): batched square covariance matrices of transition noise.</span>
 <span class="sd">            R (:obj:`Tensor`): batched square covariance matrices of observation noise.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_Q&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">"_Q"</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_R&quot;</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">"_R"</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span></div></div>
 </pre></div>
 
              </article>

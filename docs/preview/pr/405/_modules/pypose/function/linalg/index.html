@@ -247,7 +247,7 @@
 
 
 <div class="viewcode-block" id="bvv"><a class="viewcode-back" href="../../../../generated/pypose.bvv/#pypose.bvv">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">bvv</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">rvec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs batched vector-vector product, which results in matrices.</span>
 
 <span class="sd">    Args:</span>
@@ -266,7 +266,7 @@
 <span class="sd">        &gt;&gt;&gt; out = pp.bvv(lvec, rvec)</span>
 <span class="sd">        &gt;&gt;&gt; out.shape</span>
 <span class="sd">        torch.Size([2, 2, 3, 2])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">lvec</span> <span class="o">=</span> <span class="n">lvec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">lvec</span>
     <span class="n">rvec</span> <span class="o">=</span> <span class="n">rvec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rvec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">rvec</span>
     <span class="n">lvec</span><span class="p">,</span> <span class="n">rvec</span> <span class="o">=</span> <span class="n">lvec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">rvec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -274,7 +274,7 @@
 
 
 <div class="viewcode-block" id="bmv"><a class="viewcode-back" href="../../../../generated/pypose.bmv/#pypose.bmv">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">bmv</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs batched matrix-vector product.</span>
 
 <span class="sd">    Args:</span>
@@ -297,16 +297,16 @@
 <span class="sd">        &gt;&gt;&gt; out = pp.bmv(matrix, vec)</span>
 <span class="sd">        &gt;&gt;&gt; out.shape</span>
 <span class="sd">        torch.Size([2, 2, 3])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Input arguments invalid&#39;</span>
-    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;matrix-vector shape invalid&#39;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'Input arguments invalid'</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'matrix-vector shape invalid'</span>
     <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">mat</span>
     <span class="n">vec</span> <span class="o">=</span> <span class="n">vec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">vec</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">vec</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="bvmv"><a class="viewcode-back" href="../../../../generated/pypose.bvmv/#pypose.bvmv">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">bvmv</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">rvec</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs batched vector-matrix-vector product.</span>
 
 <span class="sd">    .. math::</span>
@@ -344,8 +344,8 @@
 <span class="sd">        &gt;&gt;&gt; out = pp.bvmv(v1, mat, v2)</span>
 <span class="sd">        &gt;&gt;&gt; out.shape</span>
 <span class="sd">        torch.Size([2, 2])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">lvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">rvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Shape invalid&#39;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">lvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">rvec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'Shape invalid'</span>
     <span class="k">assert</span> <span class="n">lvec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">rvec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">lvec</span> <span class="o">=</span> <span class="n">lvec</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lvec</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">lvec</span>
     <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">LieTensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">mat</span>
