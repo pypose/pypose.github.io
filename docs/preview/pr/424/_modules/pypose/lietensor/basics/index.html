@@ -372,6 +372,59 @@
 <span class="sd">    '''</span>
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="addcdiv_"><a class="viewcode-back" href="../../../../generated/pypose.addcdiv_/#pypose.addcdiv_">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">addcdiv_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
+<span class="sd">    Inplace version of :meth:`pypose.addcdiv`.</span>
+<span class="sd">    '''</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="addcdiv"><a class="viewcode-back" href="../../../../generated/pypose.addcdiv/#pypose.addcdiv">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">addcdiv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
+<span class="sd">    Performs the element-wise division of :obj:`tensor1` by :obj:`tensor2`, multiplies the result</span>
+<span class="sd">    by the scalar :obj:`value` and adds it to :obj:`input` LieTensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (:obj:`LieTensor`): the input LieTensor (Lie Algebra or Lie Group).</span>
+
+<span class="sd">        tensor1 (:obj:`Tensor`): the numerator tensor.</span>
+
+<span class="sd">        tensor2 (:obj:`Tensor`): the denominator tensor.</span>
+
+<span class="sd">        value (:obj:`Number`, optional): multiplier for :math:`\text{tensor1} / \text{tensor2}`. Default: 1.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        :obj:`LieTensor`: the output LieTensor.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \bm{y}_i =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">        \mathrm{value} * (\bm{a}_i / \bm{b}_i) + \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Algebra} \\</span>
+<span class="sd">        \mathrm{Exp}(\mathrm{value} * (\bm{a}_i / \bm{b}_i)) \times \bm{x}_i &amp; \text{if}~\bm{x}_i~\text{is a Lie Group}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where :math:`\bm{x}` is the ``input`` LieTensor, :math:`\bm{a}` is ``tensor1``, :math:`\bm{b}` is ``tensor2``,</span>
+<span class="sd">    and :math:`\bm{y}` is the output LieTensor.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        See :meth:`pypose.add` for notes on manifold tangent spaces and compatibility with optimizers.</span>
+<span class="sd">        This provides convenience to work with PyTorch optimizers like :obj:`torch.optim.Adam`,</span>
+<span class="sd">        which calls function :meth:`.addcdiv_` of a Lie Group to adjust parameters.</span>
+
+<span class="sd">    See :meth:`LieTensor` for types of Lie Algebra and Lie Group.</span>
+
+<span class="sd">    See :meth:`Exp` for Exponential mapping of Lie Algebra.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; x = pp.randn_SO3()</span>
+<span class="sd">        &gt;&gt;&gt; t1 = torch.randn(3)</span>
+<span class="sd">        &gt;&gt;&gt; t2 = torch.full((3,), 2.0)</span>
+<span class="sd">        &gt;&gt;&gt; pp.addcdiv(x, t1, t2, value=0.1)</span>
+<span class="sd">    '''</span>
+    <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">addcdiv</span><span class="p">(</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="mul"><a class="viewcode-back" href="../../../../generated/pypose.mul/#pypose.mul">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Multiply input LieTensor by other.</span>
