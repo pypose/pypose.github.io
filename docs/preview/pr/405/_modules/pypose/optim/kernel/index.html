@@ -247,7 +247,7 @@
 
 
 <div class="viewcode-block" id="Huber"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Huber/#pypose.optim.kernel.Huber">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Huber</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust Huber kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust Huber kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i = \begin{cases}</span>
@@ -277,19 +277,19 @@
 
 <span class="sd">    .. figure:: /_static/img/optim/kernel/huber.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delta has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">=</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
 
 <div class="viewcode-block" id="Huber.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Huber/#pypose.optim.kernel.Huber.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative.&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative.'</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="n">output</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
@@ -298,7 +298,7 @@
 
 
 <div class="viewcode-block" id="PseudoHuber"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.PseudoHuber/#pypose.optim.kernel.PseudoHuber">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PseudoHuber</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust pseudo Huber kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust pseudo Huber kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i = 2\delta^2 \left(\sqrt{1 + \bm{x}_i/\delta^2} - 1\right),</span>
@@ -323,23 +323,23 @@
 
 <span class="sd">    .. figure:: /_static/img/optim/kernel/pseudohuber.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delta has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">=</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
 
 <div class="viewcode-block" id="PseudoHuber.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.PseudoHuber/#pypose.optim.kernel.PseudoHuber.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative'</span>
         <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">*</span> <span class="p">((</span><span class="nb">input</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Cauchy"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Cauchy/#pypose.optim.kernel.Cauchy">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Cauchy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust Cauchy kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust Cauchy kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i = \delta^2 \log\left(1 + \frac{\bm{x}_i}{\delta^2}\right),</span>
@@ -363,23 +363,23 @@
 
 <span class="sd">    .. figure:: /_static/img/optim/kernel/cauchy.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delta has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">=</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
 
 <div class="viewcode-block" id="Cauchy.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Cauchy/#pypose.optim.kernel.Cauchy.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative'</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">*</span> <span class="p">(</span><span class="nb">input</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="SoftLOne"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.SoftLOne/#pypose.optim.kernel.SoftLOne">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SoftLOne</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust SoftLOne kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust SoftLOne kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i=2\left ( \delta \sqrt{\frac{1}{{\delta{}}^{2}}+\bm{x}_i}- 1\right )</span>
@@ -403,24 +403,24 @@
 
 <span class="sd">     .. figure:: /_static/img/optim/kernel/softlone.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delta has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta1</span> <span class="o">=</span> <span class="n">delta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">=</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
 
 <div class="viewcode-block" id="SoftLOne.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.SoftLOne/#pypose.optim.kernel.SoftLOne.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative'</span>
         <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">+</span> <span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Arctan"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Arctan/#pypose.optim.kernel.Arctan">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Arctan</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust Arctan kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust Arctan kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i=\delta ^{2}\arctan \left ( \frac{\bm{x}_i}{\delta ^{2}}\right )</span>
@@ -444,22 +444,22 @@
 
 <span class="sd">    .. figure:: /_static/img/optim/kernel/arctan.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">=</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
 
 <div class="viewcode-block" id="Arctan.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Arctan/#pypose.optim.kernel.Arctan.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative'</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span> <span class="o">*</span> <span class="p">(</span><span class="nb">input</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta2</span><span class="p">)</span><span class="o">.</span><span class="n">arctan</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="Tolerant"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Tolerant/#pypose.optim.kernel.Tolerant">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Tolerant</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust Tolerant kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust Tolerant kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i = b\log (1+e^{\frac{\bm{x}_i-a}{b}})-b\log (1+e^{\frac{-a}{b}})</span>
@@ -484,26 +484,26 @@
 
 <span class="sd">    .. figure:: /_static/img/optim/kernel/tolerant.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;a has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;b has to be negative: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"a has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"b has to be negative: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
 
 <div class="viewcode-block" id="Tolerant.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Tolerant/#pypose.optim.kernel.Tolerant.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;input has to be non-negative&#39;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="nb">input</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">())</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
-        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)))</span> <span class="c1"># constant, no grad.</span>
-        <span class="k">return</span> <span class="n">result</span> <span class="o">-</span> <span class="n">offset</span></div></div>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">input</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">'input has to be non-negative'</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">((</span><span class="nb">input</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softplus</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">new_tensor</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="n">result</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Scale"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Scale/#pypose.optim.kernel.Scale">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Scale</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The robust Scale kernel cost function.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The robust Scale kernel cost function.</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \bm{y}_i=\delta*\bm{x}_i</span>
@@ -527,17 +527,17 @@
 
 <span class="sd">     .. figure:: /_static/img/optim/kernel/scale.png</span>
 <span class="sd">                        :width: 600</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delta has to be between 0 and 1: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta has to be between 0 and 1: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span>
 
 <div class="viewcode-block" id="Scale.forward"><a class="viewcode-back" href="../../../../generated/pypose.optim.kernel.Scale/#pypose.optim.kernel.Scale.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input (torch.Tensor): the input tensor (non-negative).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">*</span> <span class="nb">input</span></div></div>
 </pre></div>
 

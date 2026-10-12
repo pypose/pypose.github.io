@@ -250,7 +250,7 @@
 
 
 <div class="viewcode-block" id="PF"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PF</span><span class="p">(</span><span class="n">EKF</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs Batched Particle Filter (PF).</span>
 
 <span class="sd">    Args:</span>
@@ -356,7 +356,7 @@
 <span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
 <span class="sd">        ...     states[i+1], observ[i] = model(states[i] + w, inputs[i])</span>
 <span class="sd">        ...     estim[i+1], P[i+1] = pf(estim[i], observ[i] + v, inputs[i], P[i], Q, R)</span>
-<span class="sd">        ... print(&#39;Est error:&#39;, (states - estim).norm(dim=-1))</span>
+<span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
 <span class="sd">        Est error: tensor([10.7083,  1.6012,  0.3339,  0.1723,  0.1107])</span>
 
 <span class="sd">    Note:</span>
@@ -365,14 +365,14 @@
 <span class="sd">        * Dan Simon, `Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</span>
 <span class="sd">          &lt;https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345&gt;`_,</span>
 <span class="sd">          Cleveland State University, 2006</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">particles</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="n">particles</span>
 
 <div class="viewcode-block" id="PF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs one step estimation.</span>
 
 <span class="sd">        Args:</span>
@@ -389,7 +389,7 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">R</span> <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
@@ -408,7 +408,7 @@
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span></div>
 
 <div class="viewcode-block" id="PF.generate_particles"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF.generate_particles">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">generate_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Randomly generate particles</span>
 
 <span class="sd">        Args:</span>
@@ -417,26 +417,26 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            list of :obj:`Tensor`: particles</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">]))</span></div>
 
 <div class="viewcode-block" id="PF.relative_likelihood"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF.relative_likelihood">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">relative_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Compute the relative likelihood</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">ye</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PF.resample_particles"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF.resample_particles">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">resample_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Resample the set of a posteriori particles</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">cumsumq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cumsumq</span><span class="p">,</span> <span class="n">r</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="PF.compute_cov"><a class="viewcode-back" href="../../../../generated/pypose.module.PF/#pypose.module.PF.compute_cov">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Compute covariance of two set of variables.&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''Compute covariance of two set of variables.'''</span>
         <span class="k">return</span> <span class="n">Q</span> <span class="o">+</span> <span class="n">bvv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span></div></div>
 </pre></div>
 

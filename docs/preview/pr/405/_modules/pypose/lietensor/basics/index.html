@@ -244,12 +244,12 @@
   <h1>Source code for pypose.lietensor.basics</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">'''</span>
 <span class="sd">This basics file includes functions needed to implement LieTensor.</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">'''</span>
 
 <div class="viewcode-block" id="vec2skew"><a class="viewcode-back" href="../../../../generated/pypose.vec2skew/#pypose.vec2skew">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">vec2skew</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Convert batched vectors to skew matrices.</span>
 
 <span class="sd">    Args:</span>
@@ -276,9 +276,9 @@
 <span class="sd">        tensor([[[ 0.0000, -2.2059, -1.2761],</span>
 <span class="sd">                [ 2.2059,  0.0000,  0.2929],</span>
 <span class="sd">                [ 1.2761, -0.2929,  0.0000]]])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">&#39;ltype&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">input</span>
-    <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Last dim should be 3&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">'ltype'</span><span class="p">)</span> <span class="k">else</span> <span class="nb">input</span>
+    <span class="k">assert</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Last dim should be 3"</span>
     <span class="n">O</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>        <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>  <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
                         <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span> <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>         <span class="n">O</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
@@ -286,14 +286,14 @@
 
 
 <div class="viewcode-block" id="add_"><a class="viewcode-back" href="../../../../generated/pypose.add_/#pypose.add_">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">add_</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Inplace version of :meth:`pypose.add`.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="add"><a class="viewcode-back" href="../../../../generated/pypose.add/#pypose.add">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Adds other, scaled by alpha, to input LieTensor.</span>
 
 <span class="sd">    Args:</span>
@@ -326,7 +326,7 @@
 <span class="sd">        the elements in the last dimension of the ``other`` Tensor (treated as a Lie Algebra</span>
 <span class="sd">        in this function) beyond the expected shape of the Lie Algebra are ignored. This is</span>
 <span class="sd">        because the gradient of a Lie Group is computed as a left perturbation (a Lie Algebra)</span>
-<span class="sd">        in its tangent space and is stored in the LieGroup&#39;s :obj:`LieTensor.grad`, which has</span>
+<span class="sd">        in its tangent space and is stored in the LieGroup's :obj:`LieTensor.grad`, which has</span>
 <span class="sd">        the same storage space with the LieGroup.</span>
 
 <span class="sd">        .. math::</span>
@@ -369,11 +369,11 @@
 <span class="sd">        &gt;&gt;&gt; x + torch.cat([a, torch.randn(1)])</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        tensor([-1.6089,  0.4184,  0.6621, -0.2098,  0.5383,  0.4794,  0.6606])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="nb">input</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="mul"><a class="viewcode-back" href="../../../../generated/pypose.mul/#pypose.mul">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">mul</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Multiply input LieTensor by other.</span>
 
 <span class="sd">    .. math::</span>
@@ -425,20 +425,20 @@
 <span class="sd">          simple element-wise multiplication.</span>
 <span class="sd">        - When ``input`` is a Lie Group, more details are shown below.</span>
 
-<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`SO3_type`</span>
+<span class="sd">    * Input :math:`\bm{x}`'s :obj:`ltype` is :obj:`SO3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SO3`):</span>
 
 <span class="sd">      .. math::</span>
 <span class="sd">        {\displaystyle \bm{y}_i={\begin{bmatrix}</span>
-<span class="sd">              q_i^wq_i^{w&#39;} - q_i^xq_i^{x&#39;} -q_i^yq_i^{y&#39;} - q_i^zq_i^{z&#39;}\\</span>
-<span class="sd">              q_i^wq_i^{x&#39;} + q_i^xq_i^{w&#39;} +q_i^yq_i^{z&#39;} - q_i^zq_i^{y&#39;}\\</span>
-<span class="sd">              q_i^wq_i^{y&#39;} - q_i^xq_i^{z&#39;} +q_i^yq_i^{w&#39;} + q_i^zq_i^{x&#39;}\\</span>
-<span class="sd">              q_i^wq_i^{z&#39;} + q_i^xq_i^{y&#39;} -q_i^yq_i^{x&#39;} + q_i^zq_i^{w&#39;}</span>
+<span class="sd">              q_i^wq_i^{w'} - q_i^xq_i^{x'} -q_i^yq_i^{y'} - q_i^zq_i^{z'}\\</span>
+<span class="sd">              q_i^wq_i^{x'} + q_i^xq_i^{w'} +q_i^yq_i^{z'} - q_i^zq_i^{y'}\\</span>
+<span class="sd">              q_i^wq_i^{y'} - q_i^xq_i^{z'} +q_i^yq_i^{w'} + q_i^zq_i^{x'}\\</span>
+<span class="sd">              q_i^wq_i^{z'} + q_i^xq_i^{y'} -q_i^yq_i^{x'} + q_i^zq_i^{w'}</span>
 <span class="sd">              \end{bmatrix}</span>
 <span class="sd">        }^T},</span>
 
 <span class="sd">      where :math:`\bm{x}_i = [q_i^x, q_i^y, q_i^z, q_i^w]` and</span>
-<span class="sd">      :math:`\bm{a}_i = [q_i^{x&#39;}, q_i^{y&#39;}, q_i^{z&#39;}, q_i^{w&#39;}]` are the ``input``</span>
+<span class="sd">      :math:`\bm{a}_i = [q_i^{x'}, q_i^{y'}, q_i^{z'}, q_i^{w'}]` are the ``input``</span>
 <span class="sd">      and ``other`` LieTensor, respectively.</span>
 
 <span class="sd">    Note:</span>
@@ -447,7 +447,7 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \bm{y}_i =</span>
 <span class="sd">            (q_i^x\mathbf{i} + q_i^y\mathbf{j} + q_i^z\mathbf{k} + q_i^w) \ast</span>
-<span class="sd">            (q_i^{x&#39;}\mathbf{i} + q_i^{y&#39;}\mathbf{j} + q_i^{z&#39;}\mathbf{k} + q_i^{w&#39;}),</span>
+<span class="sd">            (q_i^{x'}\mathbf{i} + q_i^{y'}\mathbf{j} + q_i^{z'}\mathbf{k} + q_i^{w'}),</span>
 
 <span class="sd">        where and :math:`\mathbf{i}` :math:`\mathbf{j}`, and :math:`\mathbf{k}` are the imaginary</span>
 <span class="sd">        units.</span>
@@ -455,38 +455,38 @@
 <span class="sd">        .. math::</span>
 <span class="sd">            \mathbf{i}^2 = \mathbf{j}^2 = \mathbf{k}^2 = \mathbf{ijk} = -1</span>
 
-<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`SE3_type`</span>
+<span class="sd">    * Input :math:`\bm{x}`'s :obj:`ltype` is :obj:`SE3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`SE3`):</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i&#39; + \mathbf{t}_i,</span>
-<span class="sd">                        \mathbf{q}_i * \mathbf{q}_i&#39;]</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i' + \mathbf{t}_i,</span>
+<span class="sd">                        \mathbf{q}_i * \mathbf{q}_i']</span>
 
 <span class="sd">        where :math:`\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i]` and</span>
-<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i&#39;, \mathbf{q}_i&#39;]` are the ``input`` and ``other``</span>
-<span class="sd">        LieTensor, respectively; :math:`\mathbf{t}_i`, :math:`\mathbf{t}_i&#39;` and</span>
-<span class="sd">        :math:`\mathbf{q}_i`, :math:`\mathbf{q}_i&#39;` are their translation and :obj:`SO3`</span>
+<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i', \mathbf{q}_i']` are the ``input`` and ``other``</span>
+<span class="sd">        LieTensor, respectively; :math:`\mathbf{t}_i`, :math:`\mathbf{t}_i'` and</span>
+<span class="sd">        :math:`\mathbf{q}_i`, :math:`\mathbf{q}_i'` are their translation and :obj:`SO3`</span>
 <span class="sd">        parts, respectively; the operator :math:`\ast` denotes the obj:`SO3_type`</span>
 <span class="sd">        multiplication introduced above.</span>
 
-<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`RxSO3_type`</span>
+<span class="sd">    * Input :math:`\bm{x}`'s :obj:`ltype` is :obj:`RxSO3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`RxSO3`)</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{q}_i&#39;, s_is_i&#39;]</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{q}_i', s_is_i']</span>
 
-<span class="sd">        where :math:`s_i` and :math:`s_i&#39;` are the scale parts of the ``input`` and</span>
+<span class="sd">        where :math:`s_i` and :math:`s_i'` are the scale parts of the ``input`` and</span>
 <span class="sd">        ``other`` LieTensor, respectively.</span>
 
-<span class="sd">    * Input :math:`\bm{x}`&#39;s :obj:`ltype` is :obj:`Sim3_type`</span>
+<span class="sd">    * Input :math:`\bm{x}`'s :obj:`ltype` is :obj:`Sim3_type`</span>
 <span class="sd">      (input :math:`\bm{x}` is an instance of :meth:`Sim3`):</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i&#39; + \mathbf{t}_i,</span>
-<span class="sd">                            \mathbf{q}_i * \mathbf{q}_i&#39;, s_is_i&#39;]</span>
+<span class="sd">            \bm{y}_i = [\mathbf{q}_i * \mathbf{t}_i' + \mathbf{t}_i,</span>
+<span class="sd">                            \mathbf{q}_i * \mathbf{q}_i', s_is_i']</span>
 
 <span class="sd">        where :math:`\bm{x}_i = [\mathbf{t}_i, \mathbf{q}_i, s_i]` and</span>
-<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i&#39;, \mathbf{q}_i&#39;, s_i&#39;]` are the ``input`` and</span>
+<span class="sd">        :math:`\bm{a}_i = [\mathbf{t}_i', \mathbf{q}_i', s_i']` are the ``input`` and</span>
 <span class="sd">        ``other`` LieTensor, respectively.</span>
 
 <span class="sd">    Examples:</span>
@@ -569,7 +569,7 @@
 <span class="sd">            &gt;&gt;&gt; x * a</span>
 <span class="sd">            Sim3Type LieTensor:</span>
 <span class="sd">            LieTensor([ 0.5740,  1.3197, -0.2752,  0.6819, -0.5389,  0.4634,  0.1727, 1.1172])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">return</span> <span class="nb">input</span> <span class="o">*</span> <span class="n">other</span></div>
 </pre></div>
 

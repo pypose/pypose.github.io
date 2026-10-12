@@ -250,7 +250,7 @@
 
 
 <div class="viewcode-block" id="cart2homo"><a class="viewcode-back" href="../../../../generated/pypose.cart2homo/#pypose.cart2homo">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">cart2homo</span><span class="p">(</span><span class="n">coordinates</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Converts batched Cartesian coordinates to Homogeneous coordinates</span>
 <span class="sd">    by adding ones to last dimension.</span>
 
@@ -273,13 +273,13 @@
 <span class="sd">        &gt;&gt;&gt; cart2homo(points)</span>
 <span class="sd">        tensor([[ 1.7946,  0.3548, -0.4446,  1.0000],</span>
 <span class="sd">                [ 0.3010, -2.2748, -0.4708,  1.0000]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">ones</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">ones</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="homo2cart"><a class="viewcode-back" href="../../../../generated/pypose.homo2cart/#pypose.homo2cart">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">homo2cart</span><span class="p">(</span><span class="n">coordinates</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Converts batched Homogeneous coordinates to Cartesian coordinates</span>
 <span class="sd">    by dividing the last row. Size of the last dimension will be reduced by 1.</span>
 
@@ -294,7 +294,7 @@
 <span class="sd">        &gt;&gt;&gt; homo2cart(points)</span>
 <span class="sd">        tensor([[4., 3., 2.],</span>
 <span class="sd">                [4., 3., 2.]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">tiny</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span>
     <span class="n">denum</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="n">tiny</span><span class="p">)</span>
     <span class="n">denum</span> <span class="o">=</span> <span class="n">pm</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:])</span> <span class="o">*</span> <span class="n">denum</span>
@@ -302,7 +302,7 @@
 
 
 <div class="viewcode-block" id="point2pixel"><a class="viewcode-back" href="../../../../generated/pypose.point2pixel/#pypose.point2pixel">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">point2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Project batched sets of points (either in camera or world frame) to pixels.</span>
 
 <span class="sd">    Args:</span>
@@ -344,20 +344,20 @@
 <span class="sd">                [  2.4998, -18.1282],</span>
 <span class="sd">                [  4.4999,  -6.8135],</span>
 <span class="sd">                [  4.9999,   3.4394]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Points shape incorrect&quot;</span>
-    <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Intrinsics shape incorrect.&quot;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Points shape incorrect"</span>
+    <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Intrinsics shape incorrect."</span>
     <span class="k">if</span> <span class="n">extrinsics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">extrinsics</span><span class="p">)</span> <span class="ow">and</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Type incorrect.&quot;</span>
+        <span class="k">assert</span> <span class="n">is_lietensor</span><span class="p">(</span><span class="n">extrinsics</span><span class="p">)</span> <span class="ow">and</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"Type incorrect."</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">extrinsics</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">points</span>
     <span class="k">return</span> <span class="n">homo2cart</span><span class="p">(</span><span class="n">points</span> <span class="o">@</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="pixel2point"><a class="viewcode-back" href="../../../../generated/pypose.pixel2point/#pypose.pixel2point">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">pixel2point</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Convert batch of pixels with depth into points (in camera coordinate)</span>
 
 <span class="sd">    Args:</span>
@@ -395,16 +395,16 @@
 <span class="sd">                [ -3.5000,  -4.5000,   2.0000],</span>
 <span class="sd">                [ -1.0000,  -0.7500,   0.5000],</span>
 <span class="sd">                [  0.1750,  -1.0500,   0.7000]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Pixels shape incorrect&quot;</span>
-    <span class="k">assert</span> <span class="n">depth</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Depth shape does not match pixels&quot;</span>
-    <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Intrinsics shape incorrect.&quot;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Pixels shape incorrect"</span>
+    <span class="k">assert</span> <span class="n">depth</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"Depth shape does not match pixels"</span>
+    <span class="k">assert</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Intrinsics shape incorrect."</span>
 
     <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;fx Cannot contain zero&quot;</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;fy Cannot contain zero&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">"fx Cannot contain zero"</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">"fy Cannot contain zero"</span>
 
     <span class="n">pts3d_z</span> <span class="o">=</span> <span class="n">depth</span>
     <span class="n">pts3d_x</span> <span class="o">=</span> <span class="p">((</span><span class="n">pixels</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span> <span class="o">*</span> <span class="n">pts3d_z</span><span class="p">)</span> <span class="o">/</span> <span class="n">fx</span>
@@ -412,8 +412,8 @@
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">pts3d_x</span><span class="p">,</span> <span class="n">pts3d_y</span><span class="p">,</span> <span class="n">pts3d_z</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="reprojerr"><a class="viewcode-back" href="../../../../generated/pypose.reprojerr/#pypose.reprojerr">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">reprojerr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">'none'</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Calculates batched per-pixel reprojection error (pixel distance) for points either in</span>
 <span class="sd">    the camera or world frame given camera intrinsics or extrinsics, respectively.</span>
 
@@ -427,21 +427,21 @@
 <span class="sd">            The shape has to be (..., 3, 3).</span>
 <span class="sd">        extrinsics (``LieTensor``, optional): The camera extrinsics.</span>
 <span class="sd">            The shape has to be (..., 7). Default: ``None``.</span>
-<span class="sd">        reduction (``str``, optional): The reduction to apply on the output: ``&#39;none&#39;``</span>
-<span class="sd">            | ``&#39;sum&#39;`` | ``&#39;norm&#39;``</span>
+<span class="sd">        reduction (``str``, optional): The reduction to apply on the output: ``'none'``</span>
+<span class="sd">            | ``'sum'`` | ``'norm'``</span>
 
-<span class="sd">            ``&#39;none&#39;``: No reduction is applied</span>
+<span class="sd">            ``'none'``: No reduction is applied</span>
 
-<span class="sd">            ``&#39;sum&#39;``: The reprojection error on each component (u, v) is summed for</span>
+<span class="sd">            ``'sum'``: The reprojection error on each component (u, v) is summed for</span>
 <span class="sd">            each pixel (L1 Norm)</span>
 
-<span class="sd">            ``&#39;norm&#39;``: The reprojection error&#39;s L2 norm for each pixel</span>
+<span class="sd">            ``'norm'``: The reprojection error's L2 norm for each pixel</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Per-pixel reprojection error.</span>
 
-<span class="sd">        The shape is (..., N) if reduction is ``&#39;sum&#39;`` or ``&#39;norm&#39;``.</span>
+<span class="sd">        The shape is (..., N) if reduction is ``'sum'`` or ``'norm'``.</span>
 
-<span class="sd">        The shape is (..., N, 2) if reduction is ``&#39;none&#39;``.</span>
+<span class="sd">        The shape is (..., N, 2) if reduction is ``'none'``.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch, pypose as pp</span>
@@ -452,25 +452,25 @@
 <span class="sd">        &gt;&gt;&gt; object = torch.randn(6, 3)</span>
 <span class="sd">        &gt;&gt;&gt; pose = pp.randn_SE3()</span>
 <span class="sd">        &gt;&gt;&gt; pixels = pp.point2pixel(object, intrinsics, pose)</span>
-<span class="sd">        &gt;&gt;&gt; err = pp.reprojerr(object, pixels, intrinsics, pose, reduction=&#39;norm&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; err = pp.reprojerr(object, pixels, intrinsics, pose, reduction='norm')</span>
 <span class="sd">        tensor([0., 0., 0., 0., 0., 0.])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> \
-           <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Shape not compatible.&quot;</span>
-    <span class="k">assert</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">},</span> \
-           <span class="s2">&quot;Reduction method can only be &#39;norm&#39;|&#39;sum&#39;|&#39;none&#39;.&quot;</span>
+           <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">intrinsics</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Shape not compatible."</span>
+    <span class="k">assert</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">'norm'</span><span class="p">,</span> <span class="s1">'sum'</span><span class="p">,</span> <span class="s1">'none'</span><span class="p">},</span> \
+           <span class="s2">"Reduction method can only be 'norm'|'sum'|'none'."</span>
     <span class="n">img_repj</span> <span class="o">=</span> <span class="n">point2pixel</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">intrinsics</span><span class="p">,</span> <span class="n">extrinsics</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;norm&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">'norm'</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">'sum'</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">img_repj</span> <span class="o">-</span> <span class="n">pixels</span></div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">knn</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">nbr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Select the k nearest neighbor points of reference from neighbors in each batch.</span>
 
 <span class="sd">    Args:</span>
@@ -551,13 +551,13 @@
 <span class="sd">                [1.4142, 4.0000],</span>
 <span class="sd">                [0.0000, 4.2426],</span>
 <span class="sd">                [4.2426, 5.0000]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">nbr</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="n">largest</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="nb">sorted</span><span class="p">)</span>
 
 <div class="viewcode-block" id="svdtf"><a class="viewcode-back" href="../../../../generated/pypose.svdtf/#pypose.svdtf">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">svdtf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Computes the rigid transformation ( :math:`SE(3)` ) between two sets of associated</span>
 <span class="sd">    point clouds (source and target) using Singular Value Decomposition (SVD).</span>
 
@@ -585,14 +585,14 @@
 <span class="sd">        &gt;&gt;&gt; pp.svdtf(source, target)</span>
 <span class="sd">        SE3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1.])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">{</span>
-        <span class="s2">&quot;The number of points N has to be the same for both point clouds.&quot;</span><span class="p">}</span>
+        <span class="s2">"The number of points N has to be the same for both point clouds."</span><span class="p">}</span>
     <span class="n">ctnsource</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">ctntarget</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">source</span> <span class="o">-</span> <span class="n">ctnsource</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">ctntarget</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;...Na, ...Nb -&gt; ...ab&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">'...Na, ...Nb -&gt; ...ab'</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
     <span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">Vh</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">det</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
@@ -603,7 +603,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">svdstf</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">with_scale</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Compute the affine transformation ( :math:`Sim(3)` ) between two sets of associated</span>
 <span class="sd">    point clouds (source and target) using Umeyama alignment.</span>
 
@@ -635,11 +635,11 @@
 <span class="sd">        &gt;&gt;&gt; pp.svdstf(source, target)</span>
 <span class="sd">        Sim3Type LieTensor:</span>
 <span class="sd">        LieTensor([1., 1., 1., 0., 0., 0., 1., 1.])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">{</span>
-        <span class="s2">&quot;The number of points N has to be the same for both point clouds.&quot;</span><span class="p">}</span>
-    <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;The source point dim should be 3&quot;</span><span class="p">}</span>
-    <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;The target point dim should be 3&quot;</span><span class="p">}</span>
+        <span class="s2">"The number of points N has to be the same for both point clouds."</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="p">{</span><span class="s2">"The source point dim should be 3"</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="p">{</span><span class="s2">"The target point dim should be 3"</span><span class="p">}</span>
 
     <span class="n">N</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
 
@@ -678,13 +678,13 @@
 
 
 <div class="viewcode-block" id="nbr_filter"><a class="viewcode-back" href="../../../../generated/pypose.nbr_filter/#pypose.nbr_filter">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">nbr_filter</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">nbr</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">pdim</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">ord</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">return_mask</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Filter point outliers by checking if a point has less than n neighbors (nbr) within a</span>
 <span class="sd">    radius.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points (``torch.Tensor``): the input point cloud. It is possible that the last</span>
-<span class="sd">            dimension (D) is larger than ``pdim``, with point&#39;s coordinates using first</span>
+<span class="sd">            dimension (D) is larger than ``pdim``, with point's coordinates using first</span>
 <span class="sd">            ``pdim`` values. Subsequent values may contain additional information like</span>
 <span class="sd">            intensity, RGB channels, etc. The shape has to be (N, D).</span>
 <span class="sd">        nbr (``int``): the minimum number of neighbors (nbr) within a certain radius.</span>
@@ -724,10 +724,10 @@
 <span class="sd">                 [ 0.,  1.,  1.],</span>
 <span class="sd">                 [10.,  1.,  1.]]),</span>
 <span class="sd">        tensor([ True,  True,  True,  True,  True, False]))</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"The point cloud dimension has to be 2."</span>
     <span class="n">pdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pdim</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pdim</span>
-    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">&quot;The last dim of points should not less than pdim.&quot;</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">"The last dim of points should not less than pdim."</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">nbr</span>
@@ -738,7 +738,7 @@
 
 
 <div class="viewcode-block" id="random_filter"><a class="viewcode-back" href="../../../../generated/pypose.random_filter/#pypose.random_filter">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">random_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Randomly sample a number of points from a batched point cloud.</span>
 
 <span class="sd">    Args:</span>
@@ -761,10 +761,10 @@
 <span class="sd">        tensor([[ 4.,  5.,  6.],</span>
 <span class="sd">                [ 1.,  2.,  3.],</span>
 <span class="sd">                [10., 11., 12.]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The last dim of the points should not less than 1.&quot;</span>
-    <span class="k">assert</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Number of points to sample must not larger than &quot;</span> \
-        <span class="s2">&quot;the number of input points.&quot;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"The last dim of the points should not less than 1."</span>
+    <span class="k">assert</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"Number of points to sample must not larger than "</span> \
+        <span class="s2">"the number of input points."</span>
 
     <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))[:</span><span class="n">num</span><span class="p">]</span>
     <span class="c1"># return torch.index_select(points, 0, indices)</span>
@@ -772,14 +772,14 @@
 
 
 <div class="viewcode-block" id="voxel_filter"><a class="viewcode-back" href="../../../../generated/pypose.voxel_filter/#pypose.voxel_filter">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">voxel_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">voxel</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">random</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Perform voxel filtering on a point cloud to reduce the number of points by grouping</span>
 <span class="sd">    them into voxels and selecting a representative point for each voxel.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        points (``torch.Tensor``): The input point cloud. It is possible that the last</span>
 <span class="sd">            dimension (D) is larger than dimension of voxel :math:`v` (vdim), with the</span>
-<span class="sd">            point&#39;s coordinates as the first :math:`v` values.</span>
+<span class="sd">            point's coordinates as the first :math:`v` values.</span>
 <span class="sd">            Subsequent values are additional information such as intensity, RGB channels.</span>
 <span class="sd">            The shape has to be (N, D), where :math:`D \geq v`.</span>
 
@@ -812,13 +812,13 @@
 <span class="sd">        tensor([[ 4.,  5.,  6.],</span>
 <span class="sd">                [10., 11., 12.],</span>
 <span class="sd">                [13., 14., 15.]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The point cloud dimension has to be 2.&quot;</span>
+<span class="sd">    '''</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"The point cloud dimension has to be 2."</span>
     <span class="n">D</span><span class="p">,</span> <span class="n">vdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxel</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">D</span> <span class="o">&gt;=</span> <span class="n">vdim</span><span class="p">,</span> <span class="s2">&quot;The last dimension of the pointcloud should exceed </span><span class="se">\</span>
-<span class="s2">        the dimenson of the voxel space.&quot;</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">voxel</span><span class="p">),</span> <span class="s2">&quot;Voxel size should be nonzero.&quot;</span>
-    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span>
+    <span class="k">assert</span> <span class="n">D</span> <span class="o">&gt;=</span> <span class="n">vdim</span><span class="p">,</span> <span class="s2">"The last dimension of the pointcloud should exceed </span><span class="se">\</span>
+<span class="s2">        the dimenson of the voxel space."</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">voxel</span><span class="p">),</span> <span class="s2">"Voxel size should be nonzero."</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'device'</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="s1">'dtype'</span><span class="p">:</span> <span class="n">points</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span>
 
     <span class="n">minp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">vdim</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="p">((</span><span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">vdim</span><span class="p">]</span> <span class="o">-</span> <span class="n">minp</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">voxel</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">points</span><span class="o">.</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
@@ -847,7 +847,7 @@
 
 
 <div class="viewcode-block" id="knn_filter"><a class="viewcode-back" href="../../../../generated/pypose.knn_filter/#pypose.knn_filter">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">knn_filter</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">pdim</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">ord</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Filter batched points by averaging its k-nearest neighbors and that point, removing</span>
 <span class="sd">    points if number of neighbors within radius is less than k.</span>
 
@@ -886,13 +886,13 @@
 <span class="sd">                [0.3333, 0.3333, 0.0000],</span>
 <span class="sd">                [0.0000, 0.6667, 0.3333],</span>
 <span class="sd">                [0.0000, 0.6667, 0.3333]])</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The points dimension has to be 2 given radius.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"The points dimension has to be 2 given radius."</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;The points dimension cannot be less than 2.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"The points dimension cannot be less than 2."</span>
     <span class="n">pdim</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pdim</span> <span class="o">==</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pdim</span>
-    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">&quot;The last dim of points should not less than pdim.&quot;</span>
+    <span class="k">assert</span> <span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pdim</span><span class="p">,</span> <span class="s2">"The last dim of points should not less than pdim."</span>
     <span class="n">diff</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">pdim</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="nb">ord</span><span class="p">)</span>
 
