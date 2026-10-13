@@ -1220,6 +1220,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">scalar_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">scalars</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalar_list</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"foreach addcdiv expects params, tensor1, tensor2, and scalars "</span>
+                <span class="sa">f</span><span class="s2">"to have equal lengths, got </span><span class="si">{</span><span class="n">lengths</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">scalar_list</span><span class="p">):</span>
                 <span class="n">s</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
