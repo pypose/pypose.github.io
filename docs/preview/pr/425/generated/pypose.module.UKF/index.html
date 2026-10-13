@@ -263,6 +263,8 @@
 Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 <li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system observation noise.
 Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>msqrt</strong> (<em>callable</em><em>, </em><em>optional</em>) – Matrix square-root function returning a factor
+<code class="docutils literal notranslate"><span class="pre">L</span></code> such that <code class="docutils literal notranslate"><span class="pre">L</span> <span class="pre">&#64;</span> <span class="pre">L.mT</span></code> equals its input. Default: <code class="docutils literal notranslate"><span class="pre">torch.linalg.cholesky</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -298,7 +300,9 @@ identifies a sample, and the time indices indicate the state or measurement step
 \]</div>
 </div></blockquote>
 <p>where <span class="math">\(\left(\sqrt{(n+\kappa)P_k}\right) _{i}\)</span> is the <span class="math">\(i\)</span>-th row of
-<span class="math">\(\left(\sqrt{(n+\kappa)P_k}\right)\)</span> and <span class="math">\(n\)</span> is the dimension of state <span class="math">\(\mathbf{x}\)</span>.</p>
+<span class="math">\(\left(\sqrt{(n+\kappa)P_k}\right)\)</span> and <span class="math">\(n\)</span> is the dimension of state <span class="math">\(\mathbf{x}\)</span>.
+Here the square-root matrix is <span class="math">\(L^T\)</span>, where
+<span class="math">\(LL^T=(n+\kappa)P_k\)</span>, so its rows are the sigma-point offsets.</p>
 <p>Their weighting cofficients are given as</p>
 <blockquote>
 <div><div class="math">
@@ -337,9 +341,12 @@ identifies a sample, and the time indices indicate the state or measurement step
 <li><p>Observational Estimation.</p></li>
 </ol>
 <blockquote>
-<div><div class="math">
+<div><p>Regenerate sigma points <span class="math">\(\tilde{\mathbf{x}}_{k+1}^{(i)}\)</span> from
+<span class="math">\((\mathbf{x}_{k+1}^{-}, \mathbf{P}_{k+1}^{-})\)</span> using step 1.
+These points include the process-noise covariance added in step 3.</p>
+<div class="math">
 \[\begin{aligned}
-    & \mathbf{y}_{k+1}^{(i)} = g \left( \mathbf{x}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),
+    & \mathbf{y}_{k+1}^{(i)} = g \left( \tilde{\mathbf{x}}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),
         & \quad i = 0, \cdots, 2n \\
     & \bar{\mathbf{y}}_{k+1} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}_{k+1}^{(i)}
 \end{aligned}
@@ -363,7 +370,7 @@ identifies a sample, and the time indices indicate the state or measurement step
 <blockquote>
 <div><div class="math">
 \[\mathbf{P}_{x_{k+1}y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}
-    \left( \mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)
+    \left( \tilde{\mathbf{x}}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)
     \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T
 
 \]</div>

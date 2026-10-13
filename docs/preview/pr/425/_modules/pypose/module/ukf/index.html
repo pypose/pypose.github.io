@@ -259,6 +259,8 @@
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
 <span class="sd">        R (:obj:`Tensor`, optional): The covariance matrices of system observation noise.</span>
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
+<span class="sd">        msqrt (callable, optional): Matrix square-root function returning a factor</span>
+<span class="sd">            ``L`` such that ``L @ L.mT`` equals its input. Default: ``torch.linalg.cholesky``.</span>
 
 <span class="sd">    A non-linear system can be described as</span>
 
@@ -290,6 +292,8 @@
 
 <span class="sd">    where :math:`\left(\sqrt{(n+\kappa)P_k}\right) _{i}` is the :math:`i`-th row of</span>
 <span class="sd">    :math:`\left(\sqrt{(n+\kappa)P_k}\right)` and :math:`n` is the dimension of state :math:`\mathbf{x}`.</span>
+<span class="sd">    Here the square-root matrix is :math:`L^T`, where</span>
+<span class="sd">    :math:`LL^T=(n+\kappa)P_k`, so its rows are the sigma-point offsets.</span>
 
 <span class="sd">    Their weighting cofficients are given as</span>
 
@@ -317,9 +321,13 @@
 
 <span class="sd">    4. Observational Estimation.</span>
 
+<span class="sd">      Regenerate sigma points :math:`\tilde{\mathbf{x}}_{k+1}^{(i)}` from</span>
+<span class="sd">      :math:`(\mathbf{x}_{k+1}^{-}, \mathbf{P}_{k+1}^{-})` using step 1.</span>
+<span class="sd">      These points include the process-noise covariance added in step 3.</span>
+
 <span class="sd">      .. math::</span>
 <span class="sd">          \begin{aligned}</span>
-<span class="sd">              &amp; \mathbf{y}_{k+1}^{(i)} = g \left( \mathbf{x}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),</span>
+<span class="sd">              &amp; \mathbf{y}_{k+1}^{(i)} = g \left( \tilde{\mathbf{x}}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),</span>
 <span class="sd">                  &amp; \quad i = 0, \cdots, 2n \\</span>
 <span class="sd">              &amp; \bar{\mathbf{y}}_{k+1} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}_{k+1}^{(i)}</span>
 <span class="sd">          \end{aligned}</span>
@@ -335,7 +343,7 @@
 
 <span class="sd">      .. math::</span>
 <span class="sd">          \mathbf{P}_{x_{k+1}y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}</span>
-<span class="sd">              \left( \mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)</span>
+<span class="sd">              \left( \tilde{\mathbf{x}}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)</span>
 <span class="sd">              \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T</span>
 
 <span class="sd">    7. Kalman Gain</span>
@@ -448,6 +456,7 @@
         <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cov</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
 
         <span class="n">xs</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_weight_points</span><span class="p">(</span><span class="n">xe</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">ex</span> <span class="o">=</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xs</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         <span class="n">ye</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">ey</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">ys</span>
@@ -474,7 +483,7 @@
 <span class="sd">        '''</span>
         <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'Invalid shape'</span>
         <span class="n">n</span><span class="p">,</span> <span class="n">xe</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">mT</span>
         <span class="n">we</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xe</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">wr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">xe</span><span class="p">,</span> <span class="n">xe</span> <span class="o">+</span> <span class="n">xr</span><span class="p">,</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
