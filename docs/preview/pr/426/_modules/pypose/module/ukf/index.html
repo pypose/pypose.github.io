@@ -266,8 +266,8 @@
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,</span>
 <span class="sd">            \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\</span>
-<span class="sd">            \mathbf{y}_{k+1} &amp;= \mathbf{g}(\mathbf{x}_{k+1}, \mathbf{u}_k, t_k) + \mathbf{v}_{k+1},</span>
-<span class="sd">            \quad \mathbf{v}_{k+1} \sim \mathcal{N}(\mathbf{0}, \mathbf{R})</span>
+<span class="sd">            \mathbf{y}_{k} &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,</span>
+<span class="sd">            \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})</span>
 <span class="sd">        \end{aligned}</span>
 
 <span class="sd">    UKF can be described as the following equations, where the subscript :math:`\cdot_{k}`</span>
@@ -387,8 +387,8 @@
 <span class="sd">        &gt;&gt;&gt; for i in range(T - 1):</span>
 <span class="sd">        ...     w = q * torch.randn(N) # transition noise</span>
 <span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
-<span class="sd">        ...     states[i+1], observ[i+1] = model(states[i] + w, inputs[i])</span>
-<span class="sd">        ...     estim[i+1], P[i+1] = ukf(estim[i], observ[i+1] + v, inputs[i], P[i], Q, R)</span>
+<span class="sd">        ...     states[i+1], observ[i] = model(states[i] + w, inputs[i])</span>
+<span class="sd">        ...     estim[i+1], P[i+1] = ukf(estim[i], observ[i] + v, inputs[i], P[i], Q, R)</span>
 <span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
 <span class="sd">        Est error: tensor([8.8161, 9.0322, 5.4756, 2.2453, 0.9141])</span>
 

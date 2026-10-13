@@ -650,7 +650,7 @@
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k), \\</span>
-<span class="sd">            \mathbf{y}_{k+1} &amp;= \mathbf{g}(\mathbf{x}_{k+1}, \mathbf{u}_k, t_k),</span>
+<span class="sd">            \mathbf{y}_{k}   &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k),</span>
 <span class="sd">        \end{aligned}</span>
 
 <span class="sd">    where :math:`k`, :math:`\mathbf{x}`, :math:`\mathbf{u}`, :math:`\mathbf{y}` are the time</span>
@@ -742,7 +742,7 @@
 <span class="sd">        &gt;&gt;&gt; print(system.A)    # Linearized state matrix</span>
 <span class="sd">        &gt;&gt;&gt; print(system.B)    # Linearized input matrix</span>
 <span class="sd">        tensor([1.4944, 1.9320])</span>
-<span class="sd">        tensor([9.4944, 9.9320])</span>
+<span class="sd">        tensor([9., 9.])</span>
 <span class="sd">        tensor([[1.0000, 0.0844],</span>
 <span class="sd">                [0.0844, 1.0000]])</span>
 <span class="sd">        tensor([[0.5358],</span>
@@ -759,9 +759,7 @@
 
 <div class="viewcode-block" id="NLS.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.NLS/#pypose.module.NLS.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
-<span class="sd">        Advances the system by one time step and returns the next state and its observation.</span>
-
-<span class="sd">        Both functions receive the input and timestamp of the transition step.</span>
+<span class="sd">        Defines the computation performed at every call that advances the system by one time step.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The :obj:`forward` method implicitly increments the time step via :obj:`forward_hook`.</span>
@@ -775,7 +773,7 @@
 <span class="sd">        '''</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">)</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">obs</span></div>
 
 <div class="viewcode-block" id="NLS.set_refpoint"><a class="viewcode-back" href="../../../../generated/pypose.module.NLS/#pypose.module.NLS.set_refpoint">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_refpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
