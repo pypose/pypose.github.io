@@ -271,8 +271,8 @@ Ignored if provided during each iteration. Default: <code class="docutils litera
 \[\begin{aligned}
     \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,
     \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\
-    \mathbf{y}_{k} &= \mathbf{h}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,
-    \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
+    \mathbf{y}_{k+1} &= \mathbf{h}(\mathbf{x}_{k+1}, \mathbf{u}_k, t_k) + \mathbf{v}_{k+1},
+    \quad \mathbf{v}_{k+1} \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
 \end{aligned}
 
 \]</div>
@@ -346,7 +346,7 @@ posteriori estimation, respectively.</p>
 <span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span>
 </pre></div>
 </div>
@@ -373,15 +373,15 @@ posteriori estimation, respectively.</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Perform EKF prediction. Note that estimation error becomes smaller with more steps.</p></li>
+<li><p>Predict the next state and correct it using a measurement of that same state.</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">w</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># transition noise</span>
 <span class="gp">... </span>    <span class="n">v</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># observation noise</span>
-<span class="gp">... </span>    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ekf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ekf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 <span class="gp">... </span><span class="nb">print</span><span class="p">(</span><span class="s1">'Est error:'</span><span class="p">,</span> <span class="p">(</span><span class="n">states</span> <span class="o">-</span> <span class="n">estim</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">Est error: tensor([5.7655, 5.3436, 3.5947, 0.3359, 0.0639])</span>
+<span class="go">Est error: tensor(...)</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -415,6 +415,8 @@ Cleveland State University, 2006</p></li>
 <dt class="sig sig-object py" id="pypose.module.EKF.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ekf/#EKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.EKF.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs one step estimation.</p>
+<p>The measurement <code class="docutils literal notranslate"><span class="pre">y</span></code> must correspond to the state after applying the
+transition to <code class="docutils literal notranslate"><span class="pre">x</span></code> with input <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

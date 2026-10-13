@@ -403,8 +403,7 @@
 <span class="sd">        &gt;&gt;&gt; for i in range(T - 1):</span>
 <span class="sd">        ...     w = q * torch.randn(N) # transition noise</span>
 <span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
-<span class="sd">        ...     states[i+1], _ = model(states[i] + w, inputs[i])</span>
-<span class="sd">        ...     observ[i+1] = model.observation(states[i+1], inputs[i])</span>
+<span class="sd">        ...     states[i+1], observ[i+1] = model(states[i] + w, inputs[i])</span>
 <span class="sd">        ...     estim[i+1], P[i+1] = ukf(estim[i], observ[i+1] + v, inputs[i], P[i], Q, R)</span>
 <span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
 <span class="sd">        Est error: tensor(...)</span>
