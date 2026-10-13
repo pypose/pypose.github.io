@@ -263,8 +263,6 @@
 Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 <li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code>, optional) – The covariance matrices of system observation noise.
 Ignored if provided during each iteration. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
-<li><p><strong>msqrt</strong> (<em>callable</em><em>, </em><em>optional</em>) – Matrix square-root function returning a factor
-<code class="docutils literal notranslate"><span class="pre">L</span></code> such that <code class="docutils literal notranslate"><span class="pre">L</span> <span class="pre">&#64;</span> <span class="pre">L.mT</span></code> equals its input. Default: <code class="docutils literal notranslate"><span class="pre">torch.linalg.cholesky</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -273,36 +271,32 @@ Ignored if provided during each iteration. Default: <code class="docutils litera
 \[\begin{aligned}
     \mathbf{x}_{k+1} &= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,
     \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\
-    \mathbf{y}_{k+1} &= \mathbf{g}(\mathbf{x}_{k+1}, \mathbf{u}_k, t_k) + \mathbf{v}_{k+1},
-    \quad \mathbf{v}_{k+1} \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
+    \mathbf{y}_{k} &= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,
+    \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})
 \end{aligned}
 
 \]</div>
-<p>UKF can be described as the following equations. The sigma-point index <span class="math">\(i\)</span>
-identifies a sample, and the time indices indicate the state or measurement step.</p>
+<p>UKF can be described as the following equations, where the subscript <span class="math">\(\cdot_{k}\)</span>
+is omited for simplicity.</p>
 <ol class="arabic simple">
 <li><p>Sigma Points.</p></li>
 </ol>
 <blockquote>
 <div><div class="math">
 \[\begin{aligned}
-     & \mathbf{x}_k^{\left ( i \right ) } = \mathbf{x}_k^{+} +
-         \mathbf{\check{x}}_k^{\left(i \right)}, & \quad i=0,...,2n\\
-     & \mathbf{\check{x}}_k^{\left (i \right)} = \mathbf{0}, & \quad i = 0 \\
-     & \mathbf{\check{x}}_k^{\left (i \right)} =
-         \left(\sqrt{(n+\kappa)P_k} \right)_{i}^{T},
+     & \mathbf{x}^{\left ( i \right ) } = \mathbf{x}^{+} +
+         \mathbf{\check{x}}^{\left(i \right)}, & \quad i=0,...,2n\\
+     & \mathbf{\check{x}}^{\left (i \right)} = \mathbf{0}, & \quad i=0 \\
+     & \mathbf{\check{x}}^{\left (i \right)} = \left(\sqrt{(n+\kappa)P} \right)_{i}^{T},
       & \quad i= 1, ..., n \\
-     & \mathbf{\check{x}}_k^{\left(i \right)} =
-         -\left(\sqrt{(n+\kappa)P_k} \right)_{i}^{T},
+     & \mathbf{\check{x}}^{\left(i \right)} = -\left(\sqrt{(n+\kappa)P} \right)_{i}^{T},
           & \quad i=n+1, ..., 2n \\
 \end{aligned}
 
 \]</div>
 </div></blockquote>
-<p>where <span class="math">\(\left(\sqrt{(n+\kappa)P_k}\right) _{i}\)</span> is the <span class="math">\(i\)</span>-th row of
-<span class="math">\(\left(\sqrt{(n+\kappa)P_k}\right)\)</span> and <span class="math">\(n\)</span> is the dimension of state <span class="math">\(\mathbf{x}\)</span>.
-Here the square-root matrix is <span class="math">\(L^T\)</span>, where
-<span class="math">\(LL^T=(n+\kappa)P_k\)</span>, so its rows are the sigma-point offsets.</p>
+<p>where <span class="math">\(\left(\sqrt{(n+\kappa)P}\right) _{i}\)</span> is the <span class="math">\(i\)</span>-th row of
+<span class="math">\(\left(\sqrt{(n+\kappa)P}\right)\)</span> and <span class="math">\(n\)</span> is the dimension of state <span class="math">\(\mathbf{x}\)</span>.</p>
 <p>Their weighting cofficients are given as</p>
 <blockquote>
 <div><div class="math">
@@ -318,11 +312,7 @@ Here the square-root matrix is <span class="math">\(L^T\)</span>, where
 </ol>
 <blockquote>
 <div><div class="math">
-\[\begin{aligned}
-    \mathbf{x}_{k+1}^{(i)} &= f(\mathbf{x}_k^{(i)}, \mathbf{u}_k, t_k),
-        & \quad i = 0, \cdots, 2n \\
-    \mathbf{x}_{k+1}^{-} &= \sum_{i=0}^{2n} W^{(i)} \mathbf{x}_{k+1}^{(i)}
-\end{aligned}
+\[\mathbf{x}^{-} = \sum_{i=0}^{2n} W^{(i)} f(\mathbf{x}^{(i)}, \mathbf{u}, t)
 
 \]</div>
 </div></blockquote>
@@ -331,9 +321,9 @@ Here the square-root matrix is <span class="math">\(L^T\)</span>, where
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{P}_{k+1}^{-} = \sum_{i=0}^{2n} W^{(i)}
-    \left(\mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^{-} \right)
-    \left(\mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)^T + \mathbf{Q}
+\[\mathbf{P}^{-} = \sum_{i=0}^{2n} W^{(i)}
+    \left(\mathbf{x}^{(i)} - \mathbf{x}^{-} \right)
+    \left(\mathbf{x}^{(i)} - \mathbf{x}^- \right)^T + \mathbf{Q}
 
 \]</div>
 </div></blockquote>
@@ -341,14 +331,11 @@ Here the square-root matrix is <span class="math">\(L^T\)</span>, where
 <li><p>Observational Estimation.</p></li>
 </ol>
 <blockquote>
-<div><p>Regenerate sigma points <span class="math">\(\tilde{\mathbf{x}}_{k+1}^{(i)}\)</span> from
-<span class="math">\((\mathbf{x}_{k+1}^{-}, \mathbf{P}_{k+1}^{-})\)</span> using step 1.
-These points include the process-noise covariance added in step 3.</p>
-<div class="math">
+<div><div class="math">
 \[\begin{aligned}
-    & \mathbf{y}_{k+1}^{(i)} = g \left( \tilde{\mathbf{x}}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),
+    & \mathbf{y}^{(i)} = g \left( \mathbf{x}^{(i)}, \mathbf{u}, t \right),
         & \quad i = 0, \cdots, 2n \\
-    & \bar{\mathbf{y}}_{k+1} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}_{k+1}^{(i)}
+    & \bar{\mathbf{y}} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}^{(i)}
 \end{aligned}
 
 \]</div>
@@ -358,9 +345,9 @@ These points include the process-noise covariance added in step 3.</p>
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{P}_{y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}
-    \left(\mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)
-    \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T + \mathbf{R}
+\[\mathbf{P}_{y} = \sum_{i=0}^{2n} W^{(i)}
+    \left(\mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)
+    \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T + \mathbf{R}
 
 \]</div>
 </div></blockquote>
@@ -369,9 +356,9 @@ These points include the process-noise covariance added in step 3.</p>
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{P}_{x_{k+1}y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}
-    \left( \tilde{\mathbf{x}}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)
-    \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T
+\[\mathbf{P}_{xy} = \sum_{i=0}^{2n} W^{(i)}
+    \left( \mathbf{x}^{(i)} - \mathbf{x}^- \right)
+    \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T
 
 \]</div>
 </div></blockquote>
@@ -380,7 +367,7 @@ These points include the process-noise covariance added in step 3.</p>
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{K}_{k+1} = \mathbf{P}_{x_{k+1}y_{k+1}}\mathbf{P}_{y_{k+1}}^{-1}
+\[\mathbf{K} = \mathbf{P}_{xy}\mathbf{P}_{y}^{-1}
 
 \]</div>
 </div></blockquote>
@@ -389,8 +376,7 @@ These points include the process-noise covariance added in step 3.</p>
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{x}_{k+1}^{+} = \mathbf{x}_{k+1}^{-} +
-    \mathbf{K}_{k+1} (\mathbf{y}_{k+1}- \bar{\mathbf{y}}_{k+1})
+\[\mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y}- \bar{\mathbf{y}})
 
 \]</div>
 </div></blockquote>
@@ -399,8 +385,7 @@ These points include the process-noise covariance added in step 3.</p>
 </ol>
 <blockquote>
 <div><div class="math">
-\[\mathbf{P}_{k+1} = \mathbf{P}_{k+1}^{-} -
-    \mathbf{K}_{k+1}\mathbf{P}_{y_{k+1}}\mathbf{K}_{k+1}^T
+\[\mathbf{P} = \mathbf{P}^{-} - \mathbf{K}\mathbf{P}_{y}\mathbf{K}^T
 
 \]</div>
 </div></blockquote>
@@ -415,14 +400,10 @@ posteriori estimation, respectively.</p>
 <span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">systime</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">state_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span>
 <span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span> <span class="o">+</span> <span class="nb">input</span>
 </pre></div>
 </div>
@@ -449,15 +430,15 @@ posteriori estimation, respectively.</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Predict the next state and correct it using a measurement of that same state.</p></li>
+<li><p>Perform UKF prediction. Note that estimation error becomes smaller with more steps.</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">w</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># transition noise</span>
 <span class="gp">... </span>    <span class="n">v</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="c1"># observation noise</span>
-<span class="gp">... </span>    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ukf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ukf</span><span class="p">(</span><span class="n">estim</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 <span class="gp">... </span><span class="nb">print</span><span class="p">(</span><span class="s1">'Est error:'</span><span class="p">,</span> <span class="p">(</span><span class="n">states</span> <span class="o">-</span> <span class="n">estim</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">Est error: tensor(...)</span>
+<span class="go">Est error: tensor([8.8161, 9.0322, 5.4756, 2.2453, 0.9141])</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -478,8 +459,6 @@ Cleveland State University, 2006</p></li>
 <dt class="sig sig-object py" id="pypose.module.UKF.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/module/ukf/#UKF.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.module.UKF.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs one step estimation.</p>
-<p>The measurement <code class="docutils literal notranslate"><span class="pre">y</span></code> must correspond to the state after applying the
-transition to <code class="docutils literal notranslate"><span class="pre">x</span></code> with input <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
