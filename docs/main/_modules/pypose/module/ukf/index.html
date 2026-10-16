@@ -262,6 +262,19 @@
 <span class="sd">        msqrt (callable, optional): Matrix square-root function returning a factor</span>
 <span class="sd">            ``L`` such that ``L @ L.mT`` equals its input. Default: ``torch.linalg.cholesky``.</span>
 
+<span class="sd">    Batch dimensions precede vector and matrix dimensions. For batch shape ``B``,</span>
+<span class="sd">    states have shape ``(*B, n)``, observations ``(*B, m)``, and inputs</span>
+<span class="sd">    ``(*B, l)``. Covariances ``P`` and ``Q`` have shape ``(*B, n, n)``,</span>
+<span class="sd">    and ``R`` has shape ``(*B, m, m)``. Covariances can be shared across</span>
+<span class="sd">    batches using shapes ``(n, n)`` and ``(m, m)``. An empty ``B`` gives an</span>
+<span class="sd">    unbatched filter. Batch entries represent independent systems, not time steps.</span>
+
+<span class="sd">    Internally, the sigma-point dimension comes first. Model methods receive</span>
+<span class="sd">    states of shape ``(S, *B, n)`` and return states or observations of shape</span>
+<span class="sd">    ``(S, *B, n)`` or ``(S, *B, m)``. Inputs retain shape ``(*B, l)`` and</span>
+<span class="sd">    broadcast across samples. Model operations must preserve batch independence.</span>
+<span class="sd">    Here ``S = 2*n+1``. Returned estimates have no sample dimension.</span>
+
 <span class="sd">    A non-linear system can be described as</span>
 
 <span class="sd">    .. math::</span>
@@ -391,25 +404,25 @@
 
 <span class="sd">        3. Prepare data</span>
 
-<span class="sd">        &gt;&gt;&gt; T, N = 5, 2 # steps, state dim</span>
-<span class="sd">        &gt;&gt;&gt; states = torch.zeros(T, N)</span>
-<span class="sd">        &gt;&gt;&gt; inputs = torch.randn(T, N)</span>
-<span class="sd">        &gt;&gt;&gt; observ = torch.zeros(T, N)</span>
+<span class="sd">        &gt;&gt;&gt; B, T, N = 3, 5, 2 # batchsize, steps, state dim</span>
+<span class="sd">        &gt;&gt;&gt; states = torch.zeros(B, T, N)</span>
+<span class="sd">        &gt;&gt;&gt; inputs = torch.randn(B, T, N)</span>
+<span class="sd">        &gt;&gt;&gt; observ = torch.zeros(B, T, N)</span>
 <span class="sd">        &gt;&gt;&gt; # std of transition, observation, and estimation</span>
 <span class="sd">        &gt;&gt;&gt; q, r, p = 0.1, 0.1, 10</span>
-<span class="sd">        &gt;&gt;&gt; Q = torch.eye(N) * q**2</span>
-<span class="sd">        &gt;&gt;&gt; R = torch.eye(N) * r**2</span>
-<span class="sd">        &gt;&gt;&gt; P = torch.eye(N).repeat(T, 1, 1) * p**2</span>
-<span class="sd">        &gt;&gt;&gt; estim = torch.randn(T, N) * p</span>
+<span class="sd">        &gt;&gt;&gt; Q = torch.eye(N).repeat(B, 1, 1) * q**2</span>
+<span class="sd">        &gt;&gt;&gt; R = torch.eye(N).repeat(B, 1, 1) * r**2</span>
+<span class="sd">        &gt;&gt;&gt; P = torch.eye(N).repeat(B, T, 1, 1) * p**2</span>
+<span class="sd">        &gt;&gt;&gt; estim = torch.randn(B, T, N) * p</span>
 
 <span class="sd">        4. Predict the next state and correct it using a measurement of that same state.</span>
 
 <span class="sd">        &gt;&gt;&gt; for i in range(T - 1):</span>
-<span class="sd">        ...     w = q * torch.randn(N) # transition noise</span>
-<span class="sd">        ...     v = r * torch.randn(N) # observation noise</span>
-<span class="sd">        ...     states[i+1], observ[i+1] = model(states[i], inputs[i], w)</span>
-<span class="sd">        ...     estim[i+1], P[i+1] = ukf(estim[i], observ[i+1] + v, inputs[i], P[i], Q, R)</span>
-<span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
+<span class="sd">        ...     w = q * torch.randn(B, N) # transition noise</span>
+<span class="sd">        ...     v = r * torch.randn(B, N) # observation noise</span>
+<span class="sd">        ...     states[:, i+1], observ[:, i+1] = model(states[:, i], inputs[:, i], w)</span>
+<span class="sd">        ...     estim[:, i+1], P[:, i+1] = ukf(estim[:, i], observ[:, i+1] + v, inputs[:, i], P[:, i], Q, R)</span>
+<span class="sd">        &gt;&gt;&gt; print('Est error:', (states - estim).norm(dim=-1))</span>
 <span class="sd">        Est error: tensor(...)</span>
 
 <span class="sd">    Note:</span>
@@ -432,10 +445,11 @@
 <span class="sd">        transition to ``x`` with input ``u``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step.</span>
-<span class="sd">            y (:obj:`Tensor`): system observation at current step (measurement).</span>
-<span class="sd">            u (:obj:`Tensor`): system input at current step.</span>
-<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step.</span>
+<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step, shape ``(*B, n)``.</span>
+<span class="sd">            y (:obj:`Tensor`): system observation at current step, shape ``(*B, m)``.</span>
+<span class="sd">            u (:obj:`Tensor`): system input at current step, shape ``(*B, l)``.</span>
+<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step, shape</span>
+<span class="sd">                ``(*B, n, n)`` or ``(n, n)``.</span>
 <span class="sd">            Q (:obj:`Tensor`, optional): covariance of system transition model.</span>
 <span class="sd">            R (:obj:`Tensor`, optional): covariance of system observation model.</span>
 <span class="sd">            t (:obj:`Tensor`, optional): timestamp for ths system to estimate. Default: ``None``.</span>
@@ -444,7 +458,8 @@
 <span class="sd">                which is best for Gaussian noise model. Default: ``None``.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
+<span class="sd">            tuple of :obj:`Tensor`: posteriori state ``(*B, n)`` and covariance</span>
+<span class="sd">            ``(*B, n, n)``, where ``B`` is the broadcast batch shape.</span>
 <span class="sd">        '''</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
         <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">k</span>
@@ -454,14 +469,14 @@
 
         <span class="n">xs</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_weight_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_transition</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-        <span class="n">xe</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">xs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">xe</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">xs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ex</span> <span class="o">=</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xs</span>
         <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cov</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
 
         <span class="n">xs</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_weight_points</span><span class="p">(</span><span class="n">xe</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">ex</span> <span class="o">=</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xs</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-        <span class="n">ye</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ye</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ey</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">ys</span>
         <span class="n">Py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_cov</span><span class="p">(</span><span class="n">ey</span><span class="p">,</span> <span class="n">ey</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 
@@ -482,21 +497,26 @@
 <span class="sd">            k (:obj:`int`): parameter for weighting sigma points.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            tuple of :obj:`Tensor`: sigma points and their weights</span>
+<span class="sd">            tuple of :obj:`Tensor`: sigma points ``(2*n+1, *B, n)`` and</span>
+<span class="sd">            weights ``(2*n+1, *B, 1)``.</span>
 <span class="sd">        '''</span>
         <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'Invalid shape'</span>
-        <span class="n">n</span><span class="p">,</span> <span class="n">xe</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">mT</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">xe</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Factor columns become sigma-point offsets on the leading sample axis.</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">mT</span><span class="o">.</span><span class="n">movedim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">we</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xe</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">wr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">xe</span><span class="p">,</span> <span class="n">xe</span> <span class="o">+</span> <span class="n">xr</span><span class="p">,</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">we</span><span class="p">,</span> <span class="n">wr</span><span class="p">,</span> <span class="n">wr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">xe</span><span class="p">,</span> <span class="n">xe</span> <span class="o">+</span> <span class="n">xr</span><span class="p">,</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">we</span><span class="p">,</span> <span class="n">wr</span><span class="p">,</span> <span class="n">wr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="UKF.compute_cov"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.compute_cov">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">'''Compute covariance of two set of variables.'''</span>
         <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">b</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Q</span> <span class="o">+</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">Q</span> <span class="o">+</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div></div>
 </pre></div>
 
              </article>
