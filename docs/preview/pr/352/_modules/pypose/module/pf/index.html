@@ -262,19 +262,6 @@
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
 <span class="sd">        particles (:obj:`Int`, optional): The number of particle. Default: ``1000``</span>
 
-<span class="sd">    Batch dimensions precede vector and matrix dimensions. For batch shape ``B``,</span>
-<span class="sd">    states have shape ``(*B, n)``, observations ``(*B, m)``, and inputs</span>
-<span class="sd">    ``(*B, l)``. Covariances ``P`` and ``Q`` have shape ``(*B, n, n)``,</span>
-<span class="sd">    and ``R`` has shape ``(*B, m, m)``. Covariances can be shared across</span>
-<span class="sd">    batches using shapes ``(n, n)`` and ``(m, m)``. An empty ``B`` gives an</span>
-<span class="sd">    unbatched filter. Batch entries represent independent systems, not time steps.</span>
-
-<span class="sd">    Internally, the particle dimension comes first. Model methods receive</span>
-<span class="sd">    states of shape ``(S, *B, n)`` and return states or observations of shape</span>
-<span class="sd">    ``(S, *B, n)`` or ``(S, *B, m)``. Inputs retain shape ``(*B, l)`` and</span>
-<span class="sd">    broadcast across samples. Model operations must preserve batch independence.</span>
-<span class="sd">    Here ``S = particles``. Returned estimates have no sample dimension.</span>
-
 <span class="sd">    A non-linear system can be described as</span>
 
 <span class="sd">    .. math::</span>
@@ -391,11 +378,10 @@
 <span class="sd">        Performs one step estimation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step, shape ``(*B, n)``.</span>
-<span class="sd">            y (:obj:`Tensor`): system observation at current step, shape ``(*B, m)``.</span>
-<span class="sd">            u (:obj:`Tensor`): system input at current step, shape ``(*B, l)``.</span>
-<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step, shape</span>
-<span class="sd">                ``(*B, n, n)`` or ``(n, n)``.</span>
+<span class="sd">            x (:obj:`Tensor`): estimated system state of previous step.</span>
+<span class="sd">            y (:obj:`Tensor`): system observation at current step (measurement).</span>
+<span class="sd">            u (:obj:`Tensor`): system input at current step.</span>
+<span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step.</span>
 <span class="sd">            Q (:obj:`Tensor`, optional): covariance of system transition model.</span>
 <span class="sd">                Default: ``None``.</span>
 <span class="sd">            R (:obj:`Tensor`, optional): covariance of system observation model.</span>
@@ -404,8 +390,7 @@
 <span class="sd">                If ``None``, current system time is used. Default: ``None``.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            tuple of :obj:`Tensor`: posteriori state ``(*B, n)`` and covariance</span>
-<span class="sd">            ``(*B, n, n)``, where ``B`` is the broadcast batch shape.</span>
+<span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
 <span class="sd">        '''</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span>
@@ -433,7 +418,7 @@
 <span class="sd">            P (:obj:`Tensor`): state estimation covariance of previous step</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            :obj:`Tensor`: particles of shape ``(particles, *B, n)``.</span>
+<span class="sd">            list of :obj:`Tensor`: particles</span>
 <span class="sd">        '''</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">]))</span></div>
@@ -449,7 +434,6 @@
 <span class="sd">        Resample the set of a posteriori particles</span>
 <span class="sd">        '''</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="c1"># searchsorted searches the last axis; move particles there temporarily.</span>
         <span class="n">cdf</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">movedim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">movedim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">())</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">movedim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">clamp_max</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
