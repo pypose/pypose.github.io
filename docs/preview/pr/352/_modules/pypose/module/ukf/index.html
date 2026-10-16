@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.7.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.9.5 &#x25BC</a>
     </div>
     
 
@@ -161,11 +161,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../autograd/">Autograd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,14 +242,14 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.module.ukf</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">bmv</span>
-<span class="kn">from</span> <span class="nn">.ekf</span> <span class="kn">import</span> <span class="n">EKF</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">pinv</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">bmv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ekf</span><span class="w"> </span><span class="kn">import</span> <span class="n">EKF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">pinv</span>
 
 
-<div class="viewcode-block" id="UKF"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF">[docs]</a><span class="k">class</span> <span class="nc">UKF</span><span class="p">(</span><span class="n">EKF</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UKF"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UKF</span><span class="p">(</span><span class="n">EKF</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Performs Batched Unscented Kalman Filter (UKF).</span>
 
 <span class="sd">    Args:</span>
@@ -257,11 +259,10 @@
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
 <span class="sd">        R (:obj:`Tensor`, optional): The covariance matrices of system observation noise.</span>
 <span class="sd">            Ignored if provided during each iteration. Default: ``None``</span>
-<span class="sd">        msqrt (:obj:`Function`, optional): The method for computing the square root of matrices.</span>
-<span class="sd">            Use ``torch.linalg.cholesky`` if not provided. Default: ``None``</span>
-<span class="sd">        correct_PD_eps (:obj:`Float`, optional): The eps used in positive definite correction of the state covariance matrices P.</span>
-<span class="sd">            If provided a small positive number, P will be projected to be positive definite by clamping its smaller eigenvalues to eps.</span>
-<span class="sd">            If provided a negative number, no correction will be made. Default: ``-1``</span>
+<span class="sd">        msqrt (callable, optional): Matrix square-root function returning a factor</span>
+<span class="sd">            ``L`` such that ``L @ L.mT`` equals its input. Default: ``torch.linalg.cholesky``.</span>
+<span class="sd">        correct_PD_eps (:obj:`Float`, optional): Positive eigenvalue floor for covariance</span>
+<span class="sd">            correction. Negative values disable correction. Default: ``-1``.</span>
 
 <span class="sd">    A non-linear system can be described as</span>
 
@@ -269,28 +270,32 @@
 <span class="sd">        \begin{aligned}</span>
 <span class="sd">            \mathbf{x}_{k+1} &amp;= \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{w}_k,</span>
 <span class="sd">            \quad \mathbf{w}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{Q})  \\</span>
-<span class="sd">            \mathbf{y}_{k} &amp;= \mathbf{g}(\mathbf{x}_k, \mathbf{u}_k, t_k) + \mathbf{v}_k,</span>
-<span class="sd">            \quad \mathbf{v}_k \sim \mathcal{N}(\mathbf{0}, \mathbf{R})</span>
+<span class="sd">            \mathbf{y}_{k+1} &amp;= \mathbf{g}(\mathbf{x}_{k+1}, \mathbf{u}_k, t_k) + \mathbf{v}_{k+1},</span>
+<span class="sd">            \quad \mathbf{v}_{k+1} \sim \mathcal{N}(\mathbf{0}, \mathbf{R})</span>
 <span class="sd">        \end{aligned}</span>
 
-<span class="sd">    UKF can be described as the following equations, where the subscript :math:`\cdot_{k}`</span>
-<span class="sd">    is omited for simplicity.</span>
+<span class="sd">    UKF can be described as the following equations. The sigma-point index :math:`i`</span>
+<span class="sd">    identifies a sample, and the time indices indicate the state or measurement step.</span>
 
 <span class="sd">    1. Sigma Points.</span>
 
 <span class="sd">      .. math::</span>
 <span class="sd">          \begin{aligned}</span>
-<span class="sd">              &amp; \mathbf{x}^{\left ( i \right ) } = \mathbf{x}^{+} +</span>
-<span class="sd">                  \mathbf{\check{x}}^{\left(i \right)}, &amp; \quad i=0,...,2n\\</span>
-<span class="sd">              &amp; \mathbf{\check{x}}^{\left (i \right)} = \mathbf{0}, &amp; \quad i=0 \\</span>
-<span class="sd">              &amp; \mathbf{\check{x}}^{\left (i \right)} = \left(\sqrt{(n+\kappa)P} \right)_{i}^{T},</span>
+<span class="sd">              &amp; \mathbf{x}_k^{\left ( i \right ) } = \mathbf{x}_k^{+} +</span>
+<span class="sd">                  \mathbf{\check{x}}_k^{\left(i \right)}, &amp; \quad i=0,...,2n\\</span>
+<span class="sd">              &amp; \mathbf{\check{x}}_k^{\left (i \right)} = \mathbf{0}, &amp; \quad i = 0 \\</span>
+<span class="sd">              &amp; \mathbf{\check{x}}_k^{\left (i \right)} =</span>
+<span class="sd">                  \left(\sqrt{(n+\kappa)P_k} \right)_{i}^{T},</span>
 <span class="sd">               &amp; \quad i= 1, ..., n \\</span>
-<span class="sd">              &amp; \mathbf{\check{x}}^{\left(i \right)} = -\left(\sqrt{(n+\kappa)P} \right)_{i}^{T},</span>
+<span class="sd">              &amp; \mathbf{\check{x}}_k^{\left(i \right)} =</span>
+<span class="sd">                  -\left(\sqrt{(n+\kappa)P_k} \right)_{i}^{T},</span>
 <span class="sd">                   &amp; \quad i=n+1, ..., 2n \\</span>
 <span class="sd">         \end{aligned}</span>
 
-<span class="sd">    where :math:`\left(\sqrt{(n+\kappa)P}\right) _{i}` is the :math:`i`-th row of</span>
-<span class="sd">    :math:`\left(\sqrt{(n+\kappa)P}\right)` and :math:`n` is the dimension of state :math:`\mathbf{x}`.</span>
+<span class="sd">    where :math:`\left(\sqrt{(n+\kappa)P_k}\right) _{i}` is the :math:`i`-th row of</span>
+<span class="sd">    :math:`\left(\sqrt{(n+\kappa)P_k}\right)` and :math:`n` is the dimension of state :math:`\mathbf{x}`.</span>
+<span class="sd">    Here the square-root matrix is :math:`L^T`, where</span>
+<span class="sd">    :math:`LL^T=(n+\kappa)P_k`, so its rows are the sigma-point offsets.</span>
 
 <span class="sd">    Their weighting cofficients are given as</span>
 
@@ -303,52 +308,62 @@
 <span class="sd">    2. Priori State Estimation.</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">           \mathbf{x}^{-} = \sum_{i=0}^{2n} W^{(i)} f(\mathbf{x}^{(i)}, \mathbf{u}, t)</span>
+<span class="sd">           \begin{aligned}</span>
+<span class="sd">               \mathbf{x}_{k+1}^{(i)} &amp;= f(\mathbf{x}_k^{(i)}, \mathbf{u}_k, t_k),</span>
+<span class="sd">                   &amp; \quad i = 0, \cdots, 2n \\</span>
+<span class="sd">               \mathbf{x}_{k+1}^{-} &amp;= \sum_{i=0}^{2n} W^{(i)} \mathbf{x}_{k+1}^{(i)}</span>
+<span class="sd">           \end{aligned}</span>
 
 <span class="sd">    3. Priori Covariance.</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{P}^{-} = \sum_{i=0}^{2n} W^{(i)}</span>
-<span class="sd">              \left(\mathbf{x}^{(i)} - \mathbf{x}^{-} \right)</span>
-<span class="sd">              \left(\mathbf{x}^{(i)} - \mathbf{x}^- \right)^T + \mathbf{Q}</span>
+<span class="sd">          \mathbf{P}_{k+1}^{-} = \sum_{i=0}^{2n} W^{(i)}</span>
+<span class="sd">              \left(\mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^{-} \right)</span>
+<span class="sd">              \left(\mathbf{x}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)^T + \mathbf{Q}</span>
 
 <span class="sd">    4. Observational Estimation.</span>
 
+<span class="sd">      Regenerate sigma points :math:`\tilde{\mathbf{x}}_{k+1}^{(i)}` from</span>
+<span class="sd">      :math:`(\mathbf{x}_{k+1}^{-}, \mathbf{P}_{k+1}^{-})` using step 1.</span>
+<span class="sd">      These points include the process-noise covariance added in step 3.</span>
+
 <span class="sd">      .. math::</span>
 <span class="sd">          \begin{aligned}</span>
-<span class="sd">              &amp; \mathbf{y}^{(i)} = g \left( \mathbf{x}^{(i)}, \mathbf{u}, t \right),</span>
+<span class="sd">              &amp; \mathbf{y}_{k+1}^{(i)} = g \left( \tilde{\mathbf{x}}_{k+1}^{(i)}, \mathbf{u}_k, t_k \right),</span>
 <span class="sd">                  &amp; \quad i = 0, \cdots, 2n \\</span>
-<span class="sd">              &amp; \bar{\mathbf{y}} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}^{(i)}</span>
+<span class="sd">              &amp; \bar{\mathbf{y}}_{k+1} = \sum_{i=0}^{2n} W^{(i)} \mathbf{y}_{k+1}^{(i)}</span>
 <span class="sd">          \end{aligned}</span>
 
 <span class="sd">    5. Observational Covariance.</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{P}_{y} = \sum_{i=0}^{2n} W^{(i)}</span>
-<span class="sd">              \left(\mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)</span>
-<span class="sd">              \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T + \mathbf{R}</span>
+<span class="sd">          \mathbf{P}_{y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}</span>
+<span class="sd">              \left(\mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)</span>
+<span class="sd">              \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T + \mathbf{R}</span>
 
 <span class="sd">    6. Priori and Observation Covariance:</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{P}_{xy} = \sum_{i=0}^{2n} W^{(i)}</span>
-<span class="sd">              \left( \mathbf{x}^{(i)} - \mathbf{x}^- \right)</span>
-<span class="sd">              \left( \mathbf{y}^{(i)} - \bar{\mathbf{y}} \right)^T</span>
+<span class="sd">          \mathbf{P}_{x_{k+1}y_{k+1}} = \sum_{i=0}^{2n} W^{(i)}</span>
+<span class="sd">              \left( \tilde{\mathbf{x}}_{k+1}^{(i)} - \mathbf{x}_{k+1}^- \right)</span>
+<span class="sd">              \left( \mathbf{y}_{k+1}^{(i)} - \bar{\mathbf{y}}_{k+1} \right)^T</span>
 
 <span class="sd">    7. Kalman Gain</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{K} = \mathbf{P}_{xy}\mathbf{P}_{y}^{-1}</span>
+<span class="sd">          \mathbf{K}_{k+1} = \mathbf{P}_{x_{k+1}y_{k+1}}\mathbf{P}_{y_{k+1}}^{-1}</span>
 
 <span class="sd">    8. Posteriori State Estimation.</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{x}^{+} = \mathbf{x}^{-} + \mathbf{K} (\mathbf{y}- \bar{\mathbf{y}})</span>
+<span class="sd">          \mathbf{x}_{k+1}^{+} = \mathbf{x}_{k+1}^{-} +</span>
+<span class="sd">              \mathbf{K}_{k+1} (\mathbf{y}_{k+1}- \bar{\mathbf{y}}_{k+1})</span>
 
 <span class="sd">    9. Posteriori Covariance Estimation.</span>
 
 <span class="sd">      .. math::</span>
-<span class="sd">          \mathbf{P} = \mathbf{P}^{-} - \mathbf{K}\mathbf{P}_{y}\mathbf{K}^T</span>
+<span class="sd">          \mathbf{P}_{k+1} = \mathbf{P}_{k+1}^{-} -</span>
+<span class="sd">              \mathbf{K}_{k+1}\mathbf{P}_{y_{k+1}}\mathbf{K}_{k+1}^T</span>
 
 <span class="sd">    where superscript :math:`\cdot^{-}` and :math:`\cdot^{+}` denote the priori and</span>
 <span class="sd">    posteriori estimation, respectively.</span>
@@ -361,10 +376,14 @@
 <span class="sd">        ...     def __init__(self):</span>
 <span class="sd">        ...         super().__init__()</span>
 <span class="sd">        ...</span>
+<span class="sd">        ...     def forward(self, state, input, noise):</span>
+<span class="sd">        ...         state = self.state_transition(state, input, self.systime) + noise</span>
+<span class="sd">        ...         return state, self.observation(state, input, self.systime + 1)</span>
+<span class="sd">        ...</span>
 <span class="sd">        ...     def state_transition(self, state, input, t=None):</span>
 <span class="sd">        ...         return state.cos() + input</span>
 <span class="sd">        ...</span>
-<span class="sd">        ...     def observation(self, state, input, t):</span>
+<span class="sd">        ...     def observation(self, state, input, t=None):</span>
 <span class="sd">        ...         return state.sin() + input</span>
 
 <span class="sd">        2. Create a model and filter</span>
@@ -385,17 +404,15 @@
 <span class="sd">        &gt;&gt;&gt; P = torch.eye(N).repeat(B, T, 1, 1) * p**2</span>
 <span class="sd">        &gt;&gt;&gt; estim = torch.randn(B, T, N) * p</span>
 
-<span class="sd">        4. Perform UKF prediction. Note that estimation error becomes smaller with more steps.</span>
+<span class="sd">        4. Predict the next state and correct it using a measurement of that same state.</span>
 
 <span class="sd">        &gt;&gt;&gt; for i in range(T - 1):</span>
 <span class="sd">        ...     w = q * torch.randn(B, N) # transition noise</span>
 <span class="sd">        ...     v = r * torch.randn(B, N) # observation noise</span>
-<span class="sd">        ...     states[:, i+1], observ[:, i] = model(states[:, i] + w, inputs[:, i])</span>
-<span class="sd">        ...     estim[:, i+1], P[:, i+1] = ukf(estim[:, i], observ[:, i] + v, inputs[:, i], P[:, i], Q, R)</span>
-<span class="sd">        ... print(&#39;Est error:&#39;, (states - estim).norm(dim=-1))</span>
-<span class="sd">        Est error: tensor([[19.2216,  0.9972,  0.7375,  0.8644,  0.9604],</span>
-<span class="sd">                           [16.6286,  2.1883,  1.7114,  0.8491,  1.2250],</span>
-<span class="sd">                           [10.5133,  2.1080,  1.9851,  0.5087,  1.3921]])</span>
+<span class="sd">        ...     states[:, i+1], observ[:, i+1] = model(states[:, i], inputs[:, i], w)</span>
+<span class="sd">        ...     estim[:, i+1], P[:, i+1] = ukf(estim[:, i], observ[:, i+1] + v, inputs[:, i], P[:, i], Q, R)</span>
+<span class="sd">        ... print('Est error:', (states - estim).norm(dim=-1))</span>
+<span class="sd">        Est error: tensor(...)</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Implementation is based on Section 14.3 of this book</span>
@@ -403,16 +420,19 @@
 <span class="sd">        * Dan Simon, `Optimal State Estimation: Kalman, H∞, and Nonlinear Approaches</span>
 <span class="sd">          &lt;https://onlinelibrary.wiley.com/doi/book/10.1002/0470045345&gt;`_,</span>
 <span class="sd">          Cleveland State University, 2006</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msqrt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correct_PD_eps</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msqrt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">correct_PD_eps</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span> <span class="k">if</span> <span class="n">msqrt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">msqrt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">correct_PD_eps</span> <span class="o">=</span> <span class="n">correct_PD_eps</span>
 
-<div class="viewcode-block" id="UKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UKF.forward"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.forward">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs one step estimation.</span>
+
+<span class="sd">        The measurement ``y`` must correspond to the state after applying the</span>
+<span class="sd">        transition to ``x`` with input ``u``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (:obj:`Tensor`): estimated system state of previous step.</span>
@@ -428,7 +448,7 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            list of :obj:`Tensor`: posteriori state and covariance estimation</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="c1"># Upper cases are matrices, lower cases are vectors</span>
         <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">k</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span>
@@ -444,6 +464,7 @@
             <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_to_positive_definite</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
 
         <span class="n">xs</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_weight_points</span><span class="p">(</span><span class="n">xe</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">ex</span> <span class="o">=</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xs</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         <span class="n">ye</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ey</span> <span class="o">=</span> <span class="n">ye</span> <span class="o">-</span> <span class="n">ys</span>
@@ -458,8 +479,8 @@
 
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span></div>
 
-<div class="viewcode-block" id="UKF.sigma_weight_points"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.sigma_weight_points">[docs]</a>    <span class="k">def</span> <span class="nf">sigma_weight_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UKF.sigma_weight_points"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.sigma_weight_points">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sigma_weight_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Compute sigma point and its weights</span>
 
 <span class="sd">        Args:</span>
@@ -469,23 +490,27 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            tuple of :obj:`Tensor`: sigma points and their weights</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;Invalid shape&#39;</span>
+<span class="sd">        '''</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'Invalid shape'</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">batch</span> <span class="o">+</span> <span class="n">P</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
         <span class="n">n</span><span class="p">,</span> <span class="n">xe</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msqrt</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">mT</span><span class="o">.</span><span class="n">movedim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">we</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xe</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">wr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">xe</span><span class="p">,</span> <span class="n">xe</span> <span class="o">+</span> <span class="n">xr</span><span class="p">,</span> <span class="n">xe</span> <span class="o">-</span> <span class="n">xr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">we</span><span class="p">,</span> <span class="n">wr</span><span class="p">,</span> <span class="n">wr</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UKF.compute_cov"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.compute_cov">[docs]</a>    <span class="k">def</span> <span class="nf">compute_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Compute covariance of two set of variables.&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UKF.compute_cov"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.compute_cov">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Compute covariance of two set of variables.'''</span>
         <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">b</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Q</span> <span class="o">+</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UKF.project_to_positive_definite"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.project_to_positive_definite">[docs]</a>    <span class="k">def</span> <span class="nf">project_to_positive_definite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Project matrix to positive definite by clamping its eigenvalues to positive.&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="UKF.project_to_positive_definite"><a class="viewcode-back" href="../../../../generated/pypose.module.UKF/#pypose.module.UKF.project_to_positive_definite">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">project_to_positive_definite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Project matrix to positive definite by clamping its eigenvalues to positive.'''</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">A</span><span class="o">.</span><span class="n">mT</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
         <span class="n">eigenvalues</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">correct_PD_eps</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">eigenvectors</span> <span class="o">@</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">))</span> <span class="o">@</span> <span class="n">eigenvectors</span><span class="o">.</span><span class="n">mT</span></div></div>

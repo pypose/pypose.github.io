@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex/" />
     <link rel="search" title="Search" href="../../../../search/" />
@@ -125,7 +125,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.7.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.9.5 &#x25BC</a>
     </div>
     
 
@@ -161,11 +161,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../autograd/">Autograd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/">Testing</a></li>
 </ul>
@@ -240,47 +242,100 @@
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
   <h1>Source code for pypose.optim.optimizer</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">bmv</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">finfo</span>
-<span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">modjac</span>
-<span class="kn">from</span> <span class="nn">.strategy</span> <span class="kn">import</span> <span class="n">TrustRegion</span>
-<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span>
-<span class="kn">from</span> <span class="nn">.solver</span> <span class="kn">import</span> <span class="n">PINV</span><span class="p">,</span> <span class="n">Cholesky</span>
-<span class="kn">from</span> <span class="nn">torch.linalg</span> <span class="kn">import</span> <span class="n">cholesky_ex</span>
-<span class="kn">from</span> <span class="nn">.corrector</span> <span class="kn">import</span> <span class="n">FastTriggs</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">bmv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">finfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">modjac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrustRegion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.solver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PINV</span><span class="p">,</span> <span class="n">Cholesky</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">cholesky_ex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.corrector</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastTriggs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">_require_backend_attr</span>
+
+<span class="n">jacobian</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">diagonal_op_</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<span class="k">class</span> <span class="nc">Trivial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_tracking_tensor</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="n">TrackingTensor</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+        <span class="s2">"bae.autograd.function"</span><span class="p">,</span>
+        <span class="s2">"TrackingTensor"</span><span class="p">,</span>
+        <span class="s2">"pypose.optim.LM(..., sparse=True)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TrackingTensor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_sparse_backend_globals</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">diagonal_op_</span>
+    <span class="k">if</span> <span class="n">jacobian</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">jacobian</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+            <span class="s2">"bae.autograd.graph"</span><span class="p">,</span>
+            <span class="s2">"jacobian"</span><span class="p">,</span>
+            <span class="s2">"pypose.optim.LM(..., sparse=True)"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">diagonal_op_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">diagonal_op_</span> <span class="o">=</span> <span class="n">_require_backend_attr</span><span class="p">(</span>
+            <span class="s2">"bae.sparse.py_ops"</span><span class="p">,</span>
+            <span class="s2">"diagonal_op_"</span><span class="p">,</span>
+            <span class="s2">"pypose.optim.LM(..., sparse=True)"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parameter_update_shape</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">((</span><span class="o">*</span><span class="n">param</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">manifold</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+    <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Trivial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    A trivial module. Get anything, return anything.</span>
 <span class="sd">    Not supposed to be called by PyPose users.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">out</span>
 
 
-<span class="k">class</span> <span class="nc">RobustModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RobustModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''</span>
 <span class="sd">    Standardize a model for least square problems with an option of square-rooting kernel.</span>
 <span class="sd">    Then model regression becomes minimizing the output of the standardized model.</span>
 <span class="sd">    This class is used during optimization but is not designed to expose to PyPose users.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="sd">    '''</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trivial</span><span class="p">()]</span> <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">kernel</span>
 
-    <span class="k">def</span> <span class="nf">flatten_row_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flatten_row_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params_values</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Jacobian and parameter sequences must have the same length"</span><span class="p">)</span>
+            <span class="c1"># Keep J columns aligned with trainable update segments in R^n.</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">j</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot flatten a Jacobian with no trainable parameters"</span><span class="p">)</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_flatten_single_jacobian</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">J</span>
 
-    <span class="k">def</span> <span class="nf">normalize_RWJ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_single_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="n">update_shape</span> <span class="o">=</span> <span class="n">_parameter_update_shape</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">param</span><span class="o">.</span><span class="n">ltype</span><span class="o">.</span><span class="n">on_manifold</span><span class="p">:</span>
+            <span class="c1"># J is initially in R^(m x d_embed); retain d_manifold columns</span>
+            <span class="c1"># before flattening because updates live in the tangent space.</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">update_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">j</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">update_shape</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_RWJ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span><span class="p">):</span>
         <span class="n">weight_diag</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">weight</span><span class="p">]</span>
@@ -297,11 +352,11 @@
         <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="n">J</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">weight_diag</span><span class="p">,</span> <span class="n">J</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_forward</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">model_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
@@ -309,16 +364,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">output</span> <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output</span> <span class="o">-</span> <span class="n">target</span>
 
-    <span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">targets</span>
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">out</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outputs</span><span class="p">)])</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)])</span>
 
-    <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_forward</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="n">residuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residuals</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -328,23 +383,30 @@
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_Optimizer</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Optimizer</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    Base class for all second order optimizers.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">    '''</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">update_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        params will be updated by calling this function</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">])</span>
-        <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+<span class="sd">        '''</span>
+        <span class="c1"># Frozen parameters do not consume optimizer-step segments.</span>
+        <span class="n">grad_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grad_params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot update parameters when none require gradients"</span><span class="p">)</span>
+        <span class="c1"># For LieTensor p, each delta_i is shaped in R^(batch x d_manifold).</span>
+        <span class="n">numels</span> <span class="o">=</span> <span class="p">[</span><span class="n">_parameter_update_shape</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">grad_params</span><span class="p">]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">numels</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">grad_params</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">_parameter_update_shape</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="GaussNewton"><a class="viewcode-back" href="../../../../generated/pypose.optim.GaussNewton/#pypose.optim.GaussNewton">[docs]</a><span class="k">class</span> <span class="nc">GaussNewton</span><span class="p">(</span><span class="n">_Optimizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="GaussNewton"><a class="viewcode-back" href="../../../../generated/pypose.optim.GaussNewton/#pypose.optim.GaussNewton">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">GaussNewton</span><span class="p">(</span><span class="n">_Optimizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    The Gauss-Newton (GN) algorithm solving non-linear least squares problems. This implementation</span>
 <span class="sd">    is for optimizing the model parameters to approximate the target, which can be a</span>
 <span class="sd">    Tensor/LieTensor or a tuple of Tensors/LieTensors.</span>
@@ -402,7 +464,7 @@
 <span class="sd">            Default: ``None``.</span>
 <span class="sd">        vectorize (bool, optional): the method of computing Jacobian. If ``True``, the</span>
 <span class="sd">            gradient of each scalar in output with respect to the model parameters will be</span>
-<span class="sd">            computed in parallel with ``&quot;reverse-mode&quot;``. More details go to</span>
+<span class="sd">            computed in parallel with ``"reverse-mode"``. More details go to</span>
 <span class="sd">            :meth:`pypose.optim.functional.modjac`. Default: ``True``.</span>
 
 <span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`.</span>
@@ -417,7 +479,7 @@
 <span class="sd">        dimension of model residual, whose inner product is the input to the kernel function.</span>
 <span class="sd">        This is useful for residuals like re-projection error, whose last dimension is 2.</span>
 
-<span class="sd">        Note that **auto correction** is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
+<span class="sd">        Note that **auto correction** is equivalent to the method of 'square-rooting the kernel'</span>
 <span class="sd">        mentioned in Section 3.3 of the following paper. It replaces the</span>
 <span class="sd">        :math:`d`-dimensional residual with a one-dimensional one, which loses</span>
 <span class="sd">        residual-level structural information.</span>
@@ -437,11 +499,11 @@
 <span class="sd">        :math:`\mathbf{J}\delta = -\mathbf{R}` via pseudo inversion, which is more numerically</span>
 <span class="sd">        advisable. Therefore, only solvers with pseudo inversion (inverting non-square matrices)</span>
 <span class="sd">        such as :meth:`solver.PINV` and :meth:`solver.LSTSQ` are available.</span>
-<span class="sd">        More details are in Eq. (5) of the paper &quot;`Robust Bundle Adjustment Revisited`_&quot;.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="sd">        More details are in Eq. (5) of the paper "`Robust Bundle Adjustment Revisited`_".</span>
+<span class="sd">    '''</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'vectorize'</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">PINV</span><span class="p">()</span> <span class="k">if</span> <span class="n">solver</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
         <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -456,8 +518,8 @@
 
 
 <div class="viewcode-block" id="GaussNewton.step"><a class="viewcode-back" href="../../../../generated/pypose.optim.GaussNewton/#pypose.optim.GaussNewton.step">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs a single optimization step.</span>
 
 <span class="sd">        Args:</span>
@@ -500,9 +562,9 @@
 <span class="sd">            ...</span>
 <span class="sd">            &gt;&gt;&gt; for idx in range(10):</span>
 <span class="sd">            ...     error = optimizer.step(input)</span>
-<span class="sd">            ...     print(&#39;Pose Inversion error %.7f @ %d it&#39;%(error, idx))</span>
+<span class="sd">            ...     print('Pose Inversion error %.7f @ %d it'%(error, idx))</span>
 <span class="sd">            ...     if error &lt; 1e-5:</span>
-<span class="sd">            ...         print(&#39;Early Stopping with error:&#39;, error.item())</span>
+<span class="sd">            ...         print('Early Stopping with error:', error.item())</span>
 <span class="sd">            ...         break</span>
 <span class="sd">            ...</span>
 <span class="sd">            Pose Inversion error: 1.6865690 @ 0 it</span>
@@ -510,7 +572,7 @@
 <span class="sd">            Pose Inversion error: 0.0002673 @ 2 it</span>
 <span class="sd">            Pose Inversion error: 0.0000005 @ 3 it</span>
 <span class="sd">            Early Stopping with error: 5.21540641784668e-07</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
             <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weight</span>
             <span class="n">R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
@@ -524,15 +586,14 @@
             <span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">normalize_RWJ</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
             <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">R</span><span class="p">)</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">weight</span> <span class="o">@</span> <span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">weight</span> <span class="o">@</span> <span class="n">R</span><span class="p">)</span>
             <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;loss&#39;</span><span class="p">)</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'loss'</span><span class="p">)</span> \
                         <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">step</span> <span class="o">=</span> <span class="n">D</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'params'</span><span class="p">],</span> <span class="n">step</span> <span class="o">=</span> <span class="n">D</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span></div></div>
 
-
-<div class="viewcode-block" id="LevenbergMarquardt"><a class="viewcode-back" href="../../../../generated/pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt">[docs]</a><span class="k">class</span> <span class="nc">LevenbergMarquardt</span><span class="p">(</span><span class="n">_Optimizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="LevenbergMarquardt"><a class="viewcode-back" href="../../../../generated/pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LevenbergMarquardt</span><span class="p">(</span><span class="n">_Optimizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">    The Levenberg-Marquardt (LM) algorithm solving non-linear least squares problems. It</span>
 <span class="sd">    is also known as the damped least squares (DLS) method. This implementation is for</span>
 <span class="sd">    optimizing the model parameters to approximate the target, which can be a</span>
@@ -608,10 +669,15 @@
 <span class="sd">        max (float, optional): the upper-bound of the Hessian diagonal. Default: 1e32.</span>
 <span class="sd">        vectorize (bool, optional): the method of computing Jacobian. If ``True``, the</span>
 <span class="sd">            gradient of each scalar in output with respect to the model parameters will be</span>
-<span class="sd">            computed in parallel with ``&quot;reverse-mode&quot;``. More details go to</span>
+<span class="sd">            computed in parallel with ``"reverse-mode"``. More details go to</span>
 <span class="sd">            :meth:`pypose.optim.functional.modjac`. Default: ``True``.</span>
+<span class="sd">        sparse (bool, optional): if ``True``, use the sparse LM path based on sparse Jacobians</span>
+<span class="sd">            and sparse normal equations. This mode requires the optional sparse backend `bae`</span>
+<span class="sd">            and is intended to be used with sparse linear solvers such as :meth:`solver.CG`.</span>
+<span class="sd">            Default: ``False``.</span>
 
-<span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`, :meth:`solver.Cholesky`.</span>
+<span class="sd">    Available solvers: :meth:`solver.PINV`; :meth:`solver.LSTSQ`; :meth:`solver.Cholesky`;</span>
+<span class="sd">    :meth:`solver.CG`; :meth:`solver.PCG`.</span>
 
 <span class="sd">    Available kernels: :meth:`kernel.Huber`; :meth:`kernel.PseudoHuber`; :meth:`kernel.Cauchy`.</span>
 
@@ -620,6 +686,20 @@
 <span class="sd">    Available strategies: :meth:`strategy.Constant`; :meth:`strategy.Adaptive`;</span>
 <span class="sd">    :meth:`strategy.TrustRegion`;</span>
 
+<span class="sd">    Note:</span>
+<span class="sd">        Setting ``sparse=True`` enables the sparse Jacobian / sparse LM backend.</span>
+<span class="sd">        It should be used when the underlying optimization problem exhibits a large, structured</span>
+<span class="sd">        sparse Jacobian, where each residual depends only on a small subset of parameters.</span>
+<span class="sd">        Please cite the following paper implementing the sparse LM backend:</span>
+
+<span class="sd">        * Zitong Zhan, Huan Xu, Zihang Fang, Xinpeng Wei, Yaoyu Hu, Chen Wang,</span>
+<span class="sd">          `Bundle Adjustment in the Eager Mode &lt;https://arxiv.org/abs/2409.12190&gt;`_,</span>
+<span class="sd">          IEEE Transactions on Robotics, 2026.</span>
+
+<span class="sd">        Check a `full and clean runable example</span>
+<span class="sd">        &lt;https://github.com/pypose/pypose/tree/main/examples/module/ba&gt;`_ with</span>
+<span class="sd">        ``sparse=True`` for bundle adjustment.</span>
+
 <span class="sd">    Warning:</span>
 <span class="sd">        The output of model :math:`\bm{f}(\bm{\theta},\bm{x}_i)` and target :math:`\bm{y}_i`</span>
 <span class="sd">        can be any shape, while their **last dimension** :math:`d` is always taken as the</span>
@@ -627,7 +707,7 @@
 <span class="sd">        function. This is useful for residuals like re-projection error, whose last</span>
 <span class="sd">        dimension is 2.</span>
 
-<span class="sd">        Note that **auto correction** is equivalent to the method of &#39;square-rooting the kernel&#39;</span>
+<span class="sd">        Note that **auto correction** is equivalent to the method of 'square-rooting the kernel'</span>
 <span class="sd">        mentioned in Section 3.3 of the following paper. It replaces the</span>
 <span class="sd">        :math:`d`-dimensional residual with a one-dimensional one, which loses</span>
 <span class="sd">        residual-level structural information.</span>
@@ -640,15 +720,20 @@
 <span class="sd">        1, even if the model residual is a scalar. If the model output only has one dimension,</span>
 <span class="sd">        the model Jacobian will be a row vector, instead of a matrix, which loses sample-level</span>
 <span class="sd">        structural information, although computing Jacobian vector is faster.**</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> \
-                       <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reject</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e32</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">min</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min value has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">min</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="nb">max</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max value has to be positive: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">))</span>
+<span class="sd">    '''</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">corrector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> \
+                       <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reject</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e32</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">min</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"min value has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">min</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">max</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max value has to be positive: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">TrustRegion</span><span class="p">()</span> <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">strategy</span>
-        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;min&#39;</span><span class="p">:</span><span class="nb">min</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span><span class="nb">max</span><span class="p">},</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">defaults</span><span class="p">}</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="s1">'min'</span><span class="p">:</span><span class="nb">min</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">:</span><span class="nb">max</span><span class="p">},</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">defaults</span><span class="p">}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vectorize&#39;</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span> <span class="o">=</span> <span class="n">sparse</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span><span class="p">:</span>
+            <span class="n">_load_sparse_backend_globals</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'vectorize'</span><span class="p">:</span> <span class="n">vectorize</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">Cholesky</span><span class="p">()</span> <span class="k">if</span> <span class="n">solver</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">=</span> <span class="n">reject</span><span class="p">,</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
@@ -662,10 +747,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Trivial</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">RobustModel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
 
+<div class="viewcode-block" id="LevenbergMarquardt.update_parameter"><a class="viewcode-back" href="../../../../generated/pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt.update_parameter">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'sparse'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="c1"># Keep sparse updates aligned with the same trainable parameters.</span>
+            <span class="n">grad_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">grad_params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot update parameters when none require gradients"</span><span class="p">)</span>
+            <span class="n">numels</span> <span class="o">=</span> <span class="p">[</span><span class="n">_parameter_update_shape</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">grad_params</span><span class="p">]</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">numels</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">grad_params</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">_parameter_update_shape</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LevenbergMarquardt.step"><a class="viewcode-back" href="../../../../generated/pypose.optim.LevenbergMarquardt/#pypose.optim.LevenbergMarquardt.step">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">'''</span>
 <span class="sd">        Performs a single optimization step.</span>
 
 <span class="sd">        Args:</span>
@@ -674,7 +771,8 @@
 <span class="sd">                If not given, the squared model output is minimized. Defaults: ``None``.</span>
 <span class="sd">            weight (:obj:`Tensor`, or :obj:`list`, optional): the square positive definite matrix defining</span>
 <span class="sd">                the weight of model residual. If a :obj:`list`, the element must be :obj:`Tensor` and</span>
-<span class="sd">                the length must be equal to the number of residuals. Default: ``None``.</span>
+<span class="sd">                the length must be equal to the number of residuals. This argument is currently not</span>
+<span class="sd">                supported when ``sparse=True``. Default: ``None``.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            Tensor: the minimized model loss.</span>
@@ -694,6 +792,10 @@
 <span class="sd">            `SGD &lt;https://pytorch.org/docs/stable/generated/torch.optim.SGD.html&gt;`_, where the</span>
 <span class="sd">            model error has to be a scalar, the output of model :math:`\bm{f}` can be a</span>
 <span class="sd">            Tensor/LieTensor or a tuple of Tensors/LieTensors.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When ``sparse=True``, only a single residual tensor is currently supported. If the</span>
+<span class="sd">            model returns multiple residuals, only the first one is used.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            Optimizing a simple module to **approximate pose inversion**.</span>
@@ -715,9 +817,9 @@
 <span class="sd">            ...</span>
 <span class="sd">            &gt;&gt;&gt; for idx in range(10):</span>
 <span class="sd">            ...     loss = optimizer.step(input)</span>
-<span class="sd">            ...     print(&#39;Pose Inversion loss %.7f @ %d it&#39;%(loss, idx))</span>
+<span class="sd">            ...     print('Pose Inversion loss %.7f @ %d it'%(loss, idx))</span>
 <span class="sd">            ...     if loss &lt; 1e-5:</span>
-<span class="sd">            ...         print(&#39;Early Stopping with loss:&#39;, loss.item())</span>
+<span class="sd">            ...         print('Early Stopping with loss:', loss.item())</span>
 <span class="sd">            ...         break</span>
 <span class="sd">            ...</span>
 <span class="sd">            Pose Inversion error: 1.6600330 @ 0 it</span>
@@ -726,40 +828,117 @@
 <span class="sd">            Pose Inversion error: 0.0000004 @ 3 it</span>
 <span class="sd">            Early Stopping with error: 4.443569991963159e-07</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            More practical examples, e.g., pose graph optimization (PGO), can be found at</span>
-<span class="sd">            `examples/module/pgo</span>
-<span class="sd">            &lt;https://github.com/pypose/pypose/tree/main/examples/module/pgo&gt;`_.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-            <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weight</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="n">modjac</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span><span class="p">)</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
-            <span class="n">params_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">flatten_row_jacobian</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)):</span>
-                <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">)</span> <span class="o">==</span><span class="mi">1</span> \
-                    <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">normalize_RWJ</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+<span class="sd">            Solving bundle adjustment by minimizing reprojection error with **sparse LM**.</span>
+<span class="sd">            (requires the optional sparse backend `bae` and CUDA).</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;loss&#39;</span><span class="p">)</span> \
+<span class="sd">            Here, psjac marks the reprojection residual so the</span>
+<span class="sd">            sparse backend can assemble sparse Jacobians for sparse LM. Use it on factorwise</span>
+<span class="sd">            residual functions that take batch inputs and return one residual block per</span>
+<span class="sd">            batch item. When you call the function normally, it behaves the same as before;</span>
+<span class="sd">            the decorator only helps the sparse backend build sparse Jacobians.</span>
+<span class="sd">            In the example, both camera poses and 3D points are optimized to minimize</span>
+<span class="sd">            the reprojection error.</span>
+
+<span class="sd">            &gt;&gt;&gt; import torch</span>
+<span class="sd">            &gt;&gt;&gt; import pypose as pp</span>
+<span class="sd">            &gt;&gt;&gt; from torch import nn</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.optim import LM</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.optim.solver import PCG</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.optim.strategy import TrustRegion</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.optim.scheduler import StopOnPlateau</span>
+<span class="sd">            &gt;&gt;&gt; from pypose.autograd.function import psjac</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; class ReprojErr(nn.Module):</span>
+<span class="sd">            ...     def __init__(self, poses, points):</span>
+<span class="sd">            ...         super().__init__()</span>
+<span class="sd">            ...         # sjac: enable tracing sparse Jacobian</span>
+<span class="sd">            ...         self.poses = pp.Parameter(poses, sjac=True)</span>
+<span class="sd">            ...         self.points = pp.Parameter(points, sjac=True)</span>
+<span class="sd">            ...</span>
+<span class="sd">            ...     @psjac  # parallelize assembly of sparse Jacobian</span>
+<span class="sd">            ...     def project(poses, points):</span>
+<span class="sd">            ...         points = poses.Act(points)</span>
+<span class="sd">            ...         return - points[..., :2] / points[..., [2]]</span>
+<span class="sd">            ...</span>
+<span class="sd">            ...     def forward(self, pixels, cidx, pidx):</span>
+<span class="sd">            ...         poses = self.poses[cidx]</span>
+<span class="sd">            ...         points = self.points[pidx]</span>
+<span class="sd">            ...         return ReprojErr.project(poses, points) - pixels</span>
+<span class="sd">            ...</span>
+<span class="sd">            &gt;&gt;&gt; torch.set_default_device("cuda")</span>
+<span class="sd">            &gt;&gt;&gt; npts, poses = 8, pp.randn_SE3(1)</span>
+<span class="sd">            &gt;&gt;&gt; points = torch.randn(npts, 3)</span>
+<span class="sd">            &gt;&gt;&gt; points[:, 2] += 4  # positive depth</span>
+<span class="sd">            &gt;&gt;&gt; cidx = torch.zeros(npts, dtype=torch.long)</span>
+<span class="sd">            &gt;&gt;&gt; pidx = torch.arange(npts)</span>
+<span class="sd">            &gt;&gt;&gt; pixels = torch.randn(npts, 2)</span>
+<span class="sd">            &gt;&gt;&gt; inputs = (pixels, cidx, pidx)</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; model = ReprojErr(poses, points)</span>
+<span class="sd">            &gt;&gt;&gt; strategy = TrustRegion(up=2.0, down=0.5**4)</span>
+<span class="sd">            &gt;&gt;&gt; solver = PCG(tol=1e-4, maxiter=250)</span>
+<span class="sd">            &gt;&gt;&gt; optimizer = LM(model, solver, strategy, sparse=True)</span>
+<span class="sd">            &gt;&gt;&gt; scheduler = StopOnPlateau(optimizer, steps=5, verbose=True)</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; while scheduler.continual():</span>
+<span class="sd">            ...     loss = optimizer.step(inputs)</span>
+<span class="sd">            ...     scheduler.step(loss)</span>
+<span class="sd">            StopOnPlateau on step 1 Loss 4.467577e+01 --&gt; Loss 7.737489e+00.</span>
+<span class="sd">            StopOnPlateau on step 2 Loss 7.737489e+00 --&gt; Loss 2.681350e+00.</span>
+<span class="sd">            StopOnPlateau on step 3 Loss 2.681350e+00 --&gt; Loss 1.192892e+00.</span>
+<span class="sd">            StopOnPlateau on step 4 Loss 1.192892e+00 --&gt; Loss 5.546592e-01.</span>
+<span class="sd">            StopOnPlateau on step 5 Loss 5.546592e-01 --&gt; Loss 5.288146e-01.</span>
+<span class="sd">            StopOnPlateau: Maximum steps reached, Quitting..</span>
+<span class="sd">        '''</span>
+        <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"Weight is not supported in sparse mode for now."</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Sparse mode only supports a single residual. Using the first one."</span><span class="p">)</span>
+                    <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">J</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'params'</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">_is_tracking_tensor</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+                    <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+                <span class="n">J</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">to_sparse_coo</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
+                <span class="n">J_T</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">mT</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="n">J_T</span> <span class="o">@</span> <span class="n">J</span>
+                <span class="n">diagonal_op_</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">clamp_</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">pg</span><span class="p">[</span><span class="s1">'min'</span><span class="p">],</span> <span class="nb">max</span><span class="o">=</span><span class="n">pg</span><span class="p">[</span><span class="s1">'max'</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weight</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
+                <span class="n">J</span> <span class="o">=</span> <span class="n">modjac</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">jackwargs</span><span class="p">)</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
+                <span class="n">params_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="n">J</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">flatten_row_jacobian</span><span class="p">(</span><span class="n">Jr</span><span class="p">,</span> <span class="n">params_values</span><span class="p">)</span> <span class="k">for</span> <span class="n">Jr</span> <span class="ow">in</span> <span class="n">J</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)):</span>
+                    <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">)</span> <span class="o">==</span><span class="mi">1</span> \
+                        <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrector</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">J</span> <span class="o">=</span> <span class="n">J</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">normalize_RWJ</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+                <span class="n">J_T</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="n">J_T</span> <span class="o">@</span> <span class="n">J</span>
+                <span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="n">pg</span><span class="p">[</span><span class="s1">'min'</span><span class="p">],</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'max'</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'loss'</span><span class="p">)</span> \
                                     <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-            <span class="n">J_T</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">J</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">=</span> <span class="n">J_T</span> <span class="o">@</span> <span class="n">J</span><span class="p">,</span> <span class="mi">0</span>
-            <span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="n">pg</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">],</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">:</span>
-                <span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span> <span class="o">*</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;damping&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span><span class="p">:</span>
+                    <span class="n">diagonal_op_</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'damping'</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">diagonal</span><span class="p">()</span> <span class="o">*</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'damping'</span><span class="p">])</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="n">J_T</span> <span class="o">@</span> <span class="n">R</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Linear solver failed. Breaking optimization step...&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Linear solver failed. Breaking optimization step..."</span><span class="p">)</span>
                     <span class="k">break</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">D</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">pg</span><span class="p">[</span><span class="s1">'params'</span><span class="p">],</span> <span class="n">D</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">pg</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="n">J</span><span class="o">=</span><span class="n">J</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">:</span> <span class="c1"># reject step</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">pg</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="n">D</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_parameter</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">pg</span><span class="p">[</span><span class="s1">'params'</span><span class="p">],</span> <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="n">D</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject_count</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>

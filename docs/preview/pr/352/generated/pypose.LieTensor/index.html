@@ -30,7 +30,7 @@
   <!-- <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/katex-math.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex/" />
     <link rel="search" title="Search" href="../../search/" />
@@ -128,7 +128,7 @@
           <div class="pytorch-left-menu-search">
             
     <div class="version">
-      <a href='https://pypose.org/docs/versions.html'>0.7.0 &#x25BC</a>
+      <a href='https://pypose.org/docs/versions.html'>0.9.5 &#x25BC</a>
     </div>
     
 
@@ -164,11 +164,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../lietensor/">LieTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autograd/">Autograd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../func/">Func</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../functions/">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../convert/">Convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../optim/">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metric/">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/">Utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/">Testing</a></li>
 </ul>
@@ -251,7 +253,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pypose.LieTensor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pypose.</span></span><span class="sig-name descname"><span class="pre">LieTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypose/lietensor/lietensor/#LieTensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pypose.LieTensor" title="Permalink to this definition">¶</a></dt>
-<dd><p>A sub-class of <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.Tensor</span></code> to represent Lie Algebra and Lie Group.</p>
+<dd><p>A sub-class of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor</span></code> to represent Lie Algebra and Lie Group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -353,14 +355,14 @@ since <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypos
 <p>See LieTensor method <a class="reference internal" href="#pypose.LieTensor.lview" title="pypose.LieTensor.lview"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lview()</span></code></a> for more details.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypose</span> <span class="k">as</span> <span class="nn">pp</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pypose</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda:0'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">LieTensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ltype</span><span class="o">=</span><span class="n">pp</span><span class="o">.</span><span class="n">so3_type</span><span class="p">)</span>
 <span class="go">so3Type LieTensor:</span>
 <span class="go">tensor([[ 0.9520,  0.4517,  0.5834],</span>
 <span class="go">        [-0.8106,  0.8197,  0.7077],</span>
-<span class="go">        [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [-0.5743,  0.8182, -1.2104]], device='cuda:0', grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
 <p>Alias class for specific LieTensor is recommended:</p>
@@ -368,7 +370,7 @@ since <a class="reference internal" href="#pypose.LieTensor.lshape" title="pypos
 <span class="go">so3Type LieTensor:</span>
 <span class="go">tensor([[ 0.9520,  0.4517,  0.5834],</span>
 <span class="go">        [-0.8106,  0.8197,  0.7077],</span>
-<span class="go">        [-0.5743,  0.8182, -1.2104]], device=&#39;cuda:0&#39;, grad_fn=&lt;AliasBackward0&gt;)</span>
+<span class="go">        [-0.5743,  0.8182, -1.2104]], device='cuda:0', grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
 <p>See more alias classes at <a class="reference external" href="#id1">Table 1 for Lie Group</a>  and <a class="reference external" href="#id2">Table 2 for Lie Algebra</a>.</p>
@@ -407,10 +409,10 @@ For example, the following usage is equivalent:</p>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_grad</span></code>. See more details at
 <a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html">tensor attributes</a>.</p>
 <p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">so3</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># All Tensor attributes are available for LieTensor</span>
 <span class="go">so3Type LieTensor:</span>
-<span class="go">tensor([[-1.5948,  0.3113, -0.9807]], device=&#39;cuda:0&#39;, dtype=torch.float64,</span>
+<span class="go">tensor([[-1.5948,  0.3113, -0.9807]], device='cuda:0', dtype=torch.float64,</span>
 <span class="go">    grad_fn=&lt;AliasBackward0&gt;)</span>
 </pre></div>
 </div>
@@ -564,7 +566,7 @@ rotation part is set to identity quaternion.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pypose.LieTensor.lshape">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lshape</span></span><a class="headerlink" href="#pypose.LieTensor.lshape" title="Permalink to this definition">¶</a></dt>
-<dd><p>LieTensor Shape (shape of torch.Tensor by ignoring the last dimension)</p>
+<dd><p>LieTensor Shape (shape of Tensor by ignoring the last dimension)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>torch.Size</p>
